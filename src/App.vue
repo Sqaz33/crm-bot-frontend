@@ -9,13 +9,16 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useAuthStore } from './stores/auth'
-import { loginViaTelegram, exchangeToken } from './api/auth'
+import { useRouter } from 'vue-router'
+// import { useAuthStore } from './stores/auth'
+// import { loginViaTelegram, exchangeToken } from './api/auth'
 
 const loading = ref(true)
-const authStore = useAuthStore()
+const router = useRouter()
+// const authStore = useAuthStore()
 
 onMounted(async () => {
+  /*
   try {
     const tg = window.Telegram?.WebApp
     tg?.expand()
@@ -26,23 +29,23 @@ onMounted(async () => {
       return
     }
 
-    // Шаг 1: Отправляем initData на сервер для валидации
     const loginResponse = await loginViaTelegram(tg.initData)
-
-    // Шаг 2: Обмениваем временный токен на access_token
     const exchangeResponse = await exchangeToken(loginResponse.data.temporary_token)
 
-    // Сохраняем токены
     authStore.setTokens(exchangeResponse.data)
-    loading.value = false
+    await router.push({ name: 'home' }) // Переход на HomePage.vue
   } catch (err) {
     console.error(err)
-    alert(" Ошибка авторизации")
-    loading.value = false
+    alert("Ошибка авторизации")
   }
+  */
+
+  // Заглушка без авторизации
+  await new Promise(resolve => setTimeout(resolve, 500))
+  await router.push({ name: 'home' }) 
+  loading.value = false
 })
 </script>
-
 
 
 <style scoped>
