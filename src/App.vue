@@ -42,7 +42,10 @@ onMounted(async () => {
 
   // Заглушка без авторизации
   await new Promise(resolve => setTimeout(resolve, 500))
-  await router.push({ name: 'home' }) 
+  const currentRoute = router.currentRoute.value
+  if (currentRoute.name === undefined || currentRoute.name === null) {
+    await router.push({ name: 'home' }) 
+  } 
   loading.value = false
 })
 </script>

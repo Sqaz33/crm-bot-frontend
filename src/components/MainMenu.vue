@@ -8,7 +8,29 @@
 </template>
 
 <script setup>
-// пока без логики
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const activeItem = ref('Адрес')
+
+const navigate = (item) => {
+  activeItem.value = item
+  switch (item) {
+    case 'Адрес':
+      router.push('/address')
+      break
+    case 'Записи':
+      router.push('/records')
+      break
+    case 'Поделиться':
+      router.push('/share')
+      break
+    case 'Профиль':
+      router.push('/profile')
+      break
+  }
+}
 </script>
 
 <style scoped>
