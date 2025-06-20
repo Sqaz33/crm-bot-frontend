@@ -1,0 +1,63 @@
+stages:
+  - build
+  - deploy
+
+docker-build:
+  image: docker:cli
+  stage: build
+  variables:
+    DOCKER_IMAGE_NAME: "$REGISTRY_URL/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG"
+  before_script:
+    - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" $REGISTRY_URL
+  script:
+    - docker build --pull -t "$DOCKER_IMAGE_NAME" .
+    - docker push "$DOCKER_IMAGE_NAME"
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        docker tag "$DOCKER_IMAGE_NAME" "$REGISTRY_URL/$CI_PROJECT_NAME:latest"
+        docker push "$REGISTRY_URL/$CI_PROJECT_NAME:latest"
+      fi
+  rules:
+    - if: "$CI_COMMIT_BRANCH"
+      exists:
+        - Dockerfile
+
+deploy-dev:
+  stage: deploy
+  tags:
+    - deploy
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+  before_script:
+    - cp "$DEV_ENV_FILE" .env
+    - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" $REGISTRY_URL
+  script:
+    - docker pull "$REGISTRY_URL/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG"
+    - docker rm -f "$CI_PROJECT_NAME-dev" || true
+    - |
+      docker run -d \
+        --name "$CI_PROJECT_NAME-dev" \
+        --restart always \
+        --env-file .env \
+        -p 127.0.0.1:5173:5173 \
+        "$REGISTRY_URL/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG"
+
+deploy-prod:
+  stage: deploy
+  tags:
+    - deploy
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  before_script:
+    - cp "$PROD_ENV_FILE" .env
+    - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" $REGISTRY_URL
+  script:
+    - docker pull "$REGISTRY_URL/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG"
+    - docker rm -f "$CI_PROJECT_NAME" || true
+    - |
+      docker run -d \
+        --name "$CI_PROJECT_NAME" \
+        --restart always \
+        --env-file .env \
+        -p 127.0.0.1:5173:5173 \
+        "$REGISTRY_URL/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG"
