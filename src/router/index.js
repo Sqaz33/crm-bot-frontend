@@ -1,6 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
-import StartView from '../views/StartView.vue'
 import HomeView from '../views/HomeView.vue'
 import RecordsView from '../views/RecordsView.vue'
 import EmployeeView from '../views/EmployeeView.vue'
@@ -11,11 +10,6 @@ import TestView from '../views/Test.vue'
 const routes = [
   {
     path: '/',
-    name: 'start',
-    component: StartView
-  },
-  {
-    path: '/home',
     name: 'home',
     component: HomeView
   },
@@ -45,14 +39,14 @@ const routes = [
     component: TestView,
     meta: { title: 'Тестовая страница' }
   },
-
+  // если что-то не нашлось — обратно на главную
   {
     path: '/:pathMatch(.*)*',
-    redirect: { name: 'start' }
+    redirect: { name: 'home' }
   }
 ]
 
 export default createRouter({
-  history: createWebHashHistory(),
+  history: createWebHashHistory(),  
   routes,
 })
