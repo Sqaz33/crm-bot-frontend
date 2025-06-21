@@ -1,34 +1,40 @@
-import api from './index' 
 
-/**
- * Логинимся через Telegram WebApp.
- * @param {string} initData – строка initData из window.Telegram.WebApp.initData
- * @returns {Promise<{ data: { temporary_token: string } }>}
- */
-export function loginViaTelegram(initData) {
-  return api.post('/auth/telegram/login', {
-    init_data: initData
-  })
-}
+import axios from 'axios'
 
-/**
- * Обмениваем временный токен на пару access/refresh.
- * @param {string} temporaryToken
- * @returns {Promise<{ data: { access_token: string, refresh_token: string, telegram_id?: string } }>}
- */
-export function exchangeToken(temporaryToken) {
-  return api.post('/auth/telegram/exchange', {
-    temporary_token: temporaryToken
-  })
-}
 
-/**
- * Обновляем access-токен по refresh-токену.
- * @param {string} refreshToken
- * @returns {Promise<{ data: { access_token: string, refresh_token: string } }>}
- */
-export function refreshToken(refreshToken) {
-  return api.post('/auth/refresh', {
-    refresh_token: refreshToken
-  })
-}
+const api = axios.create({
+  baseURL: 'https://www.crm-bot.dev.groza1338.ru', // так мф делать не будем больше
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  },
+})
+
+
+api.interceptors.request.use(
+  config => {
+    
+    const token = localStorage.getItem('access_token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  error => Promise.reject(error)
+)
+
+
+api.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      
+      console.warn('Unauthorized, redirecting to login...')
+      
+    }
+    return Promise.reject(error)
+  }
+)
+
+export default api
