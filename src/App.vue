@@ -19,36 +19,36 @@ const auth = useAuthStore()
 
 onMounted(async () => {
   try {
-   
+    // инициализируем store из URL-параметров, если нужно
     auth.initFromUrl()
 
+    // проверяем, что Telegram WebApp API доступна
     const tg = window.Telegram?.WebApp
     if (!tg) {
-      throw new Error("WebApp API не найдена")
+      throw new Error('WebApp API не найдена')
     }
     tg.expand()
 
-  
     const initData = tg.initData
     if (!initData) {
-      throw new Error("initData отсутствует")
+      throw new Error('initData отсутствует')
     }
 
-
+    // первый запрос — получаем временный токен
     const { data: loginData } = await loginViaTelegram(initData)
-  
+
+    // обменяем временный токен на настоящий
     const { data: exchangeData } = await exchangeToken(loginData.temporary_token)
 
-  
     auth.setTokens(exchangeData)
-    auth.setTelegramId(auth.telegramId) 
+    auth.setTelegramId(auth.telegramId)
 
+    // если всё ок — идём на home
     await router.replace({ name: 'home' })
 
   } catch (err) {
-    console.error("Ошибка авторизации:", err)
-    alert("Не удалось пройти авторизацию через Telegram")
-
+    console.error('Ошибка авторизации:', err)
+    alert('Не удалось пройти авторизацию через Telegram')
     await router.replace({ name: 'start' })
   } finally {
     loading.value = false
