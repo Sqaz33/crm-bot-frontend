@@ -19,10 +19,8 @@ const auth = useAuthStore()
 
 onMounted(async () => {
   try {
-    // если нужно — подхватываем токен из query-параметров или localStorage
     auth.initFromUrl()
 
-    // проверяем наличие Telegram WebApp API
     const tg = window.Telegram?.WebApp
     if (!tg) {
       console.warn('Telegram WebApp API не найдена — переходим на домашнюю страницу')
@@ -38,21 +36,21 @@ onMounted(async () => {
 
     // 1) логинимся через Telegram, получаем временный токен
     const { data: loginData } = await loginViaTelegram(initData)
+    console.log('loginViaTelegram response:', loginData)
 
     // 2) обмениваем временный токен на access+refresh
     const { data: exchangeData } = await exchangeToken(loginData.temporary_token)
+    console.log('exchangeToken response:', exchangeData)
 
     // сохраняем в Pinia
     auth.setTokens(exchangeData)
     auth.setTelegramId(exchangeData.telegram_id || auth.telegramId)
 
-    // на домашний экран
     await router.replace({ name: 'home' })
 
   } catch (err) {
     console.error('Ошибка авторизации:', err)
     alert('Не удалось пройти авторизацию через Telegram')
-    // даже при ошибке — показываем главный экран
     await router.replace({ name: 'home' })
   } finally {
     loading.value = false
