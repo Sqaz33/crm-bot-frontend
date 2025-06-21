@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
 import HomeView from '../views/HomeView.vue'
 import RecordsView from '../views/RecordsView.vue'
@@ -39,14 +39,14 @@ const routes = [
     component: TestView,
     meta: { title: 'Тестовая страница' }
   },
-  // если что-то не нашлось — обратно на главную
+  
   {
     path: '/:pathMatch(.*)*',
-    redirect: { name: 'home' }
+    redirect: '/'
   }
 ]
 
 export default createRouter({
-  history: createWebHashHistory(),  
+  history: createWebHistory(),
   routes,
 })
