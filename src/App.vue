@@ -10,46 +10,51 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-// import { useAuthStore } from './stores/auth'
-// import { loginViaTelegram, exchangeToken } from './api/auth'
+import { useAuthStore } from './stores/auth'
+import { loginViaTelegram, exchangeToken } from './api/auth'
 
 const loading = ref(true)
 const router = useRouter()
-// const authStore = useAuthStore()
+const auth = useAuthStore()
 
 onMounted(async () => {
-  /*
   try {
-    const tg = window.Telegram?.WebApp
-    tg?.expand()
+   
+    auth.initFromUrl()
 
-    if (!tg?.initData) {
-      alert("WebApp не запущен в Telegram или initData отсутствует")
-      loading.value = false
-      return
+    const tg = window.Telegram?.WebApp
+    if (!tg) {
+      throw new Error("WebApp API не найдена")
+    }
+    tg.expand()
+
+  
+    const initData = tg.initData
+    if (!initData) {
+      throw new Error("initData отсутствует")
     }
 
-    const loginResponse = await loginViaTelegram(tg.initData)
-    const exchangeResponse = await exchangeToken(loginResponse.data.temporary_token)
 
-    authStore.setTokens(exchangeResponse.data)
-    await router.push({ name: 'home' }) // Переход на HomePage.vue
+    const { data: loginData } = await loginViaTelegram(initData)
+  
+    const { data: exchangeData } = await exchangeToken(loginData.temporary_token)
+
+  
+    auth.setTokens(exchangeData)
+    auth.setTelegramId(auth.telegramId) 
+
+    await router.replace({ name: 'home' })
+
   } catch (err) {
-    console.error(err)
-    alert("Ошибка авторизации")
-  }
-  */
+    console.error("Ошибка авторизации:", err)
+    alert("Не удалось пройти авторизацию через Telegram")
 
-  // Заглушка без авторизации
-  await new Promise(resolve => setTimeout(resolve, 500))
-  const currentRoute = router.currentRoute.value
-  if (currentRoute.name === undefined || currentRoute.name === null) {
-    await router.push({ name: 'home' }) 
-  } 
-  loading.value = false
+    await router.replace({ name: 'start' })
+  } finally {
+    loading.value = false
+  }
 })
 </script>
-
 
 <style scoped>
 p {
