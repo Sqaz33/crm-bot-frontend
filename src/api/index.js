@@ -3,7 +3,7 @@ import axios from 'axios'
 
 
 const api = axios.create({
-  baseURL: 'https://www.crm-bot.dev.groza1338.ru', // так мф делать не будем больше
+  baseURL: 'https://api.crm-bot.dev.groza1338.ru', // так мф делать не будем больше
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
