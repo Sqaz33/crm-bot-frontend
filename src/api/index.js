@@ -1,6 +1,6 @@
 // src/api/index.js
 import axios from 'axios'
-import { refreshToken } from './api/auth'
+import { refreshToken } from './auth'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
