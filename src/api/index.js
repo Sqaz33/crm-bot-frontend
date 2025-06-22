@@ -3,7 +3,7 @@ import axios from 'axios'
 import { refreshToken } from './auth'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+    baseURL: 'https://api.crm-bot.dev.groza1338.ru',
   timeout: 10000,
   headers: { 'Content-Type': 'application/json', Accept: 'application/json' }
 })
