@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 const api = axios.create({
-  // Используем переменную окружения VITE_API_URL, иначе дефолт
   baseURL: import.meta.env.VITE_API_URL || 'https://api.crm-bot.dev.groza1338.ru',
   timeout: 10000,
   headers: {
@@ -10,10 +9,10 @@ const api = axios.create({
   },
 })
 
-
+// Логируем исходящие запросы
 api.interceptors.request.use(
   config => {
-    console.groupCollapsed(`➡️ API Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`)
+    console.groupCollapsed(`API Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`)
     console.log('Headers:', config.headers)
     console.log('Payload:', config.data)
     console.groupEnd()
@@ -30,7 +29,7 @@ api.interceptors.request.use(
   }
 )
 
-
+// Логируем ответы
 api.interceptors.response.use(
   response => {
     console.groupCollapsed(`API Response: ${response.config.method?.toUpperCase()} ${response.config.url}`)
@@ -41,7 +40,7 @@ api.interceptors.response.use(
   },
   error => {
     if (error.response) {
-      console.groupCollapsed(`API Response Error: ${error.config.method?.toUpperCase()} ${error.config.url}`)
+      console.groupCollapsed(` API Response Error: ${error.config.method?.toUpperCase()} ${error.config.url}`)
       console.log('Status:', error.response.status)
       console.log('Data:', error.response.data)
       console.groupEnd()
@@ -49,7 +48,7 @@ api.interceptors.response.use(
         console.warn('Unauthorized – you may need to log in again.')
       }
     } else {
-      console.error('API Network/Error:', error.message)
+      console.error(' API Network/Error:', error.message)
     }
     return Promise.reject(error)
   }

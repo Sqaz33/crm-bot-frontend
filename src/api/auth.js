@@ -1,10 +1,28 @@
 import api from './index'
 
-export const loginViaTelegram = initData =>
-  api.post('/telegram/login', { init_data: initData })
+/**
+ * Логинимся через Telegram WebApp.
+ */
+export function loginViaTelegram(initData) {
+  return api.post('/auth/telegram/login', {
+    init_data: initData
+  })
+}
 
-export const exchangeToken = temporaryToken =>
-  api.post('/telegram/exchange', { temporary_token: temporaryToken })
+/**
+ * Обмениваем временный токен на пару access/refresh.
+ */
+export function exchangeToken(temporaryToken) {
+  return api.post('/auth/telegram/exchange', {
+    temporary_token: temporaryToken
+  })
+}
 
-export const refreshToken = refreshToken =>
-  api.post('/refresh', { refresh_token: refreshTokoken })
+/**
+ * Обновляем access-токен по refresh-токену.
+ */
+export function refreshToken(refreshToken) {
+  return api.post('/auth/refresh', {
+    refresh_token: refreshToken
+  })
+}
