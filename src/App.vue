@@ -1,6 +1,6 @@
 <template>
   <div v-if="loading">
-    <p>Загрузка...</p>
+    <p>Загрузка…</p>
   </div>
   <div v-else>
     <router-view />
@@ -10,89 +10,59 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from './stores/auth'
-import { loginViaTelegram, exchangeToken } from './api/auth'
+import { parseTelegramLaunchData } from '../utils/telegram'
+import { fetchUser, createUser } from '../api/user'
 
 const loading = ref(true)
 const router = useRouter()
-const auth = useAuthStore()
 
 onMounted(async () => {
-  console.groupCollapsed('App Mounted')
-  console.log('Mode:', import.meta.env.MODE)
+  try {
+    // 1. Собираем данные из URL
+    const { params, tgData } = parseTelegramLaunchData()
+    console.log('Query-параметры:', params)
+    console.log('tgWebAppData:', tgData)
 
-  // initFromUrl
-  console.group('🔧 auth.initFromUrl()')
-  auth.initFromUrl()
-  console.log('Auth state after initFromUrl:', { ...auth })
-  console.groupEnd()
+    // 2. Берём telegram_id из tgData.user или из ?user_id
+    const telegramId = tgData.user?.id || params.user_id
+    if (!telegramId) {
+      throw new Error('Не найден telegram_id ни в hash ни в query')
+    }
 
-  // Проверяем Telegram.WebApp
-  let tg = window.Telegram?.WebApp
-  console.group('Telegram WebApp check')
-  console.log('window.Telegram.WebApp:', tg)
-  // Мокаем в dev-режиме, чтобы весь flow отработал
-  if (!tg && import.meta.env.MODE === 'development') {
-    console.info('— dev mode: mocking Telegram.WebApp')
-    window.Telegram = {
-      WebApp: {
-        initData: 'id=123456789&first_name=DevUser&auth_date=1234567890&hash=abcdef',
-        expand: () => console.log('— tg.expand() called'),
+    // 3. Пытаемся получить пользователя из API
+    let res
+    try {
+      res = await fetchUser(telegramId)
+      console.log('Пользователь найден:', res.data)
+    } catch (err) {
+      if (err.response?.status === 404) {
+        // 4. Если нет — создаём
+        console.log('Пользователь не найден, создаём…', tgData.user)
+        res = await createUser(tgData.user || { id: telegramId })
+        console.log('Создан пользователь:', res.data)
+      } else {
+        throw err
       }
     }
-    tg = window.Telegram.WebApp
-  }
-  console.groupEnd()
 
-  try {
-    if (!tg) {
-      console.warn('Telegram WebApp API не найдена — переходим на home')
-      await router.replace({ name: 'home' })
-      return
+    // 5. Сохраняем токен, если API вернул его в res.data
+    const { access_token, refresh_token } = res.data
+    if (access_token) {
+      localStorage.setItem('access_token', access_token)
+    }
+    if (refresh_token) {
+      localStorage.setItem('refresh_token', refresh_token)
     }
 
-    // expand
-    console.group('tg.expand()')
-    tg.expand()
-    console.groupEnd()
-
-    // initData
-    console.group('tg.initData')
-    const initData = tg.initData
-    console.log('initData:', initData)
-    if (!initData) throw new Error('initData отсутствует')
-    console.groupEnd()
-
-    // loginViaTelegram
-    console.groupCollapsed('loginViaTelegram')
-    const { data: loginData } = await loginViaTelegram(initData)
-    console.log('loginData:', loginData)
-    console.groupEnd()
-
-    // exchangeToken
-    console.groupCollapsed('exchangeToken')
-    const { data: exchangeData } = await exchangeToken(loginData.temporary_token)
-    console.log('exchangeData:', exchangeData)
-    console.groupEnd()
-
-    // сохранение в стор
-    console.group('Saving tokens to store')
-    auth.setTokens(exchangeData)
-    auth.setTelegramId(exchangeData.telegram_id || auth.telegramId)
-    console.log('Auth state after setTokens:', { ...auth })
-    console.groupEnd()
-
-    // навигация
-    console.log('Navigating to home')
+    // 6. Переходим на домашний маршрут
     await router.replace({ name: 'home' })
 
-  } catch (err) {
-    console.error('Ошибка авторизации:', err)
-    alert('Не удалось пройти авторизацию через Telegram')
+  } catch (e) {
+    console.error('Ошибка авторизации:', e)
+    // Неудача — просто на home без токена
     await router.replace({ name: 'home' })
   } finally {
     loading.value = false
-    console.groupEnd()  // закрываем корневую группу
   }
 })
 </script>
