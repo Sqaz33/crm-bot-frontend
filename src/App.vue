@@ -16,7 +16,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { loginViaTelegram, exchangeToken } from './api/auth'
-import api from '@/api'
+import api from './api'
 
 const loading = ref(true)
 const ok      = ref(false)
