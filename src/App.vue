@@ -1,22 +1,31 @@
-
 <template>
   <div v-if="loading">
     <p>Авторизация…</p>
   </div>
   <div v-else>
     <div v-if="ok">
-      <p> Токен валиден, статус: {{ status }}</p>
+      <p>Токен валиден, статус: {{ status }}</p>
     </div>
     <div v-else>
-      <p> Ошибка проверки токена: {{ status }}</p>
+      <p>Ошибка проверки токена: {{ status }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { loginViaTelegram, exchangeToken } from './api/auth.js'
+import { loginViaTelegram, exchangeToken } from './api/auth'
 import api from './api'
+
+// Вспомогалка: если нет WebApp API, вытягиваем initData из хэша URL
+function getInitDataFallback() {
+  const hash = window.location.hash.slice(1) // убираем '#'
+  const prefix = 'tgWebAppData='
+  if (hash.startsWith(prefix)) {
+    return decodeURIComponent(hash.replace(prefix, ''))
+  }
+  return null
+}
 
 const loading = ref(true)
 const ok      = ref(false)
@@ -24,29 +33,35 @@ const status  = ref(null)
 
 onMounted(async () => {
   try {
-    // 1) Получаем initData из Telegram WebApp
-    const tg = window.Telegram?.WebApp
-    if (!tg) throw new Error('WebApp API не найдена')
-    tg.expand()
-    const initData = tg.initData
-    if (!initData) throw new Error('initData отсутствует')
+    // 1) Получаем initData
+    let initData = window.Telegram?.WebApp?.initData
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.expand()
+    } else {
+      console.warn('WebApp API не найдена — используем fallback initData из URL')
+      initData = getInitDataFallback()
+    }
 
-    // 2) Обмениваем initData на temporary_token
+    if (!initData) {
+      throw new Error('initData отсутствует ни в WebApp, ни в URL')
+    }
+    console.log('initData:', initData)
+
+    // 2) POST /auth/telegram/login → temporary_token
     const { data: { temporary_token } } = await loginViaTelegram(initData)
     console.log('temporary_token:', temporary_token)
 
-    // 3) Обмениваем temporary_token на access + refresh
+    // 3) POST /auth/telegram/exchange → access + refresh
     const { data: { access_token, refresh_token } } = await exchangeToken(temporary_token)
     console.log('access_token:', access_token)
     console.log('refresh_token:', refresh_token)
 
-    // 4) Сохраняем токены в localStorage
+    // 4) Сохраняем токены
     localStorage.setItem('access_token', access_token)
     localStorage.setItem('refresh_token', refresh_token)
 
-    // 5) Делаем защищённый запрос, чтобы проверить, что access_token работает
-    //    Эндпоинт /services защищён JWT
-    const res = await api.get('/services')
+    // 5) Делаем защищённый запрос, чтобы проверить токен
+    const res = await api.get('/services')  // замените на свой защищённый эндпоинт
     ok.value     = true
     status.value = res.status
 
