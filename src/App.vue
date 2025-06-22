@@ -1,66 +1,59 @@
+
 <template>
   <div v-if="loading">
-    <p>Загрузка…</p>
+    <p>Авторизация…</p>
   </div>
   <div v-else>
-    <router-view />
+    <div v-if="ok">
+      <p> Токен валиден, статус: {{ status }}</p>
+    </div>
+    <div v-else>
+      <p> Ошибка проверки токена: {{ status }}</p>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { parseTelegramLaunchData } from './utils/telegram'
-import { fetchUser, createUser } from './api/user'
+import { ref, onMounted } from 'vue'
+import { loginViaTelegram, exchangeToken } from './api/auth'
+import api from '@/api'
 
 const loading = ref(true)
-const router = useRouter()
+const ok      = ref(false)
+const status  = ref(null)
 
 onMounted(async () => {
   try {
-    // 1. Собираем данные из URL
-    const { params, tgData } = parseTelegramLaunchData()
-    console.log('Query-параметры:', params)
-    console.log('tgWebAppData:', tgData)
+    // 1) Получаем initData из Telegram WebApp
+    const tg = window.Telegram?.WebApp
+    if (!tg) throw new Error('WebApp API не найдена')
+    tg.expand()
+    const initData = tg.initData
+    if (!initData) throw new Error('initData отсутствует')
 
-    // 2. Берём telegram_id из tgData.user или из ?user_id
-    const telegramId = tgData.user?.id || params.user_id
-    if (!telegramId) {
-      throw new Error('Не найден telegram_id ни в hash ни в query')
-    }
+    // 2) Обмениваем initData на temporary_token
+    const { data: { temporary_token } } = await loginViaTelegram(initData)
+    console.log('temporary_token:', temporary_token)
 
-    // 3. Пытаемся получить пользователя из API
-    let res
-    try {
-      res = await fetchUser(telegramId)
-      console.log('Пользователь найден:', res.data)
-    } catch (err) {
-      if (err.response?.status === 404) {
-        // 4. Если нет — создаём
-        console.log('Пользователь не найден, создаём…', tgData.user)
-        res = await createUser(tgData.user || { id: telegramId })
-        console.log('Создан пользователь:', res.data)
-      } else {
-        throw err
-      }
-    }
+    // 3) Обмениваем temporary_token на access + refresh
+    const { data: { access_token, refresh_token } } = await exchangeToken(temporary_token)
+    console.log('access_token:', access_token)
+    console.log('refresh_token:', refresh_token)
 
-    // 5. Сохраняем токен, если API вернул его в res.data
-    const { access_token, refresh_token } = res.data
-    if (access_token) {
-      localStorage.setItem('access_token', access_token)
-    }
-    if (refresh_token) {
-      localStorage.setItem('refresh_token', refresh_token)
-    }
+    // 4) Сохраняем токены в localStorage
+    localStorage.setItem('access_token', access_token)
+    localStorage.setItem('refresh_token', refresh_token)
 
-    // 6. Переходим на домашний маршрут
-    await router.replace({ name: 'home' })
+    // 5) Делаем защищённый запрос, чтобы проверить, что access_token работает
+    //    Эндпоинт /services защищён JWT
+    const res = await api.get('/services')
+    ok.value     = true
+    status.value = res.status
 
   } catch (e) {
-    console.error('Ошибка авторизации:', e)
-    // Неудача — просто на home без токена
-    await router.replace({ name: 'home' })
+    console.error('Auth error:', e)
+    ok.value     = false
+    status.value = e.response?.status || e.message
   } finally {
     loading.value = false
   }
@@ -71,5 +64,6 @@ onMounted(async () => {
 p {
   text-align: center;
   margin-top: 2rem;
+  font-size: 1.1rem;
 }
 </style>

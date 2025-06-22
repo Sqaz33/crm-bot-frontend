@@ -1,13 +1,17 @@
 import api from './index'
 
-/**
- * Получить пользователя по telegram_id.
- */
-export function fetchUser(telegramId) {
-  return api.get(`/users/${telegramId}`)
+export function loginViaTelegram(initData) {
+  return api.post('/auth/telegram/login', { init_data: initData })
 }
 
+export function exchangeToken(tmpToken) {
+  return api.post('/auth/telegram/exchange', { temporary_token: tmpToken })
+}
 
-export function createUser(userPayload) {
-  return api.post('/users', userPayload)
+/**
+ * Обновляем access-токен по refresh-токену.
+ * Возвращает { access_token, refresh_token }
+ */
+export function refreshToken(refreshToken) {
+  return api.post('/auth/refresh', { refresh_token: refreshToken })
 }
