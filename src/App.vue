@@ -10,8 +10,8 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { parseTelegramLaunchData } from '../utils/telegram'
-import { fetchUser, createUser } from '../api/user'
+import { parseTelegramLaunchData } from './utils/telegram'
+import { fetchUser, createUser } from './api/user'
 
 const loading = ref(true)
 const router = useRouter()
