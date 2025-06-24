@@ -32,15 +32,21 @@ const router = useRouter()
 // Получение initData из Telegram WebApp или из hash-фоллбека
 function getInitData() {
   if (window.Telegram?.WebApp?.initData) {
-    console.log('WebApp API доступна')
     window.Telegram.WebApp.expand()
     return window.Telegram.WebApp.initData
   }
-  console.warn('WebApp API не найдена — пытаемся из хэша URL')
-  const hash = window.location.hash.slice(1)
+
+  const rawHash = window.location.hash.slice(1)
   const prefix = 'tgWebAppData='
-  if (hash.startsWith(prefix)) return decodeURIComponent(hash.replace(prefix, ''))
-  return null
+  if (!rawHash.startsWith(prefix)) return null
+
+  // забираем только до &tgWebAppVersion
+  const endIndex = rawHash.indexOf('&tgWebAppVersion')
+  const encodedPart = endIndex > 0
+    ? rawHash.slice(prefix.length, endIndex)
+    : rawHash.slice(prefix.length)
+
+  return decodeURIComponent(encodedPart)
 }
 
 onMounted(async () => {
