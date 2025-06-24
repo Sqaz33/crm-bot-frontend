@@ -40,7 +40,7 @@ function getInitData() {
   const prefix = 'tgWebAppData='
   if (!rawHash.startsWith(prefix)) return null
 
-  // забираем только до &tgWebAppVersion
+  // Забираем только ту часть, что Telegram передаёт в initData
   const endIndex = rawHash.indexOf('&tgWebAppVersion')
   const encodedPart = endIndex > 0
     ? rawHash.slice(prefix.length, endIndex)
@@ -82,8 +82,9 @@ onMounted(async () => {
       console.error('Ошибка авторизации:', err.message)
     }
     authError.value = true
+
   } finally {
-    // В любом случае идём на home
+    // В любом случае переходим на home
     await router.replace({ name: 'home' })
     loading.value = false
 
@@ -98,6 +99,7 @@ onMounted(async () => {
   text-align: center;
   margin-top: 2rem;
 }
+
 .auth-error-banner {
   position: fixed;
   top: 0;
@@ -109,7 +111,17 @@ onMounted(async () => {
   text-align: center;
   z-index: 1000;
 }
-.fade-enter-active, .fade-leave-active { transition: opacity 0.5s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
-p { font-size: 1.1rem; }
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+p {
+  font-size: 1.1rem;
+}
 </style>
