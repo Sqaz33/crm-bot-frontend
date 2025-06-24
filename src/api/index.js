@@ -2,12 +2,11 @@ import axios from 'axios'
 import { refreshToken as apiRefreshToken } from './auth'
 
 const api = axios.create({
-  baseURL: 'https://api.crm-bot.dev.groza1338.ru',
+  baseURL: '/api',         // <-- вот здесь
   timeout: 10000,
   headers: { 'Content-Type': 'application/json', Accept: 'application/json' }
 })
 
-// В каждый запрос подставляем access_token
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('access_token')
   if (token) config.headers.Authorization = `Bearer ${token}`
