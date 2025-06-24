@@ -27,6 +27,20 @@ function getInitDataFallback() {
   return null
 }
 
+// Функция для фильтрации параметров initData
+function sanitizeInitData(raw) {
+  const params = new URLSearchParams(raw)
+  const allowed = ['query_id', 'user', 'auth_date', 'signature', 'hash']
+  const filtered = new URLSearchParams()
+  for (const key of allowed) {
+    const val = params.get(key)
+    if (val !== null) {
+      filtered.set(key, val)
+    }
+  }
+  return filtered.toString()
+}
+
 const loading = ref(true)
 const ok      = ref(false)
 const status  = ref(null)
@@ -45,10 +59,14 @@ onMounted(async () => {
     if (!initData) {
       throw new Error('initData отсутствует ни в WebApp, ни в URL')
     }
-    console.log('initData:', initData)
+    console.log('raw initData:', initData)
+
+    // 1.1) Очищаем initData от параметров, которые не нужны
+    const cleanInitData = sanitizeInitData(initData)
+    console.log('sanitized initData:', cleanInitData)
 
     // 2) POST /auth/telegram/login → temporary_token
-    const { data: { temporary_token } } = await loginViaTelegram(initData)
+    const { data: { temporary_token } } = await loginViaTelegram(cleanInitData)
     console.log('temporary_token:', temporary_token)
 
     // 3) POST /auth/telegram/exchange → access + refresh
