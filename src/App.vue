@@ -79,7 +79,7 @@ onMounted(async () => {
     localStorage.setItem('refresh_token', refresh_token)
 
     // 5) Делаем защищённый запрос, чтобы проверить токен
-    const res = await api.get('/services')  // замените на свой защищённый эндпоинт
+    const res = await api.get('/salon/info')  // замените на свой защищённый эндпоинт
     ok.value     = true
     status.value = res.status
 
