@@ -1,8 +1,8 @@
-
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: '/api',      // относительный путь, пойдет через Vite-прокси
+  
+  baseURL: import.meta.env.VITE_API_URL || 'https://api.crm-bot.dev.groza1338.ru',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -12,7 +12,9 @@ const api = axios.create({
 
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('access_token')
-  if (token) config.headers.Authorization = `Bearer ${token}`
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
   return config
 })
 
