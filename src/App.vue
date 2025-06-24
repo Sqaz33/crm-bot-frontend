@@ -1,102 +1,109 @@
 <template>
-  <div v-if="loading">
-    <p>Авторизация…</p>
-  </div>
-  <div v-else>
-    <div v-if="ok">
-      <p>Токен валиден, статус: {{ status }}</p>
+  <div>
+    <!-- Баннер об ошибке -->
+    <transition name="fade">
+      <div v-if="authError" class="auth-error-banner">
+        Не удалось пройти авторизацию
+      </div>
+    </transition>
+
+    <!-- Спиннер загрузки -->
+    <div v-if="loading" class="loading-container">
+      <p>Загрузка…</p>
     </div>
+
+    <!-- Основной контент -->
     <div v-else>
-      <p>Ошибка проверки токена: {{ status }}</p>
+      <router-view />
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { loginViaTelegram, exchangeToken } from './api/auth'
 import api from './api'
 
-// Вспомогалка: если нет WebApp API, вытягиваем initData из хэша URL
-function getInitDataFallback() {
-  const hash = window.location.hash.slice(1) // убираем '#'
-  const prefix = 'tgWebAppData='
-  if (hash.startsWith(prefix)) {
-    return decodeURIComponent(hash.replace(prefix, ''))
+const loading = ref(true)
+const authError = ref(false)
+const router = useRouter()
+
+// Получение initData из Telegram WebApp или из hash-фоллбека
+function getInitData() {
+  if (window.Telegram?.WebApp?.initData) {
+    console.log('WebApp API доступна')
+    window.Telegram.WebApp.expand()
+    return window.Telegram.WebApp.initData
   }
+  console.warn('WebApp API не найдена — пытаемся из хэша URL')
+  const hash = window.location.hash.slice(1)
+  const prefix = 'tgWebAppData='
+  if (hash.startsWith(prefix)) return decodeURIComponent(hash.replace(prefix, ''))
   return null
 }
 
-// Функция для фильтрации параметров initData
-function sanitizeInitData(raw) {
-  const params = new URLSearchParams(raw)
-  const allowed = ['query_id', 'user', 'auth_date', 'signature', 'hash']
-  const filtered = new URLSearchParams()
-  for (const key of allowed) {
-    const val = params.get(key)
-    if (val !== null) {
-      filtered.set(key, val)
-    }
-  }
-  return filtered.toString()
-}
-
-const loading = ref(true)
-const ok      = ref(false)
-const status  = ref(null)
-
 onMounted(async () => {
   try {
-    // 1) Получаем initData
-    let initData = window.Telegram?.WebApp?.initData
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.expand()
-    } else {
-      console.warn('WebApp API не найдена — используем fallback initData из URL')
-      initData = getInitDataFallback()
-    }
+    // 1) Получаем и логируем initData
+    const initData = getInitData()
+    console.log('initData:', initData)
+    if (!initData) throw new Error('initData отсутствует')
 
-    if (!initData) {
-      throw new Error('initData отсутствует ни в WebApp, ни в URL')
-    }
-    console.log('raw initData:', initData)
+    // 2) Логинимся — логируем серверный ответ
+    console.group('POST /auth/telegram/login')
+    console.log('Payload:', { init_data: initData })
+    const loginRes = await loginViaTelegram(initData)
+    console.log('Response data:', loginRes.data)
+    console.groupEnd()
 
-    // 1.1) Очищаем initData от параметров, которые не нужны
-    const cleanInitData = sanitizeInitData(initData)
-    console.log('sanitized initData:', cleanInitData)
-
-    // 2) POST /auth/telegram/login → temporary_token
-    const { data: { temporary_token } } = await loginViaTelegram(cleanInitData)
-    console.log('temporary_token:', temporary_token)
-
-    // 3) POST /auth/telegram/exchange → access + refresh
-    const { data: { access_token, refresh_token } } = await exchangeToken(temporary_token)
-    console.log('access_token:', access_token)
-    console.log('refresh_token:', refresh_token)
+    // 3) Обмениваем токен — логируем ответ
+    console.group('POST /auth/telegram/exchange')
+    console.log('Payload:', { temporary_token: loginRes.data.temporary_token })
+    const exchRes = await exchangeToken(loginRes.data.temporary_token)
+    console.log('Response data:', exchRes.data)
+    console.groupEnd()
 
     // 4) Сохраняем токены
-    localStorage.setItem('access_token', access_token)
-    localStorage.setItem('refresh_token', refresh_token)
+    localStorage.setItem('access_token', exchRes.data.access_token)
+    localStorage.setItem('refresh_token', exchRes.data.refresh_token)
 
-    // 5) Делаем защищённый запрос, чтобы проверить токен
-    const res = await api.get('/salon/info')  // замените на свой защищённый эндпоинт
-    ok.value     = true
-    status.value = res.status
-
-  } catch (e) {
-    console.error('Auth error:', e)
-    ok.value     = false
-    status.value = e.response?.status || e.message
+  } catch (err) {
+    // Логируем полную ошибку, включая ответ сервера
+    if (err.response) {
+      console.error(`Ошибка ${err.response.status} на ${err.config.url}:`, err.response.data)
+    } else {
+      console.error('Ошибка авторизации:', err.message)
+    }
+    authError.value = true
   } finally {
+    // В любом случае идём на home
+    await router.replace({ name: 'home' })
     loading.value = false
+
+    // Скрываем баннер через 5 секунд
+    setTimeout(() => { authError.value = false }, 5000)
   }
 })
 </script>
 
 <style scoped>
-p {
+.loading-container {
   text-align: center;
   margin-top: 2rem;
-  font-size: 1.1rem;
 }
+.auth-error-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #e53935;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  z-index: 1000;
+}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.5s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+p { font-size: 1.1rem; }
 </style>

@@ -1,4 +1,4 @@
-// src/api/index.js
+
 import axios from 'axios'
 import { refreshToken } from './auth'
 
@@ -15,7 +15,7 @@ api.interceptors.request.use(config => {
   return config
 })
 
-// флаг, чтобы не зациклиться
+
 let isRefreshing = false
 let failedQueue = []
 
