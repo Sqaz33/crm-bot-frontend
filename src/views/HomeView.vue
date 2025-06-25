@@ -1,4 +1,3 @@
-<!-- src/views/HomeView.vue -->
 <template>
   <div class="home-view">
     <header class="header">
@@ -49,10 +48,13 @@ const salon = ref({
 
 onMounted(async () => {
   try {
-    const { data } = await api.get('/salon/info')
+    const res = await api.get('/salon/info')
+    console.log('GET /salon/info response:', res)         
+    console.log('Response data object:', res.data)        
+
     salon.value = {
-      name: data.name,
-      description: data.description
+      name: res.data.name,
+      description: res.data.description
     }
   } catch (e) {
     console.error('Не удалось получить информацию о салоне:', e)
@@ -63,7 +65,6 @@ onMounted(async () => {
   }
 })
 </script>
-
 <style scoped>
 .home-view {
   background-color: #f5f8fd;
