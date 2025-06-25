@@ -1,11 +1,12 @@
+<!-- src/views/HomeView.vue -->
 <template>
   <div class="home-view">
     <header class="header">
       <div class="logo-block">
         <div class="logo"></div>
         <div>
-          <div class="name">Название</div>
-          <div class="type">тип заведения</div>
+          <div class="name">{{ salon.name }}</div>
+          <div class="type">{{ salon.description }}</div>
         </div>
       </div>
       <MainMenu />
@@ -37,7 +38,30 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import MainMenu from '../components/MainMenu.vue'
+import api from '../api'  
+
+const salon = ref({
+  name: 'Загрузка...',
+  description: ''
+})
+
+onMounted(async () => {
+  try {
+    const { data } = await api.get('/salon/info')
+    salon.value = {
+      name: data.name,
+      description: data.description
+    }
+  } catch (e) {
+    console.error('Не удалось получить информацию о салоне:', e)
+    salon.value = {
+      name: 'Ошибка загрузки',
+      description: ''
+    }
+  }
+})
 </script>
 
 <style scoped>
@@ -122,4 +146,3 @@ import MainMenu from '../components/MainMenu.vue'
   color: #999;
 }
 </style>
-
