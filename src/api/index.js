@@ -1,28 +1,25 @@
-// src/api/index.js
 import axios from 'axios'
-import { refreshToken } from './auth'
+import { refreshToken as apiRefreshToken } from './auth'
 
 const api = axios.create({
-    baseURL: 'https://api.crm-bot.dev.groza1338.ru',
+  baseURL: '/api',         // <-- вот здесь
   timeout: 10000,
   headers: { 'Content-Type': 'application/json', Accept: 'application/json' }
 })
 
-// передаём access_token в заголовках
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('access_token')
   if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
 
-// флаг, чтобы не зациклиться
+// Логика автоматического рефреша по 401
 let isRefreshing = false
 let failedQueue = []
 
 const processQueue = (error, token = null) => {
   failedQueue.forEach(prom => {
-    if (error) prom.reject(error)
-    else      prom.resolve(token)
+    error ? prom.reject(error) : prom.resolve(token)
   })
   failedQueue = []
 }
@@ -34,7 +31,6 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
-        // пока идёт рефреш, ставим запрос в очередь
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
         })
@@ -48,25 +44,26 @@ api.interceptors.response.use(
       originalRequest._retry = true
       isRefreshing = true
 
-      const refreshTokenStored = localStorage.getItem('refresh_token')
-      if (!refreshTokenStored) {
+      const storedRefresh = localStorage.getItem('refresh_token')
+      if (!storedRefresh) {
         isRefreshing = false
         return Promise.reject(error)
       }
 
       try {
-        const { data } = await refreshToken(refreshTokenStored)
-        const newAccess = data.access_token
-        const newRefresh = data.refresh_token
+        const { data } = await apiRefreshToken(storedRefresh)
+        const { access_token, refresh_token } = data
 
         // сохраняем новые токены
-        localStorage.setItem('access_token', newAccess)
-        localStorage.setItem('refresh_token', newRefresh)
+        localStorage.setItem('access_token', access_token)
+        localStorage.setItem('refresh_token', refresh_token)
 
-        api.defaults.headers.common.Authorization = `Bearer ${newAccess}`
-        processQueue(null, newAccess)
+        // обновляем заголовок по умолчанию
+        api.defaults.headers.common.Authorization = `Bearer ${access_token}`
+        processQueue(null, access_token)
 
         // повторяем оригинальный запрос
+        originalRequest.headers.Authorization = `Bearer ${access_token}`
         return api(originalRequest)
       } catch (err) {
         processQueue(err, null)

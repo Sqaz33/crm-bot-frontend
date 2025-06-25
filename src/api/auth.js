@@ -8,10 +8,7 @@ export function exchangeToken(tmpToken) {
   return api.post('/auth/telegram/exchange', { temporary_token: tmpToken })
 }
 
-/**
- * Обновляем access-токен по refresh-токену.
- * Возвращает { access_token, refresh_token }
- */
 export function refreshToken(refreshToken) {
   return api.post('/auth/refresh', { refresh_token: refreshToken })
 }
+
