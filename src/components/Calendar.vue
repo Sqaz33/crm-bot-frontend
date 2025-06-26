@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <Datepicker v-model="selectedDate" inline locale="ru" />
   </template>
   
@@ -9,4 +9,4 @@
   
   const selectedDate = ref(new Date())
   </script>
-  
+   -->

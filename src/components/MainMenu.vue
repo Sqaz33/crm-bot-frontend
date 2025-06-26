@@ -4,6 +4,7 @@
       <div class="salon-name">{{ salon.name }}</div>
       <div class="salon-desc">{{ salon.description }}</div>
     </div>
+
     <nav class="menu">
       <div
         v-for="item in items"
@@ -16,6 +17,11 @@
         <span>{{ item.label }}</span>
       </div>
     </nav>
+
+  
+    <Modal :visible="showShareModal" @close="showShareModal = false">
+      <ShareModal />
+    </Modal>
   </div>
 </template>
 
@@ -24,9 +30,13 @@ import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import api from '../api'
 
-const router     = useRouter()
-const route      = useRoute()
+import Modal from './Modal.vue'
+import ShareModal from './ShareModal.vue'
+
+const router = useRouter()
+const route = useRoute()
 const activeItem = ref(route.path)
+const showShareModal = ref(false)
 
 const salon = ref({ name: 'Загрузка...', description: '' })
 
@@ -39,20 +49,22 @@ onMounted(async () => {
   }
 })
 
-watch(() => route.path, p => {
+watch(() => route.path, (p) => {
   activeItem.value = p
 })
 
 const items = [
-  { label: 'Адрес',     path: '/address',   icon: '📍' },
-  { label: 'Записи',    path: '/records',   icon: '🗓️' },
-  { label: 'Поделиться', path: '/share',     icon: '🔗' },
-  { label: 'Профиль',   path: '/profile',   icon: '👤' },
+  { label: 'Адрес', path: '/address', icon: '📍' },
+  { label: 'Записи', path: '/records', icon: '🗓️' },
+  { label: 'Поделиться', path: '/share', icon: '🔗' },
+  { label: 'Профиль', path: '/profile', icon: '👤' },
 ]
 
 function navigate(item) {
   if (item.label === 'Адрес') {
-    window.open('https://yandex.ru/maps/-/CHgMj6Yi', '_blank')  // заменить на адресс
+    window.open('https://yandex.ru/maps/-/CHgMj6Yi', '_blank')
+  } else if (item.label === 'Поделиться') {
+    showShareModal.value = true
   } else {
     activeItem.value = item.path
     router.push(item.path)
@@ -92,12 +104,10 @@ function navigate(item) {
   display: flex;
   flex-wrap: nowrap;
   gap: 1rem;
-
   padding: 0.5rem 1rem;
 }
 
 .menu-item {
- 
   text-align: center;
   padding: 0.75rem 1rem;
   cursor: pointer;
@@ -119,5 +129,4 @@ function navigate(item) {
   font-size: 1.4rem;
   margin-bottom: 0.25rem;
 }
-
 </style>
