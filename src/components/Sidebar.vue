@@ -14,7 +14,7 @@
         </RouterLink>
       </li>
     </ul>
-    <div class="back-button" @click="router.back()">
+    <div class="back-button" @click="goBack">
       <span class="arrow-back">‹</span> Назад
     </div>
   </aside>
@@ -22,7 +22,6 @@
 
 <script setup>
 import { RouterLink, useRoute, useRouter } from 'vue-router'
-import { defineProps } from 'vue'
 
 const props = defineProps({
   items: {
@@ -34,6 +33,10 @@ const props = defineProps({
 
 const route = useRoute()
 const router = useRouter()
+
+function goBack() {
+  router.back()
+}
 </script>
 
 <style scoped>
@@ -44,6 +47,7 @@ const router = useRouter()
   display: flex;
   flex-direction: column;
   box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
 }
 
 .menu-list {
@@ -92,16 +96,18 @@ const router = useRouter()
 }
 
 .back-button {
-  margin-top: auto;
+  position: sticky;
+  bottom: 0;
   padding: 1rem;
   font-size: 0.95rem;
   color: #333;
-  background-color: #f1f1f1;
-  border-top: 1px solid #ddd;
+  background-color: #fff;
+  border-top: 1px solid #ccc;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  font-weight: bold;
 }
 
 .arrow-back {
@@ -110,10 +116,9 @@ const router = useRouter()
 </style>
 
 
-
 <!-- пример использования
 <script setup>
-import SidebarMenu from '../components/LeftMainMenu.vue'
+import SidebarMenu from '../components/Sidebar.vue'
 
 const menuItems = [
   { label: 'Кошелёк', path: '/wallet' },
@@ -132,15 +137,4 @@ const menuItems = [
   </div>
 </template>
 
-<style scoped>
-.layout {
-  display: flex;
-  height: 100vh;
-}
-
-.main-content {
-  flex: 1;
-  padding: 2rem;
-  background-color: #fff;
-}
-</style> -->
+ -->

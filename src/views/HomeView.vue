@@ -1,108 +1,57 @@
 <template>
   <div class="home-view">
-    <header class="header">
-      <div class="logo-block">
-        <div class="logo"></div>
-        <div>
-          <div class="name">{{ salon.name }}</div>
-          <div class="type">{{ salon.description }}</div>
-        </div>
-      </div>
-      <MainMenu />
-    </header>
+    <h2 class="section-title">Персональные услуги</h2>
 
-    <main class="content">
-      <h2 class="section-title">Персональные услуги</h2>
-
-      <div class="cards">
-        <div class="card">
-          <span>Кошелёк</span>
-          <span class="badge">0</span>
-        </div>
-        <div class="card">
-          <span>Магазин</span>
-          <span class="arrow">›</span>
-        </div>
-        <div class="card">
-          <span>Отзывы</span>
-          <span class="badge">0</span>
-        </div>
-        <div class="card">
-          <span>О компании</span>
-          <span class="arrow">›</span>
-        </div>
+    <div class="cards">
+      <div class="card">
+        <span>Кошелёк</span>
+        <span class="badge">0</span>
       </div>
-    </main>
+      <div class="card" @click="goTo('shop')">
+        <span>Магазин</span>
+        <span class="arrow">›</span>
+      </div>
+      <div class="card" @click="goTo('reviews')">
+        <span>Отзывы</span>
+        <span class="badge">{{ reviewCount }}</span>
+      </div>
+      <div class="card" @click="goTo('company')">
+        <span>О компании</span>
+        <span class="arrow">›</span>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import MainMenu from '../components/MainMenu.vue'
-import api from '../api'  
+import { useRouter } from 'vue-router'
+import api from '../api'
 
-const salon = ref({
-  name: 'Загрузка...',
-  description: ''
-})
+const router = useRouter()
+const reviewCount = ref(0)
 
+// можно заранее подгрузить количество отзывов
 onMounted(async () => {
   try {
-    const res = await api.get('/salon/info')
-    console.log('GET /salon/info response:', res)         
-    console.log('Response data object:', res.data)        
-
-    salon.value = {
-      name: res.data.name,
-      description: res.data.description
-    }
-  } catch (e) {
-    console.error('Не удалось получить информацию о салоне:', e)
-    salon.value = {
-      name: 'Ошибка загрузки',
-      description: ''
-    }
+    const { data: reviews } = await api.get('/salon/reviews')
+    reviewCount.value = Array.isArray(reviews) ? reviews.length : 0
+  } catch {
+    reviewCount.value = 0
   }
 })
+
+function goTo(name) {
+  // в зависимости от имени маршрута
+  router.push({ name })
+}
 </script>
+
 <style scoped>
 .home-view {
   background-color: #f5f8fd;
-  min-height: 100vh;
   padding-bottom: 2rem;
   font-family: sans-serif;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #1f1f1f;
-  color: white;
-  padding: 1rem;
-}
-
-.logo-block {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.logo {
-  width: 40px;
-  height: 40px;
-  background-color: #ccc;
-  border-radius: 4px;
-}
-
-.name {
-  font-weight: bold;
-  font-size: 1rem;
-}
-
-.type {
-  font-size: 0.75rem;
-  opacity: 0.7;
 }
 
 .section-title {
@@ -132,6 +81,12 @@ onMounted(async () => {
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color .2s;
+}
+
+.card:hover {
+  background-color: #eaeff5;
 }
 
 .badge {
