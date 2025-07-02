@@ -32,17 +32,19 @@ import { reactive, onMounted } from 'vue'
 
 const COOKIE_KEY = 'profile_data'
 
-// Утилиты для чтения/записи JSON-куки
+// Читаем JSON из куки
 function readProfileCookie() {
-  const match = document.cookie.match(new RegExp('(^| )' + COOKIE_KEY + '=([^;]+)'))
+  const re = new RegExp(`(?:^|;\\s*)${COOKIE_KEY}=([^;]*)`)
+  const match = document.cookie.match(re)
   if (!match) return {}
   try {
-    return JSON.parse(decodeURIComponent(match[2]))
+    return JSON.parse(decodeURIComponent(match[1]))
   } catch {
     return {}
   }
 }
 
+// Записываем JSON в куку
 function writeProfileCookie(obj) {
   const json = encodeURIComponent(JSON.stringify(obj))
   document.cookie =
@@ -51,7 +53,6 @@ function writeProfileCookie(obj) {
     `; Secure; SameSite=None`
 }
 
-// Форму инициализируем пустыми строками
 const form = reactive({
   firstName:  '',
   lastName:   '',
@@ -61,27 +62,30 @@ const form = reactive({
 })
 
 onMounted(() => {
-  // При монтировании грузим все поля из куки, если они там есть
+  // Загружаем все поля сразу из куки
   const saved = readProfileCookie()
   form.firstName  = saved.firstName  ?? ''
   form.lastName   = saved.lastName   ?? ''
   form.middleName = saved.middleName ?? ''
   form.phone      = saved.phone      ?? ''
   form.email      = saved.email      ?? ''
+  console.log('Loaded from cookie:', saved)
 })
 
 function saveProfile() {
-  // Сохраняем сразу все пять полей в куку
-  writeProfileCookie({
+  const payload = {
     firstName:  form.firstName,
     lastName:   form.lastName,
     middleName: form.middleName,
     phone:      form.phone,
     email:      form.email
-  })
-  console.log('profile_data cookie:', document.cookie)
+  }
+  writeProfileCookie(payload)
+  console.log('Saved to cookie:', payload)
+  console.log('Current document.cookie:', document.cookie)
 }
 </script>
+
 
 
 
