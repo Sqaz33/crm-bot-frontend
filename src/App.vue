@@ -21,60 +21,63 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-// import Layout from './views/Layout.vue'
-import { loginViaTelegram, exchangeToken } from './api/auth'
+import { reactive, ref, onMounted } from 'vue'
+import { parseTelegramLaunchData } from './utils/telegram'
 
-const loading    = ref(true)
-const authError  = ref(false)
-const router     = useRouter()
+// Ключ для хранения доп. данных в localStorage
+const PROFILE_KEY = 'profile_data'
+const form = reactive({
+  firstName: '',
+  lastName: '',
+  middleName: '',
+  phone: '',
+  email: ''
+})
+const initData = ref({})
 
-function getInitData() {
-  if (window.Telegram?.WebApp?.initData) {
-    window.Telegram.WebApp.expand()
-    return window.Telegram.WebApp.initData
-  }
-
-  const rawHash = window.location.hash.slice(1)
-  const prefix  = 'tgWebAppData='
-  if (!rawHash.startsWith(prefix)) return null
-
-  const endIndex   = rawHash.indexOf('&tgWebAppVersion')
-  const encoded    = endIndex > 0
-    ? rawHash.slice(prefix.length, endIndex)
-    : rawHash.slice(prefix.length)
-  return decodeURIComponent(encoded)
+function parseInit() {
+  const { tgData } = parseTelegramLaunchData()
+  initData.value = tgData
+  return tgData.user || {}
 }
 
-onMounted(async () => {
-  try {
-    const initData = getInitData()
-    console.log('InitData received from Telegram:', initData)   
-    if (!initData) throw new Error('initData отсутствует')
+onMounted(() => {
+  // логируем initData в консоль
+  console.log('InitData (tgWebAppData):', initData.value)
 
-    const loginRes = await loginViaTelegram(initData)
-    console.log('loginViaTelegram response:', loginRes.data)
-    const exchRes  = await exchangeToken(loginRes.data.temporary_token)
-    console.log('exchangeToken response:', exchRes.data)
-    
-    localStorage.setItem('access_token',  exchRes.data.access_token)
-    localStorage.setItem('refresh_token', exchRes.data.refresh_token)
-
-  } catch (err) {
-    console.error('Ошибка авторизации:', err)
-    authError.value = true
-
-  } finally {
-    // перенаправляем на главную (даже при ошибке)
-    await router.replace({ path: '/' })
-    loading.value = false
-
-    // прячем баннер через 5 секунд
-    setTimeout(() => { authError.value = false }, 5000)
-  }
+  const user = parseInit()
+  form.firstName = user.first_name || ''
+  form.lastName = user.last_name || ''
+  // Загружаем сохранённые доп. поля из localStorage
+  const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')
+  form.middleName = saved.middleName || ''
+  form.phone      = saved.phone      || ''
+  form.email      = saved.email      || ''
 })
+
+function saveProfile() {
+  // Сохраняем дополнительные поля в localStorage
+  localStorage.setItem(
+    PROFILE_KEY,
+    JSON.stringify({
+      middleName: form.middleName,
+      phone: form.phone,
+      email: form.email
+    })
+  )
+  // Сохраняем данные пользователя из initData в cookie
+  const userCookie = encodeURIComponent(JSON.stringify({
+    firstName: form.firstName,
+    lastName: form.lastName,
+    middleName: form.middleName,
+    phone: form.phone,
+    email: form.email
+  }))
+  document.cookie = `profile_user=${userCookie}; path=/; max-age=${365*24*60*60}`
+  console.log('Данные сохранены и сохранены в cookie')
+}
 </script>
+
 
 <style scoped>
 .loading-container {
