@@ -29,11 +29,10 @@
 
 <script setup>
 import { reactive, onMounted } from 'vue'
-import { parseTelegramLaunchData } from '../utils/telegram'
 
 const COOKIE_KEY = 'profile_data'
 
-// Утилиты для работы с JSON-кукой
+// Утилиты для чтения/записи JSON-куки
 function readProfileCookie() {
   const match = document.cookie.match(new RegExp('(^| )' + COOKIE_KEY + '=([^;]+)'))
   if (!match) return {}
@@ -52,7 +51,7 @@ function writeProfileCookie(obj) {
     `; Secure; SameSite=None`
 }
 
-// Форма с пятью полями
+// Форму инициализируем пустыми строками
 const form = reactive({
   firstName:  '',
   lastName:   '',
@@ -62,23 +61,17 @@ const form = reactive({
 })
 
 onMounted(() => {
-  // 1. Сначала пытаемся загрузить всё из cookie
+  // При монтировании грузим все поля из куки, если они там есть
   const saved = readProfileCookie()
-
-  // 2. Парсим tgWebAppData.user
-  const { tgData } = parseTelegramLaunchData()
-  const user = tgData.user || {}
-
-  // 3. Заполняем каждое поле: из cookie, а если нет — из Telegram
-  form.firstName  = saved.firstName  ?? user.first_name  ?? ''
-  form.lastName   = saved.lastName   ?? user.last_name   ?? ''
+  form.firstName  = saved.firstName  ?? ''
+  form.lastName   = saved.lastName   ?? ''
   form.middleName = saved.middleName ?? ''
   form.phone      = saved.phone      ?? ''
   form.email      = saved.email      ?? ''
 })
 
 function saveProfile() {
-  // Записываем ВСЕ поля в cookie
+  // Сохраняем сразу все пять полей в куку
   writeProfileCookie({
     firstName:  form.firstName,
     lastName:   form.lastName,
@@ -88,8 +81,8 @@ function saveProfile() {
   })
   console.log('profile_data cookie:', document.cookie)
 }
-
 </script>
+
 
 
 <style scoped>
