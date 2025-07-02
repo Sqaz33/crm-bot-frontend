@@ -1,18 +1,14 @@
 <template>
   <div class="profile-view">
     <h1 class="page-title">Профиль</h1>
-    <section class="init-data">
-      <h2>Init Data (tgWebAppData)</h2>
-      <pre class="init-json">{{ JSON.stringify(initData, null, 2) }}</pre>
-    </section>
     <form @submit.prevent="saveProfile" class="profile-form">
       <div class="field">
         <label for="firstName">Имя</label>
-        <input id="firstName" v-model="form.firstName" disabled />
+        <input id="firstName" v-model="form.firstName" />
       </div>
       <div class="field">
         <label for="lastName">Фамилия</label>
-        <input id="lastName" v-model="form.lastName" disabled />
+        <input id="lastName" v-model="form.lastName" />
       </div>
       <div class="field">
         <label for="middleName">Отчество</label>
@@ -32,49 +28,69 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { parseTelegramLaunchData } from '../utils/telegram'
 
-// Ключ для хранения доп. данных в localStorage
-const PROFILE_KEY = 'profile_data'
-const form = reactive({
-  firstName: '',
-  lastName: '',
-  middleName: '',
-  phone: '',
-  email: ''
-})
-const initData = ref({})
+const COOKIE_KEY = 'profile_data'
 
-function parseInit() {
-  const { tgData } = parseTelegramLaunchData()
-  initData.value = tgData
-  return tgData.user || {}
+// Утилиты для работы с JSON-кукой
+function readProfileCookie() {
+  const match = document.cookie.match(new RegExp('(^| )' + COOKIE_KEY + '=([^;]+)'))
+  if (!match) return {}
+  try {
+    return JSON.parse(decodeURIComponent(match[2]))
+  } catch {
+    return {}
+  }
 }
 
+function writeProfileCookie(obj) {
+  const json = encodeURIComponent(JSON.stringify(obj))
+  document.cookie =
+    `${COOKIE_KEY}=${json}` +
+    `; path=/; max-age=${365 * 24 * 60 * 60}` +
+    `; Secure; SameSite=None`
+}
+
+// Форма с пятью полями
+const form = reactive({
+  firstName:  '',
+  lastName:   '',
+  middleName: '',
+  phone:      '',
+  email:      ''
+})
+
 onMounted(() => {
-  const user = parseInit()
-  form.firstName = user.first_name || ''
-  form.lastName = user.last_name || ''
-  // Загружаем сохранённые доп. поля из localStorage
-  const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')
-  form.middleName = saved.middleName || ''
-  form.phone      = saved.phone      || ''
-  form.email      = saved.email      || ''
+  // 1. Сначала пытаемся загрузить всё из cookie
+  const saved = readProfileCookie()
+
+  // 2. Парсим tgWebAppData.user
+  const { tgData } = parseTelegramLaunchData()
+  const user = tgData.user || {}
+
+  // 3. Заполняем каждое поле: из cookie, а если нет — из Telegram
+  form.firstName  = saved.firstName  ?? user.first_name  ?? ''
+  form.lastName   = saved.lastName   ?? user.last_name   ?? ''
+  form.middleName = saved.middleName ?? ''
+  form.phone      = saved.phone      ?? ''
+  form.email      = saved.email      ?? ''
 })
 
 function saveProfile() {
-  localStorage.setItem(
-    PROFILE_KEY,
-    JSON.stringify({
-      middleName: form.middleName,
-      phone: form.phone,
-      email: form.email
-    })
-  )
-  alert('Данные сохранены')
+  // Записываем ВСЕ поля в cookie
+  writeProfileCookie({
+    firstName:  form.firstName,
+    lastName:   form.lastName,
+    middleName: form.middleName,
+    phone:      form.phone,
+    email:      form.email
+  })
+  console.log('profile_data cookie:', document.cookie)
 }
+
 </script>
+
 
 <style scoped>
 .profile-view {
