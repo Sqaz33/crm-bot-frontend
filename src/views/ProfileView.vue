@@ -32,7 +32,7 @@ import { reactive, onMounted } from 'vue'
 
 const COOKIE_KEY = 'profile_data'
 
-// Читаем JSON из куки
+// Чтение JSON-куки
 function readProfileCookie() {
   const re = new RegExp(`(?:^|;\\s*)${COOKIE_KEY}=([^;]*)`)
   const match = document.cookie.match(re)
@@ -44,15 +44,16 @@ function readProfileCookie() {
   }
 }
 
-// Записываем JSON в куку
+// Запись JSON-куки без Secure/SameSite
 function writeProfileCookie(obj) {
   const json = encodeURIComponent(JSON.stringify(obj))
   document.cookie =
     `${COOKIE_KEY}=${json}` +
-    `; path=/; max-age=${365 * 24 * 60 * 60}` +
-    `; Secure; SameSite=None`
+    `; path=/` +
+    `; max-age=${365 * 24 * 60 * 60}`
 }
 
+// Живая форма
 const form = reactive({
   firstName:  '',
   lastName:   '',
@@ -62,14 +63,14 @@ const form = reactive({
 })
 
 onMounted(() => {
-  // Загружаем все поля сразу из куки
   const saved = readProfileCookie()
+  console.log('Loaded from cookie →', saved)
+
   form.firstName  = saved.firstName  ?? ''
   form.lastName   = saved.lastName   ?? ''
   form.middleName = saved.middleName ?? ''
   form.phone      = saved.phone      ?? ''
   form.email      = saved.email      ?? ''
-  console.log('Loaded from cookie:', saved)
 })
 
 function saveProfile() {
@@ -81,10 +82,11 @@ function saveProfile() {
     email:      form.email
   }
   writeProfileCookie(payload)
-  console.log('Saved to cookie:', payload)
-  console.log('Current document.cookie:', document.cookie)
+  console.log('Saved to cookie →', payload)
+  console.log('Now document.cookie:', document.cookie)
 }
 </script>
+
 
 
 
