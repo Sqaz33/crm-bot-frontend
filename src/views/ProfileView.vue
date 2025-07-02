@@ -1,18 +1,18 @@
-<template>
+const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')<template>
   <div class="profile-view">
     <h1 class="page-title">Профиль</h1>
     <form @submit.prevent="saveProfile" class="profile-form">
       <div class="field">
         <label for="firstName">Имя</label>
-        <input id="firstName" v-model="form.firstName" />
+        <input id="firstName" v-model="form.firstName" disabled />
       </div>
       <div class="field">
         <label for="lastName">Фамилия</label>
-        <input id="lastName" v-model="form.lastName" />
+        <input id="lastName" v-model="form.lastName" disabled />
       </div>
       <div class="field">
         <label for="middleName">Отчество</label>
-        <input id="middleName" v-model="form.middleName" />
+        <input id="middleName" v-model="form.middleName" placeholder="Не указано" />
       </div>
       <div class="field">
         <label for="phone">Телефон</label>
@@ -29,14 +29,11 @@
 
 <script setup>
 import { reactive, onMounted } from 'vue'
-import api from '../api'
 
-// утилита для чтения куки
-function getCookie(name) {
-  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
-  return match ? match[2] : null
-}
+import { parseTelegramLaunchData } from '../utils/telegram'
 
+// Используем localStorage для хранения профиля
+const PROFILE_KEY = 'profile'
 const form = reactive({
   firstName: '',
   lastName: '',
@@ -45,38 +42,29 @@ const form = reactive({
   email: ''
 })
 
+function getInitUser() {
+  const { tgData } = parseTelegramLaunchData()
+  return tgData.user || {}
+}
+
 onMounted(() => {
-  // Парсим JSON из куки account1
-  const raw = getCookie('account1')
-  if (raw) {
-    try {
-      const user = JSON.parse(raw)
-      form.firstName   = user.firstName || ''
-      form.lastName    = user.lastName  || ''
-      form.middleName  = user.middleName|| ''
-      form.phone       = user.phone     || ''
-      form.email       = user.email     || ''
-    } catch {
-      console.error('Не удалось распарсить account1 куку')
-    }
-  }
+  const user = getInitUser()
+  form.firstName = user.first_name || ''
+  form.lastName = user.last_name || ''
+  // отчество не приходит — читаем из cookies
+  const saved = cookies.get('profile') || {}
+  form.middleName = saved.middleName || ''
+  form.phone = saved.phone || ''
+  form.email = saved.email || ''
 })
 
-async function saveProfile() {
-  try {
-    // пример отправки, если потребуется
-    await api.post(`/users/${form.firstName}`, {
-      first_name: form.firstName,
-      last_name:  form.lastName,
-      middle_name:form.middleName,
-      phone:      form.phone,
-      email:      form.email
-    })
-    alert('Профиль сохранён')
-  } catch (e) {
-    console.error(e)
-    alert('Ошибка сохранения')
-  }
+function saveProfile() {
+  localStorage.setItem(PROFILE_KEY, {
+    middleName: form.middleName,
+    phone: form.phone,
+    email: form.email
+  })
+  alert('Данные сохранены')
 }
 </script>
 
@@ -106,7 +94,12 @@ async function saveProfile() {
   padding: 0.75rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-size: 1rem;
   background: #f5f7fa;
+}
+.profile-form input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 .btn-save {
   display: block;
@@ -116,6 +109,10 @@ async function saveProfile() {
   color: white;
   border: none;
   border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
+}
+.btn-save:hover {
+  background: #0056b3;
 }
 </style>
