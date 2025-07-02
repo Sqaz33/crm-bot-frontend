@@ -112,12 +112,20 @@ function saveProfile() {
     middleName: form.middleName,
     phone:      form.phone,
     email:      form.email
-  }
-  localStorage.setItem(PROFILE_KEY, JSON.stringify(profileData))
-  document.cookie = `profile_user=${encodeURIComponent(JSON.stringify(profileData))}; path=/; max-age=${365*24*60*60}`
-  console.log('Profile saved to localStorage and cookie:', profileData)
-  console.log('Current cookies:', document.cookie)
-  console.log('Stored profile_data:', localStorage.getItem(PROFILE_KEY))
+  };
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(profileData));
+
+  // Обязательно указываем Secure и SameSite=None
+  document.cookie =
+    `profile_user=${encodeURIComponent(JSON.stringify(profileData))}` +
+    `; path=/` +
+    `; max-age=${365*24*60*60}` +
+    `; Secure` +
+    `; SameSite=None`;
+
+  console.log('Profile saved to localStorage and cookie:', profileData);
+  console.log('Current cookies:', document.cookie);
+  console.log('Stored profile_data:', localStorage.getItem(PROFILE_KEY));
 }
 
 onMounted(initAuthAndProfile)
