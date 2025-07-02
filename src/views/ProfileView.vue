@@ -1,4 +1,4 @@
-const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')<template>
+<template>
   <div class="profile-view">
     <h1 class="page-title">Профиль</h1>
     <form @submit.prevent="saveProfile" class="profile-form">
@@ -29,11 +29,10 @@ const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')<template>
 
 <script setup>
 import { reactive, onMounted } from 'vue'
-
 import { parseTelegramLaunchData } from '../utils/telegram'
 
-// Используем localStorage для хранения профиля
-const PROFILE_KEY = 'profile'
+// Ключ для хранения доп. данных в localStorage
+const PROFILE_KEY = 'profile_data'
 const form = reactive({
   firstName: '',
   lastName: '',
@@ -51,19 +50,22 @@ onMounted(() => {
   const user = getInitUser()
   form.firstName = user.first_name || ''
   form.lastName = user.last_name || ''
-  // отчество не приходит — читаем из cookies
-  const saved = cookies.get('profile') || {}
+  // Загружаем сохранённые доп. поля из localStorage
+  const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')
   form.middleName = saved.middleName || ''
-  form.phone = saved.phone || ''
-  form.email = saved.email || ''
+  form.phone      = saved.phone      || ''
+  form.email      = saved.email      || ''
 })
 
 function saveProfile() {
-  localStorage.setItem(PROFILE_KEY, {
-    middleName: form.middleName,
-    phone: form.phone,
-    email: form.email
-  })
+  localStorage.setItem(
+    PROFILE_KEY,
+    JSON.stringify({
+      middleName: form.middleName,
+      phone: form.phone,
+      email: form.email
+    })
+  )
   alert('Данные сохранены')
 }
 </script>
