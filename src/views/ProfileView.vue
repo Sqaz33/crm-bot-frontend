@@ -1,6 +1,10 @@
 <template>
   <div class="profile-view">
     <h1 class="page-title">Профиль</h1>
+    <section class="init-data">
+      <h2>Init Data (tgWebAppData)</h2>
+      <pre class="init-json">{{ JSON.stringify(initData, null, 2) }}</pre>
+    </section>
     <form @submit.prevent="saveProfile" class="profile-form">
       <div class="field">
         <label for="firstName">Имя</label>
@@ -28,7 +32,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { parseTelegramLaunchData } from '../utils/telegram'
 
 // Ключ для хранения доп. данных в localStorage
@@ -40,14 +44,16 @@ const form = reactive({
   phone: '',
   email: ''
 })
+const initData = ref({})
 
-function getInitUser() {
+function parseInit() {
   const { tgData } = parseTelegramLaunchData()
+  initData.value = tgData
   return tgData.user || {}
 }
 
 onMounted(() => {
-  const user = getInitUser()
+  const user = parseInit()
   form.firstName = user.first_name || ''
   form.lastName = user.last_name || ''
   // Загружаем сохранённые доп. поля из localStorage
@@ -72,7 +78,7 @@ function saveProfile() {
 
 <style scoped>
 .profile-view {
-  max-width: 500px;
+  max-width: 600px;
   margin: 2rem auto;
   padding: 1rem;
   background: #fff;
@@ -82,6 +88,20 @@ function saveProfile() {
   text-align: center;
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
+}
+.init-data {
+  background: #f0f0f0;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+}
+.init-json {
+  max-height: 200px;
+  overflow: auto;
+  background: #fff;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 .profile-form .field {
   display: flex;
