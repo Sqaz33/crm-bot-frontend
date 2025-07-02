@@ -3,8 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Layout        from '../views/Layout.vue'
 import HomeView      from '../views/HomeView.vue'
 import RecordsView   from '../views/RecordsView.vue'
-import EmployeeView  from '../views/EmployeeView.vue'
-import ServicesView  from '../views/ServicesView.vue'
+import ProfileView   from '../views/ProfileView.vue'
 import ReviewsView   from '../views/ReviewsView.vue'
 import AboutView      from '../views/AboutCompany.vue'
 import TestView      from '../views/Test.vue'
@@ -26,17 +25,11 @@ const routes = [
         component: RecordsView,
         meta: { title: 'Записи' }
       },
-      {
-        path: 'employee/:id',
-        name: 'employee',
-        component: EmployeeView,
-        meta: { title: 'Сотрудник' }
-      },
-      {
-        path: 'services',
-        name: 'services',
-        component: ServicesView,
-        meta: { title: 'Услуги' }
+     {
+        path: 'profile',
+        name: 'profile',
+        component: ProfileView,
+        meta: { title: 'Профиль клиента' }
       },
       {
         path: 'reviews',
