@@ -30,30 +30,32 @@
 <script setup>
 import { reactive, onMounted } from 'vue'
 
-const COOKIE_KEY = 'profile_data'
+const STORAGE_KEY = 'profile_data'
+const COOKIE_KEY  = 'profile_data'
 
-// Чтение JSON-куки
-function readProfileCookie() {
-  const re = new RegExp(`(?:^|;\\s*)${COOKIE_KEY}=([^;]*)`)
-  const match = document.cookie.match(re)
-  if (!match) return {}
+// Утилита: читаем JSON из localStorage
+function readProfileStorage() {
   try {
-    return JSON.parse(decodeURIComponent(match[1]))
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}
   } catch {
     return {}
   }
 }
 
-// Запись JSON-куки без Secure/SameSite
+// Утилита: записываем JSON в localStorage
+function writeProfileStorage(obj) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(obj))
+}
+
+// (опционально) — кука, если нужна
 function writeProfileCookie(obj) {
   const json = encodeURIComponent(JSON.stringify(obj))
   document.cookie =
     `${COOKIE_KEY}=${json}` +
-    `; path=/` +
-    `; max-age=${365 * 24 * 60 * 60}`
+    `; path=/; max-age=${365*24*60*60}`
 }
 
-// Живая форма
+// Форма
 const form = reactive({
   firstName:  '',
   lastName:   '',
@@ -63,9 +65,11 @@ const form = reactive({
 })
 
 onMounted(() => {
-  const saved = readProfileCookie()
-  console.log('Loaded from cookie →', saved)
+  // Сначала пробуем из localStorage
+  const saved = readProfileStorage()
+  console.log('Loaded from localStorage →', saved)
 
+  // Заполняем форму
   form.firstName  = saved.firstName  ?? ''
   form.lastName   = saved.lastName   ?? ''
   form.middleName = saved.middleName ?? ''
@@ -81,15 +85,15 @@ function saveProfile() {
     phone:      form.phone,
     email:      form.email
   }
+
+  writeProfileStorage(payload)
+  console.log('Saved to localStorage →', payload)
+
+ 
   writeProfileCookie(payload)
-  console.log('Saved to cookie →', payload)
-  console.log('Now document.cookie:', document.cookie)
+  console.log('Now document.cookie →', document.cookie)
 }
 </script>
-
-
-
-
 
 <style scoped>
 .profile-view {
@@ -103,20 +107,6 @@ function saveProfile() {
   text-align: center;
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
-}
-.init-data {
-  background: #f0f0f0;
-  padding: 1rem;
-  border-radius: 4px;
-  margin-bottom: 1.5rem;
-}
-.init-json {
-  max-height: 200px;
-  overflow: auto;
-  background: #fff;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
 }
 .profile-form .field {
   display: flex;
@@ -132,11 +122,6 @@ function saveProfile() {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
-  background: #f5f7fa;
-}
-.profile-form input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 .btn-save {
   display: block;
@@ -146,7 +131,6 @@ function saveProfile() {
   color: white;
   border: none;
   border-radius: 4px;
-  font-size: 1rem;
   cursor: pointer;
 }
 .btn-save:hover {
