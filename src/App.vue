@@ -50,11 +50,14 @@ function getInitData() {
 onMounted(async () => {
   try {
     const initData = getInitData()
+    console.log('InitData received from Telegram:', initData)   
     if (!initData) throw new Error('initData отсутствует')
 
     const loginRes = await loginViaTelegram(initData)
+    console.log('loginViaTelegram response:', loginRes.data)
     const exchRes  = await exchangeToken(loginRes.data.temporary_token)
-
+    console.log('exchangeToken response:', exchRes.data)
+    
     localStorage.setItem('access_token',  exchRes.data.access_token)
     localStorage.setItem('refresh_token', exchRes.data.refresh_token)
 
