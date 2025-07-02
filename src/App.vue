@@ -23,8 +23,8 @@
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { loginViaTelegram, exchangeToken } from '@/api/auth'
-import { parseTelegramLaunchData } from '@/utils/telegram'
+import { loginViaTelegram, exchangeToken } from './api/auth'
+import { parseTelegramLaunchData } from './utils/telegram'
 
 // Ключ для localStorage
 const PROFILE_KEY = 'profile_data'
