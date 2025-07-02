@@ -1,5 +1,6 @@
 <template>
   <div class="profile-view">
+    <h1 class="page-title">Профиль</h1>
     <form @submit.prevent="saveProfile" class="profile-form">
       <div class="field">
         <label for="firstName">Имя</label>
@@ -28,10 +29,14 @@
 
 <script setup>
 import { reactive, onMounted } from 'vue'
-import { useAuthStore } from '../stores/auth'
 import api from '../api'
 
-const auth = useAuthStore()
+// утилита для чтения куки
+function getCookie(name) {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
+  return match ? match[2] : null
+}
+
 const form = reactive({
   firstName: '',
   lastName: '',
@@ -41,33 +46,36 @@ const form = reactive({
 })
 
 onMounted(() => {
-  // Берём инфу из Telegram user в хранилище
-  const user = auth.user || {}
-  form.firstName = user.first_name || ''
-  form.lastName = user.last_name || ''
-  // отчество может храниться в user.middle_name
-  form.middleName = user.middle_name || ''
-  // Дополнительные поля из профиля
-  form.phone = auth.profile?.phone || ''
-  form.email = auth.profile?.email || ''
+  // Парсим JSON из куки account1
+  const raw = getCookie('account1')
+  if (raw) {
+    try {
+      const user = JSON.parse(raw)
+      form.firstName   = user.firstName || ''
+      form.lastName    = user.lastName  || ''
+      form.middleName  = user.middleName|| ''
+      form.phone       = user.phone     || ''
+      form.email       = user.email     || ''
+    } catch {
+      console.error('Не удалось распарсить account1 куку')
+    }
+  }
 })
 
 async function saveProfile() {
   try {
-    // Отправляем на сервер
-    await api.post(`/users/${auth.user.id}`, {
+    // пример отправки, если потребуется
+    await api.post(`/users/${form.firstName}`, {
       first_name: form.firstName,
-      last_name: form.lastName,
-      middle_name: form.middleName,
-      phone: form.phone,
-      email: form.email
+      last_name:  form.lastName,
+      middle_name:form.middleName,
+      phone:      form.phone,
+      email:      form.email
     })
-    // Обновляем локально
-    auth.setProfile({ phone: form.phone, email: form.email })
     alert('Профиль сохранён')
   } catch (e) {
-    console.error('Ошибка сохранения профиля:', e)
-    alert('Не удалось сохранить профиль')
+    console.error(e)
+    alert('Ошибка сохранения')
   }
 }
 </script>
@@ -98,7 +106,6 @@ async function saveProfile() {
   padding: 0.75rem;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 1rem;
   background: #f5f7fa;
 }
 .btn-save {
@@ -109,10 +116,6 @@ async function saveProfile() {
   color: white;
   border: none;
   border-radius: 4px;
-  font-size: 1rem;
   cursor: pointer;
-}
-.btn-save:hover {
-  background: #0056b3;
 }
 </style>
