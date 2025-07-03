@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
     plugins: [vue()],
     server: {
       host: env.VITE_DEV_HOST || 'localhost',
+      allowedHosts: env.VITE_DEV_HOST ? [env.VITE_DEV_HOST] : [],
       proxy: {
         '/api': {
           target: env.VITE_API_BASE,
