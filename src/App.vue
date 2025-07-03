@@ -1,21 +1,17 @@
 <template>
   <div>
-
     <transition name="fade">
       <div v-if="authError" class="auth-error-banner">
         Ошибка авторизации. Пожалуйста, попробуйте ещё раз.
       </div>
     </transition>
 
-    
     <div v-if="loading" class="loading-container">
       Загрузка...
     </div>
 
-
-    <div v-else>
-
-      <router-view/> 
+    <div v-show="!loading">
+      <router-view />
     </div>
   </div>
 </template>
@@ -63,7 +59,6 @@ function getInitDataString() {
 // Общая инициализация
 async function initAuthAndProfile() {
   try {
-    // 1) Авторизация
     const initStr = getInitDataString()
     console.log('InitData string:', initStr)
     if (!initStr) throw new Error('initData отсутствует')
@@ -77,26 +72,20 @@ async function initAuthAndProfile() {
     localStorage.setItem('access_token',  exchRes.data.access_token)
     localStorage.setItem('refresh_token', exchRes.data.refresh_token)
 
-    // 2) Парсим tgWebAppData
     const { tgData } = parseTelegramLaunchData()
     initData.value = tgData
     console.log('Parsed tgWebAppData:', tgData)
 
-    // 3) Заполняем базовые поля из Telegram
     const user = tgData.user || {}
     form.firstName = user.first_name || ''
     form.lastName  = user.last_name  || ''
 
-    // 4) Загружаем ранее сохранённые доп. поля
-    console.log('Existing localStorage:', localStorage.getItem(PROFILE_KEY))
     const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')
     form.middleName = saved.middleName || ''
     form.phone      = saved.phone      || ''
     form.email      = saved.email      || ''
 
-    // 5) Сразу сохраняем ВСЕ поля в cookie и localStorage
     saveProfile(true /* silent */)
-
   } catch (err) {
     console.error('Ошибка инициализации профиля:', err)
     authError.value = true
@@ -109,7 +98,7 @@ async function initAuthAndProfile() {
   }
 }
 
-// Сохранение профиля в localStorage + куку
+// Сохранение профиля
 function saveProfile(silent = false) {
   const profileData = {
     firstName:  form.firstName,
@@ -118,12 +107,12 @@ function saveProfile(silent = false) {
     phone:      form.phone,
     email:      form.email
   }
-  // localStorage
+
   localStorage.setItem(PROFILE_KEY, JSON.stringify(profileData))
-  // cookie (Secure, SameSite=None)
+
   document.cookie =
     `profile_user=${encodeURIComponent(JSON.stringify(profileData))}` +
-    `; path=/; max-age=${365*24*60*60}` +
+    `; path=/; max-age=${365 * 24 * 60 * 60}` +
     `; Secure; SameSite=None`
 
   if (!silent) {
@@ -135,9 +124,6 @@ function saveProfile(silent = false) {
 
 onMounted(initAuthAndProfile)
 </script>
-
-
-
 
 <style scoped>
 .loading-container {
@@ -156,7 +142,6 @@ onMounted(initAuthAndProfile)
   z-index: 1000;
 }
 
-/* Плавное появление/исчезновение баннера */
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.5s;
 }
