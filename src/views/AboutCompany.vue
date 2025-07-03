@@ -12,11 +12,12 @@
           <div class="info">
             <div class="name">{{ company.name }}</div>
             <div class="rating">⭐ {{ company.rating }}</div>
+            <p>{{ company.description }}</p>
           </div>
         </div>
 
         <section class="description">
-          <p>{{ company.description }}</p>
+          <p>{{ siteInfo.about_company }}</p>
         </section>
 
         <section class="reviews">
@@ -42,6 +43,8 @@
 import { ref, onMounted } from 'vue'
 import api from '../api'
 import SidebarMenu from '../components/Sidebar.vue'
+import { siteInfo } from '../config/siteInfo'
+
 
 // Sidebar menu items
 const menuItems = [

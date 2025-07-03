@@ -64,7 +64,11 @@ const items = [
 
 function navigate(item) {
   if (item.label === 'Адрес') {
-    window.open('https://yandex.ru/maps/-/CHgMj6Yi', '_blank')
+    const win = window.open('', '_blank')
+    if (win) {
+      win.opener = null
+      win.location = siteInfo.address
+    } 
   } else if (item.label === 'Поделиться') {
     showShareModal.value = true
   } else {
@@ -72,6 +76,7 @@ function navigate(item) {
     router.push(item.path)
   }
 }
+
 </script>
 
 <style scoped>

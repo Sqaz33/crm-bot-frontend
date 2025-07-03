@@ -5,7 +5,7 @@
   <!-- Иначе — обычный хедер -->
   <template v-else>
     <div class="topbar">
-      <div class="bot-name" @click="goHome">{{ botName }}</div>
+      <div class="bot-name" @click="goHome">{{ siteInfo.bot_name }}</div>
     </div>
     <header class="header">
       <h1 class="page-title">{{ title }}</h1>
@@ -18,6 +18,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import HomeMenu from './MainMenu.vue'
+import { siteInfo } from '../config/siteInfo'
 
 const route  = useRoute()
 const router = useRouter()
