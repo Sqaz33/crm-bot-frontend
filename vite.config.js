@@ -1,6 +1,5 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
-
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd())
@@ -8,9 +7,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [vue()],
     server: {
-      host: '0.0.0.0',  
-      port: 5173,
-      https: true, 
+      host: env.VITE_DEV_HOST || 'localhost',
       proxy: {
         '/api': {
           target: env.VITE_API_BASE,
@@ -18,7 +15,6 @@ export default defineConfig(({ mode }) => {
           secure: true,
           rewrite: path => path.replace(/^\/api/, '')
         }
-
       }
     }
   }
