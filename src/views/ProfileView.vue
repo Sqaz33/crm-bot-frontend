@@ -1,35 +1,47 @@
 <template>
-  <div class="profile-view">
-    <h1 class="page-title">Профиль</h1>
-    <form @submit.prevent="saveProfile" class="profile-form">
-      <div class="field">
-        <label for="firstName">Имя</label>
-        <input id="firstName" v-model="form.firstName" />
-      </div>
-      <div class="field">
-        <label for="lastName">Фамилия</label>
-        <input id="lastName" v-model="form.lastName" />
-      </div>
-      <div class="field">
-        <label for="middleName">Отчество</label>
-        <input id="middleName" v-model="form.middleName" placeholder="Не указано" />
-      </div>
-      <div class="field">
-        <label for="phone">Телефон</label>
-        <input id="phone" v-model="form.phone" placeholder="Не указан" />
-      </div>
-      <div class="field">
-        <label for="email">E-mail</label>
-        <input id="email" v-model="form.email" placeholder="Не указан" />
-      </div>
-      <button type="submit" class="btn-save">Сохранить</button>
-    </form>
+  <div class="profile-page">
+    <SidebarMenu :items="menuItems" class="sidebar" />
+
+    <div class="profile-form-container">
+      <form @submit.prevent="saveProfile" class="profile-form">
+        <div class="field">
+          <label for="firstName">Имя</label>
+          <input id="firstName" v-model="form.firstName" />
+        </div>
+        <div class="field">
+          <label for="lastName">Фамилия</label>
+          <input id="lastName" v-model="form.lastName" />
+        </div>
+        <div class="field">
+          <label for="middleName">Отчество</label>
+          <input id="middleName" v-model="form.middleName" />
+        </div>
+        <div class="field">
+          <label for="phone">Телефон</label>
+          <input id="phone" v-model="form.phone" />
+        </div>
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input id="email" v-model="form.email" />
+        </div>
+        <button type="submit" class="btn-save">Сохранить</button>
+      </form>
+    </div>
   </div>
 </template>
 
+
 <script setup>
 import { reactive, onMounted } from 'vue'
+import SidebarMenu from '../components/Sidebar.vue'
 
+// Sidebar menu items
+const menuItems = [
+  { label: 'Кошелёк', path: '/wallet' },
+  { label: 'Магазин', path: '/shop' },
+  { label: 'Отзывы', path: '/reviews' },
+  { label: 'О компании', path: '/about-company' }
+]
 const STORAGE_KEY = 'profile_data'
 const COOKIE_KEY  = 'profile_data'
 
@@ -96,46 +108,71 @@ function saveProfile() {
 </script>
 
 <style scoped>
-.profile-view {
-  max-width: 600px;
-  margin: 2rem auto;
+.profile-page {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f6f9fc;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  background-color: #ffffff;
+  border-right: 1px solid #e0e0e0;
   padding: 1rem;
-  background: #fff;
+}
+
+/* Контейнер формы */
+.profile-form-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+/* Форма */
+.profile-form {
+  width: 100%;
+  max-width: 500px;
+  background-color: #ffffff;
+  padding: 2rem;
   border-radius: 8px;
 }
-.page-title {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-}
-.profile-form .field {
+
+/* Поля */
+.field {
   display: flex;
   flex-direction: column;
   margin-bottom: 1rem;
 }
-.profile-form label {
+.field label {
   margin-bottom: 0.5rem;
   font-weight: 500;
 }
-.profile-form input {
+.field input {
   padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: none;
+  background-color: #e1e3e8;
+  border-radius: 6px;
   font-size: 1rem;
 }
 
+/* Кнопка */
 .btn-save {
-  display: block;
+  margin-top: 1rem;
   width: 100%;
   padding: 0.75rem;
-  background: #007bff;
-  color: white;
+  background-color: #1877f2;
+  color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: 500;
 }
 .btn-save:hover {
-  background: #0056b3;
+  background-color: #155ecb;
 }
+
 </style>
  
