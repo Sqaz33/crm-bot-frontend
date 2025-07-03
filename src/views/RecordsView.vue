@@ -1,6 +1,6 @@
 <template>
     <div class="review-view">
-      <h1>Отзывы</h1>
+      <h1>Записи</h1>
       <!-- Здесь будет список отзывов -->
     </div>
   </template>

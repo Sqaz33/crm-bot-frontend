@@ -6,7 +6,6 @@ import RecordsView   from '../views/RecordsView.vue'
 import ProfileView   from '../views/ProfileView.vue'
 import ReviewsView   from '../views/ReviewsView.vue'
 import AboutView      from '../views/AboutCompany.vue'
-import TestView      from '../views/Test.vue'
 import ShopView from '../views/ShopView.vue' 
 import WalletView from '../views/WalletView.vue' 
 
@@ -58,13 +57,6 @@ const routes = [
         name: 'wallet',
         component: WalletView,
         meta: { title:"Кошелёк"}
-        },
-    
-      {
-        path: 'test',
-        name: 'test',
-        component: TestView,
-        meta: { title: 'Тестовая страница' }
       }
     ]
   },

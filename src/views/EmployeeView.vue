@@ -1,7 +1,7 @@
 <template>
   <div class="review-view">
-    <h1>Отзывы</h1>
-    <!-- Здесь будет список отзывов -->
+    <h1></h1>
+
   </div>
 </template>
 
