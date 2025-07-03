@@ -3,7 +3,7 @@
     <h2 class="section-title">Персональные услуги</h2>
 
     <div class="cards">
-      <div class="card">
+      <div class="card" @click="goTo('wallet')">
         <span>Кошелёк</span>
         <span class="badge">0</span>
       </div>
