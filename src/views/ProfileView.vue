@@ -123,6 +123,7 @@ function saveProfile() {
   border-radius: 4px;
   font-size: 1rem;
 }
+
 .btn-save {
   display: block;
   width: 100%;
@@ -137,3 +138,4 @@ function saveProfile() {
   background: #0056b3;
 }
 </style>
+ 

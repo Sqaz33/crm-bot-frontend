@@ -22,10 +22,9 @@ import HomeMenu from './MainMenu.vue'
 const route  = useRoute()
 const router = useRouter()
 
-// сравниваем с тем же именем роута, что в router/index.js
+
 const isHome  = computed(() => route.name === 'home')
 
-// Заголовок страницы берём из meta, fallback — name
 const title   = computed(() => route.meta.title || route.name || 'Страница')
 
 // Название бота в топбаре
