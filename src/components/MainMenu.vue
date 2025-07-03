@@ -64,11 +64,13 @@ const items = [
 
 function navigate(item) {
   if (item.label === 'Адрес') {
-    const win = window.open('', '_blank')
-    if (win) {
-      win.opener = null
-      win.location = siteInfo.address
-    } 
+  const win = window.open('', '_blank')
+  if (win) {
+    win.opener = null
+    win.location = siteInfo.address
+  } else {
+    alert('Браузер заблокировал всплывающее окно. Разрешите их в настройках.')
+  }
   } else if (item.label === 'Поделиться') {
     showShareModal.value = true
   } else {
