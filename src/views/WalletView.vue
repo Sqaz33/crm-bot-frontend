@@ -1,21 +1,18 @@
 <template>
-  <div class="wallet-page">
+  <div class="base">
+        
     <SidebarMenu :items="menuItems" class="sidebar" />
-
-    <main class="wallet-content">
-      <div v-if="!hasCards">
-        <div class="wallet-empty-p">
-          <img src="../assets/SpiderWallet.svg"
-            alt="Пустой кошелёк"
-            class="wallet-empty-icon" />
-
-          <p>Увы, в кошельке пусто</p>
-          <p>У Вас пока нет ни одной карты лояльности</p>
-        </div>
-      </div>
+        
+    <main class="empty-content">
+      <img src="../assets/SpiderWallet.svg" alt="Пустой кошелёк" class="empty-icon" />
+      <p1>Увы, в кошельке пусто</p1>
+      <p2>У Вас пока нет ни одной карты лояльности</p2>        
     </main>
+         
   </div>
 </template>
+
+
 
 
 <script setup>
@@ -31,50 +28,3 @@ const menuItems = [
   { label: 'О компании', path: '/about-company' }
 ]
 </script>
-
-<style scoped>
-.wallet-page {
-  display: flex;
-  min-height: 100vh;
-  background-color: #f6f9fc;
-  font-family: sans-serif;
-}
-
-
-.sidebar {
-  width: 200px;
-  background-color: #ffffff;
-  border-right: 1px solid #e0e0e0;
-  padding: 1rem;
-}
-
-
-.wallet-content {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-}
-
-
-.wallet-empty-p {
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: black;
-}
-
-.wallet-empty-p p:last-child {
-  font-size: 1rem;
-  font-weight: normal;
-  color: #787b80;
-}
-
-.wallet-empty-icon {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 1rem;
-}
-
-</style>

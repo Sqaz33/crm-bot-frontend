@@ -1,13 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 :root {
-  --color-primary:   #dd7575;
-  --color-secondary: #75aadd;
-  --color-accent:    #75dd91;
-  --color-dark:      #333333;
-  --color-light:     #f5f5f5;
-  --color-warning:   #f2c94c;
+  --color-primary:   #dd7575; /* красный */
+  --color-secondary: #75aadd; /* синий */
+  --color-accent:    #75dd91; /* зелёный */
+  --color-dark:      #333333; /* тёмно-серый */
+  --color-light:     #f5f5f5; /* светло-серый */
+  --color-warning:   #f2c94c; /* жёлтый */
+  --font-primary: 'Inter';
+}
+
+body {
+    margin: 0;
 }
 
 /* пример силектора */
 .main-menu[data-v-c04b848d] {
-  background: var(--color-primary);
+  background: var(--color-dark);
 }
+
+.base {
+  display: flex;
+  min-height: 100vh;
+  background-color: var( --color-light);
+  width: 100%;
+  font-family: var(--font-primary);
+}
+
+
+
+.sidebar {
+  background-color: #ffffff;
+  border-right: 1px solid #e0e0e0;
+  padding: 0;
+}
+
+p1 {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: black;
+}
+
+p2 {
+  text-align: center;    
+  font-size: 1rem;
+  font-weight: normal;
+  color: #787b80;
+}
+
+.empty-content {
+  flex: 1;
+  display: flex;
+  padding: 15rem 14rem 15rem 1rem;
+  align-items: center;
+  flex-direction: column;
+}
+
+.empty-icon {
+  width: 8rem;
+  height: 8rem;
+  margin-bottom: 1rem;
+}
+

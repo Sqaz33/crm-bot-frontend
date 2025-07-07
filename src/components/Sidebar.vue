@@ -41,7 +41,7 @@ function goBack() {
 
 <style scoped>
 .sidebar {
-  width: 260px;
+  width: 220px;
   background-color: #f9fbfe;
   height: 100vh;
   display: flex;
