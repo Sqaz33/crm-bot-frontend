@@ -61,5 +61,6 @@ function goHome() {
   font-size: 1.2rem;
   font-weight: bold;
   margin: 0;
+  font-family: var(--font-primary);
 }
 </style>
