@@ -3,11 +3,12 @@
     <button class="btn-back" @click="$router.back()">← Назад</button>
 
     <div class="card">
-      <img :src="staff.photo || placeholder" class="avatar" />
+      <div v-if="staff.photo" class="avatar" :style="{ backgroundImage: `url(${staff.photo})` }" />
+      <div v-else class="avatar avatar--empty" />
       <h2 class="name">{{ staff.name }}</h2>
       <div class="spec">{{ staff.specialization }}</div>
       <div class="rating">⭐ {{ staff.rating }}</div>
-      <p class="about">{{ staff.about }}</p>
+      <p class="about">{{ staff.about || 'Информация отсутствует.' }}</p>
     </div>
 
     <section class="reviews">
@@ -29,14 +30,11 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '../api'
 
-const route = useRoute()
+const route   = useRoute()
 const staffId = route.params.id
 
-const staff = ref({
-  name: '', specialization: '', photo: '', about: '', rating: 0
-})
+const staff   = ref({ name: '', specialization: '', photo: '', about: '', rating: 0 })
 const reviews = ref([])
-const placeholder = 'https://via.placeholder.com/64'
 
 function formatDate(iso) {
   return new Date(iso).toLocaleDateString()
@@ -44,15 +42,15 @@ function formatDate(iso) {
 
 onMounted(async () => {
   try {
-    // 1) Детали сотрудника
+   
     const { data: s } = await api.get(`/salon/staff/${staffId}`)
     staff.value = s
 
-    // 2) Отзывы по этому сотруднику
+    
     const { data: rev } = await api.get(`/salon/reviews?staff_id=${staffId}`)
     reviews.value = rev
   } catch (e) {
-    console.error('Ошибка загрузки данных сотрудника:', e)
+    console.error('Ошибка загрузки данных:', e)
   }
 })
 </script>
@@ -79,10 +77,15 @@ onMounted(async () => {
   text-align: center;
 }
 .avatar {
-  width: 64px; height: 64px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 0.5rem;
+  background-size: cover;
+  background-position: center;
+  margin: 0 auto 0.5rem;
+}
+.avatar--empty {
+  background-color: #ccc;
 }
 .name {
   font-size: 1.2rem;
