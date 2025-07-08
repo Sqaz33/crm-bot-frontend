@@ -45,39 +45,44 @@ import api from '../api'
 import SidebarMenu from '../components/Sidebar.vue'
 import { siteInfo } from '../config/siteInfo'
 
-
-// Sidebar menu items
+// Sidebar items
 const menuItems = [
   { label: 'Кошелёк', path: '/wallet' },
-  { label: 'Магазин', path: '/shop' },
-  { label: 'Отзывы', path: '/reviews' },
-  { label: 'О компании', path: '/about-company' }
+  { label: 'Магазин',  path: '/shop' },
+  { label: 'Отзывы',   path: '/reviews' },
+  { label: 'О компании', path: '/company' }
 ]
 
+
 const company = ref({ name: '', rating: 0, description: '' })
+
 const reviews = ref([])
 
 onMounted(async () => {
   try {
+    // 1) Инфо о салоне
     const { data: info } = await api.get('/salon/info')
     company.value = {
-      name: info.name,
-      rating: info.rating,
+      name:       info.name,
+      rating:     info.rating,
       description: info.description || 'Описание компании отсутствует.'
     }
+
+    // 2) Отзывы по новому формату
     const { data: rev } = await api.get('/salon/reviews')
     reviews.value = rev.map(r => ({
-      id: r.id,
-      author: r.author_name,
-      date: r.created_at, // предполагаем поле
+      id:     r.id,
+      author: r.client_name,
+      date:   new Date(r.created_at).toLocaleDateString(),
       rating: r.rating,
-      text: r.text
+      text:   r.comment
     }))
   } catch (e) {
-    console.error('Ошибка загрузки данных компании:', e)
+    console.error('Ошибка загрузки данных компании/отзывов:', e)
   }
 })
 </script>
+
 
 <style scoped>
 .layout {

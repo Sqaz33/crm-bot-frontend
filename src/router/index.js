@@ -8,6 +8,8 @@ import ReviewsView   from '../views/ReviewsView.vue'
 import AboutView      from '../views/AboutCompany.vue'
 import ShopView from '../views/ShopView.vue' 
 import WalletView from '../views/WalletView.vue' 
+import StaffView from '../views/AboutStaff.vue'
+
 
 
 const routes = [
@@ -46,17 +48,24 @@ const routes = [
         meta: { title: 'О компании' }
       },
       {
-        path: '/shop',
+        path: 'shop',
         name: 'shop',
         component: ShopView,
         meta: { title:"Магазин"}
         },
     
       {
-        path: '/wallet',
+        path: 'wallet',
         name: 'wallet',
         component: WalletView,
         meta: { title:"Кошелёк"}
+      },
+    
+      {
+        path: 'staff/:id',
+        name: 'staff',
+        component: StaffView,
+        meta: { title:"О сотруднике"}
       }
     ]
   },
