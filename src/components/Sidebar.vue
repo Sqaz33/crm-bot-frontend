@@ -35,7 +35,7 @@ const route = useRoute()
 const router = useRouter()
 
 function goBack() {
-  router.back()
+  router.push('/')
 }
 </script>
 
