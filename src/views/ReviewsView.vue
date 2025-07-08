@@ -1,181 +1,183 @@
 <template>
-  <div class="layout">
-    <SidebarMenu :items="menuItems" />
-    <main class="main-content">
-      <div class="reviews-view">
-        <h1 class="page-title">Отзывы</h1>
-        <div class="tabs">
-          <button
-            v-for="tab in tabs"
-            :key="tab.value"
-            :class="['tab', { active: activeTab === tab.value }]"
-            @click="selectTab(tab)"
-          >
-            {{ tab.label }}
-          </button>
+  <div class="staff-view">
+    <div class="card-header">
+      <div
+        class="avatar"
+        :style="staff.photo ? { backgroundImage: `url(${staff.photo})` } : {}"
+      />
+      <h2 class="staff-name">{{ staff.name }}</h2>
+      <div class="staff-rating">⭐ {{ staff.rating }}</div>
+    </div>
+
+    <section class="about-section">
+      <h3>О себе</h3>
+      <p>{{ staff.about || 'Информация отсутствует.' }}</p>
+    </section>
+
+    <section class="reviews-section">
+      <h3>Отзывы ({{ reviews.length }})</h3>
+      <div v-for="r in reviews" :key="r.id" class="review">
+        <div class="review-header">
+          <div class="reviewer-name">{{ r.client_name }}</div>
+          <div class="review-date">{{ formatDate(r.created_at) }}</div>
+          <div class="review-rating">⭐ {{ r.rating }}</div>
         </div>
-        <div class="reviews-list">
-          <div
-            v-for="review in reviews"
-            :key="review.id"
-            class="review-card"
-          >
-            <div class="avatar"></div>
-            <div class="info">
-              <div class="name">{{ review.client_name }}</div>
-              <div class="date">{{ formatDate(review.created_at) }}</div>
-            </div>
-            <div class="rating">⭐ {{ review.rating }}</div>
-            <p class="comment">{{ review.comment }}</p>
-          </div>
-        </div>
+        <p class="review-text">{{ r.comment }}</p>
       </div>
-    </main>
+    </section>
+
+    <button class="btn-select" @click="selectStaff">Выбрать</button>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import api from '../api'
-import SidebarMenu from '../components/Sidebar.vue'
 
-const menuItems = [
-  { label: 'Кошелёк', path: '/wallet' },
-  { label: 'Магазин', path: '/shop' },
-  { label: 'Отзывы', path: '/reviews' },
-  { label: 'О компании', path: '/company' }
-]
+const route = useRoute()
+const router = useRouter()
+const staffId = route.params.id
 
-const tabs = ref([{ label: 'Все', value: 'all' }])
-const activeTab = ref('all')
+const staff = ref({
+  name: '',
+  photo: '',
+  about: '',
+  rating: 0
+})
 const reviews = ref([])
-
-async function loadStaffTabs() {
-  const { data: staffList } = await api.get('/salon/staff')
-  staffList.forEach(s => {
-    tabs.value.push({ label: s.name, value: s.id })
-  })
-}
-
-async function loadReviews(staffId = null) {
-  const url = staffId && staffId !== 'all'
-    ? `/salon/reviews?staff_id=${staffId}`
-    : '/salon/reviews'
-  const { data } = await api.get(url)
-  reviews.value = data
-}
-
-function selectTab(tab) {
-  activeTab.value = tab.value
-  loadReviews(tab.value === 'all' ? null : tab.value)
-}
 
 function formatDate(iso) {
   return new Date(iso).toLocaleDateString()
 }
 
-onMounted(async () => {
+async function loadData() {
   try {
-    await loadStaffTabs()
-    await loadReviews()
+    const { data: s } = await api.get(`/salon/staff/${staffId}`)
+    staff.value = s
+    const { data: rev } = await api.get(`/salon/reviews?staff_id=${staffId}`)
+    reviews.value = rev
   } catch (e) {
-    console.error('Ошибка при загрузке:', e)
+    console.error('Ошибка при загрузке данных сотрудника:', e)
   }
-})
+}
+
+function selectStaff() {
+  router.back()
+}
+
+onMounted(loadData)
 </script>
 
 <style scoped>
-.layout {
-  display: flex;
-  height: 100vh;
-}
-
-.main-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 1rem;
-  background: #fff;
-}
-
-.reviews-view {
-  padding: 1rem;
+.staff-view {
+  max-width: 500px;
+  margin: 1rem auto;
   background: #f5f8fd;
-}
-
-.page-title {
-  text-align: center;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.tabs {
-  display: flex;
-  background: #fff;
-  border-radius: 8px;
-  overflow-x: auto;
-  margin-bottom: 1rem;
-}
-
-.tab {
-  flex: none;
-  padding: 0.75rem 1.5rem;
-  cursor: pointer;
-  border: none;
-  background: #fff;
-  transition: background 0.2s;
-  white-space: nowrap;
-}
-
-.tab.active {
-  border-bottom: 3px solid #007bff;
-  font-weight: bold;
-}
-
-.reviews-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.review-card {
-  background: #fff;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  cursor: default;
-}
-
-.review-card .avatar {
-  width: 40px;
-  height: 40px;
-  background: #ccc;
-  border-radius: 50%;
-  float: left;
-  margin-right: 1rem;
-}
-
-.review-card .info {
-  overflow: hidden;
-}
-
-.review-card .name {
-  font-weight: bold;
-}
-
-.review-card .date {
-  font-size: 0.85rem;
-  color: #555;
-}
-
-.review-card .rating {
-  float: right;
-  background: #e0e0e0;
-  padding: 0.25rem 0.75rem;
   border-radius: 12px;
+  overflow: hidden;
+  font-family: sans-serif;
 }
 
-.review-card .comment {
-  clear: both;
-  margin-top: 0.5rem;
+.card-header {
+  background: #fff;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  border-radius: 12px 12px 0 0;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #ccc;
+  background-size: cover;
+  background-position: center;
+  margin: 0 auto 0.5rem;
+}
+
+.staff-name {
+  margin: 0.25rem 0;
+  font-size: 1.25rem;
+}
+
+.staff-rating {
+  color: #777;
+}
+
+.about-section,
+.reviews-section {
+  background: #fff;
+  margin-top: 1rem;
+  padding: 1rem;
+}
+
+.about-section h3,
+.reviews-section h3 {
+  margin-top: 0;
+  font-size: 1rem;
+  color: #555;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 0.5rem;
+}
+
+.about-section p {
+  margin: 0.75rem 0 0;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.review {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.review:last-child {
+  border-bottom: none;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reviewer-name {
+  font-weight: bold;
+}
+
+.review-date {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.review-rating {
+  margin-left: auto;
+  background: #e0e0e0;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+.review-text {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.btn-select {
+  width: calc(100% - 2rem);
+  margin: 1rem;
+  padding: 0.75rem 1rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn-select:hover {
+  background: #0056b3;
 }
 </style>
