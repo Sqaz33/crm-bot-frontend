@@ -1,5 +1,5 @@
 <template>
-  <div class="home-view">
+  <div class="base" style="flex-direction: column; padding: 0.2rem;">
     <h2 class="section-title">Персональные услуги</h2>
 
     <div class="cards">
@@ -48,21 +48,19 @@ function goTo(name) {
 </script>
 
 <style scoped>
-.home-view {
-  background-color: #f5f8fd;
-  padding-bottom: 2rem;
-  font-family: sans-serif;
-}
+
+
 
 .section-title {
   text-align: center;
-  margin: 2rem 0 1rem;
   font-size: 1.2rem;
   font-weight: bold;
   background: white;
-  display: inline-block;
-  padding: 0.5rem 2rem;
+  display: block;
+  padding: 1.5rem;
   border-radius: 8px;
+  margin: 1rem auto 1rem auto;
+  width: 35rem;
 }
 
 .cards {
@@ -75,7 +73,7 @@ function goTo(name) {
 .card {
   background-color: white;
   border-radius: 12px;
-  padding: 1rem;
+  padding: 1.5rem;
   font-size: 1rem;
   display: flex;
   justify-content: space-between;
