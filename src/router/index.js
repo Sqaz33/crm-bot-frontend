@@ -48,21 +48,21 @@ const routes = [
         meta: { title: 'О компании' }
       },
       {
-        path: '/shop',
+        path: 'shop',
         name: 'shop',
         component: ShopView,
         meta: { title:"Магазин"}
         },
     
       {
-        path: '/wallet',
+        path: 'wallet',
         name: 'wallet',
         component: WalletView,
         meta: { title:"Кошелёк"}
       },
     
       {
-        path: '/staff/:id',
+        path: 'staff/:id',
         name: 'staff',
         component: StaffView,
         meta: { title:"О сотруднике"}

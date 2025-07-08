@@ -1,16 +1,14 @@
 <template>
   <div class="staff-view">
     <button class="btn-back" @click="$router.back()">← Назад</button>
-
     <div class="card">
-      <div v-if="staff.photo" class="avatar" :style="{ backgroundImage: `url(${staff.photo})` }" />
-      <div v-else class="avatar avatar--empty" />
+      <div v-if="staff.photo" class="avatar" :style="{ backgroundImage: `url(${staff.photo})` }"/>
+      <div v-else class="avatar avatar--empty"/>
       <h2 class="name">{{ staff.name }}</h2>
       <div class="spec">{{ staff.specialization }}</div>
       <div class="rating">⭐ {{ staff.rating }}</div>
       <p class="about">{{ staff.about || 'Информация отсутствует.' }}</p>
     </div>
-
     <section class="reviews">
       <h3>Отзывы ({{ reviews.length }})</h3>
       <div v-for="r in reviews" :key="r.id" class="review">
@@ -33,7 +31,7 @@ import api from '../api'
 const route   = useRoute()
 const staffId = route.params.id
 
-const staff   = ref({ name: '', specialization: '', photo: '', about: '', rating: 0 })
+const staff   = ref({ name:'', specialization:'', photo:'', about:'', rating:0 })
 const reviews = ref([])
 
 function formatDate(iso) {
@@ -42,12 +40,9 @@ function formatDate(iso) {
 
 onMounted(async () => {
   try {
-   
-    const { data: s } = await api.get(`/salon/staff/${staffId}`)
-    staff.value = s
-
-    
+    const { data: s }   = await api.get(`/salon/staff/${staffId}`)
     const { data: rev } = await api.get(`/salon/reviews?staff_id=${staffId}`)
+    staff.value   = s
     reviews.value = rev
   } catch (e) {
     console.error('Ошибка загрузки данных:', e)
