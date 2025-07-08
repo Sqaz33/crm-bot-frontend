@@ -1,21 +1,23 @@
 <template>
   <div class="layout">
     <SidebarMenu :items="menuItems" />
+
     <main class="main-content">
-      <div class="reviews-view">
+      <div class="staff-view">
         <div class="tabs">
           <button
             v-for="tab in tabs"
             :key="tab.value"
             :class="['tab', { active: activeTab === tab.value }]"
-            @click="activeTab = tab.value"
+            @click="selectTab(tab.value)"
           >
             {{ tab.label }}
           </button>
         </div>
+
         <div class="staff-list">
           <div
-            v-for="staff in filteredStaff"
+            v-for="staff in staffList"
             :key="staff.id"
             class="staff-card"
             @click="goToStaff(staff.id)"
@@ -39,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api'
 import SidebarMenu from '../components/Sidebar.vue'
@@ -48,39 +50,62 @@ const router = useRouter()
 
 const menuItems = [
   { label: 'Кошелёк', path: '/wallet' },
-  { label: 'Магазин', path: '/shop' },
-  { label: 'Отзывы', path: '/reviews' },
+  { label: 'Магазин',  path: '/shop' },
+  { label: 'Отзывы',   path: '/reviews' },
   { label: 'О компании', path: '/company' }
 ]
 
-// заменить
-const tabs = [
-  { label: 'Все', value: 'all' },
-  { label: 'Барбер', value: 'Барбер' },
-  { label: 'Топ Барбер', value: 'Топ Барбер' }
-]
+
+const tabs = ref([{ label: 'Все', value: 'all' }])
 const activeTab = ref('all')
+
+
 const staffList = ref([])
 
-async function loadStaff() {
+async function loadSpecializations() {
   try {
-    const { data } = await api.get('/salon/staff')
-    staffList.value = data
+    const { data } = await api.get('/salon/specializations')
+    
+    data.forEach(spec => {
+      tabs.value.push({ label: spec, value: spec })
+    })
   } catch (e) {
-    console.error('Не удалось загрузить сотрудников:', e)
+    console.error('Не удалось получить специализации:', e)
   }
 }
 
-const filteredStaff = computed(() => {
-  if (activeTab.value === 'all') return staffList.value
-  return staffList.value.filter(s => s.specialization === activeTab.value)
+async function loadStaff(specialization = null) {
+  try {
+    let url = '/salon/staff'
+    if (specialization && specialization !== 'all') {
+      
+      url = `/salon/staff_by_specialization/${encodeURIComponent(specialization)}`
+    }
+    const { data } = await api.get(url)
+    staffList.value = data
+  } catch (e) {
+    console.error('Не удалось загрузить сотрудников:', e)
+    staffList.value = []
+  }
+}
+
+function selectTab(value) {
+  activeTab.value = value
+}
+
+watch(activeTab, (nv) => {
+  loadStaff(nv)
+})
+
+
+onMounted(async () => {
+  await loadSpecializations()
+  await loadStaff()
 })
 
 function goToStaff(id) {
-  router.push({ path: `/staff/${id}` })
+  router.push(`/staff/${id}`)
 }
-
-onMounted(loadStaff)
 </script>
 
 <style scoped>
@@ -96,7 +121,7 @@ onMounted(loadStaff)
   padding: 1rem;
 }
 
-.reviews-view {
+.staff-view {
   max-width: 600px;
   margin: 0 auto;
 }
