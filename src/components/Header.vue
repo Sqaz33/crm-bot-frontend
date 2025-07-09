@@ -18,7 +18,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import HomeMenu from './MainMenu.vue'
-import { siteInfo } from '../config/siteInfo'
+import { siteInfo } from '../static/siteInfo'
 
 const route  = useRoute()
 const router = useRouter()

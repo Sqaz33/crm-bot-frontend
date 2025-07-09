@@ -43,7 +43,7 @@
 import { ref, onMounted } from 'vue'
 import api from '../api'
 import SidebarMenu from '../components/Sidebar.vue'
-import { siteInfo } from '../config/siteInfo'
+import { siteInfo } from '../static/siteInfo'
 
 // Sidebar items
 const menuItems = [

@@ -30,7 +30,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import api from '../api'
 
-import { siteInfo } from '../config/siteInfo'
+import { siteInfo } from '../static/siteInfo'
 
 import Modal from './Modal.vue'
 import ShareModal from './ShareModal.vue'
