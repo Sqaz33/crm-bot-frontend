@@ -83,12 +83,12 @@ function navigate(item) {
 
 <style scoped>
 .main-menu {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #1f1f1f;
-  color: white;
-  padding: 0 1rem;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   background: var(--color-dark);
+   color: white;
+   padding: 0 1rem; 
 }
 
 .salon-info {

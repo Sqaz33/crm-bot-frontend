@@ -1,5 +1,5 @@
 <template>
-  <div class="home-view">
+  <div class="base" style="flex-direction: column; padding: 4rem;">
     <h2 class="section-title">Персональные услуги</h2>
 
     <div class="cards">
@@ -48,11 +48,7 @@ function goTo(name) {
 </script>
 
 <style scoped>
-.home-view {
-  background-color: #f5f8fd;
-  padding-bottom: 2rem;
-  font-family: sans-serif;
-}
+
 
 .section-title {
   text-align: center;

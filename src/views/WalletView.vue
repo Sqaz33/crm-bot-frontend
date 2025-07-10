@@ -27,5 +27,5 @@ const menuItems = [
   { label: 'Отзывы', path: '/reviews' },
   { label: 'О компании', path: '/company' }
 ]
-</script>
 
+</script>

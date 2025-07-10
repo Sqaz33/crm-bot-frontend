@@ -35,19 +35,21 @@ const route = useRoute()
 const router = useRouter()
 
 function goBack() {
-    router.push('/')
+  router.push('/')
 }
 </script>
 
 <style scoped>
 .sidebar {
-  width: 260px;
-  background-color: #f9fbfe;
+  width: 220px;
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: white;
   box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
+  border-right: 1px solid #e0e0e0;
+  font-family: var(--font-primary);
 }
 
 .menu-list {
@@ -57,9 +59,13 @@ function goBack() {
 }
 
 .menu-item {
-  margin: 0.5rem 1rem;
-  border-radius: 10px;
+  margin: 0;
   overflow: hidden;
+  padding: 2px 0 0 0;
+}
+
+.menu-list li:first-child {
+  padding: 0;
 }
 
 .menu-link {
@@ -67,13 +73,13 @@ function goBack() {
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
-  background: white;
+  background: var( --color-light);
   text-decoration: none;
   color: inherit;
 }
 
 .menu-item.active .menu-link {
-  background-color: #e0e7ff;
+  background-color: #E6E6E6;
   font-weight: bold;
 }
 
