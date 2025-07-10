@@ -38,7 +38,7 @@ function goHome() {
 
 <style scoped>
 .topbar {
-  background-color: #333;
+  background-color:var(--color-dark);
   color: white;
   padding: 0.75rem 1rem;
   font-weight: bold;
@@ -51,7 +51,7 @@ function goHome() {
 }
 
 .header {
-  background-color: #f5f7fa;
+  background-color: #faf5f6;
   text-align: center;
   padding: 1rem;
   border-bottom: 1px solid #ccc;

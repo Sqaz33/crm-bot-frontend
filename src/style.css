@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 :root {
+
   --color-primary:   #dd7575; /* красный */
   --color-secondary: #75aadd; /* синий */
   --color-accent:    #75dd91; /* зелёный */
@@ -9,14 +10,14 @@
   --font-primary: 'Inter';
 }
 
-body {
-    margin: 0;
-}
+
 
 /* пример силектора */
 .main-menu[data-v-c04b848d] {
   background: var(--color-dark);
 }
+
+
 
 .base {
   display: flex;
@@ -24,6 +25,7 @@ body {
   background-color: var( --color-light);
   width: 100%;
   font-family: var(--font-primary);
+
 }
 
 p1 {
@@ -53,4 +55,5 @@ p2 {
   height: 8rem;
   margin-bottom: 1rem;
 }
+
 

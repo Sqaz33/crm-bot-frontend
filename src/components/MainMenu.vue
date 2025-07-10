@@ -13,7 +13,7 @@
         :class="{ active: activeItem === item.path }"
         @click="navigate(item)"
       >
-        <span class="icon">{{ item.icon }}</span>
+        <span class="icon"><img :src="item.icon" :class="item.iconSize"alt="icon" /></span>
         <span>{{ item.label }}</span>
       </div>
     </nav>
@@ -35,6 +35,10 @@ import { siteInfo } from '../static/siteInfo'
 import Modal from './Modal.vue'
 import ShareModal from './ShareModal.vue'
 
+import AddressIcon from '../assets/map.svg';
+import RecordsIcon from '../assets/appointment.svg';
+import ShareIcon from '../assets/share.svg';
+import ProfileIcon from '../assets/prof.svg';
 const router = useRouter()
 const route = useRoute()
 const activeItem = ref(route.path)
@@ -56,10 +60,10 @@ watch(() => route.path, (p) => {
 })
 
 const items = [
-  { label: 'Адрес', path: '/address', icon: '📍' },
-  { label: 'Записи', path: '/records', icon: '🗓️' },
-  { label: 'Поделиться', path: '/share', icon: '🔗' },
-  { label: 'Профиль', path: '/profile', icon: '👤' },
+  { label: 'Адрес', path: '/address', icon: AddressIcon,iconSize:'icon1' },
+  { label: 'Записи', path: '/records', icon: RecordsIcon,iconSize:'icon2' },
+  { label: 'Поделиться', path: '/share', icon: ShareIcon,iconSize:'icon1' },
+  { label: 'Профиль', path: '/profile', icon: ProfileIcon,iconSize:'icon2' },
 ]
 
 function navigate(item) {
@@ -83,12 +87,14 @@ function navigate(item) {
 
 <style scoped>
 .main-menu {
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   background: var(--color-dark);
-   color: white;
-   padding: 0 1rem; 
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-dark);
+  color: white;
+  padding: 0 1rem;
+
 }
 
 .salon-info {
@@ -112,7 +118,7 @@ function navigate(item) {
 .menu {
   display: flex;
   flex-wrap: nowrap;
-  gap: 1rem;
+  gap: 3rem;
   padding: 0.5rem 1rem;
 }
 
@@ -124,10 +130,11 @@ function navigate(item) {
   display: flex;
   flex-direction: column;
   align-items: center;
+  
 }
 
 .menu-item.active {
-  background-color: #007bff;
+  background-color:var(--color-secondary);
 }
 
 .menu-item:hover:not(.active) {
@@ -135,7 +142,24 @@ function navigate(item) {
 }
 
 .menu-item .icon {
-  font-size: 1.4rem;
-  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;       
+  margin-bottom: 0.3rem;
+}
+
+.menu-item .icon img {
+  object-fit: contain;
+}
+.icon1 {
+  width: 2.4rem;
+  height: 2.4rem;
+}
+
+.icon2{
+  width: 1.6rem;
+  height: 1.6rem;
 }
 </style>

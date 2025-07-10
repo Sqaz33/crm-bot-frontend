@@ -83,7 +83,7 @@
   .share-title {
     margin-bottom: 1rem;
     font-weight: bold;
-    
+    font-family:var(--font-primary) ;
   }
   
   .share-icons {
