@@ -53,34 +53,37 @@ function goTo(name) {
 
 .section-title {
   text-align: center;
-  font-size: 1.2rem;
+  font-size: clamp(0.75rem,5vw,1.2rem);
   font-weight: bold;
   background: white;
   display: block;
-  padding: 1.5rem;
+  padding:clamp(1rem,5vw,1.5rem);
   border-radius: 8px;
-  margin: 1rem auto 1rem auto;
-  width: 35rem;
+  margin: 1rem auto;
+  width: min(85%, 35rem);
+  box-sizing: border-box;
 }
 
 .cards {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 0 1rem;
+  gap: clamp(0.5rem,3vw,1rem);
+  padding: 0 clamp(0.5rem,3vw,1rem);
+  
 }
 
 .card {
   background-color: white;
   border-radius: 12px;
-  padding: 1.5rem;
-  font-size: 1rem;
+  padding:clamp(1rem, 5vw, 1.5rem);
+  font-size: clamp(0.75rem, 4vw, 1rem);
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: background-color .2s;
+  
 }
 
 .card:hover {
@@ -91,12 +94,12 @@ function goTo(name) {
   background-color: #e0e0e0;
   border-radius: 999px;
   padding: 0.2rem 0.6rem;
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 3vw, 0.9rem);
   font-weight: bold;
 }
 
 .arrow {
-  font-size: 1.4rem;
+  font-size: clamp(1rem, 5vw, 1.4rem);
   color: #999;
 }
 </style>
