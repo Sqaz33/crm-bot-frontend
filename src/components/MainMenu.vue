@@ -123,10 +123,10 @@ function navigate(item) {
 .menu {
   display: flex;
   flex-wrap: nowrap;
-  gap: clamp(0.7rem, 1.5vw, 1rem);
   padding: 0.5rem 1rem;
   box-sizing: border-box;
-  
+  width: clamp(25rem, 100%, 30rem);
+  justify-content: space-between;
 }
 
 .menu-item {
