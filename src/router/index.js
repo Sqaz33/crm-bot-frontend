@@ -9,6 +9,9 @@ import AboutView      from '../views/AboutCompany.vue'
 import ShopView from '../views/ShopView.vue' 
 import WalletView from '../views/WalletView.vue' 
 import StaffView from '../views/AboutStaff.vue'
+import MakeAppointmant from '../views/MakeAppointmant.vue'
+import ChoiceStaffView from '../views/ChoiceStaff.vue'
+
 
 
 
@@ -66,6 +69,20 @@ const routes = [
         name: 'staff',
         component: StaffView,
         meta: { title:"О сотруднике"}
+      },
+
+      {
+        path: 'staff',
+        name: 'choicestaff',
+        component: ChoiceStaffView,
+        meta: { title:"Сотрудник"}
+      },
+    
+      {
+        path: 'appointmant',
+        name: 'appointmant',
+        component: MakeAppointmant,
+        meta: { title:"Записаться"}
       }
     ]
   },

@@ -26,6 +26,43 @@ import { useRouter } from 'vue-router'
 import { loginViaTelegram, exchangeToken } from './api/auth'
 import { parseTelegramLaunchData } from './utils/telegram'
 
+
+const VISIT_KEY = 'visit_data'
+
+/**
+ * Создаёт пустую запись визита и сохраняет её
+ * в localStorage и в cookie.
+ *
+ * @param {boolean} silent — если true, не выводить лог об успешном сохранении
+ */
+function saveVisit(silent = false) {
+
+  const visitData = {
+    staff_id:   '',        
+    client_id:  '',        
+    visit_time: { start: '' , end:''},
+    comment:    ''         
+  }
+
+  localStorage.setItem(VISIT_KEY, JSON.stringify(visitData))
+
+  
+  const cookieValue = encodeURIComponent(JSON.stringify(visitData))
+  document.cookie =
+    `${VISIT_KEY}=${cookieValue}` +
+    `; path=/; max-age=${365 * 24 * 60 * 60}` +
+    `; Secure; SameSite=None`
+
+  if (!silent) {
+    console.log('Visit data saved:', visitData)
+  }
+  console.log('→ document.cookie:', document.cookie)
+  console.log(`→ localStorage[${VISIT_KEY}]:`, localStorage.getItem(VISIT_KEY))
+}
+
+
+saveVisit()
+
 // Ключ для localStorage
 const PROFILE_KEY = 'profile_data'
 

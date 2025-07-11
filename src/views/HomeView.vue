@@ -2,7 +2,7 @@
 
   <div class="base" style="flex-direction: column; padding: 0.2rem;">
 
-    <h2 class="section-title">Персональные услуги</h2>
+    <h2 class="section-title" @click="goTo('appointmant')">Персональные услуги</h2>
 
     <div class="cards">
       <div class="card" @click="goTo('wallet')">
