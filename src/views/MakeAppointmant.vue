@@ -13,7 +13,13 @@
       </li>
       <li class="step-item" @click="goTo('services')">
         <div class="checkbox"></div>
-        <div class="label">Услуги: {{ summary.totalPrice ? summary.totalPrice + ' ₽' : '—' }}</div>
+        <div class="label">
+          Услуги: 
+          {{ summary.totalPrice !== null 
+             ? (summary.totalPrice > 0 ? summary.totalPrice + ' ₽' : '0 ₽') 
+             : '—' 
+          }}
+        </div>
         <div class="arrow">›</div>
       </li>
       <li class="step-item back-item" @click="goBack">
@@ -28,7 +34,6 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -36,7 +41,11 @@ import api from '../api'
 
 const router = useRouter()
 const VISIT_KEY = 'visit_data'
-const summary = ref(null)
+const summary = ref({
+  staffName: null,
+  visitTime: null,
+  totalPrice: null
+})
 
 async function loadSummary() {
   const raw = localStorage.getItem(VISIT_KEY)
@@ -45,11 +54,13 @@ async function loadSummary() {
   const data = JSON.parse(raw)
   const { staff_id, services_id = [], visit_time = {} } = data
 
+  // Формат даты
   const visitTime = visit_time.start
     ? new Date(visit_time.start).toLocaleString()
-    : ''
+    : null
 
-  let staffName = ''
+  // Имя сотрудника
+  let staffName = null
   if (staff_id) {
     try {
       const { data: staff } = await api.get(`/salon/staff/${staff_id}`)
@@ -59,18 +70,23 @@ async function loadSummary() {
     }
   }
 
-  let totalPrice = 0
+  // Сумма услуг
+  let totalPrice = null
   if (services_id.length) {
     try {
-      
-      const promises = services_id.map(id =>
-        api.get(`/salon/services/${id}`).then(r => r.data.price || 0)
+      const prices = await Promise.all(
+        services_id.map(id =>
+          api.get(`/salon/services/${id}`)
+            .then(r => r.data.price || 0)
+            .catch(() => 0)
+        )
       )
-      const prices = await Promise.all(promises)
-      totalPrice = prices.reduce((a, b) => a + b, 0)
+      totalPrice = prices.reduce((sum, p) => sum + p, 0)
     } catch {
       totalPrice = 0
     }
+  } else if (services_id.length === 0) {
+    totalPrice = 0
   }
 
   summary.value = { staffName, visitTime, totalPrice }
@@ -101,16 +117,6 @@ onMounted(loadSummary)
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.visit-summary {
-  background: #f0f8ff;
-  padding: 1rem;
-  border-bottom: 1px solid #cee4fd;
-}
-
-.visit-summary h3 {
-  margin: 0 0 0.5rem;
-}
-
 .steps-list {
   list-style: none;
   margin: 0;
@@ -137,15 +143,15 @@ onMounted(loadSummary)
   flex-shrink: 0;
 }
 
-.arrow, .arrow-back {
-  margin-left: auto;
-  color: #999;
-  font-size: 1.2rem;
-}
-
 .label {
   margin: 0 1rem;
   flex: 1;
+  font-size: 0.95rem;
+}
+
+.arrow, .arrow-back {
+  color: #999;
+  font-size: 1.2rem;
 }
 
 .back-item .checkbox {
