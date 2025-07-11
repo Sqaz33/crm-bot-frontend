@@ -1,26 +1,20 @@
 <template>
   <div class="booking-view">
-    <div v-if="summary" class="visit-summary">
-      <h3>Детали визита</h3>
-      <p><strong>Сотрудник:</strong> {{ summary.staffName }}</p>
-      <p><strong>Дата и время:</strong> {{ summary.visitTime }}</p>
-      <p><strong>Услуги:</strong> {{ summary.totalPrice }} ₽</p>
-    </div>
 
     <ul class="steps-list">
       <li class="step-item" @click="goTo('choicestaff')">
         <div class="checkbox"></div>
-        <div class="label">Сотрудник</div>
+        <div class="label">Сотрудник: {{ summary.staffName }}</div>
         <div class="arrow">›</div>
       </li>
       <li class="step-item" @click="goTo('datetime')">
         <div class="checkbox"></div>
-        <div class="label">Дата и время</div>
+        <div class="label">Дата и время:{{ summary.visitTime }}</div>
         <div class="arrow">›</div>
       </li>
       <li class="step-item" @click="goTo('services')">
         <div class="checkbox"></div>
-        <div class="label">Услуги</div>
+        <div class="label">Услуги:{{ summary.totalPrice }} ₽</div>
         <div class="arrow">›</div>
       </li>
       <li class="step-item back-item" @click="goBack">
