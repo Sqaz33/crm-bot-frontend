@@ -10,25 +10,32 @@
           {{ tab.label }}
         </button>
       </div>
-  
       <div class="staff-list">
         <div
           v-for="staff in staffList"
           :key="staff.id"
           class="staff-card"
-          @click="$emit('select', staff.id)"
+          @click="onSelect(staff.id)"
         >
           <div
             v-if="staff.photo"
             class="avatar"
             :style="{ backgroundImage: `url(${staff.photo})` }"
+            @click.stop="onVisit(staff.id)"
           />
-          <div v-else class="avatar avatar--empty" />
+          <div
+            v-else
+            class="avatar avatar--empty"
+            @click.stop="onVisit(staff.id)"
+          />
           <div class="info">
             <div class="name">{{ staff.name }}</div>
             <div class="spec">{{ staff.specialization }}</div>
           </div>
-          <div class="rating">⭐ {{ staff.rating }}</div>
+          <div
+            class="rating"
+            @click.stop="onReview(staff.id)"
+          >⭐ {{ staff.rating }}</div>
         </div>
       </div>
     </div>
@@ -37,51 +44,37 @@
   <script setup>
   import { ref, onMounted, watch } from 'vue'
   import api from '../api'
-  
-  const emit = defineEmits(['select'])
-  
+  const emit = defineEmits(['select','review','visit'])
   const tabs = ref([{ label: 'Все', value: 'all' }])
   const activeTab = ref('all')
   const staffList = ref([])
   
   async function loadSpecializations() {
-    try {
-      const { data } = await api.get('/salon/specializations')
-      data.forEach(spec => {
-        tabs.value.push({ label: spec, value: spec })
-      })
-    } catch (e) {
-      console.error('Не удалось получить специализации:', e)
-    }
+    const { data } = await api.get('/salon/specializations')
+    data.forEach(spec =>
+      tabs.value.push({ label: spec, value: spec })
+    )
+  }
+  async function loadStaff(spec) {
+    const url = spec && spec !== 'all'
+      ? `/salon/staff_by_specialization/${encodeURIComponent(spec)}`
+      : '/salon/staff'
+    const { data } = await api.get(url)
+    staffList.value = data
   }
   
-  async function loadStaff(specialization = null) {
-    try {
-      let url = '/salon/staff'
-      if (specialization && specialization !== 'all') {
-        url = `/salon/staff_by_specialization/${encodeURIComponent(specialization)}`
-      }
-      const { data } = await api.get(url)
-      staffList.value = data
-    } catch (e) {
-      console.error('Не удалось загрузить сотрудников:', e)
-      staffList.value = []
-    }
-  }
-  
-  function selectTab(value) {
-    activeTab.value = value
-  }
-  
-  watch(activeTab, nv => {
-    loadStaff(nv)
-  })
-  
+  function selectTab(v) { activeTab.value = v }
+  watch(activeTab, v => loadStaff(v))
   onMounted(async () => {
     await loadSpecializations()
     await loadStaff()
   })
+  
+  function onSelect(id) { emit('select', id) }
+  function onReview(id) { emit('review', id) }
+  function onVisit(id)  { emit('visit', id) }
   </script>
+  
   
   <style scoped>
   .staff-view {

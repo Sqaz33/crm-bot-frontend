@@ -72,7 +72,7 @@ const routes = [
       },
 
       {
-        path: 'staff',
+        path: 'choicestaff',
         name: 'choicestaff',
         component: ChoiceStaffView,
         meta: { title:"Сотрудник"}
