@@ -1,20 +1,19 @@
 <template>
   <div class="booking-view">
-
     <ul class="steps-list">
       <li class="step-item" @click="goTo('choicestaff')">
         <div class="checkbox"></div>
-        <div class="label">Сотрудник: {{ summary.staffName }}</div>
+        <div class="label">Сотрудник: {{ summary.staffName || '—' }}</div>
         <div class="arrow">›</div>
       </li>
       <li class="step-item" @click="goTo('datetime')">
         <div class="checkbox"></div>
-        <div class="label">Дата и время:{{ summary.visitTime }}</div>
+        <div class="label">Дата и время: {{ summary.visitTime || '—' }}</div>
         <div class="arrow">›</div>
       </li>
       <li class="step-item" @click="goTo('services')">
         <div class="checkbox"></div>
-        <div class="label">Услуги:{{ summary.totalPrice }} ₽</div>
+        <div class="label">Услуги: {{ summary.totalPrice ? summary.totalPrice + ' ₽' : '—' }}</div>
         <div class="arrow">›</div>
       </li>
       <li class="step-item back-item" @click="goBack">
@@ -28,6 +27,7 @@
     </button>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from 'vue'
