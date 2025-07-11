@@ -43,7 +43,7 @@
     localStorage.setItem(VISIT_KEY, JSON.stringify(visitData))
     document.cookie = `${VISIT_KEY}=${encodeURIComponent(JSON.stringify(visitData))}; path=/; max-age=${365*24*60*60}; Secure; SameSite=None`
     console.log('Visit initialized:', visitData)
-    router.push({ path: '/appointment' })
+    router.push({ path: '/appointmant' })
   }
   </script>
   

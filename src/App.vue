@@ -38,8 +38,8 @@ const VISIT_KEY = 'visit_data'
 function saveVisit(silent = false) {
 
   const visitData = {
-    staff_id:   '',        
-    client_id:  '',        
+    staff_id:   '',
+    services_id:[],        
     visit_time: { start: '' , end:''},
     comment:    ''         
   }
