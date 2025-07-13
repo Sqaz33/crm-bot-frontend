@@ -106,6 +106,7 @@ onMounted(async () => {
   text-align: center;
   font-size: 1.5rem;
   margin-bottom: 1rem;
+  font-family:var(--font-primary) ;
 }
 .company-card {
   display: flex;
@@ -124,6 +125,7 @@ onMounted(async () => {
 .info .name {
   font-size: 1.2rem;
   font-weight: bold;
+  font-family:var(--font-primary) ;
 }
 .info .rating {
   color: #777;
@@ -135,6 +137,7 @@ onMounted(async () => {
 .reviews h2 {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
+  font-family:var(--font-primary) ;
 }
 .review {
   background: #f5f8fd;

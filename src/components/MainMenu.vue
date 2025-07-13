@@ -90,48 +90,59 @@ function navigate(item) {
 
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
   background: var(--color-dark);
   color: white;
-  padding: 0 1rem;
+
+  padding: 0;
+  box-sizing: border-box;
+  width: 100%;
 
 }
 
 .salon-info {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  padding: clamp(0.75rem,4vw,1rem);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-sizing: border-box; 
+  text-align: center;
 }
 
 .salon-name {
-  font-size: 1rem;
+  font-size: clamp(0.75rem, 4vw, 1rem);
   font-weight: bold;
+  font-family:var(--font-primary) ;
 }
 
 .salon-desc {
-  font-size: 0.75rem;
+  font-size: clamp(0.3rem,2vw,0.6rem);
   opacity: 0.7;
   margin-top: 0.25rem;
+  font-family:var(--font-primary) ;
 }
 
 .menu {
   display: flex;
   flex-wrap: nowrap;
-  gap: 3rem;
   padding: 0.5rem 1rem;
+  box-sizing: border-box;
+  width: clamp(25rem, 100%, 30rem);
+  justify-content: space-between;
 }
 
 .menu-item {
   text-align: center;
-  padding: 0.75rem 1rem;
+  padding: clamp(0.5rem, 2vw, 0.75rem);
   cursor: pointer;
   transition: background-color 0.2s;
   display: flex;
   flex-direction: column;
   align-items: center;
-  
+  box-sizing: border-box;
 }
+ 
 
 .menu-item.active {
   background-color:var(--color-secondary);
@@ -148,18 +159,19 @@ function navigate(item) {
   width: 100%;
   height: 100%;       
   margin-bottom: 0.3rem;
+  
 }
 
 .menu-item .icon img {
   object-fit: contain;
 }
 .icon1 {
-  width: 2.4rem;
-  height: 2.4rem;
+  width: clamp(1.9rem, 6vw, 2.4rem);
+  height: clamp(1.9rem, 6vw, 2.4rem);
 }
 
 .icon2{
-  width: 1.6rem;
-  height: 1.6rem;
+  width: clamp(1.6rem, 5vw, 1.6rem);
+  height: clamp(1.6rem, 5vw, 1.6rem);
 }
 </style>
