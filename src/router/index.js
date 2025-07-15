@@ -11,7 +11,7 @@ import WalletView from '../views/WalletView.vue'
 import StaffView from '../views/AboutStaff.vue'
 import MakeAppointmant from '../views/MakeAppointmant.vue'
 import ChoiceStaffView from '../views/ChoiceStaff.vue'
-
+import DateTime from '../views/DateTime.vue'
 
 
 
@@ -83,6 +83,13 @@ const routes = [
         name: 'appointmant',
         component: MakeAppointmant,
         meta: { title:"Записаться"}
+      },
+    
+      {
+        path: 'datetime',
+        name: 'datetime',
+        component: DateTime,
+        meta: { title:"Дата и время"}
       }
     ]
   },
