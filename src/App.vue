@@ -39,8 +39,8 @@ function saveVisit(silent = false) {
 
   const visitData = {
     staff_id:   '',
-    services_id:[],        
-    visit_time: { start: '' , end:''},
+    services_id:'',        
+    visit_time: { start_time: ''},
     comment:    ''         
   }
 
