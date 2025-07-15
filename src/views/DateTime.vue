@@ -178,9 +178,9 @@ export default {
       if(!this.selectedDate||!this.selectedTime) return
       const raw=this.getCookie('visit_data')
       let visitData= raw? JSON.parse(raw) : {
-        staff_id:'', services_id:[], visit_time:{start:'',end:''}, comment:''
+        staff_id:'', services_id:[], visit_time:{start_time:'',end:''}, comment:''
       }
-      visitData.visit_time.start = `${this.selectedDate}T${this.selectedTime}:00`
+      visitData.visit_time.start_time = `${this.selectedDate}T${this.selectedTime}:00`
       const ser=JSON.stringify(visitData)
       this.setCookie('visit_data',ser)
       localStorage.setItem('visit_data',ser)
@@ -193,8 +193,8 @@ export default {
     if(raw){
       try{
         const d=JSON.parse(raw)
-        if(d.visit_time&&d.visit_time.start){
-          const [dt, tm]=d.visit_time.start.split('T')
+        if(d.visit_time&&d.visit_time.start_time){
+          const [dt, tm]=d.visit_time.start_time.split('T')
           this.selectedDate=dt
           if(tm) this.selectedTime=tm.slice(0,5)
         }
