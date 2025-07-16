@@ -62,7 +62,6 @@ const services = ref([])
 const openType = ref(null)
 const selectedServiceId = ref(null)
 
-// Прочитать visit_data из localStorage/cookie
 function loadVisitData() {
   const raw = localStorage.getItem(VISIT_KEY)
   if (raw) {
@@ -71,7 +70,6 @@ function loadVisitData() {
   return { staff_id: null, services_id: [], visit_time: {}, comment: '' }
 }
 
-// Сохранить visit_data
 function saveVisit(data) {
   const str = JSON.stringify(data)
   localStorage.setItem(VISIT_KEY, str)
@@ -81,11 +79,11 @@ function saveVisit(data) {
 const visitData = ref(loadVisitData())
 
 onMounted(async () => {
-  // 1) Получаем все типы услуг
-  const { data: types } = await api.get('/service_types')
+  // 1) Получаем список типов по правильному пути
+  const { data: types } = await api.get('/services/types')
   serviceTypes.value = types
 
-  // 2) Получаем услуги, фильтруем по staff_id если есть
+  // 2) Получаем сам список услуг, фильтруя по staff_id
   const params = {}
   if (visitData.value.staff_id) {
     params.staff_id = visitData.value.staff_id
@@ -96,14 +94,11 @@ onMounted(async () => {
   loading.value = false
 })
 
-// сгруппировать по типам
 const servicesByType = computed(() => {
   const map = {}
-  serviceTypes.value.forEach(t => { map[t] = [] })
+  serviceTypes.value.forEach(t => (map[t] = []))
   services.value.forEach(s => {
-    if (!map[s.service_type]) {
-      map[s.service_type] = []
-    }
+    if (!map[s.service_type]) map[s.service_type] = []
     map[s.service_type].push(s)
   })
   return map
@@ -118,8 +113,8 @@ function toggle(type) {
 }
 
 function confirm() {
-  if (!selectedServiceId.value) return
-  visitData.value.services_id = [ selectedServiceId.value ]
+  if (!selectedService.value) return
+  visitData.value.services_id = [ selectedService.value.id ]
   saveVisit(visitData.value)
   router.push({ name: 'appointment' })
 }
