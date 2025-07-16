@@ -40,9 +40,9 @@
         </div>
       </div>
 
-      <!-- Слоты свободного времени -->
+      <!-- Свободные слоты -->
       <div class="time-section" v-if="selectedDate">
-        <h3 class="time-title">Выберите время начала</h3>
+        <h3 class="time-title">Выберите время </h3>
         <div class="time-buttons">
           <button
             v-for="time in timesForSelectedDay"
@@ -81,7 +81,7 @@ const menuItems = [
 const currentDate   = ref(new Date())
 const selectedDate  = ref(null)
 const selectedTime  = ref(null)
-const freeSlots     = ref([])   // массив ISO-строк вида "2025-07-13T11:00:00"
+const freeSlots     = ref([])
 
 const weekdayNames = ['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС']
 
@@ -97,15 +97,16 @@ const calendarDays = computed(() => {
   const month = currentDate.value.getMonth()
   const today = new Date(); today.setHours(0,0,0,0)
 
-  // 1-й день и сдвиг недели
+  // рассчитываем смещение первого дня
   const first = new Date(year, month, 1)
   let wd = first.getDay(); wd = wd===0?6:wd-1
 
   const days = []
-  const prevDaysCount = new Date(year, month, 0).getDate()
+  const prevCount = new Date(year, month, 0).getDate()
+
   // предыдущий месяц
   for(let i=wd; i>0; i--){
-    const d = prevDaysCount - i +1
+    const d = prevCount - i +1
     const dt = new Date(year, month-1, d); dt.setHours(0,0,0,0)
     days.push({
       dayNumber: d,
@@ -115,7 +116,7 @@ const calendarDays = computed(() => {
       isPast: dt < today
     })
   }
-  // текущий месяц
+  // текущий
   const dim = new Date(year, month+1, 0).getDate()
   for(let i=1;i<=dim;i++){
     const dt = new Date(year, month, i); dt.setHours(0,0,0,0)
@@ -127,10 +128,10 @@ const calendarDays = computed(() => {
       isPast: dt < today
     })
   }
-  // дополняем сетку до полного ряда
+  // следующий
   const total = Math.ceil(days.length/7)*7
-  const nextCount = total - days.length
-  for(let i=1;i<=nextCount;i++){
+  const next = total - days.length
+  for(let i=1;i<=next;i++){
     const dt = new Date(year, month+1, i); dt.setHours(0,0,0,0)
     days.push({
       dayNumber: i,
@@ -149,7 +150,7 @@ function formatDate(d){
   return `${y}-${m}-${D}`
 }
 
-// перелистывание месяцев
+// переключение месяцев
 function prevMonth(){
   currentDate.value = new Date(
     currentDate.value.getFullYear(),
@@ -163,7 +164,7 @@ function nextMonth(){
   )
 }
 
-// выбор даты
+// выбираем дату и сразу подгружаем слоты
 async function selectDate(day){
   if(!day.isCurrentMonth || day.isPast) return
   selectedDate.value = day.date
@@ -171,7 +172,7 @@ async function selectDate(day){
   await loadFreeSlots()
 }
 
-// запрашиваем свободные слоты без даты в параметрах
+// запрашиваем free_time только с staff_id
 async function loadFreeSlots(){
   const raw = localStorage.getItem(VISIT_KEY)
   let staff_id = null
@@ -183,19 +184,20 @@ async function loadFreeSlots(){
 
   try {
     const { data } = await api.get('/salon/free_time', { params })
-    freeSlots.value = data.map(item => item.start)
+    // data = [ { start: "...", end:"..." }, … ]
+    freeSlots.value = data.map(x => x.start)
   } catch(e) {
     console.error('Не удалось загрузить слоты:', e)
     freeSlots.value = []
   }
 }
 
-// отфильтровать слоты на выбранный день и форматировать
+// отфильтровать слоты по выбранному дню и вернуть HH:mm
 const timesForSelectedDay = computed(() => {
   if(!selectedDate.value) return []
   return freeSlots.value
     .filter(s => s.startsWith(selectedDate.value+'T'))
-    .map(s => s.slice(11,16))  // HH:mm
+    .map(s => s.slice(11,16))
 })
 
 // выбор времени
@@ -203,24 +205,27 @@ function selectTime(t){
   selectedTime.value = t
 }
 
-// бронь
+// сохранить бронь
 function bookTime(){
+  if(!selectedTime.value) return
+
   const raw = localStorage.getItem(VISIT_KEY)
   const visit = raw
     ? JSON.parse(raw)
-    : { staff_id:'', services_id:[], visit_time:{start_time:'',end:''}, comment:'' }
+    : { staff_id:'',services_id:[],visit_time:{start_time:'',end:''},comment:'' }
 
   visit.visit_time.start_time = `${selectedDate.value}T${selectedTime.value}:00`
   const ser = JSON.stringify(visit)
   localStorage.setItem(VISIT_KEY, ser)
   document.cookie = `visit_data=${encodeURIComponent(ser)};path=/;SameSite=Lax;`
 
-  // возврат на страницу записи
-  this.$router.push({ name:'appointment' })
+  // переход на страницу оформления
+  // имя маршрута 'appointment' замените на своё
+  router.push({ name:'appointment' })
 }
 
-// при загрузке восстановим, если уже есть в localStorage
 onMounted(async () => {
+  // если уже есть start_time в visit_data, восстановим
   const raw = localStorage.getItem(VISIT_KEY)
   if(raw){
     try {
@@ -228,17 +233,18 @@ onMounted(async () => {
       const st = v.visit_time?.start_time
       if(st){
         const [d,t] = st.split('T')
-        selectedDate.value = d
-        selectedTime.value = t.slice(0,5)
-        currentDate.value = new Date(d)
+        selectedDate.value  = d
+        selectedTime.value  = t.slice(0,5)
+        currentDate.value   = new Date(d)
         await loadFreeSlots()
       }
-    } catch {}
+    } catch{}
   }
 })
 </script>
 
 <style scoped>
+/* стили оставляем без изменений */
 .booking-page { display:flex; min-height:100vh; background:#f5f7fa }
 .booking-container {
   flex:1; max-width:480px; margin:32px auto; padding:32px;
