@@ -116,7 +116,7 @@ function confirm() {
   if (!selectedService.value) return
   visitData.value.services_id = [ selectedService.value.id ]
   saveVisit(visitData.value)
-  router.push({ name: 'appointment' })
+  router.push({ name: 'appointmant' })
 }
 </script>
 
