@@ -3,7 +3,6 @@
     <SidebarMenu :items="menuItems" />
 
     <div class="booking-container">
-      <!-- Month nav -->
       <div class="month-navigation">
         <button class="nav-button" @click="prevMonth">&lt;</button>
         <div class="month-header">
@@ -13,12 +12,13 @@
         <button class="nav-button" @click="nextMonth">&gt;</button>
       </div>
 
-      <!-- Calendar grid -->
       <div class="calendar-section">
         <div class="weekdays">
-          <div v-for="day in weekdayNames" :key="day" class="weekday">
-            {{ day }}
-          </div>
+          <div
+            v-for="day in weekdayNames"
+            :key="day"
+            class="weekday"
+          >{{ day }}</div>
         </div>
         <div class="days-grid">
           <div
@@ -38,7 +38,6 @@
         </div>
       </div>
 
-      <!-- Time slots -->
       <div class="time-section" v-if="selectedDate">
         <h3 class="time-title">Выберите время</h3>
         <div class="time-buttons">
@@ -69,16 +68,17 @@ import SidebarMenu from '../components/Sidebar.vue'
 import api from '../api'
 
 const VISIT_KEY = 'visit_data'
+const menuItems = [
+  { label: 'Сотрудник',   path: '/choicestaff' },
+  { label: 'Дата и время', path: '/datetime'   },
+  { label: 'Услуги',       path: '/services'   }
+]
 
 export default {
   components: { SidebarMenu },
   data() {
     return {
-      menuItems: [
-        { label: 'Сотрудник',   path: '/choicestaff' },
-        { label: 'Дата и время', path: '/datetime'   },
-        { label: 'Услуги',       path: '/services'   },
-      ],
+      menuItems,
       currentDate: new Date(),
       selectedDate: null,
       selectedTime: null,
@@ -88,7 +88,7 @@ export default {
   },
   computed: {
     currentMonthName() {
-      return this.currentDate.toLocaleString('ru-RU', { month:'long' })
+      return this.currentDate.toLocaleString('ru-RU',{ month:'long' })
     },
     currentYear() {
       return this.currentDate.getFullYear()
@@ -96,22 +96,20 @@ export default {
     calendarDays() {
       const year = this.currentDate.getFullYear()
       const month = this.currentDate.getMonth()
-      const today = new Date()
-      today.setHours(0,0,0,0)
+      const today = new Date(); today.setHours(0,0,0,0)
 
-      // compute first weekday
-      const firstOfMonth = new Date(year, month, 1)
-      let startWeekday = firstOfMonth.getDay()
-      startWeekday = startWeekday === 0 ? 6 : startWeekday - 1
+      // first weekday of month
+      const firstDay = new Date(year, month, 1)
+      let w = firstDay.getDay()
+      w = w === 0 ? 6 : w - 1
 
       const days = []
-      const prevMonthCount = new Date(year, month, 0).getDate()
+      const prevCount = new Date(year, month, 0).getDate()
 
-      // days from previous month
-      for (let i = startWeekday; i > 0; i--) {
-        const d = prevMonthCount - i + 1
-        const dt = new Date(year, month - 1, d)
-        dt.setHours(0,0,0,0)
+      // previous month days
+      for (let i = w; i > 0; i--) {
+        const d = prevCount - i + 1
+        const dt = new Date(year, month - 1, d); dt.setHours(0,0,0,0)
         days.push({
           dayNumber: d,
           date: this.formatDate(dt),
@@ -121,11 +119,10 @@ export default {
         })
       }
 
-      // days in current month
-      const thisMonthCount = new Date(year, month + 1, 0).getDate()
-      for (let i = 1; i <= thisMonthCount; i++) {
-        const dt = new Date(year, month, i)
-        dt.setHours(0,0,0,0)
+      // current month
+      const thisCount = new Date(year, month + 1, 0).getDate()
+      for (let i = 1; i <= thisCount; i++) {
+        const dt = new Date(year, month, i); dt.setHours(0,0,0,0)
         days.push({
           dayNumber: i,
           date: this.formatDate(dt),
@@ -135,12 +132,11 @@ export default {
         })
       }
 
-      // fill last week
-      const totalCells = Math.ceil(days.length / 7) * 7
-      const nextCount = totalCells - days.length
+      // fill to full weeks
+      const total = Math.ceil(days.length / 7) * 7
+      const nextCount = total - days.length
       for (let i = 1; i <= nextCount; i++) {
-        const dt = new Date(year, month + 1, i)
-        dt.setHours(0,0,0,0)
+        const dt = new Date(year, month + 1, i); dt.setHours(0,0,0,0)
         days.push({
           dayNumber: i,
           date: this.formatDate(dt),
@@ -157,8 +153,8 @@ export default {
     formatDate(d) {
       const y = d.getFullYear(),
             m = String(d.getMonth()+1).padStart(2,'0'),
-            day = String(d.getDate()).padStart(2,'0')
-      return `${y}-${m}-${day}`
+            dd = String(d.getDate()).padStart(2,'0')
+      return `${y}-${m}-${dd}`
     },
     formatTime(iso) {
       return iso.slice(11,16)
@@ -166,14 +162,14 @@ export default {
     prevMonth() {
       this.currentDate = new Date(
         this.currentDate.getFullYear(),
-        this.currentDate.getMonth() - 1,
+        this.currentDate.getMonth()-1,
         1
       )
     },
     nextMonth() {
       this.currentDate = new Date(
         this.currentDate.getFullYear(),
-        this.currentDate.getMonth() + 1,
+        this.currentDate.getMonth()+1,
         1
       )
     },
@@ -183,22 +179,20 @@ export default {
       this.loadFreeSlots()
     },
     async loadFreeSlots() {
-      // read staff_id from visit_data
       let staff_id = null
       const raw = localStorage.getItem(VISIT_KEY)
       if (raw) {
-        try { staff_id = JSON.parse(raw).staff_id }
-        catch {}
+        try { staff_id = JSON.parse(raw).staff_id } catch {}
       }
 
-      // call free_time with date + optional staff_id
       const params = { date: this.selectedDate }
       if (staff_id) params.staff_id = staff_id
 
       try {
         const { data } = await api.get('/salon/free_time', { params })
-        // keep only 'start'
+        // keep only the "start" value
         this.freeSlots = data.map(slot => slot.start)
+        console.log('Loaded freeSlots:', this.freeSlots)  // ← debug
       } catch (err) {
         console.error('Не удалось загрузить слоты:', err)
         this.freeSlots = []
@@ -219,7 +213,6 @@ export default {
       localStorage.setItem(VISIT_KEY, JSON.stringify(visit))
       document.cookie = `visit_data=${encodeURIComponent(JSON.stringify(visit))}; path=/; SameSite=Lax;`
 
-      // navigate back to appointment step
       this.$router.push({ path: '/appointmant' })
     }
   }
