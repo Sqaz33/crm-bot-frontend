@@ -12,7 +12,7 @@ import StaffView from '../views/AboutStaff.vue'
 import MakeAppointmant from '../views/MakeAppointmant.vue'
 import ChoiceStaffView from '../views/ChoiceStaff.vue'
 import DateTime from '../views/DateTime.vue'
-
+import ServicesView from '../views/ServicesView.vue'
 
 
 const routes = [
@@ -90,6 +90,13 @@ const routes = [
         name: 'datetime',
         component: DateTime,
         meta: { title:"Дата и время"}
+      },
+    
+      {
+        path: 'services',
+        name: 'services',
+        component: ServicesView,
+        meta: { title:"Услуги"}
       }
     ]
   },
