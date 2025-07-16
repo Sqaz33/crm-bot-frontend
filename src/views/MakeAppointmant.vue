@@ -3,12 +3,12 @@
     <ul class="steps-list">
       <li class="step-item" @click="goTo('choicestaff')">
         <div class="checkbox"></div>
-        <div class="label">Сотрудник: {{ summary.staffName || '—' }}</div>
+        <div class="label">Сотрудник: {{ summary.staffName }}</div>
         <div class="arrow">›</div>
       </li>
       <li class="step-item" @click="goTo('datetime')">
         <div class="checkbox"></div>
-        <div class="label">Дата и время: {{ summary.visitTime || '—' }}</div>
+        <div class="label">Дата и время: {{ summary.visitTime}}</div>
         <div class="arrow">›</div>
       </li>
       <li class="step-item" @click="goTo('services')">
@@ -54,9 +54,9 @@ async function loadSummary() {
   const data = JSON.parse(raw)
   const { staff_id, services_id = [], visit_time = {} } = data
 
-  // Формат даты
-  const visitTime = visit_time.start
-    ? new Date(visit_time.start).toLocaleString()
+  // Правильно читаем дату
+  const visitTime = visit_time.start_time
+    ? new Date(visit_time.start_time).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
     : null
 
   // Имя сотрудника
@@ -91,6 +91,7 @@ async function loadSummary() {
 
   summary.value = { staffName, visitTime, totalPrice }
 }
+
 
 function goTo(stepName) {
   router.push({ name: stepName })
