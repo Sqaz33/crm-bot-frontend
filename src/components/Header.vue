@@ -65,7 +65,7 @@ function goBack() {
 }
 
 .page-title {
-  font-size: 1.2rem;
+  font-size: clamp(1rem,3vw,1.2rem);
   font-weight: bold;
   margin: 0;
   font-family: var(--font-primary);
@@ -76,13 +76,13 @@ function goBack() {
   left: 1rem;
   font-weight: bold;
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem,3vw,0.95rem);
   font-family: var(--font-primary);
   color: #787B80;
   gap: 0.5rem;
 }
 .arrow-back {
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem,3vw,0.95rem);
 }
 @media (max-width: 992px) {
   .back-button{
