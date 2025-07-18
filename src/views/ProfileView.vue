@@ -112,6 +112,7 @@ function saveProfile() {
   display: flex;
   min-height: 100vh;
   background-color: #f6f9fc;
+  font-family:var(--font-primary) ;
 }
 
 /* Sidebar */
@@ -127,14 +128,15 @@ function saveProfile() {
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 2rem;
+  align-items: flex-start;
+  padding:clamp(0.5rem, 3vw, 2rem);
+  
 }
 
 /* Форма */
 .profile-form {
   width: 100%;
-  max-width: 500px;
+  max-width: 800px;
   background-color: #ffffff;
   padding: 2rem;
   border-radius: 8px;
@@ -153,14 +155,16 @@ function saveProfile() {
 .field input {
   padding: 0.75rem;
   border: none;
-  background-color: #e1e3e8;
+  background-color: #ecedf1;
   border-radius: 6px;
   font-size: 1rem;
+  font-family:var(--font-primary) ;
 }
 
 /* Кнопка */
 .btn-save {
-  margin-top: 1rem;
+  display: block;
+  margin: 1rem auto 0; 
   width: 100%;
   padding: 0.75rem;
   background-color: #1877f2;
@@ -169,10 +173,17 @@ function saveProfile() {
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
+  font-family:var(--font-primary) ;
+  font-size: 1rem;
+  max-width: 400px;
 }
 .btn-save:hover {
   background-color: #155ecb;
 }
-
+@media (max-width: 992px) {
+  .sidebar {
+    display: none; 
+  }
+}
 </style>
  
