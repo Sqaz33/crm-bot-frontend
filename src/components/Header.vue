@@ -5,9 +5,13 @@
   <!-- Иначе — обычный хедер -->
   <template v-else>
     <div class="topbar">
+      
       <div class="bot-name" @click="goHome">{{ siteInfo.bot_name }}</div>
     </div>
     <header class="header">
+      <div class="back-button" @click="goBack">
+      <span class="arrow-back">‹</span> Назад
+    </div>
       <h1 class="page-title">{{ title }}</h1>
       <slot name="actions" />
     </header>
@@ -34,6 +38,9 @@ const botName = import.meta.env.VITE_APP_NAME || 'БЬЮТИ-БОТ'
 function goHome() {
   router.push({ name: 'home' })
 }
+function goBack() {
+  router.back()
+}
 </script>
 
 <style scoped>
@@ -51,7 +58,7 @@ function goHome() {
 }
 
 .header {
-  background-color: #faf5f6;
+  background-color: #EDF2FA;
   text-align: center;
   padding: 1rem;
   border-bottom: 1px solid #ccc;
@@ -62,5 +69,24 @@ function goHome() {
   font-weight: bold;
   margin: 0;
   font-family: var(--font-primary);
+}
+.back-button {
+  display: none;
+  position: absolute;
+  left: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-family: var(--font-primary);
+  color: #787B80;
+  gap: 0.5rem;
+}
+.arrow-back {
+  font-size: 0.95rem;
+}
+@media (max-width: 992px) {
+  .back-button{
+    display: flex; 
+  }
 }
 </style>
