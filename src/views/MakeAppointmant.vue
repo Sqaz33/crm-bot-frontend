@@ -27,11 +27,10 @@
         <div class="label">Назад</div>
       </li>
     </ul>
-
-    <button class="btn-submit" @click="submitBooking">
-      Оформить запись
-    </button>
   </div>
+  <button class="btn-submit" @click="submitBooking">
+      Оформить запись
+  </button>
 </template>
 
 <script setup>
@@ -110,8 +109,8 @@ onMounted(loadSummary)
 
 <style scoped>
 .booking-view {
-  max-width: 400px;
-  margin: 2rem auto;
+  max-width:  clamp(300px, 90%, 1140px);
+  margin: clamp(0.5rem, 2vw, 2rem) auto;
   background: #fff;
   border-radius: 8px;
   overflow: hidden;
@@ -127,7 +126,7 @@ onMounted(loadSummary)
 .step-item {
   display: flex;
   align-items: center;
-  padding: 1rem;
+  padding: clamp(0.3rem, 2vw, 1rem);
   border-bottom: 1px solid #ececec;
   cursor: pointer;
 }
@@ -137,42 +136,50 @@ onMounted(loadSummary)
 }
 
 .checkbox {
-  width: 20px;
-  height: 20px;
-  background: #ececec;
+  width: clamp(20px, 10vw, 40px);
+  height: clamp(20px, 10vw, 40px);
+  background: #dadada;
   border-radius: 4px;
   flex-shrink: 0;
 }
 
 .label {
-  margin: 0 1rem;
+  margin: 0 clamp(0.5rem, 2vw, 1rem);
   flex: 1;
-  font-size: 0.95rem;
+  font-size: clamp(0.7rem, 4vw, 1.3rem);
 }
 
 .arrow, .arrow-back {
+  display: flex;
   color: #999;
-  font-size: 1.2rem;
+  font-size: clamp(1.2rem, 5vw, 1.8rem);
+
+  width: clamp(30px, 10vw, 40px);
+  height: clamp(30px, 10vw, 40px);
+
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.back-item .checkbox {
+.back-item .checkbox { 
   display: none;
 }
 
 .back-item .arrow-back {
-  display: block;
+  display: flex;
 }
 
 .btn-submit {
   display: block;
-  width: calc(100% - 2rem);
-  margin: 1.5rem auto;
-  padding: 0.75rem;
-  background: #007bff;
+  width:  clamp(150px, 80%, 380px);
+  margin: clamp(1rem, 3vw, 1.5rem) auto;
+  padding: clamp(0.5rem, 2vw, 0.75rem);
+  background: #2F80EC;
   color: #fff;
   border: none;
   border-radius: 6px;
-  font-size: 1rem;
+  font-size: clamp(0.7rem, 3vw, 1.2rem);
   cursor: pointer;
 }
 
