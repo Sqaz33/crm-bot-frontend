@@ -20,7 +20,8 @@
 body {
   font-family: var(--font-primary);
   background-color: var(--color-light);
-  alighn-items: center;
+  align-items: center;
+  display: flex;
 }
 
 
