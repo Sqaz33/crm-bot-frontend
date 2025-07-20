@@ -74,7 +74,6 @@ onMounted(loadStaff)
 
 <style scoped>
 
-}
 
 .filter-title {
   margin: 1.5rem;
