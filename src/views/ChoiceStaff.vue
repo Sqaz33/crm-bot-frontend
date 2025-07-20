@@ -87,7 +87,7 @@ onMounted(loadStaff)
 }
 
 .filter-title {
-  margin: 1rem;
+  margin: 1.5rem;
 }
 
 .staff-list {
@@ -103,8 +103,7 @@ onMounted(loadStaff)
   padding: 1rem;
   border-radius: 8px;
   max-width: 1140px; 
-  margin: 1.5rem;
-  padding: 0.5rem;
+  margin: 0rem 1.5rem;
 }
 .avatar {
   width: 40px; height: 40px;
