@@ -104,7 +104,7 @@ onMounted(loadStaff)
   padding: 1rem;
   border-radius: 8px;
   width: 80%;
-  margin: 0rem 1.5rem;
+  margin: 0rem auto;
 }
 .avatar {
   width: 40px; height: 40px;
