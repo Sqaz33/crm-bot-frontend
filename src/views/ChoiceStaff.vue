@@ -83,7 +83,7 @@ onMounted(loadStaff)
   padding: 0.5rem;
   background: white;
   border-radius: 8px;
-  width: clamp(360px, 50vw + 180px, 1140px);
+  width: 80%;
 }
 
 .filter-title {
@@ -103,7 +103,7 @@ onMounted(loadStaff)
   background: #fff;
   padding: 1rem;
   border-radius: 8px;
-  width: clamp(360px, 50vw + 180px, 1140px);
+  width: 80%;
   margin: 0rem 1.5rem;
 }
 .avatar {
@@ -133,7 +133,7 @@ onMounted(loadStaff)
   }
   
   .staff-card {
-    width: calc(100% - 2rem);
+    width: 90%;
     margin: 0.5rem 1rem;
   }
 }
