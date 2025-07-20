@@ -83,7 +83,7 @@ onMounted(loadStaff)
   padding: 0.5rem;
   background: white;
   border-radius: 8px;
-  max-width: 1140px;
+  width: 1140px;
 }
 
 .filter-title {
@@ -102,7 +102,7 @@ onMounted(loadStaff)
   background: #fff;
   padding: 1rem;
   border-radius: 8px;
-  max-width: 1140px; 
+  width: 1140px; 
   margin: 0rem 1.5rem;
 }
 .avatar {
@@ -122,5 +122,17 @@ onMounted(loadStaff)
 .rating {
   cursor: pointer;
   user-select: none;
+}
+
+@media (max-width: 1139px) {
+  .header-of-staff-list {
+    width: 100vh;
+	margin: 0;
+  }
+  
+  .staff-card {
+  max-width: 1140px;
+  width: clamp(360px, 50vw + 180px, 1140px);
+  margin: 0rem 1rem;
 }
 </style>
