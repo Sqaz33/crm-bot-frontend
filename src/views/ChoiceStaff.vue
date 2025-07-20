@@ -134,7 +134,6 @@ onMounted(loadStaff)
   
   .staff-card {
     width: 80%;
-    margin: 0.5rem 1rem;
   }
   
   .staff-list {
