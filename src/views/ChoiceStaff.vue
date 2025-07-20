@@ -1,9 +1,5 @@
 <template>
-  <div class="header-of-staff-list">
-    <div class="filter-title">Все</div>
-	<div class="filter-title">Должность</div>
-    <div class="filter-title">Топ-сотрудник</div>
-  </div>
+  <StaffFilter :items="filterItems" />
   <div class="staff-list">
     <div
       v-for="staff in staffList"
@@ -32,6 +28,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import StaffFilter from '../components/StaffFilter.vue'
 import api from '../api'
 
 const router = useRouter()
@@ -76,14 +73,7 @@ onMounted(loadStaff)
 </script>
 
 <style scoped>
-.header-of-staff-list {
-  display: flex;
-  flex-direction: row;
-  margin: 1.5rem auto;
-  padding: 0.5rem;
-  background: white;
-  border-radius: 8px;
-  width: 80%;
+
 }
 
 .filter-title {
@@ -126,11 +116,6 @@ onMounted(loadStaff)
 }
 
 @media (max-width: 768px) {
-  .header-of-staff-list {
-    width: 100%;
-	margin-top: 0;
-	border-radius: 0;
-  }
   
   .staff-card {
     margin: 0.5rem auto;
