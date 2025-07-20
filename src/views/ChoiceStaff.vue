@@ -134,5 +134,6 @@ onMounted(loadStaff)
   max-width: 1140px;
   width: clamp(360px, 50vw + 180px, 1140px);
   margin: 0rem 1rem;
+  }
 }
 </style>
