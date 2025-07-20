@@ -78,7 +78,7 @@ onMounted(loadStaff)
 <style scoped>
 .header-of-staff-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   margin-bottom: 1.5rem;
   padding: 0.5rem;
   background: white;
