@@ -83,7 +83,7 @@ onMounted(loadStaff)
   padding: 0.5rem;
   background: white;
   border-radius: 8px;
-  width: 90%;
+  width: clamp(360px, 50vw + 180px, 1140px);
 }
 
 .filter-title {
@@ -103,7 +103,7 @@ onMounted(loadStaff)
   background: #fff;
   padding: 1rem;
   border-radius: 8px;
-  width: 1140px; 
+  width: clamp(360px, 50vw + 180px, 1140px);
   margin: 0rem 1.5rem;
 }
 .avatar {
