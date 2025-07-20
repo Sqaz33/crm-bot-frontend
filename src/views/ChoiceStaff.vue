@@ -1,4 +1,9 @@
 <template>
+  <div class="header-of-staff-list">
+    <div class="filter-title">Все</div>
+	<div class="filter-title">Должность</div>
+    <div class="filter-title">Топ-сотрудник</div>
+  </div>
   <div class="staff-list">
     <div
       v-for="staff in staffList"
@@ -71,6 +76,21 @@ onMounted(loadStaff)
 </script>
 
 <style scoped>
+.header-of-staff-list {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 8px;
+  max-width: 1140px;
+}
+
+.filter-title {
+  font-weight: bold;
+  margin: 0.5rem;
+}
+
 .staff-list {
   display: flex;
   flex-direction: column;
