@@ -79,7 +79,7 @@ onMounted(loadStaff)
 .header-of-staff-list {
   display: flex;
   flex-direction: row;
-  margin-bottom: 1.5rem;
+  margin: 1.5rem;
   padding: 0.5rem;
   background: white;
   border-radius: 8px;
