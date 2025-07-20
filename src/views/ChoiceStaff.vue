@@ -94,6 +94,7 @@ onMounted(loadStaff)
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  align-items: center;
 }
 
 .staff-card {
@@ -127,7 +128,8 @@ onMounted(loadStaff)
 @media (max-width: 1139px) {
   .header-of-staff-list {
     width: 100vh;
-	margin: 0;
+	margin-top: 0;
+	border-raduis: 0px;
   }
   
   .staff-card {
