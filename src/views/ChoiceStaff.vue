@@ -79,11 +79,11 @@ onMounted(loadStaff)
 .header-of-staff-list {
   display: flex;
   flex-direction: row;
-  margin: 1.5rem;
+  margin: 1.5rem auto;
   padding: 0.5rem;
   background: white;
   border-radius: 8px;
-  width: 1140px;
+  width: 90%;
 }
 
 .filter-title {
