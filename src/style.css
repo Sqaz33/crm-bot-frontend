@@ -17,6 +17,10 @@
   background: var(--color-dark);
 }
 
+body {
+  font-family: var(--font-primary);
+}
+
 
 
 .base {
