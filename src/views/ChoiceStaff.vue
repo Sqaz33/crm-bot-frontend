@@ -129,11 +129,11 @@ onMounted(loadStaff)
   .header-of-staff-list {
     width: 100%;
 	margin-top: 0;
-	border-raduis: 0;
+	border-radius: 0;
   }
   
   .staff-card {
-    width: 90%;
+    width: 80%;
     margin: 0.5rem 1rem;
   }
   
