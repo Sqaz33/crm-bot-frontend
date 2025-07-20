@@ -127,14 +127,14 @@ onMounted(loadStaff)
 
 @media (max-width: 768px) {
   .header-of-staff-list {
-    width: 100vh;
+    width: 100%;
 	margin-top: 0;
 	border-raduis: 0px;
   }
   
   .staff-card {
-    max-width: 700px;
-    margin: 1rem 0rem;
+    width: calc(100% - 2rem);
+    margin: 0.5rem 1rem;
   }
 }
 </style>
