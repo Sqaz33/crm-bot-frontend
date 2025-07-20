@@ -133,8 +133,8 @@ onMounted(loadStaff)
   }
   
   .staff-card {
-    max-width: 1140px;
-    margin: 0rem 1rem;
+    max-width: 700px;
+    margin: 1rem 0rem;
   }
 }
 </style>
