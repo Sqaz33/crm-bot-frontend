@@ -125,7 +125,7 @@ onMounted(loadStaff)
   user-select: none;
 }
 
-@media (max-width: 1139px) {
+@media (max-width: 768px) {
   .header-of-staff-list {
     width: 100vh;
 	margin-top: 0;
@@ -133,9 +133,8 @@ onMounted(loadStaff)
   }
   
   .staff-card {
-  max-width: 1140px;
-  width: clamp(360px, 50vw + 180px, 1140px);
-  margin: 0rem 1rem;
+    max-width: 1140px;
+    margin: 0rem 1rem;
   }
 }
 </style>
