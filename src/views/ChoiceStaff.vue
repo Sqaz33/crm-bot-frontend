@@ -87,8 +87,7 @@ onMounted(loadStaff)
 }
 
 .filter-title {
-  font-weight: bold;
-  margin: 0.5rem;
+  margin: 1rem;
 }
 
 .staff-list {
@@ -96,12 +95,16 @@ onMounted(loadStaff)
   flex-direction: column;
   gap: 1rem;
 }
+
 .staff-card {
   display: flex;
   align-items: center;
   background: #fff;
   padding: 1rem;
   border-radius: 8px;
+  max-width: 1140px; 
+  margin: 1.5rem;
+  padding: 0.5rem;
 }
 .avatar {
   width: 40px; height: 40px;
