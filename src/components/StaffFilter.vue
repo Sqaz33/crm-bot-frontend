@@ -11,6 +11,9 @@
       </button>
     </div>
     <div class="staff-list">
+      <div v-if="staffList.length === 0" style="text-align:center; color: #888;">
+        Нет сотрудников
+      </div>
       <div
         v-for="staff in staffList"
         :key="staff.id"
@@ -30,7 +33,12 @@
         />
         <div class="info">
           <div class="name">{{ staff.name }}</div>
-          <div class="spec">{{ staff.specialization }}</div>
+          <div class="spec">
+            <span
+              v-for="(spec, i) in staff.specializations"
+              :key="i"
+            >{{ spec }}<span v-if="i < staff.specializations.length - 1">, </span></span>
+          </div>
         </div>
         <div
           class="rating"
@@ -46,7 +54,7 @@ import { ref, onMounted, watch } from 'vue'
 import api from '../api'
 const emit = defineEmits(['select', 'review', 'visit'])
 
-const salon_id = 1  // <-- если всегда один, подставь актуальный id!
+const salon_id = 1 // <-- подставь нужный id, если всегда один
 
 const tabs = ref([{ label: 'Все', value: 'all' }])
 const activeTab = ref('all')
@@ -54,12 +62,12 @@ const staffList = ref([])
 
 async function loadSpecializations() {
   const { data } = await api.get('/salon/specializations')
+  // data = [{id: 1, name: 'Парикмахер'}, ...]
   data.forEach(spec =>
     tabs.value.push({ label: spec.name, value: spec.id })
   )
 }
 
-// ФИЛЬТРУЕМ через specialization_id (query param)
 async function loadStaff(specId) {
   let url = `/salons/${salon_id}/staff`
   if (specId && specId !== 'all') {
@@ -80,16 +88,12 @@ function onSelect(id) { emit('select', id) }
 function onReview(id) { emit('review', id) }
 function onVisit(id)  { emit('visit', id) }
 </script>
-п
-
-
 
 <style scoped>
 .staff-view {
   max-width: 600px;
   margin: 0 auto;
 }
-
 .tabs {
   display: flex;
   background: #fff;
@@ -97,7 +101,6 @@ function onVisit(id)  { emit('visit', id) }
   overflow-x: auto;
   margin-bottom: 1rem;
 }
-
 .tab {
   padding: 0.75rem 1.5rem;
   cursor: pointer;
@@ -106,18 +109,15 @@ function onVisit(id)  { emit('visit', id) }
   white-space: nowrap;
   transition: background 0.2s;
 }
-
 .tab.active {
   border-bottom: 3px solid #007bff;
   font-weight: bold;
 }
-
 .staff-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
-
 .staff-card {
   display: flex;
   align-items: center;
@@ -128,11 +128,9 @@ function onVisit(id)  { emit('visit', id) }
   cursor: pointer;
   transition: transform 0.1s;
 }
-
 .staff-card:hover {
   transform: translateY(-2px);
 }
-
 .avatar {
   width: 40px;
   height: 40px;
@@ -140,27 +138,22 @@ function onVisit(id)  { emit('visit', id) }
   background-position: center;
   border-radius: 50%;
 }
-
 .avatar--empty {
   width: 40px;
   height: 40px;
   background-color: #ccc;
   border-radius: 50%;
 }
-
 .info {
   margin-left: 1rem;
 }
-
 .name {
   font-weight: bold;
 }
-
 .spec {
   font-size: 0.85rem;
   color: #555;
 }
-
 .rating {
   margin-left: auto;
   background: #e0e0e0;
