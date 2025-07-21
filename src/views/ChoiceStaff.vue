@@ -1,31 +1,31 @@
 <template> 
   <div class="layout">
-  <SidebarMenu :items="menuItems" />
-  <main class="main-content">
-  <div class="staff-list">
-    <div
-      v-for="staff in staffList"
-      :key="staff.id"
-      class="staff-card"
-    >
-      <div
-        class="avatar"
-        :class="{ 'avatar--empty': !staff.photo }"
-        :style="staff.photo ? { backgroundImage: `url(${staff.photo})` } : {}"
-        @click="startVisit(staff)"
-      />
+    <SidebarMenu :items="menuItems" />
+    <main class="main-content">
+      <div class="staff-list">
+        <div
+          v-for="staff in staffList"
+          :key="staff.id"
+          class="staff-card"
+        >
+          <div
+            class="avatar"
+            :class="{ 'avatar--empty': !staff.photo }"
+            :style="staff.photo ? { backgroundImage: `url(${staff.photo})` } : {}"
+            @click="startVisit(staff)"
+          />
       
-      <div class="info">
-        <div class="name">{{ staff.name }}</div>
-        <div class="spec">{{ staff.specialization }}</div>
-      </div>
+          <div class="info">
+            <div class="name">{{ staff.name }}</div>
+            <div class="spec">{{ staff.specialization }}</div>
+          </div>
       
-      <div class="rating" @click.stop="viewStaff(staff.id)">
-        ⭐ {{ staff.rating }}
+          <div class="rating" @click.stop="viewStaff(staff.id)">
+            ⭐ {{ staff.rating }}
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-  </main>
+    </main>
   </div>
 </template>
 
