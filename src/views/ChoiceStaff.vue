@@ -1,4 +1,5 @@
 <template> 
+  <SidebarMenu :items="menuItems" />
   <div class="staff-list">
     <div
       v-for="staff in staffList"
@@ -28,11 +29,17 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api'
+import SidebarMenu from '../components/Sidebar.vue'
 
 const router = useRouter()
 const VISIT_KEY = 'visit_data'
 const staffList = ref([])
 
+const menuItems = [
+  { label: 'Сотрудник',     path: '/choicestaff' },
+  { label: 'Дата и время',   path: '/datetime'   },
+  { label: 'Услуги',         path: '/services'   }
+]
 
 async function loadStaff() {
   const { data } = await api.get('/salon/staff')
