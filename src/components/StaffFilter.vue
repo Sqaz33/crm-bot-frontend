@@ -43,34 +43,30 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import api from '../api'
-
-const props = defineProps({
-  salonId: {
-    type: Number,
-    required: true
-  }
-})
 
 const emit = defineEmits(['select', 'review', 'visit'])
 const tabs = ref([{ label: 'Все', value: 'all' }])
 const activeTab = ref('all')
 const staffList = ref([])
+const route = useRoute()
+
+// Получаем текущий salon_id из маршрута
+const salonId = route.params.salon_id || 1  // или другой дефолт
 
 async function loadSpecializations() {
-  const { data } = await api.get(`/salons/${props.salonId}/specializations`)
+  const { data } = await api.get(`/salons/${salonId}/specializations`)
+  // data = [{id: 1, name: 'Парикмахер'}, ...]
   data.forEach(spec =>
     tabs.value.push({ label: spec.name, value: spec.id })
   )
 }
 
 async function loadStaff(specId) {
-  let url = `/salons/${props.salonId}/staff`
+  let url = `/salons/${salonId}/staff`
   let params = {}
-
-  if (specId && specId !== 'all') {
-    params.specialization_id = specId
-  }
+  if (specId && specId !== 'all') params.specialization_id = specId
   const { data } = await api.get(url, { params })
   staffList.value = data
 }
@@ -86,6 +82,7 @@ function onSelect(id) { emit('select', id) }
 function onReview(id) { emit('review', id) }
 function onVisit(id)  { emit('visit', id) }
 </script>
+
 
 
 <style scoped>
