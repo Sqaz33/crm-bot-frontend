@@ -1,12 +1,4 @@
-<template>
-  <div class="layout">
-  <SidebarMenu :items="menuItems" />
-    <main class="main-content">
-      <StaffFilter @select="startVisit(staff)" />
-	  
-	</main>
-  </div>
-  
+<template> 
   <div class="staff-list">
     <div
       v-for="staff in staffList"
@@ -35,19 +27,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import StaffFilter from '../components/StaffFilter.vue'
-import SidebarMenu from '../components/Sidebar.vue'
 import api from '../api'
 
 const router = useRouter()
 const VISIT_KEY = 'visit_data'
 const staffList = ref([])
 
-const menuItems = [
-  { label: 'Сотрудник',     path: '/choicestaff' },
-  { label: 'Дата и время',   path: '/datetime'   },
-  { label: 'Услуги',         path: '/services'   }
-]
 
 async function loadStaff() {
   const { data } = await api.get('/salon/staff')
@@ -87,21 +72,6 @@ onMounted(loadStaff)
 </script>
 
 <style scoped>
-.layout { 
-  display: flex;
-  height: 100vh; 
-  }
-  
-.main-content { 
-  flex: 1;
-  overflow-y: auto;
-  padding: 1rem;
-  }
-
-.filter-title {
-  margin: 1.5rem;
-}
-
 .staff-list {
   display: flex;
   flex-direction: column;
