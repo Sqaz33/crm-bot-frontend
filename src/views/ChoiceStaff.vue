@@ -1,5 +1,7 @@
 <template> 
+  <div class="layout">
   <SidebarMenu :items="menuItems" />
+  <main class="main-content">
   <div class="staff-list">
     <div
       v-for="staff in staffList"
@@ -22,6 +24,8 @@
         ⭐ {{ staff.rating }}
       </div>
     </div>
+  </div>
+  </main>
   </div>
 </template>
 
@@ -79,6 +83,12 @@ onMounted(loadStaff)
 </script>
 
 <style scoped>
+.main-content { 
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  }
+  
 .staff-list {
   display: flex;
   flex-direction: column;
