@@ -77,6 +77,7 @@ onMounted(loadStaff)
   flex-direction: column;
   gap: 1rem;
   align-items: center;
+  margin: 0.5rem auto;
 }
 
 .staff-card {
@@ -86,7 +87,7 @@ onMounted(loadStaff)
   padding: 1rem;
   border-radius: 8px;
   width: 80%;
-  margin: 0.5rem auto;
+  margin: 0rem auto;
 }
 .avatar {
   width: 40px; height: 40px;
