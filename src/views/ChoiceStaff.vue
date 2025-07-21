@@ -83,6 +83,11 @@ onMounted(loadStaff)
 </script>
 
 <style scoped>
+.layout {
+ display: flex;
+ height: 100vh;
+ }
+ 
 .main-content { 
   flex: 1;
   overflow-y: auto;
