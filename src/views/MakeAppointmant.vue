@@ -136,8 +136,8 @@ onMounted(loadSummary)
 }
 
 .checkbox {
-  width: clamp(20px, 10vw, 40px);
-  height: clamp(20px, 10vw, 40px);
+  width: clamp(20px, 5vw, 35px);
+  height: clamp(20px, 5vw, 35px);
   background: #dadada;
   border-radius: 4px;
   flex-shrink: 0;
@@ -146,13 +146,15 @@ onMounted(loadSummary)
 .label {
   margin: 0 clamp(0.5rem, 2vw, 1rem);
   flex: 1;
-  font-size: clamp(0.7rem, 4vw, 1.3rem);
+  font-size: clamp(0.85rem, 3vw, 1rem);
+  font-family: var(--font-primary);
 }
 
 .arrow, .arrow-back {
   display: flex;
   color: #999;
-  font-size: clamp(1.2rem, 5vw, 1.8rem);
+  font-size: clamp(0.7rem, 5vw, 1.4rem);
+  font-family: var(--font-primary);
 
   width: clamp(30px, 10vw, 40px);
   height: clamp(30px, 10vw, 40px);
@@ -170,6 +172,12 @@ onMounted(loadSummary)
   display: flex;
 }
 
+@media (max-width: 992px){
+  .back-item {
+      display: none;
+  }
+}
+
 .btn-submit {
   display: block;
   width:  clamp(150px, 80%, 380px);
@@ -179,7 +187,7 @@ onMounted(loadSummary)
   color: #fff;
   border: none;
   border-radius: 6px;
-  font-size: clamp(0.7rem, 3vw, 1.2rem);
+  font-size: clamp(1rem, 3vw, 1.1rem);
   cursor: pointer;
 }
 
