@@ -88,7 +88,15 @@ onMounted(loadStaff)
   border-radius: 8px;
   width: 80%;
   margin: 0rem auto;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.1s;
 }
+
+.staff-card:hover {
+    transform: translateY(-2px);
+  }
+  
 .avatar {
   width: 40px; height: 40px;
   border-radius: 50%;
@@ -98,6 +106,9 @@ onMounted(loadStaff)
 }
 .avatar--empty {
   background-color: #ccc;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
 }
 .info {
   flex: 1;
