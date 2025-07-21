@@ -45,24 +45,33 @@
 import { ref, onMounted, watch } from 'vue'
 import api from '../api'
 
+const props = defineProps({
+  salonId: {
+    type: Number,
+    required: true
+  }
+})
+
 const emit = defineEmits(['select', 'review', 'visit'])
 const tabs = ref([{ label: 'Все', value: 'all' }])
 const activeTab = ref('all')
 const staffList = ref([])
 
 async function loadSpecializations() {
-  const { data } = await api.get('/salon/specializations')
-  // data = [{id: 1, name: 'Парикмахер'}, ...]
+  const { data } = await api.get(`/salons/${props.salonId}/specializations`)
   data.forEach(spec =>
     tabs.value.push({ label: spec.name, value: spec.id })
   )
 }
 
 async function loadStaff(specId) {
-  const url = specId && specId !== 'all'
-    ? `/salon/staff_by_specialization/${specId}`
-    : '/salon/staff'
-  const { data } = await api.get(url)
+  let url = `/salons/${props.salonId}/staff`
+  let params = {}
+
+  if (specId && specId !== 'all') {
+    params.specialization_id = specId
+  }
+  const { data } = await api.get(url, { params })
   staffList.value = data
 }
 
@@ -77,6 +86,7 @@ function onSelect(id) { emit('select', id) }
 function onReview(id) { emit('review', id) }
 function onVisit(id)  { emit('visit', id) }
 </script>
+
 
 <style scoped>
 .staff-view {
