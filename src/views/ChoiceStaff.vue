@@ -1,86 +1,60 @@
-<template> 
+<template>
   <div class="layout">
     <SidebarMenu :items="menuItems" />
     <main class="main-content">
-      <div class="staff-list">
-        <div
-          v-for="staff in staffList"
-          :key="staff.id"
-          class="staff-card"
-        >
-          <div
-            class="avatar"
-            :class="{ 'avatar--empty': !staff.photo }"
-            :style="staff.photo ? { backgroundImage: `url(${staff.photo})` } : {}"
-            @click="startVisit(staff)"
-          />
-      
-          <div class="info">
-            <div class="name">{{ staff.name }}</div>
-            <div class="spec">{{ staff.specialization }}</div>
-          </div>
-      
-          <div class="rating" @click.stop="viewStaff(staff.id)">
-            ⭐ {{ staff.rating }}
-          </div>
-        </div>
-      </div>
+      <StaffFilter
+        @select="startVisitById"
+        @review="viewStaff"
+        @visit="startVisitById"
+      />
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import api from '../api'
 import SidebarMenu from '../components/Sidebar.vue'
+import StaffFilter from '../components/StaffFilter.vue'   // <-- правильно!
 
 const router = useRouter()
-const VISIT_KEY = 'visit_data'
-const staffList = ref([])
 
 const menuItems = [
-  { label: 'Сотрудник',     path: '/choicestaff' },
-  { label: 'Дата и время',   path: '/datetime'   },
-  { label: 'Услуги',         path: '/services'   }
+  { label: 'Сотрудник',   path: '/choicestaff' },
+  { label: 'Дата и время', path: '/datetime' },
+  { label: 'Услуги',       path: '/services' }
 ]
 
-async function loadStaff() {
-  const { data } = await api.get('/salon/staff')
-  staffList.value = data
-}
+const VISIT_KEY = 'visit_data'
 
+// Переход на просмотр сотрудника (по клику на рейтинг/звезду)
 function viewStaff(id) {
   router.push({ name: 'staff', params: { id } })
 }
 
-function startVisit(staff) {
-  // 1) читаем существующий visit_data или создаём новый
+// Выбор сотрудника для записи — сюда staff.id!
+function startVisitById(id) {
   const raw = localStorage.getItem(VISIT_KEY)
   let visit = raw ? JSON.parse(raw) : {
     staff_id:   '',
     client_id:  '',
-    visit_time: { start:'', end:'' },
+    visit_time: { start: '', end: '' },
     comment:    ''
   }
 
-  // 2) записываем staff_id и сбрасываем всё остальное
-  visit.staff_id = staff.id
-  visit.visit_time = { start:'', end:'' }
+  visit.staff_id = id
+  visit.visit_time = { start: '', end: '' }
   visit.comment = ''
-  visit.services_id = []   // если нужно отслеживать услуги
+  visit.services_id = []
 
   const json = JSON.stringify(visit)
   localStorage.setItem(VISIT_KEY, json)
-  document.cookie = 
+  document.cookie =
     `${VISIT_KEY}=${encodeURIComponent(json)}; path=/; max-age=${365*24*60*60}; Secure; SameSite=None`
-  
-  // 3) уходим на страницу оформления
+
   router.push({ path: '/appointmant' })
 }
-
-onMounted(loadStaff)
 </script>
+
 
 <style scoped>
 .layout {
