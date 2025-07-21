@@ -54,22 +54,19 @@ import { ref, onMounted, watch } from 'vue'
 import api from '../api'
 const emit = defineEmits(['select', 'review', 'visit'])
 
-const salon_id = 1 // <-- подставь нужный id, если всегда один
-
 const tabs = ref([{ label: 'Все', value: 'all' }])
 const activeTab = ref('all')
 const staffList = ref([])
 
 async function loadSpecializations() {
   const { data } = await api.get('/salon/specializations')
-  // data = [{id: 1, name: 'Парикмахер'}, ...]
   data.forEach(spec =>
     tabs.value.push({ label: spec.name, value: spec.id })
   )
 }
 
 async function loadStaff(specId) {
-  let url = `/salons/${salon_id}/staff`
+  let url = `/salon/staff`
   if (specId && specId !== 'all') {
     url += `?specialization_id=${specId}`
   }
