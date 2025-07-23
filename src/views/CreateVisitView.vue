@@ -1,7 +1,29 @@
 <template>
   <div class="visit-create-view">
     <div class="visit-summary">
-      <!-- ... всё как было ... -->
+      <div class="date-row">
+        <div class="date-cell">
+          <div class="date">{{ summary.date }}</div>
+        </div>
+        <div class="time-cell">{{ summary.time }}</div>
+      </div>
+      <div class="staff-block" v-if="summary.staff">
+        <img :src="summary.staff.photo" class="avatar" v-if="summary.staff.photo" />
+        <div class="staff-info">
+          <div class="staff-name">{{ summary.staff.name }}</div>
+          <div class="staff-role">{{ summary.staff.specialization }}</div>
+        </div>
+      </div>
+      <div class="service-block" v-if="summary.service">
+        <div class="service-name">{{ summary.service.name }}</div>
+        <div class="service-desc">{{ summary.service.description }}</div>
+        <div class="service-duration">{{ summary.service.duration }} мин</div>
+        <div class="service-price">{{ summary.service.price }} ₽</div>
+      </div>
+      <div class="total-block" v-if="summary.service">
+        <span>Итого к оплате:</span>
+        <span class="total-price">{{ summary.service.price }} ₽</span>
+      </div>
     </div>
     <form class="visit-form" @submit.prevent="submitVisit">
       <div class="form-label">ПРОФИЛЬ КЛИЕНТА</div>
@@ -43,7 +65,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
-import TermsModal from '../components/TermsModal.vue'
+import TermsModal from './TermsModal.vue'
 
 const VISIT_KEY = 'visit_data'
 const PROFILE_KEY = 'profile_data'
@@ -254,6 +276,7 @@ select {
 .legal-row a {
   color: #3471d6;
   text-decoration: underline;
+  cursor: pointer;
 }
 .btn-submit {
   width: 100%;
