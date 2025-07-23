@@ -65,7 +65,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
-import TermsModal from './TermsModal.vue'
+import TermsModal from '../components/TermsModal.vue'
 
 const VISIT_KEY = 'visit_data'
 const PROFILE_KEY = 'profile_data'
