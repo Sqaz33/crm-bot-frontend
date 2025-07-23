@@ -69,16 +69,15 @@ async function loadSummary() {
     }
   }
 
-  // Сумма услуг
+  // Сумма услуг (по новым маршрутам)
   let totalPrice = null
   if (services_id.length) {
     try {
       const prices = await Promise.all(
-        services_id.map(id =>
-          api.get(`/salon/services/${id}`)
-            .then(r => r.data.price || 0)
-            .catch(() => 0)
-        )
+        services_id.map(async id => {
+          const { data } = await api.get('/services/', { params: { service_id: id } })
+          return data[0]?.price || 0
+        })
       )
       totalPrice = prices.reduce((sum, p) => sum + p, 0)
     } catch {
@@ -90,7 +89,6 @@ async function loadSummary() {
 
   summary.value = { staffName, visitTime, totalPrice }
 }
-
 
 function goTo(stepName) {
   router.push({ name: stepName })
