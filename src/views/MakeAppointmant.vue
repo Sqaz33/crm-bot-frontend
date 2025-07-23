@@ -8,16 +8,16 @@
       </li>
       <li class="step-item" @click="goTo('datetime')">
         <div class="checkbox"></div>
-        <div class="label">Дата и время: {{ summary.visitTime}}</div>
+        <div class="label">Дата и время: {{ summary.visitTime }}</div>
         <div class="arrow">›</div>
       </li>
       <li class="step-item" @click="goTo('services')">
         <div class="checkbox"></div>
         <div class="label">
-          Услуги: 
-          {{ summary.totalPrice !== null 
-             ? (summary.totalPrice > 0 ? summary.totalPrice + ' ₽' : '0 ₽') 
-             : '—' 
+          Услуги:
+          {{ summary.totalPrice !== null
+             ? (summary.totalPrice > 0 ? summary.totalPrice + ' ₽' : '0 ₽')
+             : '—'
           }}
         </div>
         <div class="arrow">›</div>
@@ -28,13 +28,15 @@
       </li>
     </ul>
   </div>
-   <button class="btn-submit" :disabled="!canSubmit" @click="submitBooking">
+  <button class="btn-submit"
+    :disabled="!canSubmit"
+    @click="submitBooking">
     Оформить запись
   </button>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api'
 
@@ -43,11 +45,10 @@ const VISIT_KEY = 'visit_data'
 const summary = ref({
   staffName: null,
   visitTime: null,
-  totalPrice: null
-})
-
-const canSubmit = computed(() => {
-  return summary.value.staffName && summary.value.visitTime && summary.value.totalPrice > 0
+  totalPrice: null,
+  staff_id: null,
+  visit_time: null,
+  services_id: []
 })
 
 async function loadSummary() {
@@ -57,10 +58,18 @@ async function loadSummary() {
   const data = JSON.parse(raw)
   const { staff_id, services_id = [], visit_time = {} } = data
 
+  // Дата и время
   const visitTime = visit_time.start_time
-    ? new Date(visit_time.start_time).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+    ? new Date(visit_time.start_time).toLocaleString('ru-RU', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
     : null
 
+  // Имя сотрудника
   let staffName = null
   if (staff_id) {
     try {
@@ -71,6 +80,7 @@ async function loadSummary() {
     }
   }
 
+  // Сумма услуг
   let totalPrice = null
   if (services_id.length) {
     try {
@@ -88,8 +98,22 @@ async function loadSummary() {
     totalPrice = 0
   }
 
-  summary.value = { staffName, visitTime, totalPrice }
+  summary.value = {
+    staffName,
+    visitTime,
+    totalPrice,
+    staff_id,
+    visit_time,
+    services_id
+  }
 }
+
+// Доступность кнопки
+const canSubmit = computed(() =>
+  !!summary.value.staff_id &&
+  !!summary.value.visitTime &&
+  Array.isArray(summary.value.services_id) && summary.value.services_id.length > 0
+)
 
 function goTo(stepName) {
   router.push({ name: stepName })
@@ -101,7 +125,7 @@ function goBack() {
 
 function submitBooking() {
   if (!canSubmit.value) return
-  console.log('Booking submitted')
+  router.push({ name: 'createvisit' })
 }
 
 onMounted(loadSummary)
