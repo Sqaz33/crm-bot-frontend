@@ -28,13 +28,13 @@
       </li>
     </ul>
   </div>
-  <button class="btn-submit" @click="submitBooking">
-      Оформить запись
+   <button class="btn-submit" :disabled="!canSubmit" @click="submitBooking">
+    Оформить запись
   </button>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api'
 
@@ -46,6 +46,10 @@ const summary = ref({
   totalPrice: null
 })
 
+const canSubmit = computed(() => {
+  return summary.value.staffName && summary.value.visitTime && summary.value.totalPrice > 0
+})
+
 async function loadSummary() {
   const raw = localStorage.getItem(VISIT_KEY)
   if (!raw) return
@@ -53,12 +57,10 @@ async function loadSummary() {
   const data = JSON.parse(raw)
   const { staff_id, services_id = [], visit_time = {} } = data
 
-  // Правильно читаем дату
   const visitTime = visit_time.start_time
     ? new Date(visit_time.start_time).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
     : null
 
-  // Имя сотрудника
   let staffName = null
   if (staff_id) {
     try {
@@ -69,7 +71,6 @@ async function loadSummary() {
     }
   }
 
-  // Сумма услуг (по новым маршрутам)
   let totalPrice = null
   if (services_id.length) {
     try {
@@ -99,11 +100,13 @@ function goBack() {
 }
 
 function submitBooking() {
+  if (!canSubmit.value) return
   console.log('Booking submitted')
 }
 
 onMounted(loadSummary)
 </script>
+
 
 <style scoped>
 .booking-view {
