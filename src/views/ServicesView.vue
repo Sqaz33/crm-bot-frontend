@@ -6,20 +6,20 @@
     <div v-else>
       <div 
         v-for="type in serviceTypes" 
-        :key="type" 
+        :key="type.id" 
         class="type-block"
       >
-        <button class="type-header" @click="toggle(type)">
-          {{ type }}
-          <span class="count">{{ servicesByType[type]?.length || 0 }}</span>
-          <span class="arrow">{{ openType === type ? '▲' : '▼' }}</span>
+        <button class="type-header" @click="toggle(type.id)">
+          {{ type.name }}
+          <span class="count">{{ servicesByType[type.id]?.length || 0 }}</span>
+          <span class="arrow">{{ openType === type.id ? '▲' : '▼' }}</span>
         </button>
         <ul 
-          v-show="openType === type" 
+          v-show="openType === type.id" 
           class="service-list"
         >
           <li 
-            v-for="svc in servicesByType[type]" 
+            v-for="svc in servicesByType[type.id]" 
             :key="svc.id" 
             :class="{ selected: selectedServiceId === svc.id }"
           >
@@ -57,8 +57,8 @@ const VISIT_KEY = 'visit_data'
 const router = useRouter()
 
 const loading = ref(true)
-const serviceTypes = ref([])
-const services = ref([])
+const serviceTypes = ref([]) // [{id, name}]
+const services = ref([])     // [{id, name, price, ..., service_type_id}]
 const openType = ref(null)
 const selectedServiceId = ref(null)
 
@@ -79,27 +79,28 @@ function saveVisit(data) {
 const visitData = ref(loadVisitData())
 
 onMounted(async () => {
-  // 1) Получаем список типов по правильному пути
-  const { data: types } = await api.get('/services/types')
+  // 1) Получаем список типов услуг (id, name)
+  const { data: types } = await api.get('/services/types/')
   serviceTypes.value = types
 
-  // 2) Получаем сам список услуг, фильтруя по staff_id
+  // 2) Получаем услуги, опционально фильтруем по staff_id
   const params = {}
   if (visitData.value.staff_id) {
     params.staff_id = visitData.value.staff_id
   }
-  const { data: all } = await api.get('/services', { params })
+  const { data: all } = await api.get('/services/', { params })
   services.value = all
 
   loading.value = false
 })
 
 const servicesByType = computed(() => {
+  // Собираем услуги по service_type_id
   const map = {}
-  serviceTypes.value.forEach(t => (map[t] = []))
+  serviceTypes.value.forEach(t => (map[t.id] = []))
   services.value.forEach(s => {
-    if (!map[s.service_type]) map[s.service_type] = []
-    map[s.service_type].push(s)
+    if (!map[s.service_type_id]) map[s.service_type_id] = []
+    map[s.service_type_id].push(s)
   })
   return map
 })
@@ -108,8 +109,8 @@ const selectedService = computed(() =>
   services.value.find(s => s.id === selectedServiceId.value) || { price: 0 }
 )
 
-function toggle(type) {
-  openType.value = openType.value === type ? null : type
+function toggle(typeId) {
+  openType.value = openType.value === typeId ? null : typeId
 }
 
 function confirm() {
