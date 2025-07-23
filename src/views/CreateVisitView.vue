@@ -26,21 +26,34 @@
       </div>
     </div>
     <form class="visit-form" @submit.prevent="submitVisit">
-      <div class="form-section">
-        <label>Комментарий к визиту:</label>
-        <textarea v-model="comment" placeholder="Ваши пожелания"></textarea>
+      <div class="form-label">ПРОФИЛЬ КЛИЕНТА</div>
+      <div class="client-block">
+        <span class="client-icon">👤</span>
+        <span class="client-name">{{ clientName }}</span>
       </div>
+      <div class="form-label">НАПОМИНАНИЕ О ВИЗИТЕ</div>
       <div class="form-section">
-        <label>Напомнить за</label>
         <select v-model="remindLeadDays">
           <option :value="0">Не напоминать</option>
-          <option :value="1">1 день</option>
-          <option :value="2">2 дня</option>
-          <option :value="3">3 дня</option>
-          <option :value="7">7 дней</option>
+          <option :value="1">1 час</option>
+          <option :value="2">2 часа</option>
+          <option :value="4">4 часа</option>
+          <option :value="24">24 часа</option>
         </select>
       </div>
-      <button class="btn-submit" type="submit" :disabled="submitting">Записаться</button>
+      <div class="form-label">ВАШИ ПОЖЕЛАНИЯ</div>
+      <div class="form-section">
+        <textarea v-model="comment" placeholder="Ваши пожелания"></textarea>
+      </div>
+      <div class="legal-row">
+        <input type="checkbox" id="accept" v-model="accepted" />
+        <label for="accept">
+          <span>
+            Я принимаю <a href="/terms" target="_blank">условия использования</a>
+          </span>
+        </label>
+      </div>
+      <button class="btn-submit" type="submit" :disabled="submitting || !accepted">Записаться</button>
       <div v-if="errorMsg" class="error-msg">{{ errorMsg }}</div>
       <div v-if="success" class="success-msg">Запись успешно создана!</div>
     </form>
@@ -48,11 +61,12 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
 
 const VISIT_KEY = 'visit_data'
+const PROFILE_KEY = 'profile_data'
 const router = useRouter()
 
 const summary = reactive({
@@ -66,6 +80,18 @@ const remindLeadDays = ref(0)
 const submitting = ref(false)
 const errorMsg = ref('')
 const success = ref(false)
+const accepted = ref(false)
+
+const clientName = computed(() => {
+  const raw = localStorage.getItem(PROFILE_KEY)
+  if (!raw) return '—'
+  try {
+    const obj = JSON.parse(raw)
+    return [obj.firstName, obj.lastName].filter(Boolean).join(' ')
+  } catch {
+    return '—'
+  }
+})
 
 function clearVisitData() {
   localStorage.removeItem(VISIT_KEY)
@@ -81,7 +107,6 @@ onMounted(async () => {
   const data = JSON.parse(raw)
   comment.value = data.comment || ''
 
- 
   if (data.visit_time?.start_time) {
     const dt = new Date(data.visit_time.start_time)
     summary.date = dt.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', weekday: 'long' })
@@ -95,7 +120,6 @@ onMounted(async () => {
     } catch { summary.staff = null }
   }
 
- 
   const serviceId = Array.isArray(data.services_id) ? data.services_id[0] : data.services_id
   if (serviceId) {
     try {
@@ -110,6 +134,10 @@ async function submitVisit() {
     errorMsg.value = 'Не заполнены обязательные поля.'
     return
   }
+  if (!accepted.value) {
+    errorMsg.value = 'Необходимо принять условия использования.'
+    return
+  }
   errorMsg.value = ''
   submitting.value = true
 
@@ -117,7 +145,7 @@ async function submitVisit() {
     await api.post('/visits/', {
       staff_id: summary.staff.id,
       service_id: summary.service.id,
-      visit_date_time: new Date().toISOString(), 
+      visit_date_time: new Date().toISOString(),
       comment: comment.value,
       remind_lead_days: remindLeadDays.value,
     })
@@ -136,7 +164,7 @@ async function submitVisit() {
 .visit-create-view {
   max-width: 500px;
   margin: 2rem auto;
-  background: #fafbfc;
+  background: #f5f8ff;
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0 2px 6px rgba(0,0,0,0.06);
@@ -174,7 +202,7 @@ async function submitVisit() {
 .service-block, .total-block { margin-bottom: 1rem; }
 .service-price, .total-price { font-weight: bold; font-size: 1.2em; float: right; }
 .total-block {
-  background: #ffe6a3;
+  background: #a3ddff;  /* синий */
   border-radius: 6px;
   padding: 0.7em 1em;
   font-weight: bold;
@@ -188,6 +216,31 @@ async function submitVisit() {
   border-radius: 8px;
   padding: 1rem;
 }
+.form-label {
+  font-size: 0.88em;
+  font-weight: bold;
+  color: #7c8499;
+  margin: 1.1em 0 0.4em 0;
+  letter-spacing: 0.03em;
+}
+.client-block {
+  background: #e5f5ff;
+  padding: 0.6em 1em;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 1em;
+  gap: 0.7em;
+}
+.client-icon {
+  font-size: 1.25em;
+  background: #00b172;
+  color: #fff;
+  padding: 0.2em 0.45em;
+  border-radius: 6px;
+}
+.client-name { font-size: 1em; }
 .form-section {
   margin-bottom: 1.1rem;
 }
@@ -203,6 +256,23 @@ select {
   border-radius: 4px;
   padding: 0.3em;
   margin-top: 0.2em;
+  font-size: 1em;
+  width: 100%;
+}
+.legal-row {
+  display: flex;
+  align-items: center;
+  font-size: 0.98em;
+  gap: 0.5em;
+  margin-bottom: 1.1em;
+}
+.legal-row input[type="checkbox"] {
+  width: 1.1em;
+  height: 1.1em;
+}
+.legal-row a {
+  color: #3471d6;
+  text-decoration: underline;
 }
 .btn-submit {
   width: 100%;
@@ -214,6 +284,7 @@ select {
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
+  margin-top: 1em;
 }
 .btn-submit[disabled] {
   background: #ccc;
