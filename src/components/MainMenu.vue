@@ -13,12 +13,13 @@
         :class="{ active: activeItem === item.path }"
         @click="navigate(item)"
       >
-        <span class="icon"><img :src="item.icon" :class="item.iconSize"alt="icon" /></span>
+        <span class="icon">
+          <img :src="item.icon" :class="item.iconSize" alt="icon" />
+        </span>
         <span>{{ item.label }}</span>
       </div>
     </nav>
 
-  
     <Modal :visible="showShareModal" @close="showShareModal = false">
       <ShareModal />
     </Modal>
@@ -30,28 +31,39 @@ import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import api from '../api'
 
-import { siteInfo } from '../static/siteInfo'
-
 import Modal from './Modal.vue'
 import ShareModal from './ShareModal.vue'
 
-import AddressIcon from '../assets/map.svg';
-import RecordsIcon from '../assets/appointment.svg';
-import ShareIcon from '../assets/share.svg';
-import ProfileIcon from '../assets/prof.svg';
+import AddressIcon from '../assets/map.svg'
+import RecordsIcon from '../assets/appointment.svg'
+import ShareIcon from '../assets/share.svg'
+import ProfileIcon from '../assets/prof.svg'
+
 const router = useRouter()
 const route = useRoute()
 const activeItem = ref(route.path)
 const showShareModal = ref(false)
 
-const salon = ref({ name: 'Загрузка...', description: '' })
+const salon = ref({
+  name: 'Загрузка...',
+  description: '',
+  address_url: ''
+})
 
 onMounted(async () => {
   try {
     const { data } = await api.get('/salon/info')
-    salon.value = { name: data.name, description: data.description }
+    salon.value = {
+      name: data.name,
+      description: data.description,
+      address_url: data.address_url || ''
+    }
   } catch {
-    salon.value = { name: 'Ошибка загрузки', description: '' }
+    salon.value = {
+      name: 'Ошибка загрузки',
+      description: '',
+      address_url: ''
+    }
   }
 })
 
@@ -60,21 +72,24 @@ watch(() => route.path, (p) => {
 })
 
 const items = [
-  { label: 'Адрес', path: '/address', icon: AddressIcon,iconSize:'icon1' },
-  { label: 'Записи', path: '/records', icon: RecordsIcon,iconSize:'icon2' },
-  { label: 'Поделиться', path: '/share', icon: ShareIcon,iconSize:'icon1' },
-  { label: 'Профиль', path: '/profile', icon: ProfileIcon,iconSize:'icon2' },
+  { label: 'Адрес', path: '/address', icon: AddressIcon, iconSize: 'icon1' },
+  { label: 'Записи', path: '/records', icon: RecordsIcon, iconSize: 'icon2' },
+  { label: 'Поделиться', path: '/share', icon: ShareIcon, iconSize: 'icon1' },
+  { label: 'Профиль', path: '/profile', icon: ProfileIcon, iconSize: 'icon2' }
 ]
 
 function navigate(item) {
   if (item.label === 'Адрес') {
-  const win = window.open('', '_blank')
-  if (win) {
-    win.opener = null
-    win.location = siteInfo.address
-  } else {
-    alert('Браузер заблокировал всплывающее окно. Разрешите их в настройках.')
-  }
+    if (salon.value.address_url) {
+      const win = window.open(salon.value.address_url, '_blank')
+      if (win) {
+        win.opener = null
+      } else {
+        console.log('Браузер заблокировал всплывающее окно. Разрешите их в настройках.')
+      }
+    } else {
+      console.log('Ссылка на адрес недоступна')
+    }
   } else if (item.label === 'Поделиться') {
     showShareModal.value = true
   } else {
@@ -82,7 +97,6 @@ function navigate(item) {
     router.push(item.path)
   }
 }
-
 </script>
 
 <style scoped>

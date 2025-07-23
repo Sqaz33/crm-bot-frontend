@@ -1,40 +1,38 @@
 <template>
   <div class="layout">
-    <!-- Sidebar -->
+
     <SidebarMenu :items="menuItems" />
 
-    <!-- Main content -->
+
     <main class="main-content">
-     
-
-        <div class="company-card">
-          <div class="avatar"></div>
-          <div class="info">
-            <div class="name">{{ company.name }}</div>
-            <div class="rating">⭐ {{ company.rating }}</div>
-            <p>{{ company.description }}</p>
-          </div>
+      <div class="company-card">
+        <div class="avatar" v-if="company.photo" :style="{ backgroundImage: `url(${company.photo})`, backgroundSize: 'cover' }"></div>
+        <div class="avatar" v-else></div>
+        <div class="info">
+          <div class="name">{{ company.name }}</div>
+          <div class="rating">⭐ {{ company.rating }}</div>
+          <p>{{ company.description }}</p>
         </div>
+      </div>
 
-        <section class="description">
-          <p>{{ siteInfo.about_company }}</p>
-        </section>
+      <section class="description" v-if="company.about_company">
+        <p>{{ company.about_company }}</p>
+      </section>
 
-        <section class="reviews">
-          <h2>Отзывы ({{ reviews.length }})</h2>
-          <div v-for="review in reviews" :key="review.id" class="review">
-            <div class="review-header">
-              <div class="reviewer-avatar"></div>
-              <div class="reviewer-info">
-                <div class="reviewer-name">{{ review.author }}</div>
-                <div class="review-date">{{ review.date }}</div>
-              </div>
-              <div class="review-rating">⭐ {{ review.rating }}</div>
+      <section class="reviews">
+        <h2>Отзывы ({{ reviews.length }})</h2>
+        <div v-for="review in reviews" :key="review.id" class="review">
+          <div class="review-header">
+            <div class="reviewer-avatar"></div>
+            <div class="reviewer-info">
+              <div class="reviewer-name">{{ review.author }}</div>
+              <div class="review-date">{{ review.date }}</div>
             </div>
-            <p class="review-text">{{ review.text }}</p>
+            <div class="review-rating">⭐ {{ review.rating }}</div>
           </div>
-        </section>
-      
+          <p class="review-text">{{ review.text }}</p>
+        </div>
+      </section>
     </main>
   </div>
 </template>
@@ -43,39 +41,45 @@
 import { ref, onMounted } from 'vue'
 import api from '../api'
 import SidebarMenu from '../components/Sidebar.vue'
-import { siteInfo } from '../static/siteInfo'
 
-// Sidebar items
+
 const menuItems = [
   { label: 'Кошелёк', path: '/wallet' },
-  { label: 'Магазин',  path: '/shop' },
-  { label: 'Отзывы',   path: '/reviews' },
+  { label: 'Магазин', path: '/shop' },
+  { label: 'Отзывы', path: '/reviews' },
   { label: 'О компании', path: '/company' }
 ]
 
-
-const company = ref({ name: '', rating: 0, description: '' })
+const company = ref({
+  name: '',
+  rating: 0,
+  description: '',
+  about_company: '',
+  photo: ''
+})
 
 const reviews = ref([])
 
 onMounted(async () => {
   try {
-    // 1) Инфо о салоне
+   
     const { data: info } = await api.get('/salon/info')
     company.value = {
-      name:       info.name,
-      rating:     info.rating,
-      description: info.description || 'Описание компании отсутствует.'
+      name: info.name,
+      rating: info.rating,
+      description: info.description || 'Описание компании отсутствует.',
+      about_company: info.about_company || '',
+      photo: info.photo || ''
     }
 
-    // 2) Отзывы по новому формату
+    
     const { data: rev } = await api.get('/salon/reviews')
     reviews.value = rev.map(r => ({
-      id:     r.id,
+      id: r.id,
       author: r.client_name,
-      date:   new Date(r.created_at).toLocaleDateString(),
+      date: new Date(r.created_at).toLocaleDateString(),
       rating: r.rating,
-      text:   r.comment
+      text: r.comment
     }))
   } catch (e) {
     console.error('Ошибка загрузки данных компании/отзывов:', e)
