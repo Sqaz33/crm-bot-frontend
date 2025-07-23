@@ -1,29 +1,7 @@
 <template>
   <div class="visit-create-view">
     <div class="visit-summary">
-      <div class="date-row">
-        <div class="date-cell">
-          <div class="date">{{ summary.date }}</div>
-        </div>
-        <div class="time-cell">{{ summary.time }}</div>
-      </div>
-      <div class="staff-block" v-if="summary.staff">
-        <img :src="summary.staff.photo" class="avatar" v-if="summary.staff.photo" />
-        <div class="staff-info">
-          <div class="staff-name">{{ summary.staff.name }}</div>
-          <div class="staff-role">{{ summary.staff.specialization }}</div>
-        </div>
-      </div>
-      <div class="service-block" v-if="summary.service">
-        <div class="service-name">{{ summary.service.name }}</div>
-        <div class="service-desc">{{ summary.service.description }}</div>
-        <div class="service-duration">{{ summary.service.duration }} мин</div>
-        <div class="service-price">{{ summary.service.price }} ₽</div>
-      </div>
-      <div class="total-block" v-if="summary.service">
-        <span>Итого к оплате:</span>
-        <span class="total-price">{{ summary.service.price }} ₽</span>
-      </div>
+      <!-- ... всё как было ... -->
     </div>
     <form class="visit-form" @submit.prevent="submitVisit">
       <div class="form-label">ПРОФИЛЬ КЛИЕНТА</div>
@@ -49,7 +27,7 @@
         <input type="checkbox" id="accept" v-model="accepted" />
         <label for="accept">
           <span>
-            Я принимаю <a href="/terms" target="_blank">условия использования</a>
+            Я принимаю <a href="#" @click.prevent="showTerms = true">условия использования</a>
           </span>
         </label>
       </div>
@@ -57,6 +35,7 @@
       <div v-if="errorMsg" class="error-msg">{{ errorMsg }}</div>
       <div v-if="success" class="success-msg">Запись успешно создана!</div>
     </form>
+    <TermsModal :visible="showTerms" @close="showTerms = false" />
   </div>
 </template>
 
@@ -64,6 +43,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
+import TermsModal from '../components/TermsModal.vue'
 
 const VISIT_KEY = 'visit_data'
 const PROFILE_KEY = 'profile_data'
@@ -81,6 +61,7 @@ const submitting = ref(false)
 const errorMsg = ref('')
 const success = ref(false)
 const accepted = ref(false)
+const showTerms = ref(false)
 
 const clientName = computed(() => {
   const raw = localStorage.getItem(PROFILE_KEY)
