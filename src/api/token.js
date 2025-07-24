@@ -1,7 +1,10 @@
 import api from './index'
 
 export async function refreshToken(refreshToken) {
-  return api.post('/auth/refresh', {
-    refresh_token: refreshToken
+  const initData = localStorage.getItem('telegram_init')
+  return axios.post('/api/auth/refresh', {
+    refresh_token: refreshToken,
+    init_data: initData || null
   })
 }
+

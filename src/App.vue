@@ -1,21 +1,17 @@
 <template>
   <div>
-
     <transition name="fade">
       <div v-if="authError" class="auth-error-banner">
         Ошибка авторизации. Пожалуйста, попробуйте ещё раз.
       </div>
     </transition>
 
-    
     <div v-if="loading" class="loading-container">
       Загрузка...
     </div>
 
-
     <div v-else>
-
-      <router-view/> 
+      <router-view />
     </div>
   </div>
 </template>
@@ -26,33 +22,35 @@ import { useRouter } from 'vue-router'
 import { loginViaTelegram, exchangeToken } from './api/auth'
 import { parseTelegramLaunchData } from './utils/telegram'
 
-
 const VISIT_KEY = 'visit_data'
+const PROFILE_KEY = 'profile_data'
+const INIT_KEY = 'telegram_init'
 
-/**
- * Создаёт пустую запись визита и сохраняет её
- * в localStorage и в cookie.
- *
- * @param {boolean} silent — если true, не выводить лог об успешном сохранении
- */
+const loading = ref(true)
+const authError = ref(false)
+const router = useRouter()
+
+const form = reactive({
+  firstName: '',
+  lastName: '',
+  middleName: '',
+  phone: '',
+  email: ''
+})
+
+const initData = ref({})
+
+// Сохраняем пустой визит в cookie и localStorage
 function saveVisit(silent = false) {
-
   const visitData = {
-    staff_id:   '',
-    services_id:'',        
-    visit_time: { start_time: ''},
-    comment:    ''         
+    staff_id: '',
+    services_id: '',
+    visit_time: { start_time: '' },
+    comment: ''
   }
-
   localStorage.setItem(VISIT_KEY, JSON.stringify(visitData))
-
-  
   const cookieValue = encodeURIComponent(JSON.stringify(visitData))
-  document.cookie =
-    `${VISIT_KEY}=${cookieValue}` +
-    `; path=/; max-age=${365 * 24 * 60 * 60}` +
-    `; Secure; SameSite=None`
-
+  document.cookie = `${VISIT_KEY}=${cookieValue}; path=/; max-age=${365 * 24 * 60 * 60}; Secure; SameSite=None`
   if (!silent) {
     console.log('Visit data saved:', visitData)
   }
@@ -60,30 +58,7 @@ function saveVisit(silent = false) {
   console.log(`→ localStorage[${VISIT_KEY}]:`, localStorage.getItem(VISIT_KEY))
 }
 
-
-saveVisit()
-
-// Ключ для localStorage
-const PROFILE_KEY = 'profile_data'
-
-// Флаги загрузки/ошибки
-const loading   = ref(true)
-const authError = ref(false)
-const router    = useRouter()
-
-// Форма профиля
-const form = reactive({
-  firstName:  '',
-  lastName:   '',
-  middleName: '',
-  phone:      '',
-  email:      ''
-})
-
-// Сырая структура tgWebAppData
-const initData = ref({})
-
-// Извлекаем строку initData
+// Получение строки initData (Telegram)
 function getInitDataString() {
   if (window.Telegram?.WebApp?.initData) {
     window.Telegram.WebApp.expand()
@@ -91,51 +66,51 @@ function getInitDataString() {
   }
   const raw = window.location.hash.slice(1)
   if (!raw.startsWith('tgWebAppData=')) return null
-  const payload = raw
-    .replace('tgWebAppData=', '')
-    .split('&tgWebAppVersion')[0]
+  const payload = raw.replace('tgWebAppData=', '').split('&tgWebAppVersion')[0]
   return decodeURIComponent(payload)
 }
 
-// Общая инициализация
+// Инициализация авторизации и профиля
 async function initAuthAndProfile() {
   try {
-    // 1) Авторизация
     const initStr = getInitDataString()
-    console.log('InitData string:', initStr)
+    console.log('[App] InitData string:', initStr)
     if (!initStr) throw new Error('initData отсутствует')
 
+    // Сохраняем initData для дальнейших refresh
+    localStorage.setItem(INIT_KEY, initStr)
+
+    // Авторизация
     const loginRes = await loginViaTelegram(initStr)
-    console.log('loginViaTelegram →', loginRes.data)
+    console.log('[App] loginViaTelegram →', loginRes.data)
 
     const exchRes = await exchangeToken(loginRes.data.temporary_token)
-    console.log('exchangeToken →', exchRes.data)
+    console.log('[App] exchangeToken →', exchRes.data)
 
-    localStorage.setItem('access_token',  exchRes.data.access_token)
+    localStorage.setItem('access_token', exchRes.data.access_token)
     localStorage.setItem('refresh_token', exchRes.data.refresh_token)
 
-    // 2) Парсим tgWebAppData
+    // Парсим Telegram данные
     const { tgData } = parseTelegramLaunchData()
     initData.value = tgData
-    console.log('Parsed tgWebAppData:', tgData)
+    console.log('[App] Parsed tgWebAppData:', tgData)
 
-    // 3) Заполняем базовые поля из Telegram
+    // Заполняем базовые поля профиля
     const user = tgData.user || {}
     form.firstName = user.first_name || ''
-    form.lastName  = user.last_name  || ''
+    form.lastName = user.last_name || ''
 
-    // 4) Загружаем ранее сохранённые доп. поля
-    console.log('Existing localStorage:', localStorage.getItem(PROFILE_KEY))
+    // Загружаем доп. данные
     const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')
     form.middleName = saved.middleName || ''
-    form.phone      = saved.phone      || ''
-    form.email      = saved.email      || ''
+    form.phone = saved.phone || ''
+    form.email = saved.email || ''
 
-    // 5) Сразу сохраняем ВСЕ поля в cookie и localStorage
-    saveProfile(true /* silent */)
-
+    // Сохраняем профиль в cookie и localStorage
+    saveProfile(true)
+    saveVisit(true)
   } catch (err) {
-    console.error('Ошибка инициализации профиля:', err)
+    console.error('[App] Ошибка инициализации профиля:', err)
     authError.value = true
   } finally {
     loading.value = false
@@ -146,35 +121,26 @@ async function initAuthAndProfile() {
   }
 }
 
-// Сохранение профиля в localStorage + куку
+// Сохранение профиля
 function saveProfile(silent = false) {
   const profileData = {
-    firstName:  form.firstName,
-    lastName:   form.lastName,
+    firstName: form.firstName,
+    lastName: form.lastName,
     middleName: form.middleName,
-    phone:      form.phone,
-    email:      form.email
+    phone: form.phone,
+    email: form.email
   }
-  // localStorage
   localStorage.setItem(PROFILE_KEY, JSON.stringify(profileData))
-  // cookie (Secure, SameSite=None)
-  document.cookie =
-    `profile_user=${encodeURIComponent(JSON.stringify(profileData))}` +
-    `; path=/; max-age=${365*24*60*60}` +
-    `; Secure; SameSite=None`
-
+  document.cookie = `profile_user=${encodeURIComponent(JSON.stringify(profileData))}; path=/; max-age=${365 * 24 * 60 * 60}; Secure; SameSite=None`
   if (!silent) {
-    console.log('Profile manually saved:', profileData)
+    console.log('[App] Profile saved:', profileData)
   }
   console.log('→ document.cookie:', document.cookie)
-  console.log('→ localStorage profile_data:', localStorage.getItem(PROFILE_KEY))
+  console.log('→ localStorage[profile_data]:', localStorage.getItem(PROFILE_KEY))
 }
 
 onMounted(initAuthAndProfile)
 </script>
-
-
-
 
 <style scoped>
 .loading-container {
@@ -182,22 +148,23 @@ onMounted(initAuthAndProfile)
   margin: 2rem 0;
   font-size: 1.1rem;
 }
-
 .auth-error-banner {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   background: #e53935;
   color: white;
   padding: 1rem;
   text-align: center;
   z-index: 1000;
 }
-
-/* Плавное появление/исчезновение баннера */
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.5s;
 }
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 </style>
