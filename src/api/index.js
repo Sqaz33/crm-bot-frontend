@@ -1,19 +1,34 @@
 import axios from 'axios'
 import { refreshToken as apiRefreshToken } from './auth'
 
+// Получение access_token из cookie, если нет в localStorage
+function getToken() {
+  const fromStorage = localStorage.getItem('access_token')
+  if (fromStorage) return fromStorage
+
+  const match = document.cookie.match(/(?:^|;\s*)access_token=([^;]*)/)
+  return match ? decodeURIComponent(match[1]) : null
+}
+
 const api = axios.create({
-  baseURL: '/api',         // <-- вот здесь
+  baseURL: '/api',
   timeout: 10000,
-  headers: { 'Content-Type': 'application/json', Accept: 'application/json' }
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json'
+  }
 })
 
 api.interceptors.request.use(config => {
-  const token = localStorage.getItem('access_token')
-  if (token) config.headers.Authorization = `Bearer ${token}`
+  const token = getToken()
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
   return config
 })
 
-// Логика автоматического рефреша по 401
+// ---- Рефреш токена при 401 ----
+
 let isRefreshing = false
 let failedQueue = []
 
@@ -58,11 +73,9 @@ api.interceptors.response.use(
         localStorage.setItem('access_token', access_token)
         localStorage.setItem('refresh_token', refresh_token)
 
-        // обновляем заголовок по умолчанию
         api.defaults.headers.common.Authorization = `Bearer ${access_token}`
         processQueue(null, access_token)
 
-        // повторяем оригинальный запрос
         originalRequest.headers.Authorization = `Bearer ${access_token}`
         return api(originalRequest)
       } catch (err) {
