@@ -140,7 +140,6 @@ onMounted(async () => {
   }
 })
 
-// Создание визита с токеном из cookie
 async function submitVisit() {
   if (!summary.staff || !summary.service || !summary.time) {
     errorMsg.value = 'Не заполнены обязательные поля.'
@@ -151,14 +150,8 @@ async function submitVisit() {
     return
   }
 
-  const token = getAccessToken()
-  if (!token) {
-    errorMsg.value = 'Ошибка авторизации (нет токена).'
-    return
-  }
-
-  errorMsg.value = ''
   submitting.value = true
+  errorMsg.value = ''
 
   try {
     await api.post('/visits/', {
@@ -167,20 +160,20 @@ async function submitVisit() {
       visit_date_time: new Date().toISOString(),
       comment: comment.value,
       remind_lead_days: remindLeadDays.value,
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
     })
 
     success.value = true
     clearVisitData()
     setTimeout(() => router.push({ name: 'home' }), 1500)
   } catch (e) {
-    errorMsg.value = 'Ошибка при записи. Проверьте данные и попробуйте ещё раз.'
+    errorMsg.value = 'Ошибка при записи. Авторизуйтесь заново или обновите токен.'
   } finally {
     submitting.value = false
   }
+
+
+
+
 }
 </script>
 
