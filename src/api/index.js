@@ -1,24 +1,14 @@
 import axios from 'axios'
 import { refreshToken as refreshAccessToken } from './token'
 
-// Декод JWT для проверки payload
-function decodeJWT(token) {
-  try {
-    return JSON.parse(atob(token.split('.')[1]))
-  } catch (e) {
-    return null
-  }
-}
-
-// Получение токена из localStorage или cookie
+// Функция для получения токена (сначала из cookie, потом из localStorage)
 function getToken() {
-  const fromStorage = localStorage.getItem('access_token')
-  if (fromStorage) return fromStorage
-
   const match = document.cookie.match(/(?:^|;\s*)access_token=([^;]*)/)
-  return match ? decodeURIComponent(match[1]) : null
+  if (match) return decodeURIComponent(match[1])
+  return localStorage.getItem('access_token') || null
 }
 
+// Создаём экземпляр axios
 const api = axios.create({
   baseURL: '/api',
   timeout: 10000,
@@ -28,28 +18,26 @@ const api = axios.create({
   }
 })
 
-// Перед каждым запросом вставляем токен и логируем его
+// Перед каждым запросом — вставляем токен
 api.interceptors.request.use(config => {
   const token = getToken()
   if (token) {
-    const payload = decodeJWT(token)
-    console.log('[API] Используем токен:', token)
-    console.log('[API] Payload токена:', payload)
-
     config.headers.Authorization = `Bearer ${token}`
-  } else {
-    console.warn('[API] Нет токена!')
   }
   return config
 })
 
-// ---- Рефреш токена при 401 ----
+// --- Обработка 401 и обновление токена ---
 let isRefreshing = false
 let failedQueue = []
 
 const processQueue = (error, token = null) => {
   failedQueue.forEach(prom => {
-    error ? prom.reject(error) : prom.resolve(token)
+    if (error) {
+      prom.reject(error)
+    } else {
+      prom.resolve(token)
+    }
   })
   failedQueue = []
 }
@@ -59,6 +47,7 @@ api.interceptors.response.use(
   async error => {
     const originalRequest = error.config
 
+    // Если 401 и ещё не пробовали рефреш
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -76,34 +65,28 @@ api.interceptors.response.use(
 
       const storedRefresh = localStorage.getItem('refresh_token')
       if (!storedRefresh) {
-        console.warn('[REFRESH] Нет refresh_token!')
         isRefreshing = false
         return Promise.reject(error)
       }
 
       try {
-        console.log('[REFRESH] Пытаемся обновить токен...')
+        // Запрашиваем новый токен
         const { data } = await refreshAccessToken(storedRefresh)
-
         const { access_token, refresh_token } = data
-        console.log('[REFRESH] Новый access_token:', access_token)
-        console.log('[REFRESH] Новый refresh_token:', refresh_token)
-        console.log('[REFRESH] Payload нового токена:', decodeJWT(access_token))
 
-        // Сохраняем токены
+        // Сохраняем новые токены
         localStorage.setItem('access_token', access_token)
         localStorage.setItem('refresh_token', refresh_token)
-
-        // Обновляем куку
         document.cookie = `access_token=${access_token}; path=/; max-age=3600; SameSite=Lax`
 
+        // Обновляем заголовки
         api.defaults.headers.common.Authorization = `Bearer ${access_token}`
         processQueue(null, access_token)
 
+        // Повторяем оригинальный запрос с новым токеном
         originalRequest.headers.Authorization = `Bearer ${access_token}`
         return api(originalRequest)
       } catch (err) {
-        console.error('[REFRESH] Ошибка обновления токена:', err)
         processQueue(err, null)
         return Promise.reject(err)
       } finally {
