@@ -85,6 +85,7 @@ const success = ref(false)
 const accepted = ref(false)
 const showTerms = ref(false)
 
+// Получаем имя клиента из localStorage (профиль)
 const clientName = computed(() => {
   const raw = localStorage.getItem(PROFILE_KEY)
   if (!raw) return '—'
@@ -96,11 +97,18 @@ const clientName = computed(() => {
   }
 })
 
+// Функция получения токена из cookie
+function getAccessToken() {
+  const match = document.cookie.match(/(?:^|;\s*)access_token=([^;]*)/)
+  return match ? decodeURIComponent(match[1]) : null
+}
+
 function clearVisitData() {
   localStorage.removeItem(VISIT_KEY)
   document.cookie = `${VISIT_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`
 }
 
+// Загружаем данные визита при открытии
 onMounted(async () => {
   const raw = localStorage.getItem(VISIT_KEY)
   if (!raw) {
@@ -132,6 +140,7 @@ onMounted(async () => {
   }
 })
 
+// Создание визита с токеном из cookie
 async function submitVisit() {
   if (!summary.staff || !summary.service || !summary.time) {
     errorMsg.value = 'Не заполнены обязательные поля.'
@@ -141,6 +150,13 @@ async function submitVisit() {
     errorMsg.value = 'Необходимо принять условия использования.'
     return
   }
+
+  const token = getAccessToken()
+  if (!token) {
+    errorMsg.value = 'Ошибка авторизации (нет токена).'
+    return
+  }
+
   errorMsg.value = ''
   submitting.value = true
 
@@ -151,7 +167,12 @@ async function submitVisit() {
       visit_date_time: new Date().toISOString(),
       comment: comment.value,
       remind_lead_days: remindLeadDays.value,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
+
     success.value = true
     clearVisitData()
     setTimeout(() => router.push({ name: 'home' }), 1500)
