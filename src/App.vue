@@ -62,13 +62,23 @@ function saveVisit(silent = false) {
 function getInitDataString() {
   if (window.Telegram?.WebApp?.initData) {
     window.Telegram.WebApp.expand()
-    return window.Telegram.WebApp.initData
+    const data = window.Telegram.WebApp.initData
+    localStorage.setItem('telegram_init', data) // сохраняем для последующих запросов
+    return data
   }
+  // если Telegram API не отдал — пробуем достать из localStorage
+  const stored = localStorage.getItem('telegram_init')
+  if (stored) return stored
+
+  // или из хэша
   const raw = window.location.hash.slice(1)
   if (!raw.startsWith('tgWebAppData=')) return null
   const payload = raw.replace('tgWebAppData=', '').split('&tgWebAppVersion')[0]
-  return decodeURIComponent(payload)
+  const decoded = decodeURIComponent(payload)
+  localStorage.setItem('telegram_init', decoded)
+  return decoded
 }
+
 
 // Инициализация авторизации и профиля
 async function initAuthAndProfile() {
