@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { refreshToken as apiRefreshToken } from './auth'
+import { refreshToken as refreshAccessToken } from './token' 
 
 // Получение access_token из cookie, если нет в localStorage
 function getToken() {
@@ -66,7 +66,7 @@ api.interceptors.response.use(
       }
 
       try {
-        const { data } = await apiRefreshToken(storedRefresh)
+        const { data } = await refreshAccessToken(storedRefresh) // Используем token.js
         const { access_token, refresh_token } = data
 
         // сохраняем новые токены

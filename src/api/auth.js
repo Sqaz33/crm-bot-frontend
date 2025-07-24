@@ -7,7 +7,3 @@ export function loginViaTelegram(initData) {
 export function exchangeToken(tmpToken) {
   return api.post('/auth/telegram/exchange', { temporary_token: tmpToken })
 }
-
-export function refreshToken(refreshToken) {
-  return api.post('/auth/refresh', { refresh_token: refreshToken })
-}
