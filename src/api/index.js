@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { refreshToken as refreshAccessToken } from './token'
 
-// Получаем access_token (localStorage → cookie)
+// Получение токена (access_token) из localStorage или cookie
 function getToken() {
   const fromStorage = localStorage.getItem('access_token')
   if (fromStorage) return fromStorage
@@ -10,6 +10,26 @@ function getToken() {
   return match ? decodeURIComponent(match[1]) : null
 }
 
+// Проверка токена на валидность (наличие telegram_id)
+function isTokenValid(token) {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    return !!payload.telegram_id
+  } catch {
+    return false
+  }
+}
+
+// Сброс сессии (если токен битый)
+function logoutAndRedirect() {
+  console.warn('[API] Сброс сессии: токен битый или невалидный')
+  localStorage.removeItem('access_token')
+  localStorage.removeItem('refresh_token')
+  document.cookie = 'access_token=; path=/; max-age=0'
+  window.location.href = '/login'
+}
+
+// Создаём axios-инстанс
 const api = axios.create({
   baseURL: '/api',
   timeout: 10000,
@@ -19,17 +39,20 @@ const api = axios.create({
   }
 })
 
-// Перед каждым запросом логируем токен
+// Перед каждым запросом вставляем токен
 api.interceptors.request.use(config => {
   const token = getToken()
-  console.log('[API] Токен перед запросом:', token ? token.slice(0, 25) + '...' : 'нет')
   if (token) {
+    if (!isTokenValid(token)) {
+      logoutAndRedirect()
+      return Promise.reject(new Error('Invalid token'))
+    }
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
 })
 
-// ---- Автоматическое обновление токена при 401 ----
+// ---- Рефреш токена при 401 ----
 let isRefreshing = false
 let failedQueue = []
 
@@ -45,23 +68,15 @@ api.interceptors.response.use(
   async error => {
     const originalRequest = error.config
 
-    // Логируем ошибку
-    if (error.response) {
-      console.warn(`[API] Ошибка ${error.response.status} на ${originalRequest.url}`)
-    }
-
+    // Ловим только 401 (просрочен токен)
     if (error.response?.status === 401 && !originalRequest._retry) {
-      console.log('[API] Пойман 401. Пробуем обновить токен...')
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
-        })
-          .then(token => {
-            console.log('[API] Используем новый токен из очереди:', token)
-            originalRequest.headers.Authorization = `Bearer ${token}`
-            return api(originalRequest)
-          })
-          .catch(err => Promise.reject(err))
+        }).then(token => {
+          originalRequest.headers.Authorization = `Bearer ${token}`
+          return api(originalRequest)
+        }).catch(err => Promise.reject(err))
       }
 
       originalRequest._retry = true
@@ -69,31 +84,35 @@ api.interceptors.response.use(
 
       const storedRefresh = localStorage.getItem('refresh_token')
       if (!storedRefresh) {
-        console.error('[API] Refresh token отсутствует. Выход.')
+        logoutAndRedirect()
         isRefreshing = false
         return Promise.reject(error)
       }
 
       try {
-        console.log('[API] Делаем refresh...')
         const { data } = await refreshAccessToken(storedRefresh)
         const { access_token, refresh_token } = data
 
-        console.log('[API] Новый токен получен:', access_token ? access_token.slice(0, 25) + '...' : 'нет')
+        // Проверяем новый токен (есть ли telegram_id)
+        if (!isTokenValid(access_token)) {
+          logoutAndRedirect()
+          return Promise.reject(new Error('Invalid refreshed token'))
+        }
 
+        // Сохраняем новые токены
         localStorage.setItem('access_token', access_token)
         localStorage.setItem('refresh_token', refresh_token)
-
         document.cookie = `access_token=${access_token}; path=/; max-age=3600; SameSite=Lax`
 
         api.defaults.headers.common.Authorization = `Bearer ${access_token}`
         processQueue(null, access_token)
 
+        // Перезапускаем оригинальный запрос с новым токеном
         originalRequest.headers.Authorization = `Bearer ${access_token}`
         return api(originalRequest)
       } catch (err) {
-        console.error('[API] Refresh не удался:', err)
         processQueue(err, null)
+        logoutAndRedirect()
         return Promise.reject(err)
       } finally {
         isRefreshing = false

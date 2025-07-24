@@ -25,6 +25,7 @@
         <span class="total-price">{{ summary.service.price }} ₽</span>
       </div>
     </div>
+
     <form class="visit-form" @submit.prevent="submitVisit">
       <div class="form-label">ПРОФИЛЬ КЛИЕНТА</div>
       <div class="client-block">
@@ -85,7 +86,7 @@ const success = ref(false)
 const accepted = ref(false)
 const showTerms = ref(false)
 
-// Получаем имя клиента
+// Получение имени клиента из профиля
 const clientName = computed(() => {
   const raw = localStorage.getItem(PROFILE_KEY)
   if (!raw) return '—'
@@ -97,7 +98,7 @@ const clientName = computed(() => {
   }
 })
 
-// Получаем актуальный токен
+// Получение токена (из localStorage или cookie)
 function getToken() {
   const fromStorage = localStorage.getItem('access_token')
   if (fromStorage) return fromStorage
@@ -105,12 +106,13 @@ function getToken() {
   return match ? decodeURIComponent(match[1]) : null
 }
 
+// Очистка данных после визита
 function clearVisitData() {
   localStorage.removeItem(VISIT_KEY)
   document.cookie = `${VISIT_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`
 }
 
-// Загружаем данные визита
+// Загрузка данных визита при монтировании
 onMounted(async () => {
   const raw = localStorage.getItem(VISIT_KEY)
   if (!raw) {
@@ -130,7 +132,9 @@ onMounted(async () => {
     try {
       const { data: staff } = await api.get(`/salon/staff/${data.staff_id}`)
       summary.staff = staff
-    } catch { summary.staff = null }
+    } catch {
+      summary.staff = null
+    }
   }
 
   const serviceId = Array.isArray(data.services_id) ? data.services_id[0] : data.services_id
@@ -138,10 +142,13 @@ onMounted(async () => {
     try {
       const { data: serviceList } = await api.get('/services/', { params: { service_id: serviceId } })
       summary.service = serviceList[0]
-    } catch { summary.service = null }
+    } catch {
+      summary.service = null
+    }
   }
 })
 
+// Отправка данных для создания визита
 async function submitVisit() {
   if (!summary.staff || !summary.service || !summary.time) {
     errorMsg.value = 'Не заполнены обязательные поля.'
@@ -153,7 +160,7 @@ async function submitVisit() {
   }
 
   const token = getToken()
-  console.log('[CreateVisit] Токен перед отправкой:', token ? token.slice(0, 25) + '...' : 'нет')
+  console.log('[CreateVisit] Используем токен:', token ? token.slice(0, 30) + '...' : 'нет')
   if (!token) {
     errorMsg.value = 'Нет токена. Авторизуйтесь заново.'
     return
@@ -173,8 +180,7 @@ async function submitVisit() {
       headers: { Authorization: `Bearer ${token}` }
     })
 
-    console.log('[CreateVisit] Ответ сервера:', res.status, res.data)
-
+    console.log('[CreateVisit] Сервер ответил:', res.status, res.data)
     success.value = true
     clearVisitData()
     setTimeout(() => router.push({ name: 'home' }), 1500)
@@ -187,9 +193,8 @@ async function submitVisit() {
 }
 </script>
 
-
-
 <style scoped>
+/* Оформление как у тебя */
 .visit-create-view {
   max-width: 500px;
   margin: 2rem auto;
@@ -205,33 +210,16 @@ async function submitVisit() {
   margin-bottom: 1rem;
   font-size: 1.1rem;
 }
-.date-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
-.staff-block {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-.avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  margin-right: 0.8rem;
-  object-fit: cover;
-  background: #eee;
-}
-.staff-info {
-  flex: 1;
-}
+.date-row { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+.staff-block { display: flex; align-items: center; margin-bottom: 1rem; }
+.avatar { width: 48px; height: 48px; border-radius: 50%; margin-right: 0.8rem; object-fit: cover; background: #eee; }
+.staff-info { flex: 1; }
 .staff-name { font-weight: bold; }
 .staff-role { font-size: 0.92em; color: #888; }
 .service-block, .total-block { margin-bottom: 1rem; }
 .service-price, .total-price { font-weight: bold; font-size: 1.2em; float: right; }
 .total-block {
-  background: #a3ddff;  /* синий */
+  background: #a3ddff;
   border-radius: 6px;
   padding: 0.7em 1em;
   font-weight: bold;
@@ -245,13 +233,7 @@ async function submitVisit() {
   border-radius: 8px;
   padding: 1rem;
 }
-.form-label {
-  font-size: 0.88em;
-  font-weight: bold;
-  color: #7c8499;
-  margin: 1.1em 0 0.4em 0;
-  letter-spacing: 0.03em;
-}
+.form-label { font-size: 0.88em; font-weight: bold; color: #7c8499; margin: 1.1em 0 0.4em 0; letter-spacing: 0.03em; }
 .client-block {
   background: #e5f5ff;
   padding: 0.6em 1em;
@@ -262,17 +244,9 @@ async function submitVisit() {
   margin-bottom: 1em;
   gap: 0.7em;
 }
-.client-icon {
-  font-size: 1.25em;
-  background: #00b172;
-  color: #fff;
-  padding: 0.2em 0.45em;
-  border-radius: 6px;
-}
+.client-icon { font-size: 1.25em; background: #00b172; color: #fff; padding: 0.2em 0.45em; border-radius: 6px; }
 .client-name { font-size: 1em; }
-.form-section {
-  margin-bottom: 1.1rem;
-}
+.form-section { margin-bottom: 1.1rem; }
 textarea {
   width: 100%;
   border-radius: 6px;
@@ -288,22 +262,9 @@ select {
   font-size: 1em;
   width: 100%;
 }
-.legal-row {
-  display: flex;
-  align-items: center;
-  font-size: 0.98em;
-  gap: 0.5em;
-  margin-bottom: 1.1em;
-}
-.legal-row input[type="checkbox"] {
-  width: 1.1em;
-  height: 1.1em;
-}
-.legal-row a {
-  color: #3471d6;
-  text-decoration: underline;
-  cursor: pointer;
-}
+.legal-row { display: flex; align-items: center; font-size: 0.98em; gap: 0.5em; margin-bottom: 1.1em; }
+.legal-row input[type="checkbox"] { width: 1.1em; height: 1.1em; }
+.legal-row a { color: #3471d6; text-decoration: underline; cursor: pointer; }
 .btn-submit {
   width: 100%;
   background: #2F80EC;
@@ -316,18 +277,7 @@ select {
   font-weight: bold;
   margin-top: 1em;
 }
-.btn-submit[disabled] {
-  background: #ccc;
-  cursor: not-allowed;
-}
-.error-msg {
-  color: #c00;
-  margin-top: 1em;
-  text-align: center;
-}
-.success-msg {
-  color: #2d9400;
-  margin-top: 1em;
-  text-align: center;
-}
+.btn-submit[disabled] { background: #ccc; cursor: not-allowed; }
+.error-msg { color: #c00; margin-top: 1em; text-align: center; }
+.success-msg { color: #2d9400; margin-top: 1em; text-align: center; }
 </style>
