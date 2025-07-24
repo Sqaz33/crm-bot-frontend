@@ -167,7 +167,7 @@ async function submitVisit() {
         service_id: summary.service.id,
         visit_date_time: new Date().toISOString(),
         comment: comment.value,
-        remind_lead_days: remindLeadDays.value,
+        remind_lead_hours: remindLeadDays.value,
       },
       {
         headers: {
