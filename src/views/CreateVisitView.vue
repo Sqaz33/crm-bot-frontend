@@ -25,14 +25,12 @@
         <span class="total-price">{{ summary.service.price }} ₽</span>
       </div>
     </div>
-
     <form class="visit-form" @submit.prevent="submitVisit">
       <div class="form-label">ПРОФИЛЬ КЛИЕНТА</div>
       <div class="client-block">
         <span class="client-icon">👤</span>
         <span class="client-name">{{ clientName }}</span>
       </div>
-
       <div class="form-label">НАПОМИНАНИЕ О ВИЗИТЕ</div>
       <div class="form-section">
         <select v-model="remindLeadDays">
@@ -43,12 +41,10 @@
           <option :value="24">24 часа</option>
         </select>
       </div>
-
       <div class="form-label">ВАШИ ПОЖЕЛАНИЯ</div>
       <div class="form-section">
         <textarea v-model="comment" placeholder="Ваши пожелания"></textarea>
       </div>
-
       <div class="legal-row">
         <input type="checkbox" id="accept" v-model="accepted" />
         <label for="accept">
@@ -57,12 +53,10 @@
           </span>
         </label>
       </div>
-
       <button class="btn-submit" type="submit" :disabled="submitting || !accepted">Записаться</button>
       <div v-if="errorMsg" class="error-msg">{{ errorMsg }}</div>
       <div v-if="success" class="success-msg">Запись успешно создана!</div>
     </form>
-
     <TermsModal :visible="showTerms" @close="showTerms = false" />
   </div>
 </template>
@@ -77,7 +71,12 @@ const VISIT_KEY = 'visit_data'
 const PROFILE_KEY = 'profile_data'
 const router = useRouter()
 
-const summary = reactive({ date: '', time: '', staff: null, service: null })
+const summary = reactive({
+  date: '',
+  time: '',
+  staff: null,
+  service: null,
+})
 const comment = ref('')
 const remindLeadDays = ref(0)
 const submitting = ref(false)
@@ -86,7 +85,6 @@ const success = ref(false)
 const accepted = ref(false)
 const showTerms = ref(false)
 
-// Имя клиента
 const clientName = computed(() => {
   const raw = localStorage.getItem(PROFILE_KEY)
   if (!raw) return '—'
@@ -98,13 +96,19 @@ const clientName = computed(() => {
   }
 })
 
-// Очищаем данные визита
+// Получаем актуальный токен (всегда свежий)
+function getToken() {
+  const fromStorage = localStorage.getItem('access_token')
+  if (fromStorage) return fromStorage
+  const match = document.cookie.match(/(?:^|;\s*)access_token=([^;]*)/)
+  return match ? decodeURIComponent(match[1]) : null
+}
+
 function clearVisitData() {
   localStorage.removeItem(VISIT_KEY)
   document.cookie = `${VISIT_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`
 }
 
-// Загружаем данные визита
 onMounted(async () => {
   const raw = localStorage.getItem(VISIT_KEY)
   if (!raw) {
@@ -136,7 +140,6 @@ onMounted(async () => {
   }
 })
 
-// Создание визита
 async function submitVisit() {
   if (!summary.staff || !summary.service || !summary.time) {
     errorMsg.value = 'Не заполнены обязательные поля.'
@@ -147,34 +150,25 @@ async function submitVisit() {
     return
   }
 
-  submitting.value = true
-  errorMsg.value = ''
-
-  // Берем токен из куки или localStorage
-  const match = document.cookie.match(/(?:^|;\s*)access_token=([^;]*)/)
-  const token = match ? decodeURIComponent(match[1]) : localStorage.getItem('access_token')
+  const token = getToken()
   if (!token) {
-    errorMsg.value = 'Нет токена авторизации. Перезайдите.'
-    submitting.value = false
+    errorMsg.value = 'Нет токена. Авторизуйтесь заново.'
     return
   }
 
+  submitting.value = true
+  errorMsg.value = ''
+
   try {
-    await api.post(
-      '/visits/',
-      {
-        staff_id: summary.staff.id,
-        service_id: summary.service.id,
-        visit_date_time: new Date().toISOString(),
-        comment: comment.value,
-        remind_lead_hours: remindLeadDays.value,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}` // ЯВНО передаем
-        }
-      }
-    )
+    await api.post('/visits/', {
+      staff_id: summary.staff.id,
+      service_id: summary.service.id,
+      visit_date_time: new Date().toISOString(),
+      comment: comment.value,
+      remind_lead_days: remindLeadDays.value,
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
 
     success.value = true
     clearVisitData()
@@ -184,10 +178,9 @@ async function submitVisit() {
   } finally {
     submitting.value = false
   }
-
-
 }
 </script>
+
 
 <style scoped>
 .visit-create-view {

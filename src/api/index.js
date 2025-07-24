@@ -1,14 +1,15 @@
 import axios from 'axios'
 import { refreshToken as refreshAccessToken } from './token'
 
-// Функция для получения токена (сначала из cookie, потом из localStorage)
+// Получение access_token (приоритет: localStorage → cookie)
 function getToken() {
+  const fromStorage = localStorage.getItem('access_token')
+  if (fromStorage) return fromStorage
+
   const match = document.cookie.match(/(?:^|;\s*)access_token=([^;]*)/)
-  if (match) return decodeURIComponent(match[1])
-  return localStorage.getItem('access_token') || null
+  return match ? decodeURIComponent(match[1]) : null
 }
 
-// Создаём экземпляр axios
 const api = axios.create({
   baseURL: '/api',
   timeout: 10000,
@@ -18,7 +19,7 @@ const api = axios.create({
   }
 })
 
-// Перед каждым запросом — вставляем токен
+// Перед каждым запросом вставляем токен
 api.interceptors.request.use(config => {
   const token = getToken()
   if (token) {
@@ -27,17 +28,13 @@ api.interceptors.request.use(config => {
   return config
 })
 
-// --- Обработка 401 и обновление токена ---
+// ---- Авто-обновление токена при 401 ----
 let isRefreshing = false
 let failedQueue = []
 
 const processQueue = (error, token = null) => {
   failedQueue.forEach(prom => {
-    if (error) {
-      prom.reject(error)
-    } else {
-      prom.resolve(token)
-    }
+    error ? prom.reject(error) : prom.resolve(token)
   })
   failedQueue = []
 }
@@ -47,7 +44,6 @@ api.interceptors.response.use(
   async error => {
     const originalRequest = error.config
 
-    // Если 401 и ещё не пробовали рефреш
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -70,20 +66,19 @@ api.interceptors.response.use(
       }
 
       try {
-        // Запрашиваем новый токен
         const { data } = await refreshAccessToken(storedRefresh)
         const { access_token, refresh_token } = data
 
         // Сохраняем новые токены
         localStorage.setItem('access_token', access_token)
         localStorage.setItem('refresh_token', refresh_token)
+
+        // Записываем обновлённый токен в cookie
         document.cookie = `access_token=${access_token}; path=/; max-age=3600; SameSite=Lax`
 
-        // Обновляем заголовки
         api.defaults.headers.common.Authorization = `Bearer ${access_token}`
         processQueue(null, access_token)
 
-        // Повторяем оригинальный запрос с новым токеном
         originalRequest.headers.Authorization = `Bearer ${access_token}`
         return api(originalRequest)
       } catch (err) {
