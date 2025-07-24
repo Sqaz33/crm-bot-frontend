@@ -150,22 +150,42 @@ async function submitVisit() {
   submitting.value = true
   errorMsg.value = ''
 
+  // Берем токен из куки или localStorage
+  const match = document.cookie.match(/(?:^|;\s*)access_token=([^;]*)/)
+  const token = match ? decodeURIComponent(match[1]) : localStorage.getItem('access_token')
+  if (!token) {
+    errorMsg.value = 'Нет токена авторизации. Перезайдите.'
+    submitting.value = false
+    return
+  }
+
   try {
-    await api.post('/visits/', {
-      staff_id: summary.staff.id,
-      service_id: summary.service.id,
-      visit_date_time: new Date().toISOString(),
-      comment: comment.value,
-      remind_lead_days: remindLeadDays.value,
-    })
+    await api.post(
+      '/visits/',
+      {
+        staff_id: summary.staff.id,
+        service_id: summary.service.id,
+        visit_date_time: new Date().toISOString(),
+        comment: comment.value,
+        remind_lead_days: remindLeadDays.value,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}` // ЯВНО передаем
+        }
+      }
+    )
+
     success.value = true
     clearVisitData()
     setTimeout(() => router.push({ name: 'home' }), 1500)
   } catch (e) {
-    errorMsg.value = 'Ошибка при записи (401). Перезайдите в аккаунт.'
+    errorMsg.value = 'Ошибка (401). Токен просрочен или неверный. Перезайдите.'
   } finally {
     submitting.value = false
   }
+
+
 }
 </script>
 
