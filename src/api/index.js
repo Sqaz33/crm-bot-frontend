@@ -1,13 +1,23 @@
 import axios from 'axios'
 import { refreshToken as refreshAccessToken } from './token'
 
-// Получаем access_token (localStorage → cookie)
+// Получение access_token из localStorage или cookie
 function getToken() {
   const fromStorage = localStorage.getItem('access_token')
   if (fromStorage) return fromStorage
 
   const match = document.cookie.match(/(?:^|;\s*)access_token=([^;]*)/)
   return match ? decodeURIComponent(match[1]) : null
+}
+
+// Сброс токенов и редирект на корень
+function logoutAndRedirect() {
+  console.warn('[API] Сброс сессии: токен битый или невалидный')
+  localStorage.removeItem('access_token')
+  localStorage.removeItem('refresh_token')
+  localStorage.removeItem('telegram_init')
+  document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;'
+  window.location.href = '/'
 }
 
 const api = axios.create({
@@ -19,17 +29,16 @@ const api = axios.create({
   }
 })
 
-// Перед каждым запросом логируем токен
+// Добавляем Authorization для каждого запроса
 api.interceptors.request.use(config => {
   const token = getToken()
-  console.log('[API] Токен перед запросом:', token ? token.slice(0, 25) + '...' : 'нет')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
 })
 
-// ---- Автоматическое обновление токена при 401 ----
+// Очередь запросов при обновлении токена
 let isRefreshing = false
 let failedQueue = []
 
@@ -40,28 +49,22 @@ const processQueue = (error, token = null) => {
   failedQueue = []
 }
 
+// Обработка 401 и обновление токена
 api.interceptors.response.use(
   response => response,
   async error => {
     const originalRequest = error.config
 
-    // Логируем ошибку
-    if (error.response) {
-      console.warn(`[API] Ошибка ${error.response.status} на ${originalRequest.url}`)
-    }
-
+    // Только если это не повторный запрос
     if (error.response?.status === 401 && !originalRequest._retry) {
-      console.log('[API] Пойман 401. Пробуем обновить токен...')
       if (isRefreshing) {
+        // Ждём, пока токен обновится
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
-        })
-          .then(token => {
-            console.log('[API] Используем новый токен из очереди:', token)
-            originalRequest.headers.Authorization = `Bearer ${token}`
-            return api(originalRequest)
-          })
-          .catch(err => Promise.reject(err))
+        }).then(token => {
+          originalRequest.headers.Authorization = `Bearer ${token}`
+          return api(originalRequest)
+        }).catch(err => Promise.reject(err))
       }
 
       originalRequest._retry = true
@@ -69,21 +72,21 @@ api.interceptors.response.use(
 
       const storedRefresh = localStorage.getItem('refresh_token')
       if (!storedRefresh) {
-        console.error('[API] Refresh token отсутствует. Выход.')
+        logoutAndRedirect()
         isRefreshing = false
         return Promise.reject(error)
       }
 
       try {
-        console.log('[API] Делаем refresh...')
+        // Обновляем токен, обязательно передавая init_data (для telegram_id)
         const { data } = await refreshAccessToken(storedRefresh)
         const { access_token, refresh_token } = data
 
-        console.log('[API] Новый токен получен:', access_token ? access_token.slice(0, 25) + '...' : 'нет')
+        if (!access_token) throw new Error('Invalid refreshed token')
 
+        // Сохраняем токены
         localStorage.setItem('access_token', access_token)
         localStorage.setItem('refresh_token', refresh_token)
-
         document.cookie = `access_token=${access_token}; path=/; max-age=3600; SameSite=Lax`
 
         api.defaults.headers.common.Authorization = `Bearer ${access_token}`
@@ -93,6 +96,7 @@ api.interceptors.response.use(
         return api(originalRequest)
       } catch (err) {
         console.error('[API] Refresh не удался:', err)
+        logoutAndRedirect()
         processQueue(err, null)
         return Promise.reject(err)
       } finally {
