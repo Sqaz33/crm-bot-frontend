@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { refreshToken as refreshAccessToken } from './token'
 
+// Получение access_token из localStorage или cookie
 function getToken() {
   const fromStorage = localStorage.getItem('access_token')
   if (fromStorage) return fromStorage
@@ -18,6 +19,7 @@ const api = axios.create({
   }
 })
 
+// Перед каждым запросом вставляем токен
 api.interceptors.request.use(config => {
   const token = getToken()
   if (token) {
@@ -26,6 +28,7 @@ api.interceptors.request.use(config => {
   return config
 })
 
+// ---- Рефреш токена при 401 ----
 let isRefreshing = false
 let failedQueue = []
 
@@ -66,9 +69,11 @@ api.interceptors.response.use(
         const { data } = await refreshAccessToken(storedRefresh)
         const { access_token, refresh_token } = data
 
-        // сохраняем токены
+        // сохраняем новые токены
         localStorage.setItem('access_token', access_token)
         localStorage.setItem('refresh_token', refresh_token)
+
+        // обновляем куку
         document.cookie = `access_token=${access_token}; path=/; max-age=3600; SameSite=Lax`
 
         api.defaults.headers.common.Authorization = `Bearer ${access_token}`
