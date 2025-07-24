@@ -1,3 +1,66 @@
+<template>
+  <div class="visit-create-view">
+    <div class="visit-summary">
+      <div class="date-row">
+        <div class="date-cell">
+          <div class="date">{{ summary.date }}</div>
+        </div>
+        <div class="time-cell">{{ summary.time }}</div>
+      </div>
+      <div class="staff-block" v-if="summary.staff">
+        <img :src="summary.staff.photo" class="avatar" v-if="summary.staff.photo" />
+        <div class="staff-info">
+          <div class="staff-name">{{ summary.staff.name }}</div>
+          <div class="staff-role">{{ summary.staff.specialization }}</div>
+        </div>
+      </div>
+      <div class="service-block" v-if="summary.service">
+        <div class="service-name">{{ summary.service.name }}</div>
+        <div class="service-desc">{{ summary.service.description }}</div>
+        <div class="service-duration">{{ summary.service.duration }} мин</div>
+        <div class="service-price">{{ summary.service.price }} ₽</div>
+      </div>
+      <div class="total-block" v-if="summary.service">
+        <span>Итого к оплате:</span>
+        <span class="total-price">{{ summary.service.price }} ₽</span>
+      </div>
+    </div>
+    <form class="visit-form" @submit.prevent="submitVisit">
+      <div class="form-label">ПРОФИЛЬ КЛИЕНТА</div>
+      <div class="client-block">
+        <span class="client-icon">👤</span>
+        <span class="client-name">{{ clientName }}</span>
+      </div>
+      <div class="form-label">НАПОМИНАНИЕ О ВИЗИТЕ</div>
+      <div class="form-section">
+        <select v-model="remindLeadDays">
+          <option :value="0">Не напоминать</option>
+          <option :value="1">1 час</option>
+          <option :value="2">2 часа</option>
+          <option :value="4">4 часа</option>
+          <option :value="24">24 часа</option>
+        </select>
+      </div>
+      <div class="form-label">ВАШИ ПОЖЕЛАНИЯ</div>
+      <div class="form-section">
+        <textarea v-model="comment" placeholder="Ваши пожелания"></textarea>
+      </div>
+      <div class="legal-row">
+        <input type="checkbox" id="accept" v-model="accepted" />
+        <label for="accept">
+          <span>
+            Я принимаю <a href="#" @click.prevent="showTerms = true">условия использования</a>
+          </span>
+        </label>
+      </div>
+      <button class="btn-submit" type="submit" :disabled="submitting || !accepted">Записаться</button>
+      <div v-if="errorMsg" class="error-msg">{{ errorMsg }}</div>
+      <div v-if="success" class="success-msg">Запись успешно создана!</div>
+    </form>
+    <TermsModal :visible="showTerms" @close="showTerms = false" />
+  </div>
+</template>
+
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import api from '../api'
