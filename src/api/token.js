@@ -1,7 +1,7 @@
 import api from './index'
 
 export async function refreshToken(refreshToken) {
-  return axios.post('/api/auth/refresh', {
+  return api.post('/auth/refresh', {
     refresh_token: refreshToken
   })
 }
