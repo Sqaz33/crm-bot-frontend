@@ -65,7 +65,9 @@ function goTo(name) {
   width: min(85%, 35rem);
   box-sizing: border-box;
 }
-
+.section-title:hover {
+  background-color: #eaeff5;
+}
 .cards {
   display: flex;
   flex-direction: column;

@@ -155,6 +155,7 @@ function navigate(item) {
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
+  font-family:var(--font-primary) ;
 }
  
 
