@@ -7,6 +7,7 @@
         </div>
         <div class="time-cell">{{ summary.time }}</div>
       </div>
+
       <div class="staff-block" v-if="summary.staff">
         <img :src="summary.staff.photo" class="avatar" v-if="summary.staff.photo" />
         <div class="staff-info">
@@ -14,12 +15,14 @@
           <div class="staff-role">{{ summary.staff.specialization }}</div>
         </div>
       </div>
+
       <div class="service-block" v-if="summary.service">
         <div class="service-name">{{ summary.service.name }}</div>
         <div class="service-desc">{{ summary.service.description }}</div>
         <div class="service-duration">{{ summary.service.duration }} мин</div>
         <div class="service-price">{{ summary.service.price }} ₽</div>
       </div>
+
       <div class="total-block" v-if="summary.service">
         <span>Итого к оплате:</span>
         <span class="total-price">{{ summary.service.price }} ₽</span>
@@ -32,6 +35,7 @@
         <span class="client-icon">👤</span>
         <span class="client-name">{{ clientName }}</span>
       </div>
+
       <div class="form-label">НАПОМИНАНИЕ О ВИЗИТЕ</div>
       <div class="form-section">
         <select v-model="remindLeadDays">
@@ -42,10 +46,12 @@
           <option :value="24">24 часа</option>
         </select>
       </div>
+
       <div class="form-label">ВАШИ ПОЖЕЛАНИЯ</div>
       <div class="form-section">
         <textarea v-model="comment" placeholder="Ваши пожелания"></textarea>
       </div>
+
       <div class="legal-row">
         <input type="checkbox" id="accept" v-model="accepted" />
         <label for="accept">
@@ -54,10 +60,15 @@
           </span>
         </label>
       </div>
-      <button class="btn-submit" type="submit" :disabled="submitting || !accepted">Записаться</button>
+
+      <button class="btn-submit" type="submit" :disabled="submitting || !accepted">
+        Подтвердить визит
+      </button>
+
       <div v-if="errorMsg" class="error-msg">{{ errorMsg }}</div>
-      <div v-if="success" class="success-msg">Запись успешно создана!</div>
+      <div v-if="success" class="success-msg">Визит обновлён и подтверждён!</div>
     </form>
+
     <TermsModal :visible="showTerms" @close="showTerms = false" />
   </div>
 </template>
@@ -72,21 +83,27 @@ const VISIT_KEY = 'visit_data'
 const PROFILE_KEY = 'profile_data'
 const router = useRouter()
 
+// Summary карточка
 const summary = reactive({
   date: '',
   time: '',
   staff: null,
   service: null,
 })
+
 const comment = ref('')
-const remindLeadDays = ref(0)
+const remindLeadDays = ref(0) // хранится локально (этот эндпоинт его не принимает)
 const submitting = ref(false)
 const errorMsg = ref('')
 const success = ref(false)
 const accepted = ref(false)
 const showTerms = ref(false)
 
-// Получение имени клиента из профиля
+// Для обновления визита
+const visitId = ref(null)
+const visitDateISO = ref(null) // точное ISO-время визита, которое отправляем на сервер
+
+// Имя клиента из сохранённого профиля
 const clientName = computed(() => {
   const raw = localStorage.getItem(PROFILE_KEY)
   if (!raw) return '—'
@@ -98,36 +115,51 @@ const clientName = computed(() => {
   }
 })
 
-// Получение токена (из localStorage или cookie)
-function getToken() {
-  const fromStorage = localStorage.getItem('access_token')
-  if (fromStorage) return fromStorage
-  const match = document.cookie.match(/(?:^|;\s*)access_token=([^;]*)/)
-  return match ? decodeURIComponent(match[1]) : null
-}
-
-// Очистка данных после визита
+// Очистка локального состояния визита
 function clearVisitData() {
   localStorage.removeItem(VISIT_KEY)
   document.cookie = `${VISIT_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`
 }
 
-// Загрузка данных визита при монтировании
+// Загрузка данных при монтировании
 onMounted(async () => {
   const raw = localStorage.getItem(VISIT_KEY)
   if (!raw) {
     errorMsg.value = 'Не выбраны данные для записи.'
     return
   }
+
   const data = JSON.parse(raw)
   comment.value = data.comment || ''
 
-  if (data.visit_time?.start_time) {
-    const dt = new Date(data.visit_time.start_time)
-    summary.date = dt.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', weekday: 'long' })
-    summary.time = dt.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+  // ID визита: из сохранённого объекта или из маршрута
+  visitId.value =
+    data.visit_id ??
+    router.currentRoute.value.params.visit_id ??
+    router.currentRoute.value.query.visit_id ??
+    null
+
+  if (!visitId.value) {
+    errorMsg.value = 'Не передан visit_id.'
+    return
   }
 
+  // Время визита
+  if (data.visit_time?.start_time) {
+    const dt = new Date(data.visit_time.start_time)
+    visitDateISO.value = dt.toISOString()
+    summary.date = dt.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: 'long',
+      weekday: 'long'
+    })
+    summary.time = dt.toLocaleTimeString('ru-RU', {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
+  // Сотрудник
   if (data.staff_id) {
     try {
       const { data: staff } = await api.get(`/salon/staff/${data.staff_id}`)
@@ -137,21 +169,22 @@ onMounted(async () => {
     }
   }
 
+  // Услуга (берём первый ID, если массив)
   const serviceId = Array.isArray(data.services_id) ? data.services_id[0] : data.services_id
   if (serviceId) {
     try {
       const { data: serviceList } = await api.get('/services/', { params: { service_id: serviceId } })
-      summary.service = serviceList[0]
+      summary.service = serviceList?.[0] ?? null
     } catch {
       summary.service = null
     }
   }
 })
 
-// Отправка данных для создания визита
+// Подтверждение визита и изменение даты
 async function submitVisit() {
-  if (!summary.staff || !summary.service || !summary.time) {
-    errorMsg.value = 'Не заполнены обязательные поля.'
+  if (!visitId.value || !visitDateISO.value) {
+    errorMsg.value = 'Не хватает данных визита (visit_id или дата).'
     return
   }
   if (!accepted.value) {
@@ -159,34 +192,28 @@ async function submitVisit() {
     return
   }
 
-  const token = getToken()
-  console.log('[CreateVisit] Используем токен:', token ? token.slice(0, 30) + '...' : 'нет')
-  if (!token) {
-    errorMsg.value = 'Нет токена. Авторизуйтесь заново.'
-    return
-  }
-
   submitting.value = true
   errorMsg.value = ''
 
   try {
-    const res = await api.post('/visits/', {
-      staff_id: summary.staff.id,
-      service_id: summary.service.id,
-      visit_date_time: new Date().toISOString(),
-      comment: comment.value,
-      remind_lead_days: remindLeadDays.value,
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
+    // Если сервер требует PUT — замени на api.put
+    const res = await api.patch(`/visits/${visitId.value}`, {
+      visit_date_time: visitDateISO.value,
+      will_come: true
     })
 
-    console.log('[CreateVisit] Сервер ответил:', res.status, res.data)
+    console.log('[VisitUpdate] Сервер ответил:', res.status, res.data)
     success.value = true
     clearVisitData()
     setTimeout(() => router.push({ name: 'home' }), 1500)
   } catch (e) {
-    console.error('[CreateVisit] Ошибка при POST /visits/:', e)
-    errorMsg.value = 'Ошибка (401). Токен просрочен или неверный. Перезайдите.'
+    console.error('[VisitUpdate] Ошибка:', e)
+    const status = e?.response?.status
+    errorMsg.value =
+      status === 401 ? 'Сессия истекла. Перезайдите.' :
+      status === 403 ? 'Недостаточно прав.' :
+      status === 422 ? 'Некорректные данные (422). Проверьте дату.' :
+      'Не удалось обновить визит. Попробуйте ещё раз.'
   } finally {
     submitting.value = false
   }
@@ -194,7 +221,6 @@ async function submitVisit() {
 </script>
 
 <style scoped>
-/* Оформление как у тебя */
 .visit-create-view {
   max-width: 500px;
   margin: 2rem auto;

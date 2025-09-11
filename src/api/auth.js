@@ -11,7 +11,7 @@ export function loginViaTelegram(initDataStr) {
 
 /**
  * Обмен временного токена на обычные токены
- * POST /auth/telegram/exchange -> { access_token, refresh_token }
+ * POST /auth/telegram/exchange -> { access_token }
  */
 export function exchangeToken(tmpToken) {
   return api.post('/auth/telegram/exchange', { temporary_token: tmpToken })
