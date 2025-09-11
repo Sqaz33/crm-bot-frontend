@@ -19,59 +19,20 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { loginViaTelegram, exchangeToken } from './api/auth'
-import { parseTelegramLaunchData } from './utils/telegram'
-
+import { parseTelegramLaunchData, getInitDataString } from './utils/telegram'
 
 const VISIT_KEY = 'visit_data'
-
-/**
- * Создаёт пустую запись визита и сохраняет её
- * в localStorage и в cookie.
- *
- * @param {boolean} silent — если true, не выводить лог об успешном сохранении
- */
-function saveVisit(silent = false) {
-
-  const visitData = {
-    staff_id:   '',
-    services_id:'',        
-    visit_time: { start_time: ''},
-    comment:    ''         
-  }
-
-  localStorage.setItem(VISIT_KEY, JSON.stringify(visitData))
-
-  
-  const cookieValue = encodeURIComponent(JSON.stringify(visitData))
-  document.cookie =
-    `${VISIT_KEY}=${cookieValue}` +
-    `; path=/; max-age=${365 * 24 * 60 * 60}` +
-    `; Secure; SameSite=None`
-
-  if (!silent) {
-    console.log('Visit data saved:', visitData)
-  }
-  console.log('→ document.cookie:', document.cookie)
-  console.log(`→ localStorage[${VISIT_KEY}]:`, localStorage.getItem(VISIT_KEY))
-}
-
-
-saveVisit()
-
-// Ключ для localStorage
 const PROFILE_KEY = 'profile_data'
 
-// Флаги загрузки/ошибки
 const loading   = ref(true)
 const authError = ref(false)
+const errorText = ref('Ошибка авторизации. Пожалуйста, попробуйте ещё раз.')
 const router    = useRouter()
 
-// Форма профиля
 const form = reactive({
   firstName:  '',
   lastName:   '',
@@ -80,62 +41,69 @@ const form = reactive({
   email:      ''
 })
 
-// Сырая структура tgWebAppData
-const initData = ref({})
-
-// Извлекаем строку initData
-function getInitDataString() {
-  if (window.Telegram?.WebApp?.initData) {
-    window.Telegram.WebApp.expand()
-    return window.Telegram.WebApp.initData
-  }
-  const raw = window.location.hash.slice(1)
-  if (!raw.startsWith('tgWebAppData=')) return null
-  const payload = raw
-    .replace('tgWebAppData=', '')
-    .split('&tgWebAppVersion')[0]
-  return decodeURIComponent(payload)
+function saveVisit(silent = false) {
+  const visitData = { staff_id:'', services_id:'', visit_time:{ start_time:'' }, comment:'' }
+  localStorage.setItem(VISIT_KEY, JSON.stringify(visitData))
+  document.cookie =
+    `${VISIT_KEY}=${encodeURIComponent(JSON.stringify(visitData))}; path=/; max-age=${365*24*60*60}; Secure; SameSite=None`
+  if (!silent) console.log('Visit data saved:', visitData)
 }
 
-// Общая инициализация
+function saveProfile(silent = false) {
+  const profileData = {
+    firstName: form.firstName, lastName: form.lastName,
+    middleName: form.middleName, phone: form.phone, email: form.email
+  }
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(profileData))
+  document.cookie =
+    `profile_user=${encodeURIComponent(JSON.stringify(profileData))}; path=/; max-age=${365*24*60*60}; Secure; SameSite=None`
+  if (!silent) console.log('Profile manually saved:', profileData)
+}
+
 async function initAuthAndProfile() {
   try {
-    // 1) Авторизация
+    saveVisit(true)
+
     const initStr = getInitDataString()
-    console.log('InitData string:', initStr)
     if (!initStr) throw new Error('initData отсутствует')
 
+    // 1) Новый маршрут: /auth/telegram/login { init_data }
     const loginRes = await loginViaTelegram(initStr)
-    console.log('loginViaTelegram →', loginRes.data)
+    const tmp = loginRes.data?.temporary_token
+    if (!tmp) throw new Error('temporary_token отсутствует')
 
-    const exchRes = await exchangeToken(loginRes.data.temporary_token)
-    console.log('exchangeToken →', exchRes.data)
+    // 2) Обмен на обычные токены
+    const exchRes = await exchangeToken(tmp)
+    const { access_token, refresh_token } = exchRes.data || {}
+    localStorage.setItem('access_token', access_token || '')
+    localStorage.setItem('refresh_token', refresh_token || '')
+    document.cookie = `access_token=${access_token || ''}; path=/; max-age=3600; SameSite=Lax`
 
-    localStorage.setItem('access_token',  exchRes.data.access_token)
-    localStorage.setItem('refresh_token', exchRes.data.refresh_token)
-
-    // 2) Парсим tgWebAppData
+    // 3) Распарсим user для автозаполнения
     const { tgData } = parseTelegramLaunchData()
-    initData.value = tgData
-    console.log('Parsed tgWebAppData:', tgData)
-
-    // 3) Заполняем базовые поля из Telegram
     const user = tgData.user || {}
     form.firstName = user.first_name || ''
     form.lastName  = user.last_name  || ''
 
-    // 4) Загружаем ранее сохранённые доп. поля
-    console.log('Existing localStorage:', localStorage.getItem(PROFILE_KEY))
+    // 4) Подхватим сохранённые доп. поля
     const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')
     form.middleName = saved.middleName || ''
     form.phone      = saved.phone      || ''
     form.email      = saved.email      || ''
 
-    // 5) Сразу сохраняем ВСЕ поля в cookie и localStorage
-    saveProfile(true /* silent */)
-
-  } catch (err) {
-    console.error('Ошибка инициализации профиля:', err)
+    // 5) Сохраняем профиль (cookie + LS)
+    saveProfile(true)
+  } catch (e) {
+    console.error('Ошибка авторизации:', e)
+    // точные сообщения по спецификации:
+    const status = e?.response?.status
+    if (status === 400) {
+      errorText.value = 'Некорректная подпись или телефон не найден.'
+    } else if (status === 422) {
+      errorText.value = 'Validation Error: проверьте корректность init_data.'
+    } else {
+      errorText.value = 'Ошибка авторизации. Пожалуйста, попробуйте ещё раз.'
+    }
     authError.value = true
   } finally {
     loading.value = false
@@ -146,58 +114,15 @@ async function initAuthAndProfile() {
   }
 }
 
-// Сохранение профиля в localStorage + куку
-function saveProfile(silent = false) {
-  const profileData = {
-    firstName:  form.firstName,
-    lastName:   form.lastName,
-    middleName: form.middleName,
-    phone:      form.phone,
-    email:      form.email
-  }
-  // localStorage
-  localStorage.setItem(PROFILE_KEY, JSON.stringify(profileData))
-  // cookie (Secure, SameSite=None)
-  document.cookie =
-    `profile_user=${encodeURIComponent(JSON.stringify(profileData))}` +
-    `; path=/; max-age=${365*24*60*60}` +
-    `; Secure; SameSite=None`
-
-  if (!silent) {
-    console.log('Profile manually saved:', profileData)
-  }
-  console.log('→ document.cookie:', document.cookie)
-  console.log('→ localStorage profile_data:', localStorage.getItem(PROFILE_KEY))
-}
-
 onMounted(initAuthAndProfile)
 </script>
 
-
-
-
 <style scoped>
-.loading-container {
-  text-align: center;
-  margin: 2rem 0;
-  font-size: 1.1rem;
+.loading-container{ text-align:center; margin:2rem 0; font-size:1.1rem; }
+.auth-error-banner{
+  position:fixed; top:0; left:0; right:0;
+  background:#e53935; color:#fff; padding:1rem; text-align:center; z-index:1000;
 }
-
-.auth-error-banner {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  background: #e53935;
-  color: white;
-  padding: 1rem;
-  text-align: center;
-  z-index: 1000;
-}
-
-/* Плавное появление/исчезновение баннера */
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
+.fade-enter-active,.fade-leave-active{ transition:opacity .5s; }
+.fade-enter-from,.fade-leave-to{ opacity:0; }
 </style>
