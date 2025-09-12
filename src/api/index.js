@@ -5,8 +5,7 @@ const AUTH_WHITELIST = [
   '/auth/telegram/login',
   '/auth/logout',
 ]
-
-const AUTH_SCHEME = 'Bearer' // 'JWT'
+const AUTH_SCHEME = 'Bearer' 
 
 const api = axios.create({
   baseURL: '/api',
@@ -14,14 +13,12 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json', Accept: 'application/json' }
 })
 
-// Берём токен из Pinia (память) или из sessionStorage (на случай обновления страницы)
 function getAccess() {
   try {
     const store = useAuthStore()
     if (store?.accessToken) return store.accessToken
   } catch {}
-  const ss = sessionStorage.getItem('access_token')
-  return ss || null
+  return sessionStorage.getItem('access_token')
 }
 
 api.interceptors.request.use(cfg => {
@@ -38,12 +35,8 @@ api.interceptors.response.use(
     const status = err.response?.status
     const url = err.config?.url
     if (status === 401 && !AUTH_WHITELIST.includes(url)) {
-      // токен умер/невалиден — чищаем хранилища и ведём на авторизацию
-      try {
-        const store = useAuthStore()
-        store.logout({ silent: true })
-      } catch {}
-      window.location.replace('/') // страница, где получим init_data и залогинимся
+      try { useAuthStore().logout({ silent: true }) } catch {}
+      window.location.replace('/')
     }
     return Promise.reject(err)
   }

@@ -32,7 +32,6 @@ function saveVisit(silent = false) {
   localStorage.setItem(VISIT_KEY, JSON.stringify(visitData))
   if (!silent) console.log('[App] Visit draft saved:', visitData)
 }
-
 function saveProfile(silent = false) {
   const profileData = {
     firstName: form.firstName, lastName: form.lastName,
@@ -42,16 +41,12 @@ function saveProfile(silent = false) {
   if (!silent) console.log('[App] Profile (local) saved:', profileData)
 }
 
-/* ====== DEBUG ХЕЛПЕРЫ ДЛЯ init_data ====== */
-
-// коротко маскируем длинные значения
-function mask(str, keep = 80) {
+// ===== DEBUG helpers =====
+function mask(str, keep = 300) {
   if (typeof str !== 'string') return str
   if (str.length <= keep) return str
   return str.slice(0, keep) + '…(' + str.length + ')'
 }
-
-// печать ключей/длин и важных полей из init_data
 function debugDumpInitData(initStr) {
   console.groupCollapsed('[LOGIN] init_data RAW preview')
   console.log('length:', initStr?.length || 0)
@@ -65,18 +60,9 @@ function debugDumpInitData(initStr) {
     console.group('[LOGIN] init_data parsed keys')
     const keys = Array.from(usp.keys())
     console.log('keys:', keys)
-    const obj = {}
-    for (const k of keys) {
-      const v = usp.get(k)
-      obj[k] = (k === 'user' || k === 'receiver' || k === 'chat' || k === 'start_param')
-        ? mask(v, 200)
-        : mask(v, 120)
-    }
-    console.log('values (masked):', obj)
-    // отдельные важные поля
-    console.log('hash present:', !!usp.get('hash'))
-    console.log('auth_date:', usp.get('auth_date'))
-    console.log('query_id:', mask(usp.get('query_id') || '', 64))
+    const view = {}
+    for (const k of keys) view[k] = mask(usp.get(k), 160)
+    console.log('values (masked):', view)
     const userRaw = usp.get('user')
     if (userRaw) {
       try { console.log('user parsed:', JSON.parse(userRaw)) } catch { console.warn('user JSON parse failed') }
@@ -94,26 +80,22 @@ async function doTelegramLogin() {
   console.log('[LOGIN] has init_data?', !!initStr)
   if (!initStr) {
     console.groupEnd()
-    throw new Error('init_data отсутствует (откройте приложение внутри Telegram)')
+    throw new Error('init_data отсутствует (запустите внутри Telegram)')
   }
 
-  // Печатаем безопасный дамп init_data
+  // важное: теперь initStr — сырой query-string. Логируем и проверяем наличие hash=
   debugDumpInitData(initStr)
+  console.log('[LOGIN] POST payload.init_data:', mask(initStr, 400))
 
-  // Тело запроса (маскируем для консоли)
-  console.log('[LOGIN] POST /auth/telegram/login payload:', { init_data: mask(initStr, 300) })
-
-  // Отправляем РОВНО initStr как строку — без decode/encode
   const { data } = await loginViaTelegram(initStr) // ожидаем { access_token }
-  console.log('[LOGIN] Response 200:', data)
-
+  console.log('[LOGIN] Response:', data)
   const access = data?.access_token
   if (!access) {
     console.groupEnd()
     throw new Error('access_token отсутствует в ответе /auth/telegram/login')
   }
-  store.setAccess(access) // память + sessionStorage
-  console.log('[LOGIN] access_token stored (len):', access.length)
+  store.setAccess(access)
+  console.log('[LOGIN] access_token stored, len=', access.length)
   console.groupEnd()
 }
 
@@ -126,10 +108,12 @@ async function initAuthAndProfile() {
       await doTelegramLogin()
     }
 
+    // локальная автоподстановка по tgData
     const { tgData } = parseTelegramLaunchData()
     const user = tgData.user || {}
     form.firstName = user.first_name || ''
     form.lastName  = user.last_name  || ''
+    if (user.id && store.setTelegramId) store.setTelegramId(user.id)
 
     const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')
     form.middleName = saved.middleName || ''
@@ -142,7 +126,7 @@ async function initAuthAndProfile() {
     const status = e?.response?.status
     if (status === 400)      errorText.value = 'Некорректная подпись или телефон не найден.'
     else if (status === 422) errorText.value = 'Validation Error: проверьте корректность init_data.'
-    else if (status === 500) errorText.value = 'Серверная ошибка при парсинге init_data (500).'
+    else if (status === 500) errorText.value = 'Серверная ошибка при разборе init_data (500).'
     else                     errorText.value = e?.message || 'Ошибка авторизации.'
     authError.value = true
   } finally {
