@@ -13,7 +13,7 @@
 import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { loginViaTelegram } from './api/auth'
-import { parseTelegramLaunchData, getInitDataString } from './utils/telegram'
+import { parseTelegramLaunchData, getInitData } from './utils/telegram'
 import { useAuthStore } from './stores/auth'
 
 const VISIT_KEY = 'visit_data'
@@ -41,60 +41,45 @@ function saveProfile(silent = false) {
   if (!silent) console.log('[App] Profile (local) saved:', profileData)
 }
 
-// ===== DEBUG helpers =====
-function mask(str, keep = 300) {
+// вспомогательные логи (безопасные)
+function mask(str, keep = 280) {
   if (typeof str !== 'string') return str
-  if (str.length <= keep) return str
-  return str.slice(0, keep) + '…(' + str.length + ')'
+  return str.length <= keep ? str : str.slice(0, keep) + '…(' + str.length + ')'
 }
-function debugDumpInitData(initStr) {
-  console.groupCollapsed('[LOGIN] init_data RAW preview')
-  console.log('length:', initStr?.length || 0)
-  console.log('startsWith "query_id=":', initStr?.startsWith('query_id='))
-  console.log('includes "hash=":', initStr?.includes('hash='))
-  console.log('raw head:', mask(initStr, 200))
-  console.groupEnd()
-
+function debugInitData(id) {
+  console.group('init_data')
+  console.log('length:', id?.length || 0)
+  console.log('startsWith "query_id="? ', id?.startsWith('query_id='))
+  console.log('includes "hash="? ', !!id?.includes('hash='))
+  console.log('head:', mask(id, 220))
+  console.log(initData)
   try {
-    const usp = new URLSearchParams(initStr)
-    console.group('[LOGIN] init_data parsed keys')
-    const keys = Array.from(usp.keys())
-    console.log('keys:', keys)
-    const view = {}
-    for (const k of keys) view[k] = mask(usp.get(k), 160)
-    console.log('values (masked):', view)
-    const userRaw = usp.get('user')
-    if (userRaw) {
-      try { console.log('user parsed:', JSON.parse(userRaw)) } catch { console.warn('user JSON parse failed') }
-    }
-    console.groupEnd()
-  } catch (e) {
-    console.warn('[LOGIN] URLSearchParams parse FAILED:', e)
-  }
+    const usp = new URLSearchParams(id)
+    console.log('keys:', Array.from(usp.keys()))
+    console.log('user(masked):', mask(usp.get('user') || '', 200))
+  } catch (e) { console.warn('URLSearchParams failed:', e) }
+  console.groupEnd()
 }
 
 async function doTelegramLogin() {
   console.group('[LOGIN] Start')
-  const initStr = getInitDataString()
+
+  const initData = getInitData() // ← берём РОВНО так, как описано выше
   console.log('[LOGIN] from WebApp?', !!window.Telegram?.WebApp?.initData)
-  console.log('[LOGIN] has init_data?', !!initStr)
-  if (!initStr) {
-    console.groupEnd()
-    throw new Error('init_data отсутствует (запустите внутри Telegram)')
-  }
+  console.log('[LOGIN] has init_data?', !!initData)
+  if (!initData) { console.groupEnd(); throw new Error('init_data отсутствует (WebApp/hash/query)') }
 
-  // важное: теперь initStr — сырой query-string. Логируем и проверяем наличие hash=
-  debugDumpInitData(initStr)
-  console.log('[LOGIN] POST payload.init_data:', mask(initStr, 400))
+  debugInitData(initData)
+  console.log('[LOGIN] POST payload.init_data:', mask(initData, 400))
 
-  const { data } = await loginViaTelegram(initStr) // ожидаем { access_token }
+  // отправляем на бэк без каких-либо преобразований постфактум
+  const { data } = await loginViaTelegram(initData) // ожидаем { access_token }
   console.log('[LOGIN] Response:', data)
+
   const access = data?.access_token
-  if (!access) {
-    console.groupEnd()
-    throw new Error('access_token отсутствует в ответе /auth/telegram/login')
-  }
-  store.setAccess(access)
+  if (!access) { console.groupEnd(); throw new Error('access_token отсутствует') }
+
+  store.setAccess(access) // память + sessionStorage
   console.log('[LOGIN] access_token stored, len=', access.length)
   console.groupEnd()
 }
@@ -108,7 +93,6 @@ async function initAuthAndProfile() {
       await doTelegramLogin()
     }
 
-    // локальная автоподстановка по tgData
     const { tgData } = parseTelegramLaunchData()
     const user = tgData.user || {}
     form.firstName = user.first_name || ''
@@ -126,7 +110,7 @@ async function initAuthAndProfile() {
     const status = e?.response?.status
     if (status === 400)      errorText.value = 'Некорректная подпись или телефон не найден.'
     else if (status === 422) errorText.value = 'Validation Error: проверьте корректность init_data.'
-    else if (status === 500) errorText.value = 'Серверная ошибка при разборе init_data (500).'
+    else if (status === 500) errorText.value = 'Серверная ошибка при разборе init_data.'
     else                     errorText.value = e?.message || 'Ошибка авторизации.'
     authError.value = true
   } finally {

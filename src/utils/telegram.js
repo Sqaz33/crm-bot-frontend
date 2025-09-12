@@ -1,29 +1,31 @@
-export function getInitDataString() {
-  // 1) основной источник — внутри Telegram WebApp
+function tryDecodeOnce(str) {
+  try { return decodeURIComponent(str) } catch { return str }
+}
+
+export function getInitData() {
+
   if (window.Telegram?.WebApp?.initData) {
     window.Telegram.WebApp.expand?.()
-    return window.Telegram.WebApp.initData // raw query string
+    return window.Telegram.WebApp.initData
   }
 
-  // 2) fallback из hash
-  const hash = window.location.hash.slice(1) // "tgWebAppData=...."
+
+  const hash = window.location.hash.slice(1) 
   if (hash.startsWith('tgWebAppData=')) {
-    const encoded = hash.replace(/^tgWebAppData=/, '')
-    // превращаем %3D → "=", %26 → "&", и т.д.
-    return decodeURIComponent(encoded)
+    const encoded = hash.substring('tgWebAppData='.length)
+    return tryDecodeOnce(encoded) 
   }
 
-  // 3) fallback из query (?init_data=...)
+
   const q = new URLSearchParams(window.location.search).get('init_data')
   if (q) {
-    // если пришло закодированным — декодируем до сырого query-string
-    try { return decodeURIComponent(q) } catch { return q }
+    return q.startsWith('query_id=') ? q : tryDecodeOnce(q)
   }
 
   return null
 }
 
-// Для UI (автоподстановка имени), не для подписи.
+
 export function parseTelegramLaunchData() {
   const params = Object.fromEntries(new URLSearchParams(window.location.search))
 
@@ -32,17 +34,14 @@ export function parseTelegramLaunchData() {
   }
 
   let tgData = {}
-  const hash = window.location.hash.slice(1)
-  if (hash.startsWith('tgWebAppData=')) {
-    const decoded = decodeURIComponent(hash.replace(/^tgWebAppData=/, ''))
-    const usp = new URLSearchParams(decoded)
-    for (const [k, v] of usp.entries()) {
-      if (k === 'user') {
-        try { tgData.user = JSON.parse(v) } catch { tgData.user = null }
-      } else {
-        tgData[k] = v
-      }
+  const raw = getInitData()
+  if (raw) {
+    const usp = new URLSearchParams(raw)
+    const userStr = usp.get('user')
+    if (userStr) {
+      try { tgData.user = JSON.parse(userStr) } catch { tgData.user = null }
     }
+
   }
   return { params, tgData }
 }
