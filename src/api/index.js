@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useAuthStore } from './stores/auth'
+import { useAuthStore } from '../stores/auth'
 
 const AUTH_WHITELIST = [
   '/auth/telegram/login',
@@ -50,3 +50,12 @@ api.interceptors.response.use(
 )
 
 export default api
+
+// Пример использования перед защищённым запросом
+// import api from './api'
+// import { ensureAccess } from '@/auth/ensureAuth'
+
+// async function createVisit(payload) {
+//   await ensureAccess() // гарантируем токен (пока так не ебу чё мы там с серёгой и ильясом придумаем)
+//   return api.post('/visits/', payload)
+// }
