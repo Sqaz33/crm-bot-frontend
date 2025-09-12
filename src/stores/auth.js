@@ -1,41 +1,35 @@
 import { defineStore } from 'pinia'
+import { logoutWithToken } from './api/auth'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    accessToken: null,
-    refreshToken: null,
+    accessToken: null,   
     telegramId: null,
   }),
   actions: {
-    setTokens({ access_token, refresh_token }) {
-      this.accessToken = access_token
-      this.refreshToken = refresh_token
-      localStorage.setItem('access_token', access_token)
-      localStorage.setItem('refresh_token', refresh_token)
-    },
-    setTelegramId(id) {
-      this.telegramId = id
-    },
-    logout() {
-      this.accessToken = null
-      this.refreshToken = null
-      this.telegramId = null
-      localStorage.removeItem('access_token')
-      localStorage.removeItem('refresh_token')
-    },
-    initFromLocal() {
-      const at = localStorage.getItem('access_token')
-      const rt = localStorage.getItem('refresh_token')
-      if (at && rt) {
-        this.accessToken = at
-        this.refreshToken = rt
+    setAccess(access_token) {
+      this.accessToken = access_token || null
+      if (access_token) {
+        sessionStorage.setItem('access_token', access_token)
+      } else {
+        sessionStorage.removeItem('access_token')
       }
     },
-    initFromUrl() {
-    
-      const params = new URLSearchParams(window.location.search)
-      const id = parseInt(params.get('user_id'))
-      if (id) this.telegramId = id
-    }
+    setTelegramId(id) {
+      this.telegramId = id ?? null
+    },
+    async logout({ server = true, silent = false } = {}) {
+      const token = this.accessToken || sessionStorage.getItem('access_token')
+      if (server && token) {
+        try { await logoutWithToken(token) } catch (e) { if (!silent) console.warn('logout API:', e) }
+      }
+      this.accessToken = null
+      this.telegramId = null
+      sessionStorage.removeItem('access_token')
+    },
+    initFromSession() {
+      const at = sessionStorage.getItem('access_token')
+      if (at) this.accessToken = at
+    },
   },
 })

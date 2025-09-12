@@ -1,6 +1,5 @@
 export function parseTelegramLaunchData() {
   const params = Object.fromEntries(new URLSearchParams(window.location.search))
-
   let tgData = {}
   const hash = window.location.hash.slice(1)
   if (hash.startsWith('tgWebAppData=')) {
@@ -19,12 +18,6 @@ export function parseTelegramLaunchData() {
   return { params, tgData }
 }
 
-/**
- * Универсально возвращает строку init_data:
- * 1) WebApp: window.Telegram.WebApp.initData
- * 2) Хэш: #tgWebAppData=...
- * 3) Query: ?init_data=...
- */
 export function getInitDataString() {
   if (window.Telegram?.WebApp?.initData) {
     window.Telegram.WebApp.expand?.()
