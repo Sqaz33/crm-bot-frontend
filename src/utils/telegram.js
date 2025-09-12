@@ -36,7 +36,7 @@ export function parseTelegramLaunchData() {
   let tgData = {}
   const hash = window.location.hash.slice(1) // "tgWebAppData=...."
   if (hash.startsWith('tgWebAppData=')) {
-    // Для парсинга в объект можно декодировать — это не участвует в подписи
+
     const encoded = hash.replace('tgWebAppData=', '')
     const decoded = decodeURIComponent(encoded)
     const urlp = new URLSearchParams(decoded)

@@ -5,26 +5,28 @@
     </transition>
 
     <div v-if="loading" class="loading-container">Загрузка...</div>
+
     <div v-else>
+      <!-- Мягкий режим: если токена нет и мы вне Telegram — покажем подсказку -->
+      <div v-if="!store.accessToken && !isInTelegram && !hasInitData" class="dev-hint">
+        <p>Вы открыли приложение вне Telegram. Для авторизации нужно запустить WebApp в Telegram.</p>
+        <p v-if="allowBrowser">DEV-режим включён: вы можете работать без авторизации.</p>
+        <button v-if="hasInitData" @click="retryLogin">Повторить авторизацию</button>
+      </div>
+
       <router-view />
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { loginViaTelegram } from './api/auth'                 
+import { loginViaTelegram } from './api/auth'
 import { parseTelegramLaunchData, getInitDataString } from './utils/telegram'
 import { useAuthStore } from './stores/auth'
 
-/**
- * Политика хранения:
- * - init_data: только в памяти (не пишем в LS/cookie)
- * - access_token: в Pinia + sessionStorage (store.setAccess)
- * - Профиль/черновики: только локально (LS) с TTL — серверу не отправляем
- */
-
+// локальные черновики (LS) — профиль и визит
 const VISIT_KEY = 'visit_data'
 const PROFILE_KEY = 'profile_data'
 
@@ -34,17 +36,21 @@ const errorText = ref('Ошибка авторизации. Пожалуйста
 const router    = useRouter()
 const store     = useAuthStore()
 
-const form = reactive({ firstName: '', lastName: '', middleName: '', phone: '', email: '' })
+const isInTelegram = computed(() => !!window.Telegram?.WebApp)
+const allowBrowser = import.meta?.env?.VITE_ALLOW_BROWSER === '1'
+
+// есть ли init_data где-либо (hash/query/WebApp)
+const hasInitData = computed(() => !!getInitDataString())
+
+const form = reactive({ firstName:'', lastName:'', middleName:'', phone:'', email:'' })
 
 function saveVisit(silent = false) {
-  // локальный черновик (LS), без cookie
-  const visitData = { staff_id: '', services_id: '', visit_time: { start_time: '' }, comment: '' }
+  const visitData = { staff_id:'', services_id:'', visit_time:{ start_time:'' }, comment:'' }
   localStorage.setItem(VISIT_KEY, JSON.stringify(visitData))
   if (!silent) console.log('[App] Visit draft saved:', visitData)
 }
 
 function saveProfile(silent = false) {
-  // локальный профиль (LS), НЕ отправляется на сервер
   const profileData = {
     firstName: form.firstName, lastName: form.lastName,
     middleName: form.middleName, phone: form.phone, email: form.email
@@ -54,10 +60,9 @@ function saveProfile(silent = false) {
 }
 
 async function doTelegramLogin() {
-  // Берём init_data РОВНО как Telegram его даёт 
   const initStr = getInitDataString()
   if (!initStr) {
-    throw new Error('init_data отсутствует (откройте приложение внутри Telegram)')
+    throw new Error('init_data отсутствует')
   }
   console.log('[App] init_data length:', initStr.length, 'hash?=', initStr.includes('hash='))
 
@@ -65,35 +70,36 @@ async function doTelegramLogin() {
   const access = data?.access_token
   if (!access) throw new Error('access_token отсутствует в ответе /auth/telegram/login')
 
-  // Кладём только в память + sessionStorage 
-  store.setAccess(access)
+  store.setAccess(access) // память + sessionStorage
 }
 
 async function initAuthAndProfile() {
   try {
-    // 0) Черновики локально
+    // Черновики локально
     saveVisit(true)
 
-    // 1) Если уже восстанавливали токен из sessionStorage — логин не нужен
+    // Пытаемся восстановить токен из sessionStorage
     store.initFromSession()
+
+    // Если токена нет — пробуем авторизоваться, но только если есть init_data
     if (!store.accessToken) {
-      // Проверка, что мы действительно внутри Telegram 
-      const isInTelegram = !!window.Telegram?.WebApp
-      if (!isInTelegram) {
-        throw new Error('Приложение должно быть запущено внутри Telegram.')
+      if (hasInitData.value) {
+        await doTelegramLogin()
+      } else if (!isInTelegram.value && !allowBrowser) {
+        // Вне Telegram и init_data нет — мягко сообщим, но не падаем
+        throw new Error('Откройте приложение внутри Telegram для авторизации.')
       }
-      await doTelegramLogin()
+      // Если allowBrowser=1 — разрешаем работу без авторизации (для DEV)
     }
 
-    // 2) Автоподстановка имени в локальный профиль из tgData 
+    // Автоподстановка имени в локальный профиль из tgData (не на сервер)
     const { tgData } = parseTelegramLaunchData()
     const user = tgData.user || {}
     form.firstName = user.first_name || ''
     form.lastName  = user.last_name  || ''
-    // опционально сохраним tg id в store (не обязательно)
-    if (user.id) store.setTelegramId?.(user.id)
+    if (user.id && store.setTelegramId) store.setTelegramId(user.id)
 
-    // 3) Подхват локально сохранённых полей 
+    // Подхват локально сохранённых полей
     const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')
     form.middleName = saved.middleName || ''
     form.phone      = saved.phone      || ''
@@ -105,11 +111,23 @@ async function initAuthAndProfile() {
     const status = e?.response?.status
     if (status === 400)      errorText.value = 'Некорректная подпись или телефон не найден.'
     else if (status === 422) errorText.value = 'Validation Error: проверьте корректность init_data.'
-    else                     errorText.value = e?.message || 'Ошибка авторизации. Откройте приложение внутри Telegram.'
+    else                     errorText.value = e?.message || 'Ошибка авторизации.'
     authError.value = true
   } finally {
-
+    loading.value = false
     setTimeout(() => { authError.value = false }, 1500)
+  }
+}
+
+async function retryLogin() {
+  authError.value = false
+  errorText.value = ''
+  try {
+    await doTelegramLogin()
+  } catch (e) {
+    console.error('[App] retryLogin:', e)
+    errorText.value = e?.message || 'Авторизация не удалась.'
+    authError.value = true
   }
 }
 
@@ -117,11 +135,23 @@ onMounted(initAuthAndProfile)
 </script>
 
 <style scoped>
-.loading-container { text-align: center; margin: 2rem 0; font-size: 1.1rem; }
-.auth-error-banner {
-  position: fixed; top: 0; left: 0; right: 0;
-  background: #e53935; color: #fff; padding: 1rem; text-align: center; z-index: 1000;
+.loading-container{ text-align:center; margin:2rem 0; font-size:1.1rem; }
+.auth-error-banner{
+  position:fixed; top:0; left:0; right:0;
+  background:#e53935; color:#fff; padding:1rem; text-align:center; z-index:1000;
 }
-.fade-enter-active, .fade-leave-active { transition: opacity .5s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+.fade-enter-active,.fade-leave-active{ transition:opacity .5s; }
+.fade-enter-from,.fade-leave-to{ opacity:0; }
+
+.dev-hint{
+  margin: 1rem auto; max-width: 720px;
+  background: #fff3cd; color: #7a5d00;
+  border: 1px solid #ffeeba; border-radius: 8px;
+  padding: 1rem;
+}
+.dev-hint button{
+  margin-top: .5rem; padding: .5rem .9rem;
+  border: none; border-radius: 6px; cursor: pointer;
+  background:#2F80EC; color:#fff; font-weight:600;
+}
 </style>
