@@ -1,35 +1,19 @@
-export function parseTelegramLaunchData() {
-  const params = Object.fromEntries(new URLSearchParams(window.location.search))
-  let tgData = {}
-  const hash = window.location.hash.slice(1)
-  if (hash.startsWith('tgWebAppData=')) {
-    const encoded = hash.replace('tgWebAppData=', '')
-    const decoded = decodeURIComponent(encoded)
-    const urlp = new URLSearchParams(decoded)
-    tgData = {}
-    for (const [k, v] of urlp.entries()) {
-      if (k === 'user') {
-        try { tgData.user = JSON.parse(v) } catch { tgData.user = null }
-      } else {
-        tgData[k] = v
-      }
-    }
-  }
-  return { params, tgData }
-}
-
 export function getInitDataString() {
+
   if (window.Telegram?.WebApp?.initData) {
     window.Telegram.WebApp.expand?.()
-    return window.Telegram.WebApp.initData
+    return window.Telegram.WebApp.initData 
   }
+
+
+  const raw = window.location.hash.slice(1) // "tgWebAppData=..."
+  if (raw.startsWith('tgWebAppData=')) {
+    return raw.replace('tgWebAppData=', '') 
+  }
+
+  
   const q = new URLSearchParams(window.location.search).get('init_data')
   if (q) return q
 
-  const raw = window.location.hash.slice(1)
-  if (raw.startsWith('tgWebAppData=')) {
-    const payload = raw.replace('tgWebAppData=', '').split('&tgWebAppVersion')[0]
-    return decodeURIComponent(payload)
-  }
   return null
 }
