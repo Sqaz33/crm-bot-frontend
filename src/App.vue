@@ -13,6 +13,7 @@
 import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { loginViaTelegram } from './api/auth'
+import { getClientByTelegramId } from './api/clients'
 import { getInitData } from './utils/telegram'
 import { useAuthStore } from './stores/auth'
 
@@ -39,18 +40,19 @@ function saveVisit(silent = false) {
   if (!silent) console.log('[App] Visit draft saved:', visitData)
 }
 
+
 function mergeSaveProfile(partial = {}, silent = false) {
   let saved = {}
   try { saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}') } catch {}
 
   const val = (v) => (typeof v === 'string' ? v.trim() : v)
   const next = {
-    tg_id:      partial.tg_id ?? saved.tg_id ?? null,
     firstName:  val(partial.firstName)  ?? saved.firstName  ?? form.firstName  ?? '',
     lastName:   val(partial.lastName)   ?? saved.lastName   ?? form.lastName   ?? '',
     middleName: val(partial.middleName) ?? saved.middleName ?? form.middleName ?? '',
     phone:      val(partial.phone)      ?? saved.phone      ?? form.phone      ?? '',
     email:      val(partial.email)      ?? saved.email      ?? form.email      ?? '',
+    tg_id:      partial.tg_id ?? saved.tg_id ?? null,
   }
 
   localStorage.setItem(PROFILE_KEY, JSON.stringify(next))
@@ -82,24 +84,72 @@ function extractUserFromInitData(id) {
     if (!obj) return null
 
     return {
-      tg_id:     obj.id ?? null, 
       firstName: obj.first_name || '',
       lastName:  obj.last_name  || '',
+      tg_id:     obj.id ?? null,
     }
   } catch {
     return null
   }
 }
 
+
+function splitFullNameIfNeeded(fullName, fallback = {}) {
+  if (!fullName || typeof fullName !== 'string') return {}
+  const trimmed = fullName.trim().replace(/\s+/g, ' ')
+  if (!trimmed) return {}
+
+  const parts = trimmed.split(' ')
+  if (parts.length === 1) {
+    return {
+      firstName: fallback.firstName || parts[0],
+      lastName:  fallback.lastName  || ''
+    }
+  }
+  return {
+    firstName: fallback.firstName || parts.slice(0, -1).join(' '),
+    lastName:  fallback.lastName  || parts.slice(-1)[0]
+  }
+}
+
+
+async function fetchAndApplyClientByTelegramId(tg_id) {
+  if (!tg_id && tg_id !== 0) return
+
+  try {
+    const { data } = await getClientByTelegramId(tg_id) 
+    const { name, telephone } = data || {}
+
+    const namePatch = splitFullNameIfNeeded(name, {
+      firstName: form.firstName,
+      lastName:  form.lastName
+    })
+
+    mergeSaveProfile({
+      ...namePatch,
+      phone: telephone || form.phone,
+      tg_id
+    }, true)
+
+    console.log('[App] CRM client applied →', { name, telephone, tg_id })
+  } catch (e) {
+    const s = e?.response?.status
+    if (s !== 404) console.warn('[App] getClientByTelegramId failed:', e)
+  }
+}
+
 async function doTelegramLogin(initData) {
-  const { data } = await loginViaTelegram(initData)
+  const { data } = await loginViaTelegram(initData) 
   const access = data?.access_token
   if (!access) throw new Error('access_token отсутствует')
 
   store.setAccess(access)
 
   const u = extractUserFromInitData(initData)
-  if (u) mergeSaveProfile(u, true)  
+  if (u) {
+    mergeSaveProfile(u, true)          
+    await fetchAndApplyClientByTelegramId(u.tg_id) 
+  }
 }
 
 async function initAuthAndProfile() {
@@ -114,7 +164,10 @@ async function initAuthAndProfile() {
       await doTelegramLogin(initData)
     } else {
       const u = extractUserFromInitData(initData)
-      if (u) mergeSaveProfile(u, true)
+      if (u) {
+        mergeSaveProfile(u, true)
+        await fetchAndApplyClientByTelegramId(u.tg_id)
+      }
     }
 
     let saved = {}
