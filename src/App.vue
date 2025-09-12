@@ -37,67 +37,63 @@ function saveVisit(silent = false) {
 
 function saveProfile(silent = false) {
   const profileData = {
-    firstName:  form.firstName,
-    lastName:   form.lastName,
-    middleName: form.middleName,
-    phone:      form.phone,
-    email:      form.email
+    firstName:  form.firstName ?? '',
+    lastName:   form.lastName ?? '',
+    middleName: form.middleName ?? '',
+    phone:      form.phone ?? '',
+    email:      form.email ?? ''
   }
   localStorage.setItem(PROFILE_KEY, JSON.stringify(profileData))
   if (!silent) console.log('[App] Profile (local) saved:', profileData)
 }
 
+const nonEmpty = v => (typeof v === 'string' ? v.trim() !== '' : !!v)
+const pick = (fromForm, fromSaved) => (nonEmpty(fromForm) ? fromForm : (nonEmpty(fromSaved) ? fromSaved : ''))
 
 function mask(str, keep = 280) {
   if (typeof str !== 'string') return str
   return str.length <= keep ? str : str.slice(0, keep) + '…(' + str.length + ')'
 }
 
+// (опционально включай при отладке)
+// function debugInitData(id) {
+//   console.group('init_data')
+//   console.log('length:', id?.length || 0)
+//   console.log('startsWith "query_id="? ', id?.startsWith('query_id='))
+//   console.log('includes "hash="? ', !!id?.includes('hash='))
+//   console.log('head:', mask(id, 220))
+//   try {
+//     const usp = new URLSearchParams(id)
+//     console.log('keys:', Array.from(usp.keys()))
+//     console.log('user(masked):', mask(usp.get('user') || '', 200))
+//   } catch (e) {
+//     console.warn('URLSearchParams failed:', e)
+//   }
+//   console.groupEnd()
+// }
 
-function logFullInitData(id) {
-  console.group('[INIT_DATA READY TO USE]')
-  console.log('-----BEGIN INIT_DATA-----')
-  console.log(id)   //инит дата
-  console.log('-----END INIT_DATA-----')
-  console.log('Длина:', id.length)
-  console.groupEnd()
-  try { localStorage.setItem('DEBUG_INIT_DATA', id) } catch {}
-  try { window.__INIT_DATA = id } catch {}
-}
 
-function debugInitData(id) {
-  console.group('init_data')
-  console.log('length:', id?.length || 0)
-  console.log('startsWith "query_id="? ', id?.startsWith('query_id='))
-  console.log('includes "hash="? ', !!id?.includes('hash='))
-  console.log('head:', mask(id, 220))
-  try {
-    const usp = new URLSearchParams(id)
-    console.log('keys:', Array.from(usp.keys()))
-    console.log('user(masked):', mask(usp.get('user') || '', 200))
-  } catch (e) {
-    console.warn('URLSearchParams failed:', e)
-  }
-  console.groupEnd()
-}
-
-// извлекаем user из init_data если авторизация прошла
 function extractUserFromInitData(id) {
   try {
     const usp = new URLSearchParams(id)
     const rawUser = usp.get('user')
     if (!rawUser) return null
 
-    let decoded = rawUser
-    try { decoded = decodeURIComponent(rawUser) } catch {}
-    const u = JSON.parse(decoded)
+    let s1 = rawUser
+    try { s1 = decodeURIComponent(rawUser) } catch {}
+    let s2 = s1
+    try { s2 = decodeURIComponent(s1) } catch {}
+
+    let obj = null
+    try { obj = JSON.parse(s2) } catch { try { obj = JSON.parse(s1) } catch {} }
+    if (!obj) return null
 
     return {
-      id: u.id,
-      first_name: u.first_name || '',
-      last_name:  u.last_name  || '',
-      username:   u.username   || '',
-      photo_url:  u.photo_url  || ''
+      id: obj.id,
+      first_name: obj.first_name || '',
+      last_name:  obj.last_name  || '',
+      username:   obj.username   || '',
+      photo_url:  obj.photo_url  || ''
     }
   } catch {
     return null
@@ -113,12 +109,10 @@ async function doTelegramLogin() {
   console.log('[LOGIN] has init_data?', !!initData)
   if (!initData) { console.groupEnd(); throw new Error('init_data отсутствует (WebApp/hash/query)') }
 
-  // логи
-  logFullInitData(initData)
-  debugInitData(initData)
+  // debugInitData(initData) 
 
   console.log('[LOGIN] POST payload.init_data:', mask(initData, 400))
-  const { data } = await loginViaTelegram(initData) // ожидаем { access_token }
+  const { data } = await loginViaTelegram(initData) 
   console.log('[LOGIN] Response:', data)
 
   const access = data?.access_token
@@ -127,11 +121,12 @@ async function doTelegramLogin() {
   store.setAccess(access)
   console.log('[LOGIN] access_token stored, len=', access.length)
 
-  // после успешной авторизации — заполним локальный профиль из init_data.user
+
   const u = extractUserFromInitData(initData)
   if (u) {
     form.firstName = u.first_name
     form.lastName  = u.last_name
+
     saveProfile(true)
   }
 
@@ -147,13 +142,14 @@ async function initAuthAndProfile() {
       await doTelegramLogin()
     }
 
-    // подхватим ранее сохранённые поля (если уже были)
+
     const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')
-    form.firstName  = form.firstName  || saved.firstName  || ''
-    form.lastName   = form.lastName   || saved.lastName   || ''
-    form.middleName = saved.middleName || ''
-    form.phone      = saved.phone      || ''
-    form.email      = saved.email      || ''
+    form.firstName  = pick(form.firstName,  saved.firstName)
+    form.lastName   = pick(form.lastName,   saved.lastName)
+    form.middleName = pick(form.middleName, saved.middleName)
+    form.phone      = pick(form.phone,      saved.phone)
+    form.email      = pick(form.email,      saved.email)
+
     saveProfile(true)
 
   } catch (e) {
