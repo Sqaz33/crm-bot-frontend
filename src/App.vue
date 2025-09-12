@@ -25,52 +25,44 @@ const errorText = ref('Ошибка авторизации. Пожалуйста
 const router    = useRouter()
 const store     = useAuthStore()
 
-const form = reactive({ firstName:'', lastName:'', middleName:'', phone:'', email:'' })
-
+const form = reactive({
+  firstName: '',
+  lastName: '',
+  middleName: '',
+  phone: '',
+  email: ''
+})
 
 
 function saveVisit(silent = false) {
-  const visitData = { staff_id:'', services_id:'', visit_time:{ start_time:'' }, comment:'' }
+  const visitData = { staff_id: '', services_id: '', visit_time: { start_time: '' }, comment: '' }
   localStorage.setItem(VISIT_KEY, JSON.stringify(visitData))
   if (!silent) console.log('[App] Visit draft saved:', visitData)
 }
 
-function saveProfile(silent = false) {
-  const profileData = {
-    firstName:  form.firstName ?? '',
-    lastName:   form.lastName ?? '',
-    middleName: form.middleName ?? '',
-    phone:      form.phone ?? '',
-    email:      form.email ?? ''
+
+function mergeSaveProfile(partial = {}, silent = false) {
+  let saved = {}
+  try { saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}') } catch {}
+
+  const val = (v) => (typeof v === 'string' ? v.trim() : v)
+  const next = {
+    firstName:  val(partial.firstName)  || saved.firstName  || form.firstName  || '',
+    lastName:   val(partial.lastName)   || saved.lastName   || form.lastName   || '',
+    middleName: val(partial.middleName) || saved.middleName || form.middleName || '',
+    phone:      val(partial.phone)      || saved.phone      || form.phone      || '',
+    email:      val(partial.email)      || saved.email      || form.email      || '',
   }
-  localStorage.setItem(PROFILE_KEY, JSON.stringify(profileData))
-  if (!silent) console.log('[App] Profile (local) saved:', profileData)
+
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(next))
+  if (!silent) console.log('[App] Profile merged & saved:', next)
+
+  form.firstName  = next.firstName
+  form.lastName   = next.lastName
+  form.middleName = next.middleName
+  form.phone      = next.phone
+  form.email      = next.email
 }
-
-const nonEmpty = v => (typeof v === 'string' ? v.trim() !== '' : !!v)
-const pick = (fromForm, fromSaved) => (nonEmpty(fromForm) ? fromForm : (nonEmpty(fromSaved) ? fromSaved : ''))
-
-function mask(str, keep = 280) {
-  if (typeof str !== 'string') return str
-  return str.length <= keep ? str : str.slice(0, keep) + '…(' + str.length + ')'
-}
-
-// (опционально включай при отладке)
-// function debugInitData(id) {
-//   console.group('init_data')
-//   console.log('length:', id?.length || 0)
-//   console.log('startsWith "query_id="? ', id?.startsWith('query_id='))
-//   console.log('includes "hash="? ', !!id?.includes('hash='))
-//   console.log('head:', mask(id, 220))
-//   try {
-//     const usp = new URLSearchParams(id)
-//     console.log('keys:', Array.from(usp.keys()))
-//     console.log('user(masked):', mask(usp.get('user') || '', 200))
-//   } catch (e) {
-//     console.warn('URLSearchParams failed:', e)
-//   }
-//   console.groupEnd()
-// }
 
 
 function extractUserFromInitData(id) {
@@ -79,78 +71,55 @@ function extractUserFromInitData(id) {
     const rawUser = usp.get('user')
     if (!rawUser) return null
 
-    let s1 = rawUser
-    try { s1 = decodeURIComponent(rawUser) } catch {}
-    let s2 = s1
-    try { s2 = decodeURIComponent(s1) } catch {}
+    let s1 = rawUser; try { s1 = decodeURIComponent(rawUser) } catch {}
+    let s2 = s1;     try { s2 = decodeURIComponent(s1) }     catch {}
 
     let obj = null
     try { obj = JSON.parse(s2) } catch { try { obj = JSON.parse(s1) } catch {} }
     if (!obj) return null
 
     return {
-      id: obj.id,
-      first_name: obj.first_name || '',
-      last_name:  obj.last_name  || '',
-      username:   obj.username   || '',
-      photo_url:  obj.photo_url  || ''
+      firstName: obj.first_name || '',
+      lastName:  obj.last_name  || '',
     }
-  } catch {
-    return null
-  }
+  } catch { return null }
 }
 
-/* --------------------- авторизация ----------------------- */
 
-async function doTelegramLogin() {
-  console.group('[LOGIN] Start')
-  const initData = getInitData() 
-  console.log('[LOGIN] from WebApp?', !!window.Telegram?.WebApp?.initData)
-  console.log('[LOGIN] has init_data?', !!initData)
-  if (!initData) { console.groupEnd(); throw new Error('init_data отсутствует (WebApp/hash/query)') }
 
-  // debugInitData(initData) 
-
-  console.log('[LOGIN] POST payload.init_data:', mask(initData, 400))
-  const { data } = await loginViaTelegram(initData) 
-  console.log('[LOGIN] Response:', data)
-
+async function doTelegramLogin(initData) {
+  const { data } = await loginViaTelegram(initData)   
   const access = data?.access_token
-  if (!access) { console.groupEnd(); throw new Error('access_token отсутствует') }
+  if (!access) throw new Error('access_token отсутствует')
 
   store.setAccess(access)
-  console.log('[LOGIN] access_token stored, len=', access.length)
 
 
   const u = extractUserFromInitData(initData)
-  if (u) {
-    form.firstName = u.first_name
-    form.lastName  = u.last_name
-
-    saveProfile(true)
-  }
-
-  console.groupEnd()
+  if (u) mergeSaveProfile(u, true)
 }
 
 async function initAuthAndProfile() {
   try {
     saveVisit(true)
 
-    store.initFromSession()
+
+    const initData = getInitData()
+    if (!initData) throw new Error('init_data отсутствует (WebApp/hash/query)')
+
+ 
+    store.initFromSession?.()
     if (!store.accessToken) {
-      await doTelegramLogin()
+      await doTelegramLogin(initData)
+    } else {
+      const u = extractUserFromInitData(initData)
+      if (u) mergeSaveProfile(u, true)
     }
 
-
-    const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')
-    form.firstName  = pick(form.firstName,  saved.firstName)
-    form.lastName   = pick(form.lastName,   saved.lastName)
-    form.middleName = pick(form.middleName, saved.middleName)
-    form.phone      = pick(form.phone,      saved.phone)
-    form.email      = pick(form.email,      saved.email)
-
-    saveProfile(true)
+   
+    let saved = {}
+    try { saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}') } catch {}
+    mergeSaveProfile(saved, true)
 
   } catch (e) {
     console.error('[App] Ошибка авторизации:', e)
