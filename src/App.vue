@@ -41,39 +41,61 @@ function saveProfile(silent = false) {
   if (!silent) console.log('[App] Profile (local) saved:', profileData)
 }
 
-
+// утилиты логирования
 function mask(str, keep = 280) {
   if (typeof str !== 'string') return str
   return str.length <= keep ? str : str.slice(0, keep) + '…(' + str.length + ')'
 }
-
 function logFullInitData(id) {
-  console.log('-----INIT_DATA-----')
-  console.log(id) 
-
+  console.group('[INIT_DATA READY TO USE]')
+  console.log('-----BEGIN INIT_DATA-----')
+  console.log(id) // для копирование
+  console.log('-----END INIT_DATA-----')
   console.log('Длина:', id.length)
   console.groupEnd()
-
   try { localStorage.setItem('DEBUG_INIT_DATA', id) } catch {}
   try { window.__INIT_DATA = id } catch {}
 }
-
 function debugInitData(id) {
   console.group('init_data')
   console.log('length:', id?.length || 0)
   console.log('startsWith "query_id="? ', id?.startsWith('query_id='))
   console.log('includes "hash="? ', !!id?.includes('hash='))
   console.log('head:', mask(id, 220))
-  console.log(id) 
+  console.log(id)
   try {
     const usp = new URLSearchParams(id)
     console.log('keys:', Array.from(usp.keys()))
     console.log('user(masked):', mask(usp.get('user') || '', 200))
-  } catch (e) { console.warn('URLSearchParams failed:', e) }
+  } catch (e) {
+    console.warn('URLSearchParams failed:', e)
+  }
   console.groupEnd()
 }
 
 
+async function doTelegramLogin() {
+  console.group('[LOGIN] Start')
+  const initData = getInitData()
+  console.log('[LOGIN] from WebApp?', !!window.Telegram?.WebApp?.initData)
+  console.log('[LOGIN] has init_data?', !!initData)
+  if (!initData) { console.groupEnd(); throw new Error('init_data отсутствует (WebApp/hash/query)') }
+
+
+  logFullInitData(initData)
+  debugInitData(initData)
+
+  console.log('[LOGIN] POST payload.init_data:', mask(initData, 400))
+  const { data } = await loginViaTelegram(initData) // ожидаем { access_token }
+  console.log('[LOGIN] Response:', data)
+
+  const access = data?.access_token
+  if (!access) { console.groupEnd(); throw new Error('access_token отсутствует') }
+
+  store.setAccess(access) // память + sessionStorage
+  console.log('[LOGIN] access_token stored, len=', access.length)
+  console.groupEnd()
+}
 
 async function initAuthAndProfile() {
   try {
@@ -85,7 +107,7 @@ async function initAuthAndProfile() {
     }
 
     const { tgData } = parseTelegramLaunchData()
-    const user = tgData.user || {}
+    const user = tgData?.user || {}
     form.firstName = user.first_name || ''
     form.lastName  = user.last_name  || ''
     if (user.id && store.setTelegramId) store.setTelegramId(user.id)
@@ -99,10 +121,18 @@ async function initAuthAndProfile() {
   } catch (e) {
     console.error('[App] Ошибка авторизации:', e)
     const status = e?.response?.status
-    if (status === 400)      errorText.value = 'Некорректная подпись или телефон не найден.'
-    else if (status === 422) errorText.value = 'Validation Error: проверьте корректность init_data.'
-    else if (status === 500) errorText.value = 'Серверная ошибка при разборе init_data.'
-    else                     errorText.value = e?.message || 'Ошибка авторизации.'
+    const detail = e?.response?.data?.detail
+    if (status === 401 && /client not found/i.test(String(detail))) {
+      errorText.value = 'Клиент не найден в CRM. Нужна привязка/создание клиента.'
+    } else if (status === 400) {
+      errorText.value = 'Некорректная подпись или бизнес-правило не выполнено.'
+    } else if (status === 422) {
+      errorText.value = 'Validation Error: проверьте корректность init_data.'
+    } else if (status === 500) {
+      errorText.value = 'Серверная ошибка при разборе init_data.'
+    } else {
+      errorText.value = e?.message || 'Ошибка авторизации.'
+    }
     authError.value = true
   } finally {
     loading.value = false
