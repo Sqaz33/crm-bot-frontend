@@ -13,10 +13,10 @@
 import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { loginViaTelegram } from './api/auth'
-import { parseTelegramLaunchData, getInitData } from './utils/telegram'
+import { getInitData } from './utils/telegram'
 import { useAuthStore } from './stores/auth'
 
-const VISIT_KEY = 'visit_data'
+const VISIT_KEY   = 'visit_data'
 const PROFILE_KEY = 'profile_data'
 
 const loading   = ref(true)
@@ -27,42 +27,50 @@ const store     = useAuthStore()
 
 const form = reactive({ firstName:'', lastName:'', middleName:'', phone:'', email:'' })
 
+
+
 function saveVisit(silent = false) {
   const visitData = { staff_id:'', services_id:'', visit_time:{ start_time:'' }, comment:'' }
   localStorage.setItem(VISIT_KEY, JSON.stringify(visitData))
   if (!silent) console.log('[App] Visit draft saved:', visitData)
 }
+
 function saveProfile(silent = false) {
   const profileData = {
-    firstName: form.firstName, lastName: form.lastName,
-    middleName: form.middleName, phone: form.phone, email: form.email
+    firstName:  form.firstName,
+    lastName:   form.lastName,
+    middleName: form.middleName,
+    phone:      form.phone,
+    email:      form.email
   }
   localStorage.setItem(PROFILE_KEY, JSON.stringify(profileData))
   if (!silent) console.log('[App] Profile (local) saved:', profileData)
 }
 
-// утилиты логирования
+
 function mask(str, keep = 280) {
   if (typeof str !== 'string') return str
   return str.length <= keep ? str : str.slice(0, keep) + '…(' + str.length + ')'
 }
+
+
 function logFullInitData(id) {
   console.group('[INIT_DATA READY TO USE]')
   console.log('-----BEGIN INIT_DATA-----')
-  console.log(id) // для копирование
+  console.log(id)   //инит дата
   console.log('-----END INIT_DATA-----')
   console.log('Длина:', id.length)
   console.groupEnd()
   try { localStorage.setItem('DEBUG_INIT_DATA', id) } catch {}
   try { window.__INIT_DATA = id } catch {}
 }
+
 function debugInitData(id) {
   console.group('init_data')
   console.log('length:', id?.length || 0)
   console.log('startsWith "query_id="? ', id?.startsWith('query_id='))
   console.log('includes "hash="? ', !!id?.includes('hash='))
   console.log('head:', mask(id, 220))
-  console.log(id)
   try {
     const usp = new URLSearchParams(id)
     console.log('keys:', Array.from(usp.keys()))
@@ -73,15 +81,39 @@ function debugInitData(id) {
   console.groupEnd()
 }
 
+// извлекаем user из init_data если авторизация прошла
+function extractUserFromInitData(id) {
+  try {
+    const usp = new URLSearchParams(id)
+    const rawUser = usp.get('user')
+    if (!rawUser) return null
+
+    let decoded = rawUser
+    try { decoded = decodeURIComponent(rawUser) } catch {}
+    const u = JSON.parse(decoded)
+
+    return {
+      id: u.id,
+      first_name: u.first_name || '',
+      last_name:  u.last_name  || '',
+      username:   u.username   || '',
+      photo_url:  u.photo_url  || ''
+    }
+  } catch {
+    return null
+  }
+}
+
+/* --------------------- авторизация ----------------------- */
 
 async function doTelegramLogin() {
   console.group('[LOGIN] Start')
-  const initData = getInitData()
+  const initData = getInitData() 
   console.log('[LOGIN] from WebApp?', !!window.Telegram?.WebApp?.initData)
   console.log('[LOGIN] has init_data?', !!initData)
   if (!initData) { console.groupEnd(); throw new Error('init_data отсутствует (WebApp/hash/query)') }
 
-
+  // логи
   logFullInitData(initData)
   debugInitData(initData)
 
@@ -92,8 +124,17 @@ async function doTelegramLogin() {
   const access = data?.access_token
   if (!access) { console.groupEnd(); throw new Error('access_token отсутствует') }
 
-  store.setAccess(access) // память + sessionStorage
+  store.setAccess(access)
   console.log('[LOGIN] access_token stored, len=', access.length)
+
+  // после успешной авторизации — заполним локальный профиль из init_data.user
+  const u = extractUserFromInitData(initData)
+  if (u) {
+    form.firstName = u.first_name
+    form.lastName  = u.last_name
+    saveProfile(true)
+  }
+
   console.groupEnd()
 }
 
@@ -106,13 +147,10 @@ async function initAuthAndProfile() {
       await doTelegramLogin()
     }
 
-    const { tgData } = parseTelegramLaunchData()
-    const user = tgData?.user || {}
-    form.firstName = user.first_name || ''
-    form.lastName  = user.last_name  || ''
-    if (user.id && store.setTelegramId) store.setTelegramId(user.id)
-
+    // подхватим ранее сохранённые поля (если уже были)
     const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')
+    form.firstName  = form.firstName  || saved.firstName  || ''
+    form.lastName   = form.lastName   || saved.lastName   || ''
     form.middleName = saved.middleName || ''
     form.phone      = saved.phone      || ''
     form.email      = saved.email      || ''
