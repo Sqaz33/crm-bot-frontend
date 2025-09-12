@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { logoutWithToken } from './api/auth'
+import { logoutWithToken } from '../api/auth'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
