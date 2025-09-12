@@ -1,47 +1,66 @@
-function tryDecodeOnce(str) {
-  try { return decodeURIComponent(str) } catch { return str }
-}
 
 export function getInitData() {
+  let raw = null;
+
 
   if (window.Telegram?.WebApp?.initData) {
-    window.Telegram.WebApp.expand?.()
-    return window.Telegram.WebApp.initData
+    raw = window.Telegram.WebApp.initData;
   }
 
 
-  const hash = window.location.hash.slice(1) 
-  if (hash.startsWith('tgWebAppData=')) {
-    const encoded = hash.substring('tgWebAppData='.length)
-    return tryDecodeOnce(encoded) 
+  if (!raw && window.location.hash.startsWith('#tgWebAppData=')) {
+    raw = decodeURIComponent(window.location.hash.replace('#tgWebAppData=', ''));
   }
 
 
-  const q = new URLSearchParams(window.location.search).get('init_data')
-  if (q) {
-    return q.startsWith('query_id=') ? q : tryDecodeOnce(q)
+  if (!raw) {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('init_data')) {
+      raw = decodeURIComponent(params.get('init_data'));
+    }
   }
 
-  return null
+  if (!raw) return null;
+
+
+  console.group('[INIT_DATA RAW]');
+  console.log('-----BEGIN RAW INIT_DATA-----');
+  console.log(raw);
+  console.log('-----END RAW INIT_DATA-----');
+  console.log('Длина строки:', raw.length);
+  console.groupEnd();
+
+
+  const idx = raw.indexOf('&tgWebAppVersion=');
+  if (idx > -1) {
+    raw = raw.substring(0, idx);
+  }
+
+
+  console.group('[INIT_DATA CLEAN]');
+  console.log('-----BEGIN CLEAN INIT_DATA-----');
+  console.log(raw);
+  console.log('-----END CLEAN INIT_DATA-----');
+  console.log('Длина строки:', raw.length);
+  console.groupEnd();
+
+  return raw;
 }
 
-
 export function parseTelegramLaunchData() {
-  const params = Object.fromEntries(new URLSearchParams(window.location.search))
-
-  if (window.Telegram?.WebApp?.initDataUnsafe) {
-    return { params, tgData: window.Telegram.WebApp.initDataUnsafe }
-  }
-
-  let tgData = {}
-  const raw = getInitData()
-  if (raw) {
-    const usp = new URLSearchParams(raw)
-    const userStr = usp.get('user')
-    if (userStr) {
-      try { tgData.user = JSON.parse(userStr) } catch { tgData.user = null }
+  try {
+    if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
+      return window.Telegram.WebApp.initDataUnsafe.user;
     }
-
+    const hash = window.location.hash || '';
+    if (hash.includes('user=')) {
+      const match = decodeURIComponent(hash).match(/user=({.*?})/);
+      if (match) {
+        return JSON.parse(match[1]);
+      }
+    }
+  } catch (e) {
+    console.error('parseTelegramLaunchData error:', e);
   }
-  return { params, tgData }
+  return null;
 }
