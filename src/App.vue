@@ -33,13 +33,11 @@ const form = reactive({
   email: ''
 })
 
-
 function saveVisit(silent = false) {
   const visitData = { staff_id: '', services_id: '', visit_time: { start_time: '' }, comment: '' }
   localStorage.setItem(VISIT_KEY, JSON.stringify(visitData))
   if (!silent) console.log('[App] Visit draft saved:', visitData)
 }
-
 
 function mergeSaveProfile(partial = {}, silent = false) {
   let saved = {}
@@ -47,11 +45,12 @@ function mergeSaveProfile(partial = {}, silent = false) {
 
   const val = (v) => (typeof v === 'string' ? v.trim() : v)
   const next = {
-    firstName:  val(partial.firstName)  || saved.firstName  || form.firstName  || '',
-    lastName:   val(partial.lastName)   || saved.lastName   || form.lastName   || '',
-    middleName: val(partial.middleName) || saved.middleName || form.middleName || '',
-    phone:      val(partial.phone)      || saved.phone      || form.phone      || '',
-    email:      val(partial.email)      || saved.email      || form.email      || '',
+    tg_id:      partial.tg_id ?? saved.tg_id ?? null,
+    firstName:  val(partial.firstName)  ?? saved.firstName  ?? form.firstName  ?? '',
+    lastName:   val(partial.lastName)   ?? saved.lastName   ?? form.lastName   ?? '',
+    middleName: val(partial.middleName) ?? saved.middleName ?? form.middleName ?? '',
+    phone:      val(partial.phone)      ?? saved.phone      ?? form.phone      ?? '',
+    email:      val(partial.email)      ?? saved.email      ?? form.email      ?? '',
   }
 
   localStorage.setItem(PROFILE_KEY, JSON.stringify(next))
@@ -62,6 +61,10 @@ function mergeSaveProfile(partial = {}, silent = false) {
   form.middleName = next.middleName
   form.phone      = next.phone
   form.email      = next.email
+
+  if (next.tg_id && store.setTelegramId) {
+    try { store.setTelegramId(next.tg_id) } catch {}
+  }
 }
 
 
@@ -79,35 +82,33 @@ function extractUserFromInitData(id) {
     if (!obj) return null
 
     return {
+      tg_id:     obj.id ?? null, 
       firstName: obj.first_name || '',
       lastName:  obj.last_name  || '',
     }
-  } catch { return null }
+  } catch {
+    return null
+  }
 }
 
-
-
 async function doTelegramLogin(initData) {
-  const { data } = await loginViaTelegram(initData)   
+  const { data } = await loginViaTelegram(initData)
   const access = data?.access_token
   if (!access) throw new Error('access_token отсутствует')
 
   store.setAccess(access)
 
-
   const u = extractUserFromInitData(initData)
-  if (u) mergeSaveProfile(u, true)
+  if (u) mergeSaveProfile(u, true)  
 }
 
 async function initAuthAndProfile() {
   try {
     saveVisit(true)
 
-
     const initData = getInitData()
     if (!initData) throw new Error('init_data отсутствует (WebApp/hash/query)')
 
- 
     store.initFromSession?.()
     if (!store.accessToken) {
       await doTelegramLogin(initData)
@@ -116,7 +117,6 @@ async function initAuthAndProfile() {
       if (u) mergeSaveProfile(u, true)
     }
 
-   
     let saved = {}
     try { saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}') } catch {}
     mergeSaveProfile(saved, true)
