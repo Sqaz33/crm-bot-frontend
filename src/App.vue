@@ -41,18 +41,34 @@ function saveProfile(silent = false) {
   if (!silent) console.log('[App] Profile (local) saved:', profileData)
 }
 
-// вспомогательные логи (безопасные)
+// безопасный маскер
 function mask(str, keep = 280) {
   if (typeof str !== 'string') return str
   return str.length <= keep ? str : str.slice(0, keep) + '…(' + str.length + ')'
 }
+
+// УДОБНЫЙ ЛОГ ДЛЯ КОПИРОВАНИЯ init_data
+function logFullInitData(id) {
+  console.group('[INIT_DATA READY TO USE]')
+  console.log('-----BEGIN INIT_DATA-----')
+  console.log(id) 
+  console.log('-----END INIT_DATA-----')
+  console.log('Длина:', id.length)
+  console.groupEnd()
+
+  // положим для удобства в LS и на window
+  try { localStorage.setItem('DEBUG_INIT_DATA', id) } catch {}
+  try { window.__INIT_DATA = id } catch {}
+}
+
+// Диагностика init_data (ключи/хед)
 function debugInitData(id) {
   console.group('init_data')
   console.log('length:', id?.length || 0)
   console.log('startsWith "query_id="? ', id?.startsWith('query_id='))
   console.log('includes "hash="? ', !!id?.includes('hash='))
   console.log('head:', mask(id, 220))
-  console.log(initData)
+  console.log(id) // ← БЫЛА ОПЕЧАТКА: было console.log(initData)
   try {
     const usp = new URLSearchParams(id)
     console.log('keys:', Array.from(usp.keys()))
@@ -64,15 +80,18 @@ function debugInitData(id) {
 async function doTelegramLogin() {
   console.group('[LOGIN] Start')
 
-  const initData = getInitData() // ← берём РОВНО так, как описано выше
+  const initData = getInitData() // берём как есть (см. utils/telegram.js)
   console.log('[LOGIN] from WebApp?', !!window.Telegram?.WebApp?.initData)
   console.log('[LOGIN] has init_data?', !!initData)
   if (!initData) { console.groupEnd(); throw new Error('init_data отсутствует (WebApp/hash/query)') }
 
+  // Покажем «копируемый» блок и диагностику
+  logFullInitData(initData)
   debugInitData(initData)
+
   console.log('[LOGIN] POST payload.init_data:', mask(initData, 400))
 
-  // отправляем на бэк без каких-либо преобразований постфактум
+  // отправляем на бэк без изменений
   const { data } = await loginViaTelegram(initData) // ожидаем { access_token }
   console.log('[LOGIN] Response:', data)
 
