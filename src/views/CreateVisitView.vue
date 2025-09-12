@@ -2,7 +2,9 @@
   <div class="visit-create-view">
     <div class="visit-summary">
       <div class="date-row">
-        <div class="date-cell"><div class="date">{{ summary.date || '—' }}</div></div>
+        <div class="date-cell">
+          <div class="date">{{ summary.date || '—' }}</div>
+        </div>
         <div class="time-cell">{{ summary.time || '—' }}</div>
       </div>
 
@@ -52,7 +54,9 @@
 
       <div class="legal-row">
         <input type="checkbox" id="accept" v-model="accepted" />
-        <label for="accept"><span>Я принимаю <a href="#" @click.prevent="showTerms = true">условия использования</a></span></label>
+        <label for="accept">
+          <span>Я принимаю <a href="#" @click.prevent="showTerms = true">условия использования</a></span>
+        </label>
       </div>
 
       <button class="btn-submit" type="submit" :disabled="submitting || !accepted">Записаться</button>
@@ -76,6 +80,7 @@ const PROFILE_KEY = 'profile_data'
 const router = useRouter()
 
 const summary = reactive({ date: '', time: '', staff: null, service: null })
+
 const comment = ref('')
 const remindLeadDays = ref(0)
 const submitting = ref(false)
@@ -88,7 +93,6 @@ const staffId = ref(null)
 const serviceId = ref(null)
 const visitDateISO = ref(null)
 
-// Имя клиента из профиля
 const clientName = computed(() => {
   try {
     const raw = localStorage.getItem(PROFILE_KEY)
@@ -137,20 +141,26 @@ onMounted(async () => {
 
     comment.value = v.comment || ''
     staffId.value = v.staff_id ?? null
-    serviceId.value = Array.isArray(v.services_id) ? v.services_id[0] : v.services_id ?? null
+    serviceId.value = Array.isArray(v.services_id) ? v.services_id[0] : (v.services_id ?? null)
 
-    // дата из localStorage -> из query (?date / ?datetime)
     visitDateISO.value =
       toISO(v.visit_time?.start_time) ??
       toISO(router.currentRoute.value.query.date) ??
       toISO(router.currentRoute.value.query.datetime) ??
       null
 
+
     if (staffId.value) {
-      try { const { data: staff } = await api.get(`/salon/staff/${staffId.value}`); summary.staff = staff } catch {}
+      try {
+        const { data: staff } = await api.get(`/salon/staff/${staffId.value}`)
+        summary.staff = staff
+      } catch { summary.staff = null }
     }
     if (serviceId.value) {
-      try { const { data: list } = await api.get('/services/', { params: { service_id: serviceId.value } }); summary.service = list?.[0] ?? null } catch {}
+      try {
+        const { data: list } = await api.get('/services/', { params: { service_id: serviceId.value } })
+        summary.service = list?.[0] ?? null
+      } catch { summary.service = null }
     }
 
     const h = humanize(visitDateISO.value)
@@ -161,7 +171,9 @@ onMounted(async () => {
   }
 })
 
+
 async function submitVisit() {
+
   if (!staffId.value || !serviceId.value || !visitDateISO.value) {
     errorMsg.value = 'Заполните сотрудника, услугу и дату.'
     return
@@ -175,18 +187,17 @@ async function submitVisit() {
   errorMsg.value = ''
 
   try {
-
     const payload = {
-      staff_id: staffId.value,
-      service_id: serviceId.value,
-      visit_date_time: visitDateISO.value,
-      comment: comment.value || '',
+      staff_id:         staffId.value,
+      service_id:       serviceId.value,
+      visit_date_time:  visitDateISO.value,   
+      comment:          comment.value || '',
       remind_lead_days: Number(remindLeadDays.value) || 0
     }
-    const res = await api.post('/visits/', payload)
-    console.log('[VisitCreate] OK', res.status, res.data)
 
-   
+    console.log('[VisitCreate] POST /visits/ payload →', payload)
+    const res = await api.post('/visits/', payload) 
+    console.log('[VisitCreate] OK', res.status, res.data)
 
     success.value = true
     clearVisitData()
@@ -194,11 +205,12 @@ async function submitVisit() {
   } catch (e) {
     console.error('[VisitCreate] Ошибка:', e)
     const s = e?.response?.status
+    const detail = e?.response?.data?.detail
     errorMsg.value =
-      s === 401 ? 'Сессия истекла. Перезайдите.' :
+      s === 401 ? 'Сессия истекла или невалидна. Перезайдите.' :
       s === 403 ? 'Недостаточно прав.' :
-      s === 422 ? 'Некорректные данные (422). Проверьте дату.' :
-      'Не удалось создать запись. Попробуйте ещё раз.'
+      s === 422 ? (detail || 'Некорректные данные (422). Проверьте дату/идентификаторы.') :
+      (detail || 'Не удалось создать запись. Попробуйте ещё раз.')
   } finally {
     submitting.value = false
   }
@@ -226,7 +238,7 @@ async function submitVisit() {
 textarea { width: 100%; border-radius: 6px; border: 1px solid #d3d3d3; min-height: 50px; padding: .5em; font-size: 1em; }
 select { border-radius: 4px; padding: .3em; margin-top: .2em; font-size: 1em; width: 100%; }
 .legal-row { display: flex; align-items: center; font-size: .98em; gap: .5em; margin-bottom: 1.1em; }
-.legal-row input[type="checkbox"] { width: 1.1em; height: 1.1ем; }
+.legal-row input[type="checkbox"] { width: 1.1em; height: 1.1em; }
 .legal-row a { color: #3471d6; text-decoration: underline; cursor: pointer; }
 .btn-submit { width: 100%; background: #2F80EC; color: #fff; padding: .9em; font-size: 1.11em; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 1em; }
 .btn-submit[disabled] { background: #ccc; cursor: not-allowed; }

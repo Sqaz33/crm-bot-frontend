@@ -47,12 +47,12 @@ function mergeSaveProfile(partial = {}, silent = false) {
 
   const val = (v) => (typeof v === 'string' ? v.trim() : v)
   const next = {
+    tg_id:      partial.tg_id ?? saved.tg_id ?? null,
     firstName:  val(partial.firstName)  ?? saved.firstName  ?? form.firstName  ?? '',
     lastName:   val(partial.lastName)   ?? saved.lastName   ?? form.lastName   ?? '',
     middleName: val(partial.middleName) ?? saved.middleName ?? form.middleName ?? '',
     phone:      val(partial.phone)      ?? saved.phone      ?? form.phone      ?? '',
     email:      val(partial.email)      ?? saved.email      ?? form.email      ?? '',
-    tg_id:      partial.tg_id ?? saved.tg_id ?? null,
   }
 
   localStorage.setItem(PROFILE_KEY, JSON.stringify(next))
