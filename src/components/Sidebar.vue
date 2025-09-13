@@ -1,5 +1,10 @@
 <template>
-  <aside class="sidebar">
+  <aside 
+	  class="sidebar"
+		:class="{ 'collapsed': !isOpen }"
+		@mouseenter="isHover = true"
+		@mouseleave="isHover = false"
+	>
     <ul class="menu-list">
       <li
         v-for="item in items"
@@ -15,13 +20,28 @@
       </li>
     </ul>
     <div class="back-button" @click="goBack">
-      <span class="arrow-back">‹</span> Назад
+      <span class="arrow-back">‹</span>
+			<span class = back-label> Назад</span>
     </div>
   </aside>
 </template>
 
 <script setup>
 import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { ref, watch } from 'vue';
+
+const isOpen = ref(false);
+const isHover = ref(false);
+
+watch(isHover, (newVal) => {
+  if (newVal && isOpen.value) {
+	  isOpen.value = true;
+	}
+	else {
+	  isOpen.value = false;
+	}
+});
+	
 
 const props = defineProps({
   items: {
@@ -41,7 +61,6 @@ function goBack() {
 
 <style scoped>
 .sidebar {
-  width: 220px;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -50,6 +69,7 @@ function goBack() {
   overflow-y: auto;
   border-right: 1px solid #e0e0e0;
   font-family: var(--font-primary);
+	transition: width 0.3s ease;
 }
 
 .menu-list {
@@ -76,6 +96,8 @@ function goBack() {
   background: var( --color-light);
   text-decoration: none;
   color: inherit;
+	max-height: 50px;
+	box-sizing: border-box;
 }
 
 .menu-item.active .menu-link {
@@ -119,6 +141,83 @@ function goBack() {
 .arrow-back {
   font-size: 1.2rem;
 }
+
+.sidebar.collapsed {
+  width: 50px; 
+}
+
+.sidebar.collapsed:hover {
+  width: 220px;
+}
+
+.sidebar.collapsed .label,
+.sidebar.collapsed .arrow,
+.sidebar.collapsed .back-label {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.9s ease-in-out, visibility 0.9s ease-in-out, transform 0.6s ease-out 0.1s;
+	width: 0;
+	display: none;
+}
+
+.sidebar.collapsed .menu-link {
+  
+  padding: 1rem 0.5rem;
+	margin: 0;
+}
+
+.sidebar.collapsed .icon {
+  margin-right: 0;
+}
+
+.sidebar.collapsed:hover .back-label {
+  display: block;
+}
+
+.sidebar.collapsed:hover .label,
+.sidebar.collapsed:hover .arrow,
+.sidebar.collapsed:hover .back-label {
+  opacity: 1;
+  visibility: visible;	
+	display: block;
+	white-space: nowrap;
+}
+
+.sidebar.collapsed:hover .menu-link {
+  justify-content: space-between;
+  padding: 1rem;
+	transition: all 0.3s ease 0.1s;
+}
+
+.sidebar.collapsed:hover .icon {
+  margin-right: 1rem;
+	transition: margin-right 0.3s ease 0.1s;
+}
+
+.sidebar.collapsed:hover .back-button {
+  justify-content: flex-start;
+	padding: 1rem;
+	transition: all 0.3s ease 0.2s;
+}
+
+/* анимация каскадная */
+.sidebar.collapsed:hover .arrow {
+  transition: 0.5s ease-out 0.1s;
+}
+.sidebar.collapsed:hover .label {
+  transition: all 0.6s ease-out 0.2s;
+}
+.sidebar.collapsed:hover .back-label {
+  transition: all 0.5s ease-out 0.3s;
+}
+
+/* исчезновение при @mouseleave */
+.sidebar:not(.collapsed) .label,
+.sidebar:not(.collapsed) .arrow,
+.sidebar:not(.collapsed) .back-label {
+  transition: all 0.3s ease;
+}
+
 </style>
 
 
