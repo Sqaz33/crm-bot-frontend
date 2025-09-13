@@ -2,9 +2,7 @@
   <div class="visit-create-view">
     <div class="visit-summary">
       <div class="date-row">
-        <div class="date-cell">
-          <div class="date">{{ summary.date || '—' }}</div>
-        </div>
+        <div class="date-cell"><div class="date">{{ summary.date || '—' }}</div></div>
         <div class="time-cell">{{ summary.time || '—' }}</div>
       </div>
 
@@ -38,7 +36,7 @@
 
       <div class="form-label">НАПОМИНАНИЕ О ВИЗИТЕ</div>
       <div class="form-section">
-        <select v-model="remindLeadDays">
+        <select v-model.number="remindLeadHours">
           <option :value="0">Не напоминать</option>
           <option :value="1">1 час</option>
           <option :value="2">2 часа</option>
@@ -82,7 +80,7 @@ const router = useRouter()
 const summary = reactive({ date: '', time: '', staff: null, service: null })
 
 const comment = ref('')
-const remindLeadDays = ref(0)
+const remindLeadHours = ref(0) 
 const submitting = ref(false)
 const errorMsg = ref('')
 const success = ref(false)
@@ -149,18 +147,11 @@ onMounted(async () => {
       toISO(router.currentRoute.value.query.datetime) ??
       null
 
-
     if (staffId.value) {
-      try {
-        const { data: staff } = await api.get(`/salon/staff/${staffId.value}`)
-        summary.staff = staff
-      } catch { summary.staff = null }
+      try { const { data: staff } = await api.get(`/salon/staff/${staffId.value}`); summary.staff = staff } catch { summary.staff = null }
     }
     if (serviceId.value) {
-      try {
-        const { data: list } = await api.get('/services/', { params: { service_id: serviceId.value } })
-        summary.service = list?.[0] ?? null
-      } catch { summary.service = null }
+      try { const { data: list } = await api.get('/services/', { params: { service_id: serviceId.value } }); summary.service = list?.[0] ?? null } catch { summary.service = null }
     }
 
     const h = humanize(visitDateISO.value)
@@ -171,9 +162,7 @@ onMounted(async () => {
   }
 })
 
-
 async function submitVisit() {
-
   if (!staffId.value || !serviceId.value || !visitDateISO.value) {
     errorMsg.value = 'Заполните сотрудника, услугу и дату.'
     return
@@ -188,15 +177,15 @@ async function submitVisit() {
 
   try {
     const payload = {
-      staff_id:         staffId.value,
-      service_id:       serviceId.value,
-      visit_date_time:  visitDateISO.value,   
-      comment:          comment.value || '',
-      remind_lead_days: Number(remindLeadDays.value) || 0
+      staff_id:        staffId.value,
+      service_id:      serviceId.value,
+      visit_date_time: visitDateISO.value,
+      comment:         comment.value || '',
+      remind_lead_hours: Number(remindLeadHours.value) || 0, 
     }
 
     console.log('[VisitCreate] POST /visits/ payload →', payload)
-    const res = await api.post('/visits/', payload) 
+    const res = await api.post('/visits/', payload)
     console.log('[VisitCreate] OK', res.status, res.data)
 
     success.value = true
@@ -207,10 +196,10 @@ async function submitVisit() {
     const s = e?.response?.status
     const detail = e?.response?.data?.detail
     errorMsg.value =
-      s === 401 ? 'Сессия истекла или невалидна. Перезайдите.' :
+      s === 401 ? 'Сессия истекла. Перезайдите.' :
       s === 403 ? 'Недостаточно прав.' :
-      s === 422 ? (detail || 'Некорректные данные (422). Проверьте дату/идентификаторы.') :
-      (detail || 'Не удалось создать запись. Попробуйте ещё раз.')
+      s === 422 ? (Array.isArray(detail) ? JSON.stringify(detail) : (detail || 'Некорректные данные (422).')) :
+      'Не удалось создать запись. Попробуйте ещё раз.'
   } finally {
     submitting.value = false
   }
