@@ -34,12 +34,12 @@ const form = reactive({
   email: ''
 })
 
+
 function saveVisit(silent = false) {
   const visitData = { staff_id: '', services_id: '', visit_time: { start_time: '' }, comment: '' }
   localStorage.setItem(VISIT_KEY, JSON.stringify(visitData))
   if (!silent) console.log('[App] Visit draft saved:', visitData)
 }
-
 
 function mergeSaveProfile(partial = {}, silent = false) {
   let saved = {}
@@ -93,12 +93,10 @@ function extractUserFromInitData(id) {
   }
 }
 
-
 function splitFullNameIfNeeded(fullName, fallback = {}) {
   if (!fullName || typeof fullName !== 'string') return {}
   const trimmed = fullName.trim().replace(/\s+/g, ' ')
   if (!trimmed) return {}
-
   const parts = trimmed.split(' ')
   if (parts.length === 1) {
     return {
@@ -113,24 +111,37 @@ function splitFullNameIfNeeded(fullName, fallback = {}) {
 }
 
 
+function parseJwt(token) {
+  try {
+    const payload = token.split('.')[1]
+    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/')
+    const json = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''))
+    return JSON.parse(json)
+  } catch { return null }
+}
+
+
+function shouldRenew(token, skewSec = 60) {
+  const p = parseJwt(token)
+  if (!p || !p.exp) return true
+  const now = Math.floor(Date.now() / 1000)
+  return p.exp <= (now + skewSec)
+}
+
+
+function persistAccessToken(access) {
+  store.setAccess?.(access)
+  try { sessionStorage.setItem('access_token', access) } catch {}
+}
+
+
 async function fetchAndApplyClientByTelegramId(tg_id) {
   if (!tg_id && tg_id !== 0) return
-
   try {
     const { data } = await getClientByTelegramId(tg_id) 
     const { name, telephone } = data || {}
-
-    const namePatch = splitFullNameIfNeeded(name, {
-      firstName: form.firstName,
-      lastName:  form.lastName
-    })
-
-    mergeSaveProfile({
-      ...namePatch,
-      phone: telephone || form.phone,
-      tg_id
-    }, true)
-
+    const namePatch = splitFullNameIfNeeded(name, { firstName: form.firstName, lastName: form.lastName })
+    mergeSaveProfile({ ...namePatch, phone: telephone || form.phone, tg_id }, true)
     console.log('[App] CRM client applied →', { name, telephone, tg_id })
   } catch (e) {
     const s = e?.response?.status
@@ -138,19 +149,40 @@ async function fetchAndApplyClientByTelegramId(tg_id) {
   }
 }
 
+
 async function doTelegramLogin(initData) {
+
+  try { localStorage.setItem('DEBUG_INIT_DATA', initData) } catch {}
+
   const { data } = await loginViaTelegram(initData) 
   const access = data?.access_token
   if (!access) throw new Error('access_token отсутствует')
 
-  store.setAccess(access)
+  persistAccessToken(access)
 
   const u = extractUserFromInitData(initData)
   if (u) {
-    mergeSaveProfile(u, true)          
-    await fetchAndApplyClientByTelegramId(u.tg_id) 
+    mergeSaveProfile(u, true)
+    await fetchAndApplyClientByTelegramId(u.tg_id)
   }
 }
+
+async function ensureFreshAccessToken(initData) {
+  const token = store?.accessToken || sessionStorage.getItem('access_token') || null
+  if (!token) {
+    console.log('[Auth] No token → login via init_data')
+    await doTelegramLogin(initData)
+    return
+  }
+  if (shouldRenew(token, 60)) {
+    console.log('[Auth] Token expiring → renew via init_data')
+    await doTelegramLogin(initData)
+    return
+  }
+
+  console.log('[Auth] Token is fresh, keep using it')
+}
+
 
 async function initAuthAndProfile() {
   try {
@@ -159,16 +191,11 @@ async function initAuthAndProfile() {
     const initData = getInitData()
     if (!initData) throw new Error('init_data отсутствует (WebApp/hash/query)')
 
+
     store.initFromSession?.()
-    if (!store.accessToken) {
-      await doTelegramLogin(initData)
-    } else {
-      const u = extractUserFromInitData(initData)
-      if (u) {
-        mergeSaveProfile(u, true)
-        await fetchAndApplyClientByTelegramId(u.tg_id)
-      }
-    }
+
+    await ensureFreshAccessToken(initData)
+
 
     let saved = {}
     try { saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}') } catch {}
