@@ -1,47 +1,50 @@
 <template>
-  <aside 
-	  class="sidebar"
-		:class="{ 'collapsed': !isOpen }"
+	<aside 
+		class="sidebar"
+		:class="{ 'collapsed': !isOpen }" 
 		@mouseenter="isHover = true"
 		@mouseleave="isHover = false"
 	>
-    <ul class="menu-list">
-      <li
-        v-for="item in items"
-        :key="item.path"
-        class="menu-item"
-        :class="{ active: route.path === item.path }"
-      >
-        <RouterLink :to="item.path" class="menu-link">
-          <span class="icon"></span>
-          <span class="label">{{ item.label }}</span>
-          <span class="arrow">›</span>
-        </RouterLink>
-      </li>
-    </ul>
-    <div class="back-button" @click="goBack">
-      <span class="arrow-back">‹</span>
+		<ul class="menu-list">
+			<li
+				v-for="item in items"
+				:key="item.path"
+				class="menu-item"
+				:class="{ active: route.path === item.path }"
+			>
+				<RouterLink :to="item.path" class="menu-link">
+					<span class="icon"></span>
+					<span class="label">{{ item.label }}</span>
+					<span class="arrow">›</span>
+				</RouterLink>
+			</li>
+		</ul>
+		<div class="back-button" @click="goBack">
+			<span class="arrow-back">‹</span>
 			<span class = back-label> Назад</span>
-    </div>
-  </aside>
+		</div>
+	</aside>
+
 </template>
 
 <script setup>
 import { RouterLink, useRoute, useRouter } from 'vue-router'
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 const isOpen = ref(false);
 const isHover = ref(false);
 
-watch(isHover, (newVal) => {
-  if (newVal && isOpen.value) {
-	  isOpen.value = true;
-	}
-	else {
-	  isOpen.value = false;
-	}
-});
-	
+const hoverToggleSidebarMouseEnter = () => {
+  if (!isOpen.value && isHover.value) {
+    isOpen.value = true;
+  }
+};
+
+const hoverToggleSidebarMouseLeave = () => {
+  if (!isOpen.value && !isHover.value) {
+    isOpen.value = false;
+  }
+}
 
 const props = defineProps({
   items: {
@@ -60,7 +63,28 @@ function goBack() {
 </script>
 
 <style scoped>
+.sidebar-toggle {
+  width: 50px;
+  position: sticky;
+  padding: 1rem 0.5rem;
+  background-color: var( --color-light);
+  border: none;
+	border-bottom: 2px solid #fff;
+  display: flex;
+  align-items: left;
+  cursor: pointer;
+}
+
+.sidebar-container {
+  position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 220px;
+	max-width: 220px;
+}
+
 .sidebar {
+  width: 100%;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -150,6 +174,7 @@ function goBack() {
   width: 220px;
 }
 
+/* Состояние свернутого сайдбара */
 .sidebar.collapsed .label,
 .sidebar.collapsed .arrow,
 .sidebar.collapsed .back-label {
@@ -243,3 +268,4 @@ const menuItems = [
 </template>
 
  -->
+

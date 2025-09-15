@@ -3,19 +3,31 @@
 
  
   <template v-else>
+	
     <div class="topbar">
-
       <div class="bot-name" @click="goHome">{{ botName }}</div>
-
-
     </div>
+		
     <header class="header">
       <div class="back-button" @click="goBack">
-      <span class="arrow-back">‹</span> Назад
-    </div>
+        <span class="arrow-back">‹</span> Назад
+      </div>
+			<div class = "g">
+			<button class="button" v-if="!notShowSidebarButton">
+			  <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23"  viewBox="0 0 16 16">
+        <path
+          stroke="#888"          
+          stroke-width="1"       
+          fill="none" 				  
+				  d="M0 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3zm5-1v12h9a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H5zM4 2H2a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h2V2z"
+				/>
+      </svg>
+			</button>
       <h1 class="page-title">{{ title }}</h1>
+			</div>
       <slot name="actions" />
     </header>
+		
   </template>
 </template>
 
@@ -32,6 +44,9 @@ const isHome  = computed(() => route.name === 'home')
 const title   = computed(() => route.meta.title || route.name || 'Страница')
 
 const botName = ref('') 
+
+const notShowSidebarButton = computed(() => route.name === 'appointmant')
+
 
 onMounted(async () => {
   try {
@@ -52,6 +67,25 @@ function goBack() {
 </script>
 
 <style scoped>
+.button {
+  width: 24px;
+	height: 24px;
+  position: sticky;
+  margin: 0 0.5rem;
+  background: rgba(255, 255, 255, 0);
+  border: none;
+  display: flex;
+  align-items: left;
+  cursor: pointer;
+  border-radius: 4px;	
+	padding: 0rem;
+}
+
+.g {
+  display: flex;
+  justify-content: center;	
+} 
+
 .topbar {
   background-color:var(--color-dark);
   color: white;
@@ -68,7 +102,7 @@ function goBack() {
 .header {
   background-color: #EDF2FA;
   text-align: center;
-  padding: 1rem;
+  padding: 1rem 0;
   border-bottom: 1px solid #ccc;
 }
 
@@ -77,6 +111,7 @@ function goBack() {
   font-weight: bold;
   margin: 0;
   font-family: var(--font-primary);
+	width: 100%;
 }
 .back-button {
   display: none;
