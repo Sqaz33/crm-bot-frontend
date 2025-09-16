@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
 
-    <SidebarMenu :items="menuItems" />
+    
 
 
     <main class="main-content">
@@ -40,15 +40,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import api from '../api'
-import SidebarMenu from '../components/Sidebar.vue'
 
-
-const menuItems = [
-  { label: 'Кошелёк', path: '/wallet' },
-  { label: 'Магазин', path: '/shop' },
-  { label: 'Отзывы', path: '/reviews' },
-  { label: 'О компании', path: '/company' }
-]
 
 const company = ref({
   name: '',

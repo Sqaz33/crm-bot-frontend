@@ -1,6 +1,6 @@
 <template>
   <div class="layout">
-    <SidebarMenu :items="menuItems" />
+    
     <main class="main-content">
       <StaffFilter @select="goToStaff" />
 
@@ -10,17 +10,12 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import SidebarMenu from '../components/Sidebar.vue'
+
 import StaffFilter from '../components/StaffFilter.vue'
 
 const router = useRouter()
 
-const menuItems = [
-  { label: 'Кошелёк', path: '/wallet' },
-  { label: 'Магазин',  path: '/shop'   },
-  { label: 'Отзывы',   path: '/reviews'},
-  { label: 'О компании', path: '/company' }
-]
+
 
 function goToStaff(staffId) {
   router.push({ name: 'staff', params: { id: staffId } })

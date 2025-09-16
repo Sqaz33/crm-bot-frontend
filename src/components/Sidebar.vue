@@ -1,50 +1,37 @@
 <template>
-	<aside 
-		class="sidebar"
-		:class="{ 'collapsed': !isOpen }" 
-		@mouseenter="isHover = true"
-		@mouseleave="isHover = false"
-	>
-		<ul class="menu-list">
-			<li
-				v-for="item in items"
-				:key="item.path"
-				class="menu-item"
-				:class="{ active: route.path === item.path }"
-			>
-				<RouterLink :to="item.path" class="menu-link">
-					<span class="icon"></span>
-					<span class="label">{{ item.label }}</span>
-					<span class="arrow">›</span>
-				</RouterLink>
-			</li>
-		</ul>
-		<div class="back-button" @click="goBack">
-			<span class="arrow-back">‹</span>
-			<span class = back-label> Назад</span>
-		</div>
-	</aside>
-
+  <aside 
+    class="sidebar"
+    :class="{ 'collapsed': !isOpen, 'empty': items.length === 0 }" 
+  >
+    <div v-if="items.length > 0">
+      <ul class="menu-list">
+        <li
+          v-for="item in items"
+          :key="item.path"
+          class="menu-item"
+          :class="{ active: route.path === item.path }"
+        >
+          <RouterLink :to="item.path" class="menu-link" @click="closeSidebar">
+            <span class="icon"></span>
+            <span class="label">{{ item.label }}</span>
+            <span class="arrow">›</span>
+          </RouterLink>
+        </li>
+      </ul>
+      <div class="back-button" @click="goBack">
+        <span class="arrow-back">‹</span>
+        <span class="back-label"> Назад</span>
+      </div>
+    </div>
+    
+    <div v-else class="empty-state">
+      Меню недоступно для этой страницы
+    </div>
+  </aside>
 </template>
 
 <script setup>
 import { RouterLink, useRoute, useRouter } from 'vue-router'
-import { ref } from 'vue';
-
-const isOpen = ref(false);
-const isHover = ref(false);
-
-const hoverToggleSidebarMouseEnter = () => {
-  if (!isOpen.value && isHover.value) {
-    isOpen.value = true;
-  }
-};
-
-const hoverToggleSidebarMouseLeave = () => {
-  if (!isOpen.value && !isHover.value) {
-    isOpen.value = false;
-  }
-}
 
 const props = defineProps({
   items: {
@@ -52,17 +39,41 @@ const props = defineProps({
     required: true,
     default: () => [],
   },
+  isOpen: {
+    type: Boolean,
+    default: false
+  },
+  sidebarButtonClicked: {
+    type: Boolean,
+    default: false
+  }
 })
 
+const emit = defineEmits(['close'])
 const route = useRoute()
 const router = useRouter()
 
 function goBack() {
   router.push('/')
+  emit('close')
+}
+
+function closeSidebar() {
+  emit('close')
 }
 </script>
 
 <style scoped>
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: #888;
+}
+
+.sidebar.empty {
+  display: none; 
+}
+
 .sidebar-toggle {
   width: 50px;
   position: sticky;
@@ -84,7 +95,7 @@ function goBack() {
 }
 
 .sidebar {
-  width: 100%;
+  width: 220px;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -268,4 +279,3 @@ const menuItems = [
 </template>
 
  -->
-

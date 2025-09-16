@@ -1,7 +1,7 @@
 <template>
   <div class="base">
         
-    <SidebarMenu :items="menuItems" class="sidebar" />
+    
         
     <main class="empty-content">
       <img src="../assets/SpiderWallet.svg" alt="Пустой кошелёк" class="empty-icon" />
@@ -19,13 +19,6 @@
   import { ref } from 'vue'
   const hasCards = ref(false)
 
-  import SidebarMenu from '../components/Sidebar.vue'
 
-const menuItems = [
-  { label: 'Кошелёк', path: '/wallet' },
-  { label: 'Магазин', path: '/shop' },
-  { label: 'Отзывы', path: '/reviews' },
-  { label: 'О компании', path: '/company' }
-]
 
 </script>

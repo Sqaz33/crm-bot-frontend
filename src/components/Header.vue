@@ -13,7 +13,7 @@
         <span class="arrow-back">‹</span> Назад
       </div>
 			<div class = "g">
-			<button class="button" v-if="!notShowSidebarButton">
+			<button class="button" @click="clickSidebarButton" v-if="!notShowSidebarButton">
 			  <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23"  viewBox="0 0 16 16">
         <path
           stroke="#888"          
@@ -47,6 +47,11 @@ const botName = ref('')
 
 const notShowSidebarButton = computed(() => route.name === 'appointmant')
 
+const emit = defineEmits(['sidebarButtonClick'])
+
+function clickSidebarButton() {
+  emit('sidebarButtonClick') 
+}
 
 onMounted(async () => {
   try {

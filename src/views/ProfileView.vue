@@ -1,6 +1,6 @@
 <template>
   <div class="profile-page">
-    <SidebarMenu :items="menuItems" class="sidebar" />
+    
 
     <div class="profile-form-container">
       <form @submit.prevent="saveProfile" class="profile-form">
@@ -33,15 +33,10 @@
 
 <script setup>
 import { reactive, onMounted } from 'vue'
-import SidebarMenu from '../components/Sidebar.vue'
 
-// Sidebar menu items
-const menuItems = [
-  { label: 'Кошелёк', path: '/wallet' },
-  { label: 'Магазин', path: '/shop' },
-  { label: 'Отзывы', path: '/reviews' },
-  { label: 'О компании', path: '/company' }
-]
+
+
+
 const STORAGE_KEY = 'profile_data'
 const COOKIE_KEY  = 'profile_data'
 
