@@ -221,7 +221,7 @@ export default {
 </script>
 
 <style scoped>
-.booking-page { display: flex; min-height: 100vh; background: #f5f7fa; }
+.booking-page { display: flex; min-height: 100vh; background: var(--light-color); }
 .booking-container {
   flex: 1; max-width: 480px; margin: 32px auto; padding: 32px;
   background: #fff; border-radius: 18px;

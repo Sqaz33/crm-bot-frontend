@@ -88,6 +88,7 @@ watch(() => route.path, () => {
   display: flex;
   flex: 1;
   overflow: hidden;
+	
 }
 
 .main-content {

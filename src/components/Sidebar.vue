@@ -78,9 +78,9 @@ function closeSidebar() {
   width: 50px;
   position: sticky;
   padding: 1rem 0.5rem;
-  background-color: var( --color-light);
+  background-color: var(--color-light);
   border: none;
-	border-bottom: 2px solid #fff;
+  border-bottom: 2px solid #fff;
   display: flex;
   align-items: left;
   cursor: pointer;
@@ -88,10 +88,10 @@ function closeSidebar() {
 
 .sidebar-container {
   position: relative;
-	display: flex;
-	flex-direction: column;
-	width: 220px;
-	max-width: 220px;
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  max-width: 220px;
 }
 
 .sidebar {
@@ -104,8 +104,8 @@ function closeSidebar() {
   overflow-y: auto;
   border-right: 1px solid #e0e0e0;
   font-family: var(--font-primary);
-	transition: width 0.3s ease;
-	position: absolute;
+  transition: width 0.3s ease;
+  position: absolute;
 }
 
 .menu-list {
@@ -129,11 +129,12 @@ function closeSidebar() {
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
-  background: var( --color-light);
+  background: var(--color-light);
   text-decoration: none;
   color: inherit;
-	max-height: 50px;
-	box-sizing: border-box;
+  max-height: 50px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .menu-item.active .menu-link {
@@ -147,16 +148,25 @@ function closeSidebar() {
   background-color: #ddd;
   border-radius: 4px;
   margin-right: 1rem;
+  transition: margin-right 0.3s ease;
 }
 
 .label {
   flex: 1;
   margin-left: 0.5rem;
+  transition: all 0.3s ease;
+  opacity: 1;
+  visibility: visible;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .arrow {
   color: #888;
   font-size: 1.2rem;
+  transition: all 0.3s ease;
+  opacity: 1;
+  visibility: visible;
 }
 
 .back-button {
@@ -172,89 +182,114 @@ function closeSidebar() {
   gap: 0.5rem;
   cursor: pointer;
   font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.back-label {
+  transition: all 0.3s ease;
+  opacity: 1;
+  visibility: visible;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .arrow-back {
   font-size: 1.2rem;
 }
 
+/* свёрнутый сайдбар */
 .sidebar.collapsed {
   width: 50px; 
 }
 
-.sidebar.collapsed:hover {
-  width: 220px;
-}
-
-/* Состояние свернутого сайдбара */
 .sidebar.collapsed .label,
 .sidebar.collapsed .arrow,
 .sidebar.collapsed .back-label {
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.9s ease-in-out, visibility 0.9s ease-in-out, transform 0.6s ease-out 0.1s;
-	width: 0;
-	display: none;
+  width: 0;
+  margin: 0;
+  transition: all 0.3s ease;
 }
 
 .sidebar.collapsed .menu-link {
-  
   padding: 1rem 0.5rem;
-	margin: 0;
+  justify-content: center;
+  transition: all 0.3s ease 0.1s;
 }
 
 .sidebar.collapsed .icon {
   margin-right: 0;
+  transition: margin-right 0.3s ease 0.1s;
 }
 
-.sidebar.collapsed:hover .back-label {
-  display: block;
+.sidebar.collapsed .back-button {
+  justify-content: center;
+  padding: 1rem 0.5rem;
+  transition: all 0.3s ease 0.2s;
+}
+
+/* развёрнутый по клику */
+.sidebar:not(.collapsed) {
+  width: 220px;
+}
+
+.sidebar:not(.collapsed) .label,
+.sidebar:not(.collapsed) .arrow,
+.sidebar:not(.collapsed) .back-label {
+  opacity: 1;
+  visibility: visible;
+  width: auto;
+  transition: all 0.3s ease 0.2s;
+}
+
+.sidebar:not(.collapsed) .menu-link {
+  justify-content: space-between;
+  padding: 1rem;
+  transition: all 0.3s ease 0.1s;
+}
+
+.sidebar:not(.collapsed) .icon {
+  margin-right: 1rem;
+  transition: margin-right 0.3s ease 0.1s;
+}
+
+.sidebar:not(.collapsed) .back-button {
+  justify-content: flex-start;
+  padding: 1rem;
+  transition: all 0.3s ease 0.2s;
+}
+
+/* развёрнутый по наведению */
+.sidebar.collapsed:hover {
+  width: 220px;
 }
 
 .sidebar.collapsed:hover .label,
 .sidebar.collapsed:hover .arrow,
 .sidebar.collapsed:hover .back-label {
   opacity: 1;
-  visibility: visible;	
-	display: block;
-	white-space: nowrap;
+  visibility: visible;
+  width: auto;
+  transition: all 0.3s ease 0.2s;
 }
 
 .sidebar.collapsed:hover .menu-link {
   justify-content: space-between;
   padding: 1rem;
-	transition: all 0.3s ease 0.1s;
+  transition: all 0.3s ease 0.1s;
 }
 
 .sidebar.collapsed:hover .icon {
   margin-right: 1rem;
-	transition: margin-right 0.3s ease 0.1s;
+  transition: margin-right 0.3s ease 0.1s;
 }
 
 .sidebar.collapsed:hover .back-button {
   justify-content: flex-start;
-	padding: 1rem;
-	transition: all 0.3s ease 0.2s;
+  padding: 1rem;
+  transition: all 0.3s ease 0.2s;
 }
-
-/* анимация каскадная */
-.sidebar.collapsed:hover .arrow {
-  transition: 0.5s ease-out 0.1s;
-}
-.sidebar.collapsed:hover .label {
-  transition: all 0.6s ease-out 0.2s;
-}
-.sidebar.collapsed:hover .back-label {
-  transition: all 0.5s ease-out 0.3s;
-}
-
-/* исчезновение при @mouseleave */
-.sidebar:not(.collapsed) .label,
-.sidebar:not(.collapsed) .arrow,
-.sidebar:not(.collapsed) .back-label {
-  transition: all 0.3s ease;
-}
-
 </style>
 
 

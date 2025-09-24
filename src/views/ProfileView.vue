@@ -106,16 +106,9 @@ function saveProfile() {
 .profile-page {
   display: flex;
   min-height: 100vh;
-  background-color: #f6f9fc;
+  background-color: var(--light-color);
   font-family:var(--font-primary) ;
-}
-
-/* Sidebar */
-.sidebar {
-  width: 200px;
-  background-color: #ffffff;
-  border-right: 1px solid #e0e0e0;
-  padding: 1rem;
+	padding: 1rem clamp(2rem, 15vw, 20rem);
 }
 
 /* Контейнер формы */
