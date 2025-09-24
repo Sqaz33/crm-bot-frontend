@@ -31,7 +31,7 @@ body {
   background-color: var(--color-light);
   width: 100%;
   font-family: var(--font-primary);
-
+  
 }
 
 p1 {
@@ -51,7 +51,7 @@ p2 {
 .empty-content {
   flex: 1;
   display: flex;
-  padding: 15rem 14rem 15rem 1rem;
+  padding: 6rem;
   align-items: center;
   flex-direction: column;
   overflow-y: auto;

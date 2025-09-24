@@ -1,8 +1,6 @@
 <template>
   <div class="base">
       
-    
-
     <main class="empty-content">
       <img src="../assets/PercentShop.svg" alt="Пустой магазин" class="empty-icon" />
       <p1>Магазин скоро откроется</p1>

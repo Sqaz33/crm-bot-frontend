@@ -1,13 +1,14 @@
 <template>
   <div class="app">
     <Header @sidebarButtonClick="handleSidebarButtonClick" />
-    <SidebarMenu 
+    
+    <div class="container">
+		  <SidebarMenu 
       :is-open="isSidebarOpen" 
       :items="currentMenuItems"
       :sidebar-button-clicked="sidebarButtonClicked"
       v-if="showSidebar"
-    />
-    <div class="container">
+      />
       <main class="main-content">
         <router-view />
       </main>
@@ -80,6 +81,7 @@ watch(() => route.path, () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+	position: relative;
 }
 
 .container {

@@ -105,6 +105,7 @@ function closeSidebar() {
   border-right: 1px solid #e0e0e0;
   font-family: var(--font-primary);
 	transition: width 0.3s ease;
+	position: absolute;
 }
 
 .menu-list {
