@@ -84,11 +84,12 @@ onMounted(async () => {
 .layout {
   display: flex;
   height: 100vh;
+	
 }
 .main-content {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 1rem 20rem;
   background: #fff;
 }
 .about-company {
