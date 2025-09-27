@@ -20,19 +20,24 @@
           Прошедшие
         </button>
       </div>
-
       <!-- Content -->
       <div v-if="loading" class="loading">Загрузка...</div>
       <div v-else>
         <ul v-if="visits.length > 0" class="records-list">
           <li v-for="visit in visits" :key="visit.id" class="record-item">
-            <div class="record-id">№ {{ visit.id }}</div>
-            <div class="record-date">
-              {{ formatDate(visit.visit_date_time) }}
+            <div class="record-left">
+              <div class="staff-name">{{ visit.staff.name }}</div>
+              <div class="staff-spec">
+                {{ visit.staff.specializations.join(', ') }}
+              </div>
+              <div class="service-name">{{ visit.service.name }}</div>
+            </div>
+            <div class="record-right">
+              <div class="date">{{ formatDate(visit.visit_date_time) }}</div>
+              <div class="price">{{ visit.service.price }} ₽</div>
             </div>
           </li>
         </ul>
-
         <!-- Заглушка -->
         <div v-else class="empty-state">
           <div class="empty-circle"></div>
@@ -59,28 +64,56 @@ const visits = ref([])
 const loading = ref(true)
 const activeTab = ref('current')
 
+// кэш чтобы не дергать API по 100 раз
+const staffCache = {}
+const servicesCache = {}
+
+async function getStaff(staff_id) {
+  if (staffCache[staff_id]) return staffCache[staff_id]
+  const resp = await fetch(`/salon/staff/${staff_id}`)
+  const data = await resp.json()
+  staffCache[staff_id] = data
+  return data
+}
+
+async function getService(service_id) {
+  if (servicesCache[service_id]) return servicesCache[service_id]
+  // тут проще дернуть все услуги, потом закэшировать
+  if (Object.keys(servicesCache).length === 0) {
+    const resp = await fetch(`/services/`)
+    const arr = await resp.json()
+    arr.forEach(s => { servicesCache[s.id] = s })
+  }
+  return servicesCache[service_id]
+}
+
 // --- API загрузка ---
 async function fetchVisits(tab) {
   loading.value = true
   visits.value = []
 
-  const url =
-    tab === 'current'
-      ? '/visitds/current/'
-      : '/visits/old/'
+  const url = tab === 'current' ? '/visitds/current/' : '/visits/old/'
 
   try {
     const resp = await fetch(url)
-    const text = await resp.text()
-    console.log(`Raw response [${tab}] →`, text)
+    const rawVisits = await resp.json()
 
-    try {
-      visits.value = JSON.parse(text)
-    } catch {
-      visits.value = [] // если не JSON
-    }
+    // обогащение запиcей
+    const mapped = await Promise.all(
+      rawVisits.map(async v => {
+        const staff = await getStaff(v.staff_id)
+        const service = await getService(v.service_id)
+        return {
+          ...v,
+          staff,
+          service
+        }
+      })
+    )
+
+    visits.value = mapped
   } catch {
-    visits.value = [] // при ошибке сети
+    visits.value = []
   } finally {
     loading.value = false
   }
@@ -104,6 +137,7 @@ function formatDate(iso) {
 
 onMounted(() => fetchVisits(activeTab.value))
 </script>
+
 
 <style scoped>
 .records-page {
