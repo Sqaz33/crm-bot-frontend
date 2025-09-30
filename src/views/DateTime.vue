@@ -1,6 +1,5 @@
 <template>
   <div class="booking-page">
-    <SidebarMenu :items="menuItems" />
 
     <div class="booking-container">
       <div class="month-navigation">
@@ -64,7 +63,6 @@
 </template>
 
 <script>
-import SidebarMenu from '../components/Sidebar.vue'
 import api from '../api'
 
 const VISIT_KEY = 'visit_data'
@@ -75,7 +73,6 @@ const menuItems = [
 ]
 
 export default {
-  components: { SidebarMenu },
   data() {
     return {
       menuItems,
