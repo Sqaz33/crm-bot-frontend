@@ -11,7 +11,6 @@
 
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { ensureSession } from './auth/ensureSession'
 import { getClientByTelegramId } from './api/clients'
 import { useAuthStore } from './stores/auth'
@@ -23,7 +22,6 @@ const PROFILE_KEY = 'profile_data'
 const loading   = ref(true)
 const authError = ref(false)
 const errorText = ref('Ошибка авторизации. Пожалуйста, попробуйте ещё раз.')
-const router    = useRouter()
 const store     = useAuthStore()
 
 const form = reactive({
@@ -86,9 +84,8 @@ async function initAuthAndProfile() {
   try {
     saveVisit(true)
 
-    // Критично: получаем/создаём cookie-сессию и читаем /auth/me
-    const me = await ensureSession()
-    // me: { client_id, telegram_id, telephone }
+    // создаём/проверяем cookie-сессию и читаем /auth/me
+    const me = await ensureSession() // { client_id, telegram_id, telephone }
     mergeSaveProfile({ tg_id: me.telegram_id, phone: me.telephone }, true)
 
     await fetchAndApplyClientByTelegramId(me.telegram_id)
@@ -107,6 +104,8 @@ async function initAuthAndProfile() {
       errorText.value = 'Validation Error: проверьте корректность init_data.'
     } else if (status === 500) {
       errorText.value = 'Серверная ошибка при разборе init_data.'
+    } else if (status === 401) {
+      errorText.value = 'Сессия отсутствует: проверьте Set-Cookie (SameSite=None; Secure; Domain).'
     } else {
       errorText.value = e?.message || 'Ошибка авторизации.'
     }

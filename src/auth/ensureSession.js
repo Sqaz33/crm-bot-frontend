@@ -1,33 +1,40 @@
+import { getMe, loginViaTelegram } from '../api/auth'
+import { useAuthStore } from '../stores/auth'
+import { getInitData, extractUserFromInitData } from '../utils/telegram'
+
+/**
+ * Гарантируем cookie-сессию:
+ * 1) /auth/me → если 200 — ок
+ * 2) если 401 — логинимся /auth/telegram/login с init_data
+ * 3) повторяем /auth/me
+ */
 export async function ensureSession() {
   const store = useAuthStore()
 
-  // 1) пробуем /auth/me
+  // 1) пробуем текущую сессию
   try {
-    console.log('[ensureSession] try /auth/me')
     const { data } = await getMe()
-    console.log('[ensureSession] /auth/me OK →', data)
     store.setMe?.(data)
     return data
   } catch (e) {
-    console.warn('[ensureSession] /auth/me 401?', e?.response?.status)
     if (e?.response?.status !== 401) throw e
   }
 
-  // 2) берём init_data
+  // 2) логин по init_data
   const initData = getInitData()
-  console.log('[ensureSession] init_data exists?', !!initData)
   if (!initData) {
     const err = new Error('init_data отсутствует (WebApp/hash/query)')
     err.code = 'NO_INIT_DATA'
     throw err
   }
 
-  // 3) логинимся
-  console.log('[ensureSession] POST /auth/telegram/login')
   await loginViaTelegram(initData)
 
-  // 4) повторный /auth/me
-  console.log('[ensureSession] retry /auth/me')
+  // можно проставить tg_id из init_data для UX
+  const u = extractUserFromInitData(initData)
+  if (u?.tg_id != null) store.setTelegramId?.(u.tg_id)
+
+  // 3) повторяем /auth/me
   const { data } = await getMe()
   store.setMe?.(data)
   return data
