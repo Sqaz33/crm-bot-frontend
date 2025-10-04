@@ -1,66 +1,56 @@
-
 export function getInitData() {
-  let raw = null;
-
-
+  let raw = null
   if (window.Telegram?.WebApp?.initData) {
-    raw = window.Telegram.WebApp.initData;
+    raw = window.Telegram.WebApp.initData
   }
-
-
-  if (!raw && window.location.hash.startsWith('#tgWebAppData=')) {
-    raw = decodeURIComponent(window.location.hash.replace('#tgWebAppData=', ''));
+  if (!raw && window.location.hash?.startsWith('#tgWebAppData=')) {
+    raw = decodeURIComponent(window.location.hash.replace('#tgWebAppData=', ''))
   }
-
-
   if (!raw) {
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('init_data')) {
-      raw = decodeURIComponent(params.get('init_data'));
-    }
+    const params = new URLSearchParams(window.location.search)
+    if (params.has('init_data')) raw = decodeURIComponent(params.get('init_data'))
   }
+  if (!raw) return null
 
-  if (!raw) return null;
+  // обрезаем шум, оставляем каноничную строку
+  const idx = raw.indexOf('&tgWebAppVersion=')
+  if (idx > -1) raw = raw.substring(0, idx)
 
-
-  console.group('[INIT_DATA RAW]');
-  console.log('-----BEGIN RAW INIT_DATA-----');
-  console.log(raw);
-  console.log('-----END RAW INIT_DATA-----');
-  console.log('Длина строки:', raw.length);
-  console.groupEnd();
-
-
-  const idx = raw.indexOf('&tgWebAppVersion=');
-  if (idx > -1) {
-    raw = raw.substring(0, idx);
-  }
-
-
-  console.group('[INIT_DATA CLEAN]');
-  console.log('-----BEGIN CLEAN INIT_DATA-----');
-  console.log(raw);
-  console.log('-----END CLEAN INIT_DATA-----');
-  console.log('Длина строки:', raw.length);
-  console.groupEnd();
-
-  return raw;
+  return raw
 }
 
-export function parseTelegramLaunchData() {
+export function extractUserFromInitData(id) {
   try {
-    if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
-      return window.Telegram.WebApp.initDataUnsafe.user;
+    const usp = new URLSearchParams(id)
+    const rawUser = usp.get('user')
+    if (!rawUser) return null
+
+    let s1 = rawUser; try { s1 = decodeURIComponent(rawUser) } catch {}
+    let s2 = s1;     try { s2 = decodeURIComponent(s1) }     catch {}
+
+    let obj = null
+    try { obj = JSON.parse(s2) } catch { try { obj = JSON.parse(s1) } catch {} }
+    if (!obj) return null
+
+    return {
+      firstName: obj.first_name || '',
+      lastName:  obj.last_name  || '',
+      tg_id:     obj.id ?? null,
+      username:  obj.username || '',
     }
-    const hash = window.location.hash || '';
-    if (hash.includes('user=')) {
-      const match = decodeURIComponent(hash).match(/user=({.*?})/);
-      if (match) {
-        return JSON.parse(match[1]);
-      }
-    }
-  } catch (e) {
-    console.error('parseTelegramLaunchData error:', e);
+  } catch { return null }
+}
+
+export function splitFullNameIfNeeded(fullName, fallback = {}) {
+  if (!fullName || typeof fullName !== 'string') return {}
+  const trimmed = fullName.trim().replace(/\s+/g, ' ')
+  if (!trimmed) return {}
+  const parts = trimmed.split(' ')
+  if (parts.length === 1) {
+    return { firstName: fallback.firstName || parts[0], lastName: fallback.lastName || '' }
   }
-  return null;
+  return {
+    firstName: fallback.firstName || parts.slice(0, -1).join(' '),
+    lastName:  fallback.lastName  || parts.slice(-1)[0],
+  }
 }

@@ -1,6 +1,6 @@
-import { getMe, loginViaTelegram } from './api/auth'
-import { useAuthStore } from './stores/auth'
-import { getInitData, extractUserFromInitData } from './utils/telegram'
+import { getMe, loginViaTelegram } from '../api/auth'
+import { useAuthStore } from '../stores/auth'
+import { getInitData, extractUserFromInitData } from '../utils/telegram'
 
 /**
  * Гарантируем актуальную cookie-сессию:

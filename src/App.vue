@@ -12,10 +12,10 @@
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { loginViaTelegram } from './api/auth'
+import { ensureSession } from './auth/ensureSession'
 import { getClientByTelegramId } from './api/clients'
-import { getInitData } from './utils/telegram'
 import { useAuthStore } from './stores/auth'
+import { splitFullNameIfNeeded } from './utils/telegram'
 
 const VISIT_KEY   = 'visit_data'
 const PROFILE_KEY = 'profile_data'
@@ -33,7 +33,6 @@ const form = reactive({
   phone: '',
   email: ''
 })
-
 
 function saveVisit(silent = false) {
   const visitData = { staff_id: '', services_id: '', visit_time: { start_time: '' }, comment: '' }
@@ -69,76 +68,10 @@ function mergeSaveProfile(partial = {}, silent = false) {
   }
 }
 
-
-function extractUserFromInitData(id) {
-  try {
-    const usp = new URLSearchParams(id)
-    const rawUser = usp.get('user')
-    if (!rawUser) return null
-
-    let s1 = rawUser; try { s1 = decodeURIComponent(rawUser) } catch {}
-    let s2 = s1;     try { s2 = decodeURIComponent(s1) }     catch {}
-
-    let obj = null
-    try { obj = JSON.parse(s2) } catch { try { obj = JSON.parse(s1) } catch {} }
-    if (!obj) return null
-
-    return {
-      firstName: obj.first_name || '',
-      lastName:  obj.last_name  || '',
-      tg_id:     obj.id ?? null,
-    }
-  } catch {
-    return null
-  }
-}
-
-function splitFullNameIfNeeded(fullName, fallback = {}) {
-  if (!fullName || typeof fullName !== 'string') return {}
-  const trimmed = fullName.trim().replace(/\s+/g, ' ')
-  if (!trimmed) return {}
-  const parts = trimmed.split(' ')
-  if (parts.length === 1) {
-    return {
-      firstName: fallback.firstName || parts[0],
-      lastName:  fallback.lastName  || ''
-    }
-  }
-  return {
-    firstName: fallback.firstName || parts.slice(0, -1).join(' '),
-    lastName:  fallback.lastName  || parts.slice(-1)[0]
-  }
-}
-
-
-function parseJwt(token) {
-  try {
-    const payload = token.split('.')[1]
-    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/')
-    const json = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''))
-    return JSON.parse(json)
-  } catch { return null }
-}
-
-
-function shouldRenew(token, skewSec = 60) {
-  const p = parseJwt(token)
-  if (!p || !p.exp) return true
-  const now = Math.floor(Date.now() / 1000)
-  return p.exp <= (now + skewSec)
-}
-
-
-function persistAccessToken(access) {
-  store.setAccess?.(access)
-  try { sessionStorage.setItem('access_token', access) } catch {}
-}
-
-
 async function fetchAndApplyClientByTelegramId(tg_id) {
-  if (!tg_id && tg_id !== 0) return
+  if (tg_id === undefined || tg_id === null) return
   try {
-    const { data } = await getClientByTelegramId(tg_id) 
+    const { data } = await getClientByTelegramId(tg_id)
     const { name, telephone } = data || {}
     const namePatch = splitFullNameIfNeeded(name, { firstName: form.firstName, lastName: form.lastName })
     mergeSaveProfile({ ...namePatch, phone: telephone || form.phone, tg_id }, true)
@@ -149,63 +82,24 @@ async function fetchAndApplyClientByTelegramId(tg_id) {
   }
 }
 
-
-async function doTelegramLogin(initData) {
-
-  try { localStorage.setItem('DEBUG_INIT_DATA', initData) } catch {}
-
-  const { data } = await loginViaTelegram(initData) 
-  const access = data?.access_token
-  if (!access) throw new Error('access_token отсутствует')
-
-  persistAccessToken(access)
-
-  const u = extractUserFromInitData(initData)
-  if (u) {
-    mergeSaveProfile(u, true)
-    await fetchAndApplyClientByTelegramId(u.tg_id)
-  }
-}
-
-async function ensureFreshAccessToken(initData) {
-  const token = store?.accessToken || sessionStorage.getItem('access_token') || null
-  if (!token) {
-    console.log('[Auth] No token → login via init_data')
-    await doTelegramLogin(initData)
-    return
-  }
-  if (shouldRenew(token, 60)) {
-    console.log('[Auth] Token expiring → renew via init_data')
-    await doTelegramLogin(initData)
-    return
-  }
-
-  console.log('[Auth] Token is fresh, keep using it')
-}
-
-
 async function initAuthAndProfile() {
   try {
     saveVisit(true)
 
-    const initData = getInitData()
-    if (!initData) throw new Error('init_data отсутствует (WebApp/hash/query)')
+    // Критично: получаем/создаём cookie-сессию и читаем /auth/me
+    const me = await ensureSession()
+    // me: { client_id, telegram_id, telephone }
+    mergeSaveProfile({ tg_id: me.telegram_id, phone: me.telephone }, true)
 
-
-    store.initFromSession?.()
-
-    await ensureFreshAccessToken(initData)
-
-
-    let saved = {}
-    try { saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}') } catch {}
-    mergeSaveProfile(saved, true)
+    await fetchAndApplyClientByTelegramId(me.telegram_id)
 
   } catch (e) {
     console.error('[App] Ошибка авторизации:', e)
     const status = e?.response?.status
     const detail = e?.response?.data?.detail
-    if (status === 401 && /client not found/i.test(String(detail))) {
+    if (e?.code === 'NO_INIT_DATA') {
+      errorText.value = 'Приложение открыто не из Telegram WebApp: нет init_data.'
+    } else if (status === 401 && /client not found/i.test(String(detail))) {
       errorText.value = 'Клиент не найден в CRM. Нужна привязка/создание клиента.'
     } else if (status === 400) {
       errorText.value = 'Некорректная подпись или бизнес-правило не выполнено.'
@@ -219,7 +113,7 @@ async function initAuthAndProfile() {
     authError.value = true
   } finally {
     loading.value = false
-    setTimeout(() => { authError.value = false }, 2000)
+    setTimeout(() => { authError.value = false }, 2500)
   }
 }
 
