@@ -1,21 +1,34 @@
 export function getInitData() {
   let raw = null
+
   if (window.Telegram?.WebApp?.initData) {
     raw = window.Telegram.WebApp.initData
+    console.log('[InitData] from window.Telegram.WebApp.initData:', raw?.slice(0,200), '...len=', raw?.length)
   }
+
   if (!raw && window.location.hash?.startsWith('#tgWebAppData=')) {
     raw = decodeURIComponent(window.location.hash.replace('#tgWebAppData=', ''))
+    console.log('[InitData] from location.hash:', raw?.slice(0,200), '...len=', raw?.length)
   }
+
   if (!raw) {
     const params = new URLSearchParams(window.location.search)
-    if (params.has('init_data')) raw = decodeURIComponent(params.get('init_data'))
+    if (params.has('init_data')) {
+      raw = decodeURIComponent(params.get('init_data'))
+      console.log('[InitData] from query param init_data:', raw?.slice(0,200), '...len=', raw?.length)
+    }
   }
-  if (!raw) return null
 
-  // обрезаем шум, оставляем каноничную строку
+  if (!raw) {
+    console.warn('[InitData] not found')
+    return null
+  }
+
+
   const idx = raw.indexOf('&tgWebAppVersion=')
   if (idx > -1) raw = raw.substring(0, idx)
 
+  console.log('[InitData] final clean:', raw?.slice(0,200), '...len=', raw?.length)
   return raw
 }
 
