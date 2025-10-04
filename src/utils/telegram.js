@@ -1,3 +1,9 @@
+// src/utils/telegram.js
+
+/**
+ * Получаем init_data из Telegram WebApp (или из hash/query при локальном запуске).
+ * Логируем источник, длину строки и сохраняем копию в localStorage.DEBUG_INIT_DATA.
+ */
 export function getInitData() {
   let raw = null
 
@@ -24,14 +30,13 @@ export function getInitData() {
     return null
   }
 
-  // -- чистка хвоста версии
+  // обрезаем хвост с версией
   const idx = raw.indexOf('&tgWebAppVersion=')
   if (idx > -1) raw = raw.substring(0, idx)
 
-  // -- подробные логи
   console.group('[InitData] CLEAN')
   console.log('-----BEGIN INIT_DATA-----')
-  console.log(raw)                            // печатаем целиком
+  console.log(raw) // печатаем целиком
   console.log('-----END INIT_DATA-----')
   console.log('length =', raw.length)
 
@@ -56,6 +61,9 @@ export function getInitData() {
   return raw
 }
 
+/**
+ * Извлекаем user из init_data (user=… в строке запроса)
+ */
 export function extractUserFromInitData(id) {
   try {
     const usp = new URLSearchParams(id)
@@ -78,7 +86,32 @@ export function extractUserFromInitData(id) {
   } catch { return null }
 }
 
-// Удобный дебаг-хелпер из консоли:
+/**
+ * Разделяем строку ФИО на firstName/lastName
+ */
+export function splitFullNameIfNeeded(fullName, fallback = {}) {
+  if (!fullName || typeof fullName !== 'string') return {}
+  const trimmed = fullName.trim().replace(/\s+/g, ' ')
+  if (!trimmed) return {}
+
+  const parts = trimmed.split(' ')
+  if (parts.length === 1) {
+    return {
+      firstName: fallback.firstName || parts[0],
+      lastName:  fallback.lastName  || ''
+    }
+  }
+
+  return {
+    firstName: fallback.firstName || parts.slice(0, -1).join(' '),
+    lastName:  fallback.lastName  || parts.slice(-1)[0]
+  }
+}
+
+/**
+ * Вспомогательная функция для отладки:
+ * Печатает сохранённый init_data из localStorage.DEBUG_INIT_DATA
+ */
 export function debugInitData() {
   const val = localStorage.getItem('DEBUG_INIT_DATA')
   if (!val) { console.warn('DEBUG_INIT_DATA not found'); return }
