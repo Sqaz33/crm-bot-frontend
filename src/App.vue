@@ -24,6 +24,9 @@ const authError = ref(false)
 const errorText = ref('Ошибка авторизации. Пожалуйста, попробуйте ещё раз.')
 const store     = useAuthStore()
 
+
+let mountedOnce = false
+
 const form = reactive({
   firstName: '',
   lastName: '',
@@ -81,11 +84,14 @@ async function fetchAndApplyClientByTelegramId(tg_id) {
 }
 
 async function initAuthAndProfile() {
+  if (mountedOnce) return
+  mountedOnce = true
+
   try {
     saveVisit(true)
 
-    // создаём/проверяем cookie-сессию и читаем /auth/me
-    const me = await ensureSession() // { client_id, telegram_id, telephone }
+
+    const me = await ensureSession() 
     mergeSaveProfile({ tg_id: me.telegram_id, phone: me.telephone }, true)
 
     await fetchAndApplyClientByTelegramId(me.telegram_id)
