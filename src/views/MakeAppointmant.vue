@@ -22,10 +22,7 @@
         </div>
         <div class="arrow">›</div>
       </li>
-      <li class="step-item back-item" @click="goBack">
-        <div class="arrow-back">‹</div>
-        <div class="label">Назад</div>
-      </li>
+      
     </ul>
   </div>
   <button class="btn-submit"
