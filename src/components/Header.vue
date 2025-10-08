@@ -12,6 +12,10 @@
       
 			
 			<div class = "button-title">
+			  <div class="back-button" @click="goBack" v-if="notShowSidebarButton">
+					<span class="arrow-back">‹</span> Назад
+			  </div>
+						
 				<button class="button" @click="clickSidebarButton" v-if="!notShowSidebarButton">
 					<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23"  viewBox="0 0 16 16">
 					<path
