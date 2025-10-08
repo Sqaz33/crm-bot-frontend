@@ -19,6 +19,7 @@
 				<button class="button" @click="clickSidebarButton" v-if="!notShowSidebarButton">
 					<img src="../assets/sidebarIcon.svg"/>
 				</button>
+				
         <h1 class="page-title">
 				  {{ title }}
 			  </h1>
@@ -125,7 +126,7 @@ function goBack() {
 }
 
 .back-button {
-  display: none;
+  display: flex; 
   position: absolute;
   left: 1rem;
   font-weight: bold;
@@ -138,9 +139,6 @@ function goBack() {
 .arrow-back {
   font-size: clamp(0.85rem,3vw,0.95rem);
 }
-@media (max-width: 992px) {
-  .back-button{
-    display: flex; 
-  }
-}
+
+
 </style>
