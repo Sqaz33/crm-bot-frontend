@@ -31,7 +31,8 @@
 </template>
 
 <script setup>
-import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { RouterLink, useRoute, useRouter} from 'vue-router'
+import { watch } from 'vue'
 
 const props = defineProps({
   items: {
@@ -55,12 +56,14 @@ const router = useRouter()
 
 function goBack() {
   router.push('/')
-  emit('close')
 }
 
-function closeSidebar() {
-  emit('close')
-}
+watch(() => route.path, () => {
+  if (props.isOpen) {
+    emit('close')
+  }
+})
+
 </script>
 
 <style scoped>
