@@ -1,28 +1,24 @@
 <template>
-  <div class="layout">
-    <SidebarMenu :items="menuItems" />
-    <main class="main-content">
-      <StaffFilter
-        @select="startVisitById"
-        @review="viewStaff"
-        @visit="startVisitById"
-      />
-    </main>
-  </div>
+
+    <div class="layout">    
+      <main class="main-content">
+				<StaffFilter
+					@select="startVisitById"
+					@review="viewStaff"
+					@visit="startVisitById"
+				/>
+      </main>
+    </div>
+
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router'
-import SidebarMenu from '../components/Sidebar.vue'
 import StaffFilter from '../components/StaffFilter.vue'   // <-- правильно!
 
 const router = useRouter()
 
-const menuItems = [
-  { label: 'Сотрудник',   path: '/choicestaff' },
-  { label: 'Дата и время', path: '/datetime' },
-  { label: 'Услуги',       path: '/services' }
-]
+
 
 const VISIT_KEY = 'visit_data'
 

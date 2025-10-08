@@ -3,19 +3,34 @@
 
  
   <template v-else>
+	
     <div class="topbar">
-
       <div class="bot-name" @click="goHome">{{ botName }}</div>
-
-
     </div>
+		
     <header class="header">
-      <div class="back-button" @click="goBack">
-      <span class="arrow-back">‹</span> Назад
-    </div>
-      <h1 class="page-title">{{ title }}</h1>
+      
+			
+			<div class = "button-title">
+				<button class="button" @click="clickSidebarButton" v-if="!notShowSidebarButton">
+					<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23"  viewBox="0 0 16 16">
+					<path
+						stroke="#888"          
+						stroke-width="1"       
+						fill="none" 				  
+						d="M0 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3zm5-1v12h9a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H5zM4 2H2a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h2V2z"
+					/>
+					</svg>
+				</button>
+        <h1 class="page-title">
+				  {{ title }}
+			  </h1>
+			</div>
+			
+			
       <slot name="actions" />
     </header>
+		
   </template>
 </template>
 
@@ -32,6 +47,14 @@ const isHome  = computed(() => route.name === 'home')
 const title   = computed(() => route.meta.title || route.name || 'Страница')
 
 const botName = ref('') 
+
+const notShowSidebarButton = computed(() => route.name === 'appointmant')
+
+const emit = defineEmits(['sidebarButtonClick'])
+
+function clickSidebarButton() {
+  emit('sidebarButtonClick') 
+}
 
 onMounted(async () => {
   try {
@@ -52,6 +75,36 @@ function goBack() {
 </script>
 
 <style scoped>
+.button-title {
+  display: flex;
+  justify-content: center; 
+  width: 100%; 
+  position: relative; 
+}
+
+.page-title {
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  font-weight: bold;
+  font-family: var(--font-primary);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.button {
+  width: 24px;
+  height: 24px;
+  position: absolute; 
+  left: 0.7rem; 
+  margin: 0;
+  background: rgba(255, 255, 255, 0);
+  border: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 0px;
+  padding: 0;
+}
+
 .topbar {
   background-color:var(--color-dark);
   color: white;
@@ -66,18 +119,14 @@ function goBack() {
 }
 
 .header {
+  
   background-color: #EDF2FA;
   text-align: center;
-  padding: 1rem;
+  padding: 1rem 0;
+	justify-content: center;
   border-bottom: 1px solid #ccc;
 }
 
-.page-title {
-  font-size: clamp(1rem,3vw,1.2rem);
-  font-weight: bold;
-  margin: 0;
-  font-family: var(--font-primary);
-}
 .back-button {
   display: none;
   position: absolute;

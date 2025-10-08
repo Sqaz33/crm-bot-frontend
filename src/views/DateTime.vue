@@ -1,6 +1,5 @@
 <template>
   <div class="booking-page">
-    <SidebarMenu :items="menuItems" />
 
     <div class="booking-container">
       <div class="month-navigation">
@@ -64,7 +63,6 @@
 </template>
 
 <script>
-import SidebarMenu from '../components/Sidebar.vue'
 import api from '../api'
 
 const VISIT_KEY = 'visit_data'
@@ -75,7 +73,6 @@ const menuItems = [
 ]
 
 export default {
-  components: { SidebarMenu },
   data() {
     return {
       menuItems,
@@ -221,9 +218,9 @@ export default {
 </script>
 
 <style scoped>
-.booking-page { display: flex; min-height: 100vh; background: #f5f7fa; }
+.booking-page { display: flex; min-height: 100vh; background: var(--light-color); }
 .booking-container {
-  flex: 1; max-width: 480px; margin: 32px auto; padding: 32px;
+  flex: 1; max-width: clamp(250px, 70%, 900px);  margin: 32px auto; padding: 32px;
   background: #fff; border-radius: 18px;
   box-shadow: 0 2px 18px rgba(31,70,255,0.1);
   border: 2px solid #1976ff;
@@ -243,10 +240,10 @@ export default {
   font-size: 15px; color: #9ea5b1;
 }
 .days-grid {
-  display: grid; grid-template-columns: repeat(7,1fr); gap: 7px;
+  display: grid; grid-template-columns: repeat(7,1fr); gap: 5%; margin-left: 40px;
 }
 .day {
-  height: 38px; display: flex; align-items: center; justify-content: center;
+  height: 38px; width: 38px; display: flex; align-items: center; justify-content: center;
   border-radius: 8px; font-size: 16px; background: #f6f8fa;
   color: #222; cursor: pointer; transition: background .1s,color .1s;
   border: none;
@@ -291,5 +288,9 @@ export default {
 }
 .book-button:disabled {
   background: #c4c4c4; cursor: not-allowed;
+}
+
+.calendar-section {
+  padding: 0 32px; 
 }
 </style>
