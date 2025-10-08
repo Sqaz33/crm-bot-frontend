@@ -12,11 +12,11 @@
       
 			
 			<div class = "button-title">
-			  <div class="back-button" @click="goBack" v-if="!notShowSidebarButton">
+			  <div class="back-button" @click="goBack" v-if="notShowSidebarButton">
 					<span class="arrow-back">‹</span> Назад
 			  </div>
 						
-				<button class="button" @click="clickSidebarButton" v-if="notShowSidebarButton">
+				<button class="button" @click="clickSidebarButton" v-if="!notShowSidebarButton">
 					<img src="../assets/sidebarIcon.svg"/>
 				</button>
         <h1 class="page-title">
