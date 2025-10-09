@@ -203,8 +203,12 @@ async function submitReview() {
     review.value = { rating: 0, comment: '' }
   } catch (err) {
     console.error(err)
-    // Если сервер вернул details
-    reviewError.value = err.response?.data?.details || 'Ошибка при отправке отзыва'
+    // Теперь выводим поле "detail" из ответа 400
+    if (err.response?.status === 400 && err.response?.data?.detail) {
+      reviewError.value = err.response.data.detail
+    } else {
+      reviewError.value = 'Ошибка при отправке отзыва'
+    }
   } finally {
     sending.value = false
   }
