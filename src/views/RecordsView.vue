@@ -28,7 +28,7 @@
             v-for="visit in visits"
             :key="visit.id"
             class="record-item"
-            @click="goToVisit(visit.id, activeTab === 'old')"
+            @click="goToVisit(visit.id, activeTab === 'past')"
             style="cursor: pointer;"
           >
             <div class="record-left">
