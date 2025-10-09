@@ -62,9 +62,10 @@
             Перенести запись
           </button>
         </div>
+        
+        <div v-if="visitError" class="visit-error">{{ visitError }}</div>
       </div>
 
-      <div v-if="visitError" class="visit-error">{{ visitError }}</div>
 
       <!-- Кнопка оставить отзыв -->
       <button
