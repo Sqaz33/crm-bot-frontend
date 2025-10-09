@@ -98,7 +98,7 @@ async function loadVisit() {
   error.value = ''
 
   try {
-    const { data } = await api.post(`/visits/${visitId}`)
+    const { data } = await api.get(`/visits/${visitId}`)
     visit.value = data
 
     staff.value = await getStaff(data.staff_id)
