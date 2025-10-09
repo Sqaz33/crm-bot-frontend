@@ -64,7 +64,6 @@
 
 <script>
 import api from '../api'
-import { useRoute } from 'vue-router'
 
 const VISIT_KEY = 'visit_data'
 const menuItems = [
@@ -211,8 +210,7 @@ export default {
       visit.visit_time.start_time = this.selectedTime
       localStorage.setItem(VISIT_KEY, JSON.stringify(visit))
       document.cookie = `visit_data=${encodeURIComponent(JSON.stringify(visit))}; path=/; SameSite=Lax;`
-      const route = useRoute()
-      const redirect = route?.query?.redirect || '/appointment'
+      const redirect = this.$route?.query?.redirect || '/appointment';
       this.$router.push({ path: redirect })
     }
   }
