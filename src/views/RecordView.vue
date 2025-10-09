@@ -61,14 +61,6 @@
           >
             Перенести запись
           </button>
-
-          <button
-            class="confirm-btn"
-            @click="confirmVisit"
-            :disabled="visit.will_come || processing"
-          >
-            Подтвердить визит
-          </button>
         </div>
       </div>
 
@@ -173,31 +165,15 @@ async function loadVisit() {
   }
 }
 
-// --- PATCH подтверждение визита --- //
-async function confirmVisit() {
-  processing.value = true
-  try {
-    await api.patch(`/visits/${visitId}`, {
-      visit_date_time: visit.value.visit_date_time,
-      will_come: true
-    })
-    visit.value.will_come = true
-    alert('Визит подтверждён.')
-  } catch (err) {
-    console.error(err)
-    alert('Ошибка при подтверждении визита.')
-  } finally {
-    processing.value = false
-  }
-}
-
 // --- PATCH переключатель --- //
 async function toggleWillCome() {
   processing.value = true
   try {
+    const visitDateISO = new Date(visit.value.visit_date_time).toISOString()
+
     await api.patch(`/visits/${visitId}`, {
-      visit_date_time: visit.value.visit_date_time,
-      will_come: visit.value.will_come
+      visit_date_time: visitDateISO,
+      will_come: visit.value.will_come // берём текущее состояние чекбокса
     })
   } catch (err) {
     console.error(err)
@@ -225,29 +201,28 @@ async function cancelVisit() {
 
 // --- Перенос визита --- //
 async function goToDatetime() {
-  const VISIT_KEY = 'visit_data'
-  const raw = localStorage.getItem(VISIT_KEY)
-  if (!raw) {
-    alert('Данные о визите не найдены.')
-    return
-  }
-
-  const data = JSON.parse(raw)
-  const visit_time = data.visit_time
-  if (!visit_time) {
-    alert('Выберите новое время на странице даты/времени.')
-    router.push('/datetime')
-    return
-  }
-
-  processing.value = true
   try {
+    // Переходим на страницу выбора даты/времени
+    await router.push('/datetime')
+
+    // После перехода читаем visit_time из localStorage
+    const VISIT_KEY = 'visit_data'
+    const raw = localStorage.getItem(VISIT_KEY)
+    if (!raw) return
+
+    const data = JSON.parse(raw)
+    const visit_time = data.visit_time
+    if (!visit_time) return
+
+    processing.value = true
+    const visitDateISO = new Date(visit_time).toISOString()
+
     await api.patch(`/visits/${visitId}`, {
-      visit_date_time: visit_time,
+      visit_date_time: visitDateISO,
       will_come: visit.value.will_come
     })
+
     alert('Дата и время визита обновлены.')
-    router.push('/datetime') // переход на страницу выбора даты/времени
   } catch (err) {
     console.error(err)
     alert('Не удалось обновить дату и время визита.')
