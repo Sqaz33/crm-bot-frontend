@@ -52,6 +52,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import SidebarMenu from '../components/Sidebar.vue'
+import api from '../api'
 
 const menuItems = [
   { label: 'Кошелёк', path: '/wallet' },
@@ -70,8 +71,7 @@ const servicesCache = {}
 
 async function getStaff(staff_id) {
   if (staffCache[staff_id]) return staffCache[staff_id]
-  const resp = await fetch(`/salon/staff/${staff_id}`)
-  const data = await resp.json()
+  const { data } = await api.get(`/salon/staff/${staff_id}`)
   staffCache[staff_id] = data
   return data
 }
@@ -79,8 +79,7 @@ async function getStaff(staff_id) {
 async function getService(service_id) {
   if (servicesCache[service_id]) return servicesCache[service_id]
   if (Object.keys(servicesCache).length === 0) {
-    const resp = await fetch(`/services/`)
-    const arr = await resp.json()
+    const { data: arr } = await api.get(`/services/`)
     arr.forEach(s => { servicesCache[s.id] = s })
   }
   return servicesCache[service_id]
@@ -95,17 +94,18 @@ async function fetchVisits(tab) {
   console.log(`Загружаем данные с: ${url}`)
 
   try {
-    const resp = await fetch(url)
-    const rawVisits = await resp.json()
+    const { data: rawVisits } = await api.get(url)
 
-    console.log(`Получено ${rawVisits.length} записей`)
-
-    if (rawVisits.length > 0) {
-      console.log('Первый элемент (сырой):', rawVisits[0])
+    if (!Array.isArray(rawVisits)) {
+      console.error('Сервер вернул не массив:', rawVisits)
+      visits.value = []
+      return
     }
 
-    let processedCount = 0
+    console.log(`Получено ${rawVisits.length} записей`)
+    if (rawVisits.length > 0) console.log('🧩 Первый элемент (сырой):', rawVisits[0])
 
+    let processedCount = 0
     const mapped = await Promise.all(
       rawVisits.map(async (v, i) => {
         const staff = await getStaff(v.staff_id)
@@ -113,13 +113,9 @@ async function fetchVisits(tab) {
         const enriched = { ...v, staff, service }
 
         processedCount++
-        if (i === 0) {
-          console.log('Первый элемент после обработки:', enriched)
-        }
-        if (processedCount % 10 === 0 || processedCount === rawVisits.length) {
-          console.log(`Обработано ${processedCount} из ${rawVisits.length}`)
-        }
-
+        if (i === 0) console.log('✨ Первый элемент после обработки:', enriched)
+        if (processedCount % 10 === 0 || processedCount === rawVisits.length)
+          console.log(`⚙️ Обработано ${processedCount} из ${rawVisits.length}`)
         return enriched
       })
     )
@@ -131,7 +127,7 @@ async function fetchVisits(tab) {
     visits.value = []
   } finally {
     loading.value = false
-    console.log('Завершено обновление данных\n')
+    console.log('🏁 Завершено обновление данных\n')
   }
 }
 
@@ -153,6 +149,7 @@ function formatDate(iso) {
 
 onMounted(() => fetchVisits(activeTab.value))
 </script>
+
 
 
 <style scoped>
