@@ -98,7 +98,7 @@ function goBack() {
   
   box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
-  
+  z-index: 1000;
   transition: width 0.3s ease;
   position: absolute;
 }
