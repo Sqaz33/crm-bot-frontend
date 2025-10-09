@@ -264,6 +264,7 @@ async function goToDatetime() {
       visit_date_time: visitDateISO, 
       will_come: visit.value.will_come 
     });
+    visit.visit_date_time = visitTime;
 
   } catch (err) {
     console.error(err);
