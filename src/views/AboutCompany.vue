@@ -91,6 +91,7 @@ onMounted(async () => {
   overflow-y: auto;
   padding: 1rem clamp(2rem, 15vw, 20rem);
   background: var(--color-light);
+	height: 100vh;
 }
 
 .container {
@@ -128,6 +129,7 @@ onMounted(async () => {
   height: 100px;
   background: #ccc;
   border-radius: 50%;
+
 }
 .info .name {
   font-size: clamp(1rem, 3vw, 1.2rem);
