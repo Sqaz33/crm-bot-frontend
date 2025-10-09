@@ -64,7 +64,7 @@ const visits = ref([])
 const loading = ref(true)
 const activeTab = ref('current')
 
-// кэш чтобы не дергать API по 100 раз
+// --- КЭШ ---
 const staffCache = {}
 const servicesCache = {}
 
@@ -78,7 +78,6 @@ async function getStaff(staff_id) {
 
 async function getService(service_id) {
   if (servicesCache[service_id]) return servicesCache[service_id]
-  // тут проще дернуть все услуги, потом закэшировать
   if (Object.keys(servicesCache).length === 0) {
     const resp = await fetch(`/services/`)
     const arr = await resp.json()
@@ -92,30 +91,47 @@ async function fetchVisits(tab) {
   loading.value = true
   visits.value = []
 
-  const url = tab === 'current' ? '/visitds/current/' : '/visits/old/'
+  const url = tab === 'current' ? '/visits/current/' : '/visits/old/'
+  console.log(`Загружаем данные с: ${url}`)
 
   try {
     const resp = await fetch(url)
     const rawVisits = await resp.json()
 
-    // обогащение запиcей
+    console.log(`Получено ${rawVisits.length} записей`)
+
+    if (rawVisits.length > 0) {
+      console.log('Первый элемент (сырой):', rawVisits[0])
+    }
+
+    let processedCount = 0
+
     const mapped = await Promise.all(
-      rawVisits.map(async v => {
+      rawVisits.map(async (v, i) => {
         const staff = await getStaff(v.staff_id)
         const service = await getService(v.service_id)
-        return {
-          ...v,
-          staff,
-          service
+        const enriched = { ...v, staff, service }
+
+        processedCount++
+        if (i === 0) {
+          console.log('Первый элемент после обработки:', enriched)
         }
+        if (processedCount % 10 === 0 || processedCount === rawVisits.length) {
+          console.log(`Обработано ${processedCount} из ${rawVisits.length}`)
+        }
+
+        return enriched
       })
     )
 
     visits.value = mapped
-  } catch {
+    console.log(`Всего обработано ${mapped.length} записей`)
+  } catch (err) {
+    console.error('Ошибка при загрузке или обработке:', err)
     visits.value = []
   } finally {
     loading.value = false
+    console.log('Завершено обновление данных\n')
   }
 }
 
