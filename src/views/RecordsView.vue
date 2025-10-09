@@ -24,12 +24,16 @@
       <div v-if="loading" class="loading">Загрузка...</div>
       <div v-else>
         <ul v-if="visits.length > 0" class="records-list">
-          <li v-for="visit in visits" :key="visit.id" class="record-item">
+          <li
+            v-for="visit in visits"
+            :key="visit.id"
+            class="record-item"
+            @click="goToVisit(visit.id, activeTab === 'old')"
+            style="cursor: pointer;"
+          >
             <div class="record-left">
               <div class="staff-name">{{ visit.staff.name }}</div>
-              <div class="staff-spec">
-                {{ visit.staff.specializations.join(', ') }}
-              </div>
+              <div class="staff-spec">{{ visit.staff.specializations.join(', ') }}</div>
               <div class="service-name">{{ visit.service.name }}</div>
             </div>
             <div class="record-right">
@@ -53,7 +57,17 @@
 import { ref, onMounted } from 'vue'
 import SidebarMenu from '../components/Sidebar.vue'
 import api from '../api'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+
+function goToVisit(id, isOld) {
+  router.push({
+    name: 'record',
+    params: { id },
+    query: { isOld: isOld.toString() } 
+  })
+}
 const menuItems = [
   { label: 'Кошелёк', path: '/wallet' },
   { label: 'Магазин', path: '/shop' },
@@ -103,7 +117,7 @@ async function fetchVisits(tab) {
     }
 
     console.log(`Получено ${rawVisits.length} записей`)
-    if (rawVisits.length > 0) console.log('🧩 Первый элемент (сырой):', rawVisits[0])
+    if (rawVisits.length > 0) console.log('Первый элемент (сырой):', rawVisits[0])
 
     let processedCount = 0
     const mapped = await Promise.all(
@@ -113,9 +127,9 @@ async function fetchVisits(tab) {
         const enriched = { ...v, staff, service }
 
         processedCount++
-        if (i === 0) console.log('✨ Первый элемент после обработки:', enriched)
+        if (i === 0) console.log('Первый элемент после обработки:', enriched)
         if (processedCount % 10 === 0 || processedCount === rawVisits.length)
-          console.log(`⚙️ Обработано ${processedCount} из ${rawVisits.length}`)
+          console.log(`Обработано ${processedCount} из ${rawVisits.length}`)
         return enriched
       })
     )
@@ -127,7 +141,7 @@ async function fetchVisits(tab) {
     visits.value = []
   } finally {
     loading.value = false
-    console.log('🏁 Завершено обновление данных\n')
+    console.log('Завершено обновление данных\n')
   }
 }
 

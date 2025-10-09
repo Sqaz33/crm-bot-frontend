@@ -14,6 +14,7 @@ import ChoiceStaffView from '../views/ChoiceStaff.vue'
 import DateTime from '../views/DateTime.vue'
 import ServicesView from '../views/ServicesView.vue'
 import CreateVisitView from '../views/CreateVisitView.vue'
+import RecordView from '../views/RecordView.vue'
 
 const routes = [
   {
@@ -98,12 +99,17 @@ const routes = [
         component: ServicesView,
         meta: { title:"Услуги"}
       },
-    
       {
         path: 'createvisit',
         name: 'createvisit',
         component: CreateVisitView,
         meta: { title:"Оформление записи"}
+      },
+      {
+        path: 'record/:id',
+        name: 'record',
+        component: RecordView,
+        meta: { title: "Просмотр записи" }
       }
     ]
   },
