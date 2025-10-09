@@ -33,22 +33,57 @@
         </div>
       </div>
 
-      <!-- Кнопка -->
-      <button
+        <!-- Кнопка -->
+        <button
         v-if="!isOld"
         class="cancel-btn"
         @click="cancelVisit"
         :disabled="deleting"
-      >
+        >
         {{ deleting ? 'Отмена...' : 'Отменить запись' }}
-      </button>
+        </button>
 
-      <button
+        <button
         v-else
         class="review-btn"
-      >
+        @click="showReviewModal = true"
+        >
         Оставить отзыв
-      </button>
+        </button>
+
+        <!-- Модалка для отзыва -->
+        <div v-if="showReviewModal" class="modal-overlay">
+            <div class="modal">
+                <h3>Отзыв для {{ staff.name }}</h3>
+
+                <!-- Выбор рейтинга -->
+                <div class="stars">
+                <span
+                    v-for="n in 5"
+                    :key="n"
+                    class="star"
+                    :class="{ filled: n <= review.rating }"
+                    @click="review.rating = n"
+                >★</span>
+                </div>
+
+                <!-- Комментарий -->
+                <textarea
+                v-model="review.comment"
+                placeholder="Напишите ваш комментарий..."
+                ></textarea>
+
+                <!-- Кнопки -->
+                <div class="modal-buttons">
+                <button @click="submitReview" :disabled="sending">
+                    {{ sending ? 'Отправка...' : 'Отправить' }}
+                </button>
+                <button @click="showReviewModal = false" :disabled="sending">Отмена</button>
+                </div>
+
+                <div v-if="reviewError" class="modal-error">{{ reviewError }}</div>
+            </div>
+        </div>
     </div>
   </div>
 </template>
@@ -139,6 +174,41 @@ function formatDate(iso) {
 }
 
 onMounted(loadVisit)
+
+const showReviewModal = ref(false)
+const review = ref({
+  rating: 0,
+  comment: ''
+})
+const sending = ref(false)
+const reviewError = ref('')
+
+async function submitReview() {
+  if (review.value.rating === 0) {
+    reviewError.value = 'Пожалуйста, выберите количество звезд'
+    return
+  }
+
+  sending.value = true
+  reviewError.value = ''
+
+  try {
+    await api.post('/salon/reviews', {
+      staff_id: staff.value.id,
+      rating: review.value.rating,
+      comment: review.value.comment
+    })
+    alert('Спасибо за ваш отзыв!')
+    showReviewModal.value = false
+    review.value = { rating: 0, comment: '' }
+  } catch (err) {
+    console.error(err)
+    // Если сервер вернул details
+    reviewError.value = err.response?.data?.details || 'Ошибка при отправке отзыва'
+  } finally {
+    sending.value = false
+  }
+}
 </script>
 
 <style scoped>
@@ -241,5 +311,79 @@ onMounted(loadVisit)
 .error {
   color: red;
   font-size: 1rem;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 320px;
+  max-width: 90%;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.stars {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.star {
+  cursor: pointer;
+  color: #ccc;
+}
+
+.star.filled {
+  color: #fbc02d;
+}
+
+textarea {
+  width: 100%;
+  min-height: 80px;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: none;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.modal-buttons button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-buttons button:first-child {
+  background-color: #1e88e5;
+  color: white;
+}
+
+.modal-buttons button:last-child {
+  background-color: #ccc;
+}
+
+.modal-error {
+  color: red;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
 }
 </style>
