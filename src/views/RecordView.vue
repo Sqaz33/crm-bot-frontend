@@ -62,7 +62,7 @@
             Перенести запись
           </button>
         </div>
-        
+
         <div v-if="visitError" class="visit-error">{{ visitError }}</div>
       </div>
 
@@ -214,7 +214,7 @@ async function waitForVisitTime(timeoutMs = 60000, intervalMs = 500) {
       try {
         const data = JSON.parse(raw);
         if (data.visit_time) {
-          return new Date(data.visit_time); // дата найдена, возвращаем
+          return new Date(data.visit_time.start_time); // дата найдена, возвращаем
         }
       } catch (e) {
         console.error('Ошибка парсинга localStorage:', e);
