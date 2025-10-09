@@ -229,7 +229,24 @@ async function waitForVisitTime(timeoutMs = 60000, intervalMs = 500) {
 
 // --- Перенос визита --- //
 async function goToDatetime() {
+  const VISIT_KEY = 'visit_data';
+  let backupVisitData = null;
+
   try {
+    // сохраняем текущее значение визита
+    const raw = localStorage.getItem(VISIT_KEY);
+    if (raw) {
+      try {
+        backupVisitData = JSON.parse(raw);
+      } catch (e) {
+        console.error('Ошибка парсинга localStorage при резервировании:', e);
+      }
+    }
+
+    // очищаем значение для редиректа
+    localStorage.removeItem(VISIT_KEY);
+
+    // переходим на страницу выбора даты и времени
     await router.push({ 
       path: '/datetime', 
       query: { redirect: router.currentRoute.value.fullPath } 
@@ -237,7 +254,8 @@ async function goToDatetime() {
 
     processing.value = true;
 
-    const visitTime = await waitForVisitTime(); // ждем дату из localStorage
+    // ждем, пока в localStorage появится новое время визита
+    const visitTime = await waitForVisitTime();
 
     // когда дата появится, отправляем на сервер
     const visitDateISO = visitTime.toISOString();
@@ -249,10 +267,17 @@ async function goToDatetime() {
   } catch (err) {
     console.error(err);
     visitError.value = 'Не удалось обновить дату и время визита.';
+
+    // если дата не выбрана — восстанавливаем старое значение
+    if (backupVisitData) {
+      localStorage.setItem(VISIT_KEY, JSON.stringify(backupVisitData));
+    }
+
   } finally {
     processing.value = false;
   }
 }
+
 
 function formatDate(iso) {
   const d = new Date(iso)
