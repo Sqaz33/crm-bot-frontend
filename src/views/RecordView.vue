@@ -203,32 +203,54 @@ async function cancelVisit() {
   }
 }
 
+async function waitForVisitTime(timeoutMs = 60000, intervalMs = 500) {
+  const VISIT_KEY = 'visit_data';
+  const start = Date.now();
+
+  while (Date.now() - start < timeoutMs) {
+    const raw = localStorage.getItem(VISIT_KEY);
+    if (raw) {
+      try {
+        const data = JSON.parse(raw);
+        if (data.visit_time) {
+          return new Date(data.visit_time); // дата найдена, возвращаем
+        }
+      } catch (e) {
+        console.error('Ошибка парсинга localStorage:', e);
+      }
+    }
+    // ждем intervalMs миллисекунд перед следующей проверкой
+    await new Promise(resolve => setTimeout(resolve, intervalMs));
+  }
+
+  // если дата не появилась за timeoutMs
+  throw new Error('Дата визита не появилась в localStorage за отведенное время.');
+}
+
 // --- Перенос визита --- //
 async function goToDatetime() {
   try {
-    await router.push({
-      path: '/datetime',
-      query: { redirect: router.currentRoute.value.fullPath }
-    })
+    await router.push({ 
+      path: '/datetime', 
+      query: { redirect: router.currentRoute.value.fullPath } 
+    });
 
-    const VISIT_KEY = 'visit_data'
-    const raw = localStorage.getItem(VISIT_KEY)
-    if (!raw) return
-    const data = JSON.parse(raw)
-    const visit_time = data.visit_time
-    if (!visit_time) return
+    processing.value = true;
 
-    processing.value = true
-    const visitDateISO = new Date(visit_time).toISOString()
-    await api.patch(`/visits/${visitId}`, {
-      visit_date_time: visitDateISO,
-      will_come: visit.value.will_come
-    })
+    const visitTime = await waitForVisitTime(); // ждем дату из localStorage
+
+    // когда дата появится, отправляем на сервер
+    const visitDateISO = visitTime.toISOString();
+    await api.patch(`/visits/${visitId}`, { 
+      visit_date_time: visitDateISO, 
+      will_come: visit.value.will_come 
+    });
+
   } catch (err) {
-    console.error(err)
-    visitError.value = 'Не удалось обновить дату и время визита.'
+    console.error(err);
+    visitError.value = 'Не удалось обновить дату и время визита.';
   } finally {
-    processing.value = false
+    processing.value = false;
   }
 }
 
