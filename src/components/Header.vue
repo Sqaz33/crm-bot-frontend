@@ -9,8 +9,7 @@
     </div>
 		
     <header class="header">
-      
-			
+      		
 			<div class = "button-title">
 			  <div class="back-button" @click="goBack" v-if="notShowSidebarButton">
 					<span class="arrow-back">‹</span> Назад
@@ -19,6 +18,7 @@
 				<button class="button" @click="clickSidebarButton" v-if="!notShowSidebarButton">
 					<img src="../assets/sidebarIcon.svg"/>
 				</button>
+				
         <h1 class="page-title">
 				  {{ title }}
 			  </h1>
@@ -82,7 +82,6 @@ function goBack() {
 .page-title {
   font-size: clamp(1rem, 3vw, 1.2rem);
   font-weight: bold;
-  font-family: var(--font-primary);
   margin: 0 auto;
   text-align: center;
 }
@@ -103,8 +102,6 @@ function goBack() {
 }
 
 .topbar {
-  background-color:var(--color-dark);
-  color: white;
   padding: 0.75rem 1rem;
   font-weight: bold;
   font-size: 1rem;
@@ -115,32 +112,10 @@ function goBack() {
   cursor: pointer;
 }
 
-.header {
-  
-  background-color: #EDF2FA;
+.header { 
   text-align: center;
   padding: 1rem 0;
 	justify-content: center;
   border-bottom: 1px solid #ccc;
-}
-
-.back-button {
-  display: none;
-  position: absolute;
-  left: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: clamp(0.85rem,3vw,0.95rem);
-  font-family: var(--font-primary);
-  color: #787B80;
-  gap: 0.5rem;
-}
-.arrow-back {
-  font-size: clamp(0.85rem,3vw,0.95rem);
-}
-@media (max-width: 992px) {
-  .back-button{
-    display: flex; 
-  }
 }
 </style>

@@ -50,14 +50,10 @@ function goTo(name) {
 </script>
 
 <style scoped>
-
-
-
 .section-title {
   text-align: center;
   font-size: clamp(0.75rem,5vw,1.2rem);
-  font-weight: bold;
-  background: white;
+  font-weight: bold;  
   display: block;
   padding:clamp(1rem,5vw,1.5rem);
   border-radius: 8px;
@@ -65,19 +61,15 @@ function goTo(name) {
   width: min(85%, 35rem);
   box-sizing: border-box;
 }
-.section-title:hover {
-  background-color: #eaeff5;
-}
+
 .cards {
   display: flex;
   flex-direction: column;
   gap: clamp(0.5rem,3vw,1rem);
-  padding: 0 clamp(0.5rem,3vw,1rem);
-  
+  padding: 0 clamp(0.5rem,3vw,1rem);  
 }
 
 .card {
-  background-color: white;
   border-radius: 12px;
   padding:clamp(1rem, 5vw, 1.5rem);
   font-size: clamp(0.75rem, 4vw, 1rem);
@@ -86,24 +78,12 @@ function goTo(name) {
   align-items: center;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: background-color .2s;
-  
-}
-
-.card:hover {
-  background-color: #eaeff5;
 }
 
 .badge {
-  background-color: #e0e0e0;
   border-radius: 999px;
   padding: 0.2rem 0.6rem;
   font-size: clamp(0.7rem, 3vw, 0.9rem);
   font-weight: bold;
-}
-
-.arrow {
-  font-size: clamp(1rem, 5vw, 1.4rem);
-  color: #999;
 }
 </style>

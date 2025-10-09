@@ -8,7 +8,7 @@
       :items="currentMenuItems"
       :sidebar-button-clicked="sidebarButtonClicked"
       v-if="showSidebar"
-			@close="handleSidebarClose"
+			
       />
       <main class="main-content">
         <router-view />
@@ -72,14 +72,6 @@ function handleSidebarButtonClick() {
   }
 }
 
-function handleSidebarClose() {
-  isSidebarOpen.value = false
-}
-
-watch(() => route.path, () => {
-  isSidebarOpen.value = false
-  sidebarButtonClicked.value = false
-})
 </script>
 
 <style scoped>
