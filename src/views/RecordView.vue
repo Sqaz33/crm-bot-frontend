@@ -64,6 +64,7 @@
         </div>
       </div>
 
+      <div v-if="visitError" class="visit-error">{{ visitError }}</div>
 
       <!-- Кнопка оставить отзыв -->
       <button
@@ -165,19 +166,22 @@ async function loadVisit() {
   }
 }
 
+// --- STATE --- //
+const visitError = ref('')
+
 // --- PATCH переключатель --- //
 async function toggleWillCome() {
   processing.value = true
+  visitError.value = ''
   try {
     const visitDateISO = new Date(visit.value.visit_date_time).toISOString()
-
     await api.patch(`/visits/${visitId}`, {
       visit_date_time: visitDateISO,
-      will_come: visit.value.will_come // берём текущее состояние чекбокса
+      will_come: visit.value.will_come
     })
   } catch (err) {
     console.error(err)
-    alert('Ошибка при обновлении статуса визита.')
+    visitError.value = 'Ошибка при обновлении статуса визита.'
   } finally {
     processing.value = false
   }
@@ -187,13 +191,13 @@ async function toggleWillCome() {
 async function cancelVisit() {
   if (!confirm('Вы уверены, что хотите отменить запись?')) return
   deleting.value = true
+  visitError.value = ''
   try {
     await api.delete(`/visits/${visitId}`)
-    alert('Запись успешно отменена.')
     router.push('/records')
   } catch (err) {
     console.error(err)
-    alert('Не удалось отменить запись.')
+    visitError.value = 'Не удалось отменить запись.'
   } finally {
     deleting.value = false
   }
@@ -202,30 +206,23 @@ async function cancelVisit() {
 // --- Перенос визита --- //
 async function goToDatetime() {
   try {
-    // Переходим на страницу выбора даты/времени
     await router.push('/datetime')
-
-    // После перехода читаем visit_time из localStorage
     const VISIT_KEY = 'visit_data'
     const raw = localStorage.getItem(VISIT_KEY)
     if (!raw) return
-
     const data = JSON.parse(raw)
     const visit_time = data.visit_time
     if (!visit_time) return
 
     processing.value = true
     const visitDateISO = new Date(visit_time).toISOString()
-
     await api.patch(`/visits/${visitId}`, {
       visit_date_time: visitDateISO,
       will_come: visit.value.will_come
     })
-
-    alert('Дата и время визита обновлены.')
   } catch (err) {
     console.error(err)
-    alert('Не удалось обновить дату и время визита.')
+    visitError.value = 'Не удалось обновить дату и время визита.'
   } finally {
     processing.value = false
   }
@@ -504,6 +501,12 @@ button:disabled,
 input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.visit-error {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
 }
 
 </style>
