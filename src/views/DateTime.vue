@@ -72,7 +72,6 @@ const menuItems = [
   { label: 'Дата и время',   path: '/datetime'   },
   { label: 'Услуги',         path: '/services'   }
 ]
-const route = useRoute()
 
 export default {
   data() {
@@ -212,7 +211,8 @@ export default {
       visit.visit_time.start_time = this.selectedTime
       localStorage.setItem(VISIT_KEY, JSON.stringify(visit))
       document.cookie = `visit_data=${encodeURIComponent(JSON.stringify(visit))}; path=/; SameSite=Lax;`
-      const redirect = route?.query?.redirect || '/appointmant'
+      const route = useRoute()
+      const redirect = route?.query?.redirect || '/appointment'
       this.$router.push({ path: redirect })
     }
   }
