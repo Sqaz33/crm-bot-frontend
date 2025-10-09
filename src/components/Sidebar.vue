@@ -32,7 +32,6 @@
 
 <script setup>
 import { RouterLink, useRoute, useRouter} from 'vue-router'
-import { watch } from 'vue'
 
 const props = defineProps({
   items: {
@@ -57,12 +56,6 @@ const router = useRouter()
 function goBack() {
   router.push('/')
 }
-
-watch(() => route.path, () => {
-  if (props.isOpen) {
-    emit('close')
-  }
-})
 
 </script>
 
@@ -102,11 +95,10 @@ watch(() => route.path, () => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: white;
+  
   box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
-  border-right: 1px solid #e0e0e0;
-  font-family: var(--font-primary);
+  
   transition: width 0.3s ease;
   position: absolute;
 }

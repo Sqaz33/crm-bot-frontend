@@ -112,12 +112,7 @@ onMounted(async () => {
   padding: 1rem; 
   border-radius: 8px;
 }
-.page-title {
-  text-align: center;
-  font-size: clamp(1rem, 3vw, 1.2rem);
-  margin-bottom: 1rem;
-  font-family:var(--font-primary) ;
-}
+
 .company-card {
   display: flex;
   align-items: center;

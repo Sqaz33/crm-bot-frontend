@@ -100,41 +100,37 @@ function navigate(item) {
 </script>
 
 <style scoped>
-.main-menu {
-
+.main-menu, .salon-info {
   display: flex;
+	box-sizing: border-box;
+}
+
+.main-menu { 
   align-items: center;
   flex-wrap: wrap;
-  justify-content: space-between;
-  background: var(--color-dark);
-  color: white;
-
-  padding: 0;
-  box-sizing: border-box;
+  justify-content: space-between; 
+  padding: 0; 
   width: 100%;
-
 }
 
 .salon-info {
-  display: flex;
   flex-direction: column;
   padding: clamp(0.75rem,4vw,1rem);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-sizing: border-box; 
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
   text-align: center;
 }
 
 .salon-name {
   font-size: clamp(0.75rem, 4vw, 1rem);
   font-weight: bold;
-  font-family:var(--font-primary) ;
+  
 }
 
 .salon-desc {
   font-size: clamp(0.3rem,2vw,0.6rem);
   opacity: 0.7;
   margin-top: 0.25rem;
-  font-family:var(--font-primary) ;
+  
 }
 
 .menu {
@@ -155,8 +151,7 @@ function navigate(item) {
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  font-family:var(--font-primary) ;
-}
+  }
  
 
 .menu-item.active {
