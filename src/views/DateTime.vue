@@ -210,8 +210,8 @@ export default {
       visit.visit_time.start_time = this.selectedTime
       localStorage.setItem(VISIT_KEY, JSON.stringify(visit))
       document.cookie = `visit_data=${encodeURIComponent(JSON.stringify(visit))}; path=/; SameSite=Lax;`
-
-      this.$router.push({ path: '/appointmant' })
+      const redirect = router.currentRoute.value.query.redirect || '/appointmant'
+      this.$router.push({ path: redirect })
     }
   }
 }

@@ -206,7 +206,11 @@ async function cancelVisit() {
 // --- Перенос визита --- //
 async function goToDatetime() {
   try {
-    await router.push('/datetime')
+    await router.push({
+      path: '/datetime',
+      query: { redirect: router.currentRoute.value.fullPath }
+    })
+
     const VISIT_KEY = 'visit_data'
     const raw = localStorage.getItem(VISIT_KEY)
     if (!raw) return
