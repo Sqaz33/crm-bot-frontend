@@ -68,7 +68,7 @@
 
       <!-- Кнопка оставить отзыв -->
       <button
-        v-else
+        v-else-if="isOld"
         class="review-btn"
         @click="showReviewModal = true"
       >
