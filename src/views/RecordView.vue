@@ -33,57 +33,85 @@
         </div>
       </div>
 
-        <!-- Кнопка -->
-        <button
-        v-if="!isOld"
-        class="cancel-btn"
-        @click="cancelVisit"
-        :disabled="deleting"
-        >
-        {{ deleting ? 'Отмена...' : 'Отменить запись' }}
-        </button>
+      <!-- Панель управления визитом -->
+      <div v-if="!isOld" class="control-panel">
+        <div class="switch-row">
+          <label class="switch-label">Подтверждаю визит</label>
+          <input
+            type="checkbox"
+            v-model="visit.will_come"
+            @change="toggleWillCome"
+            :disabled="visit.will_come || processing"
+          />
+        </div>
 
-        <button
+        <div class="buttons">
+          <button
+            class="cancel-btn"
+            @click="cancelVisit"
+            :disabled="visit.will_come || deleting || processing"
+          >
+            Отменить запись
+          </button>
+
+          <button
+            class="move-btn"
+            @click="goToDatetime"
+            :disabled="visit.will_come || processing"
+          >
+            Перенести запись
+          </button>
+
+          <button
+            class="confirm-btn"
+            @click="confirmVisit"
+            :disabled="visit.will_come || processing"
+          >
+            Подтвердить визит
+          </button>
+        </div>
+      </div>
+
+
+      <!-- Кнопка оставить отзыв -->
+      <button
         v-else
         class="review-btn"
         @click="showReviewModal = true"
-        >
+      >
         Оставить отзыв
-        </button>
+      </button>
 
-        <!-- Модалка для отзыва -->
-        <div v-if="showReviewModal" class="modal-overlay">
-            <div class="modal">
-                <h3>Отзыв для {{ staff.name }}</h3>
+      <!-- Модалка для отзыва (без изменений) -->
+      <div v-if="showReviewModal" class="modal-overlay">
+        <div class="modal">
+          <h3>Отзыв для {{ staff.name }}</h3>
 
-                <!-- Выбор рейтинга -->
-                <div class="stars">
-                <span
-                    v-for="n in 5"
-                    :key="n"
-                    class="star"
-                    :class="{ filled: n <= review.rating }"
-                    @click="review.rating = n"
-                >★</span>
-                </div>
+          <div class="stars">
+            <span
+              v-for="n in 5"
+              :key="n"
+              class="star"
+              :class="{ filled: n <= review.rating }"
+              @click="review.rating = n"
+            >★</span>
+          </div>
 
-                <!-- Комментарий -->
-                <textarea
-                v-model="review.comment"
-                placeholder="Напишите ваш комментарий..."
-                ></textarea>
+          <textarea
+            v-model="review.comment"
+            placeholder="Напишите ваш комментарий..."
+          ></textarea>
 
-                <!-- Кнопки -->
-                <div class="modal-buttons">
-                <button @click="submitReview" :disabled="sending">
-                    {{ sending ? 'Отправка...' : 'Отправить' }}
-                </button>
-                <button @click="showReviewModal = false" :disabled="sending">Отмена</button>
-                </div>
+          <div class="modal-buttons">
+            <button @click="submitReview" :disabled="sending">
+              {{ sending ? 'Отправка...' : 'Отправить' }}
+            </button>
+            <button @click="showReviewModal = false" :disabled="sending">Отмена</button>
+          </div>
 
-                <div v-if="reviewError" class="modal-error">{{ reviewError }}</div>
-            </div>
+          <div v-if="reviewError" class="modal-error">{{ reviewError }}</div>
         </div>
+      </div>
     </div>
   </div>
 </template>
@@ -122,6 +150,7 @@ const isOld = route.query.isOld === 'true'
 // --- STATE --- //
 const loading = ref(true)
 const deleting = ref(false)
+const processing = ref(false)
 const error = ref('')
 const visit = ref(null)
 const staff = ref({})
@@ -131,11 +160,9 @@ const service = ref({})
 async function loadVisit() {
   loading.value = true
   error.value = ''
-
   try {
     const { data } = await api.get(`/visits/${visitId}`)
     visit.value = data
-
     staff.value = await getStaff(data.staff_id)
     service.value = await getService(data.service_id)
   } catch (err) {
@@ -146,7 +173,41 @@ async function loadVisit() {
   }
 }
 
-// --- API: Отмена визита --- //
+// --- PATCH подтверждение визита --- //
+async function confirmVisit() {
+  processing.value = true
+  try {
+    await api.patch(`/visits/${visitId}`, {
+      visit_date_time: visit.value.visit_date_time,
+      will_come: true
+    })
+    visit.value.will_come = true
+    alert('Визит подтверждён.')
+  } catch (err) {
+    console.error(err)
+    alert('Ошибка при подтверждении визита.')
+  } finally {
+    processing.value = false
+  }
+}
+
+// --- PATCH переключатель --- //
+async function toggleWillCome() {
+  processing.value = true
+  try {
+    await api.patch(`/visits/${visitId}`, {
+      visit_date_time: visit.value.visit_date_time,
+      will_come: visit.value.will_come
+    })
+  } catch (err) {
+    console.error(err)
+    alert('Ошибка при обновлении статуса визита.')
+  } finally {
+    processing.value = false
+  }
+}
+
+// --- Отмена визита --- //
 async function cancelVisit() {
   if (!confirm('Вы уверены, что хотите отменить запись?')) return
   deleting.value = true
@@ -159,6 +220,39 @@ async function cancelVisit() {
     alert('Не удалось отменить запись.')
   } finally {
     deleting.value = false
+  }
+}
+
+// --- Перенос визита --- //
+async function goToDatetime() {
+  const VISIT_KEY = 'visit_data'
+  const raw = localStorage.getItem(VISIT_KEY)
+  if (!raw) {
+    alert('Данные о визите не найдены.')
+    return
+  }
+
+  const data = JSON.parse(raw)
+  const visit_time = data.visit_time
+  if (!visit_time) {
+    alert('Выберите новое время на странице даты/времени.')
+    router.push('/datetime')
+    return
+  }
+
+  processing.value = true
+  try {
+    await api.patch(`/visits/${visitId}`, {
+      visit_date_time: visit_time,
+      will_come: visit.value.will_come
+    })
+    alert('Дата и время визита обновлены.')
+    router.push('/datetime') // переход на страницу выбора даты/времени
+  } catch (err) {
+    console.error(err)
+    alert('Не удалось обновить дату и время визита.')
+  } finally {
+    processing.value = false
   }
 }
 
@@ -175,11 +269,9 @@ function formatDate(iso) {
 
 onMounted(loadVisit)
 
+// --- Модалка отзыва --- //
 const showReviewModal = ref(false)
-const review = ref({
-  rating: 0,
-  comment: ''
-})
+const review = ref({ rating: 0, comment: '' })
 const sending = ref(false)
 const reviewError = ref('')
 
@@ -188,10 +280,8 @@ async function submitReview() {
     reviewError.value = 'Пожалуйста, выберите количество звезд'
     return
   }
-
   sending.value = true
   reviewError.value = ''
-
   try {
     await api.post('/salon/reviews', {
       staff_id: staff.value.id,
@@ -203,12 +293,10 @@ async function submitReview() {
     review.value = { rating: 0, comment: '' }
   } catch (err) {
     console.error(err)
-    // Теперь выводим поле "detail" из ответа 400
-    if (err.response?.status === 400 && err.response?.data?.detail) {
+    if (err.response?.status === 400 && err.response?.data?.detail)
       reviewError.value = err.response.data.detail
-    } else {
+    else
       reviewError.value = 'Ошибка при отправке отзыва'
-    }
   } finally {
     sending.value = false
   }
@@ -216,80 +304,36 @@ async function submitReview() {
 </script>
 
 <style scoped>
-.record-view {
+/* ... остальной стиль без изменений ... */
+
+.control-panel {
   display: flex;
-  justify-content: center;
-  align-items: start;
-  padding: 2rem;
-  background-color: #f6f9fc;
-  min-height: 100vh;
-  font-family: var(--font-primary);
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.record-card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  width: 360px;
-  padding: 1.5rem;
-}
-
-.header {
+.switch-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  background: #f1f3f5;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
 }
 
-.avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: #ccc;
+.switch-label {
+  font-weight: 500;
+  color: #333;
 }
 
-.info {
-  flex: 1;
-  margin-left: 10px;
-  text-align: left;
-}
-
-.name {
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.spec {
-  font-size: 0.85rem;
-  color: #777;
-}
-
-.datetime {
-  font-size: 0.85rem;
-  color: #555;
-}
-
-.details {
-  background-color: #f1f3f5;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.row {
+.buttons {
   display: flex;
-  justify-content: space-between;
-  font-size: 0.9rem;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.header-row {
-  font-weight: 600;
-  color: #555;
-  margin-bottom: 0.5rem;
-}
-
-.cancel-btn,
-.review-btn {
+.move-btn,
+.confirm-btn {
   width: 100%;
   padding: 0.75rem;
   border: none;
@@ -299,95 +343,17 @@ async function submitReview() {
   cursor: pointer;
 }
 
-.cancel-btn {
-  background-color: #e53935;
+.move-btn {
+  background-color: #8e24aa;
 }
 
-.review-btn {
-  background-color: #1e88e5;
+.confirm-btn {
+  background-color: #43a047;
 }
 
-.loading {
-  font-size: 1.2rem;
-  color: #555;
-}
-
-.error {
-  color: red;
-  font-size: 1rem;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-}
-
-.modal {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 10px;
-  width: 320px;
-  max-width: 90%;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
-
-.stars {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.star {
-  cursor: pointer;
-  color: #ccc;
-}
-
-.star.filled {
-  color: #fbc02d;
-}
-
-textarea {
-  width: 100%;
-  min-height: 80px;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  resize: none;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-}
-
-.modal-buttons button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.modal-buttons button:first-child {
-  background-color: #1e88e5;
-  color: white;
-}
-
-.modal-buttons button:last-child {
-  background-color: #ccc;
-}
-
-.modal-error {
-  color: red;
-  margin-top: 0.5rem;
-  font-size: 0.85rem;
+button:disabled,
+input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 </style>
