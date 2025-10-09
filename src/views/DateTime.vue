@@ -64,6 +64,7 @@
 
 <script>
 import api from '../api'
+import { useRoute } from 'vue-router'
 
 const VISIT_KEY = 'visit_data'
 const menuItems = [
@@ -71,6 +72,7 @@ const menuItems = [
   { label: 'Дата и время',   path: '/datetime'   },
   { label: 'Услуги',         path: '/services'   }
 ]
+const route = useRoute()
 
 export default {
   data() {
@@ -210,7 +212,7 @@ export default {
       visit.visit_time.start_time = this.selectedTime
       localStorage.setItem(VISIT_KEY, JSON.stringify(visit))
       document.cookie = `visit_data=${encodeURIComponent(JSON.stringify(visit))}; path=/; SameSite=Lax;`
-      const redirect = router.currentRoute.value.query.redirect || '/appointmant'
+      const redirect = route?.query?.redirect || '/appointmant'
       this.$router.push({ path: redirect })
     }
   }
