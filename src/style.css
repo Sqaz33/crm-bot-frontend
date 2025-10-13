@@ -125,6 +125,7 @@ p2 {
 .container-sidebar {
 	width:100%;
 	margin-left: 50px;
+	border: green solid 1px;
 }
 
 
