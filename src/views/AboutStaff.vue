@@ -89,7 +89,6 @@ onMounted(async () => {
 .staff-view {
   max-width: 600px;
   margin: 1rem auto;
-	margin-left: 50px;
   padding: 1rem;
   background: #f5f8fd;
   border-radius: 8px;
@@ -206,6 +205,7 @@ onMounted(async () => {
 {
 .staff-view {
   max-width: 350px;
+	margin-left: 70px; 
 	}
 	
 }
@@ -213,6 +213,7 @@ onMounted(async () => {
 @media (max-width: 480px) {
   .staff-view {
 		max-width: 250px;
+		margin-left: 60px; 
   }
 	}
 </style>
