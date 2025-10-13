@@ -202,12 +202,15 @@ onMounted(async () => {
 {
 .staff-view {
   max-width: 400px;
+	margin: 0;
 	}
+	
 }
 
 @media (max-width: 480px) {
   .staff-view {
 		max-width: 300px;
+		margin: 0;
   }
 	}
 </style>
