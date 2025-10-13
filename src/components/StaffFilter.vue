@@ -90,7 +90,7 @@ function onVisit(id)  { emit('visit', id) }
 .staff-view {
   max-width: min(600px, 80%);
   margin: 0 auto;
-	padding-left: 50px;
+	padding-left: 25px;
 }
 .tabs {
   display: flex;
@@ -115,14 +115,14 @@ function onVisit(id)  { emit('visit', id) }
   display: flex;
   flex-direction: column;
   gap: 1rem;
-	width: min(600px, 80%);
+	width: min(600px, 100%);
 	border: red solid 1px;
 }
 .staff-card {
   display: flex;
   align-items: center;
   background: #fff;
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   cursor: pointer;
@@ -145,7 +145,7 @@ function onVisit(id)  { emit('visit', id) }
   border-radius: 50%;
 }
 .info {
-  margin-left: 1rem;
+  margin-left: 0.5rem;
 }
 .name {
   font-weight: bold;
@@ -157,7 +157,7 @@ function onVisit(id)  { emit('visit', id) }
 .rating {
   margin-left: auto;
   background: #e0e0e0;
-  padding: 0.25rem 0.75rem;
+  padding: 0rem 0.5rem;
   border-radius: 999px;
   font-size: 0.85rem;
 }
