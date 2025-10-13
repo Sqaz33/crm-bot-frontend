@@ -197,4 +197,17 @@ onMounted(async () => {
 .rev-text {
   margin: 0;
 }
+
+@media (max-width: 765px)
+{
+.staff-view {
+  max-width: 400px;
+	}
+}
+
+@media (max-width: 480px) {
+  .staff-view {
+		max-width: 300px;
+  }
+	}
 </style>
