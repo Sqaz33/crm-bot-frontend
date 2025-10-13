@@ -88,8 +88,9 @@ function onVisit(id)  { emit('visit', id) }
 
 <style scoped>
 .staff-view {
-  max-width: 600px;
+  max-width: min(600px, 90%);
   margin: 0 auto;
+	padding-left: 50px;
 }
 .tabs {
   display: flex;

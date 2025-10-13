@@ -57,6 +57,10 @@ function goBack() {
   router.push('/')
 }
 
+function closeSidebar() {
+  emit('close')
+}
+
 </script>
 
 <style scoped>

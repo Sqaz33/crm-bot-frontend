@@ -108,7 +108,7 @@ function saveProfile() {
   min-height: 100vh;
   background-color: var(--light-color);
   font-family:var(--font-primary) ;
-	padding: 1rem clamp(2rem, 15vw, 20rem);
+	padding: 1rem clamp(3rem, 15vw, 20rem);
 }
 
 /* Контейнер формы */
@@ -118,6 +118,7 @@ function saveProfile() {
   justify-content: center;
   align-items: flex-start;
   padding:clamp(0.5rem, 3vw, 2rem);
+	margin: 0;
   
 }
 
@@ -126,8 +127,9 @@ function saveProfile() {
   width: 100%;
   max-width: 800px;
   background-color: #ffffff;
-  padding: 2rem;
+  padding: 1.2rem;
   border-radius: 8px;
+	margin: 0;
 }
 
 /* Поля */
