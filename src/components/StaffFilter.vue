@@ -198,7 +198,7 @@ function onVisit(id)  { emit('visit', id) }
   }
   
   .rating {
-	  width: 3rem;
+	  width: 2rem;
     padding: 0.3rem;
     font-size: 0.75rem;
   }
