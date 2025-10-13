@@ -155,7 +155,7 @@ function onVisit(id)  { emit('visit', id) }
   color: #555;
 }
 .rating {
-  margin-left: auto;
+  margin-left: 0;
   background: #e0e0e0;
   padding: 0rem 0.5rem;
   border-radius: 999px;
