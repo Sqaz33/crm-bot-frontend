@@ -90,7 +90,7 @@ function onVisit(id)  { emit('visit', id) }
 .staff-view {
   max-width: 600px;
   margin: 0 auto;
-	padding: 0;
+	padding-left: 50px;
 }
 .tabs {
   display: flex;
@@ -171,7 +171,6 @@ function onVisit(id)  { emit('visit', id) }
 
 @media (max-width: 480px) {
   .staff-view {
-    padding: 0 0.5rem;
 		max-width: 300px;
   }
   
