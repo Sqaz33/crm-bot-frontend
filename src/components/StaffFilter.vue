@@ -116,7 +116,7 @@ function onVisit(id)  { emit('visit', id) }
   flex-direction: column;
   gap: 1rem;
 	width: 100%;
-	border: red solid 1px;
+	
 }
 .staff-card {
   display: flex;
@@ -198,7 +198,7 @@ function onVisit(id)  { emit('visit', id) }
   }
   
   .rating {
-	  width: 2rem;
+	  width: 2.5rem;
     padding: 0.3rem;
     font-size: 0.75rem;
   }
