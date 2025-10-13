@@ -122,5 +122,10 @@ p2 {
   color: #999;
 }
 
+.container-sidebar {
+	width:100%
+	margin-left: 50px;
+}
+
 
 

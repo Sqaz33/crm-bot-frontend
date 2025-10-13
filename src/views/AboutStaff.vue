@@ -1,4 +1,5 @@
 <template>
+<div class="container-sidebar">
   <div class="staff-view">
     <button class="btn-back" @click="$router.back()">← Назад</button>
     <div class="card">
@@ -30,6 +31,7 @@
       </div>
     </section>
   </div>
+</div>
 </template>
 
 <script setup>
@@ -205,7 +207,6 @@ onMounted(async () => {
 {
 .staff-view {
   max-width: 350px;
-	margin-left: 70px; 
 	}
 	
 }
@@ -213,7 +214,6 @@ onMounted(async () => {
 @media (max-width: 480px) {
   .staff-view {
 		max-width: 250px;
-		margin-left: 60px; 
   }
 	}
 </style>
