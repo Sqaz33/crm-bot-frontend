@@ -88,7 +88,7 @@ function onVisit(id)  { emit('visit', id) }
 
 <style scoped>
 .staff-view {
-  max-width: min(600px, 80%);
+  max-width: 600px;
   margin: 0 auto;
 	padding: 0;
 }
@@ -115,7 +115,7 @@ function onVisit(id)  { emit('visit', id) }
   display: flex;
   flex-direction: column;
   gap: 1rem;
-	width: min(600px, 100%);
+	width: 100%;
 	border: red solid 1px;
 }
 .staff-card {
@@ -162,9 +162,17 @@ function onVisit(id)  { emit('visit', id) }
   font-size: 0.85rem;
 }
 
-@media (max-width: 360px) {
+@media (max-width: 765px)
+{
+.staff-view {
+  max-width: 400px;
+	}
+}
+
+@media (max-width: 480px) {
   .staff-view {
     padding: 0 0.5rem;
+		max-width: 300px;
   }
   
   .staff-card {
