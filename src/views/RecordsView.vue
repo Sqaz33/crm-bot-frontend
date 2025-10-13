@@ -112,6 +112,14 @@
                 1000  ₽
               </div>
             </div>
+
+            <div v-if="paid" class="leave-review">
+              <button 
+                class="leave-review-btn" >
+                Оставить отзыв
+              </button>
+            </div>
+
           </div>
           <!-- шаблон2 записи -->
           <div class="appointment-card">
@@ -146,6 +154,14 @@
                 2000  ₽
               </div>
             </div>
+      
+            <div v-if="paid" class="leave-review">
+              <button 
+                class="leave-review-btn" >
+                Оставить отзыв
+              </button>
+            </div>
+
           </div>
 
         </div>
@@ -161,7 +177,8 @@ export default {
   data() {
     return {
       activeTab: 'current',
-      hasRecords: true
+      hasRecords: true,
+      paid: true
     }
   }
 }
@@ -259,7 +276,7 @@ export default {
   grid-template-columns: auto auto auto;
   gap: clamp(0.1rem, 0.3vw, 0.5rem);
   margin-bottom: 0.5rem;
-  padding: clamp(0.1rem, 2vw, 0.3rem) 0;
+  padding: clamp(0.2rem, 2vw, 0.6rem) 0;
   border-bottom: 1px solid #e0e0e0;
   border-top: 1px solid #e0e0e0;
 }
@@ -326,10 +343,52 @@ export default {
   height: 50px;
   border-radius: 50%;
 }
+.leave-review
+{
+  display: flex;
+  justify-content: right;
+  border-radius: 10px;
+  padding: 0 0 0 70%;
+  margin-bottom: 0rem;
+}
+.leave-review-btn
+{
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  background-color: #2F80EC;
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  font-weight: 470;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 10px;
+}
+.leave-review-btn:hover:not(.active) 
+{
+  background: #3d91ff;
+}
 @media (max-width: 900px) {
   .review-view {
   padding: 1rem clamp(1rem, 5vw, 15rem) 1rem  clamp(2rem, 14vw, 15rem);
   width: 100%;
+  }
+  .leave-review
+  {
+    padding: 0;
+  }
+  .leave-review-btn
+  {
+    padding: 0.6rem 1rem;
+    margin-top: 0.2rem;
+  }
+  .employee-name, .price, .total-price, .service-name, .status-badge
+  {
+    font-weight: 540;
+  }
+  .status-badge{
+    font-weight: 470;
   }
 }
 </style>
