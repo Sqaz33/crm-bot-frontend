@@ -89,6 +89,7 @@ onMounted(async () => {
 .staff-view {
   max-width: 600px;
   margin: 1rem auto;
+	margin-left: 50px;
   padding: 1rem;
   background: #f5f8fd;
   border-radius: 8px;
@@ -109,6 +110,7 @@ onMounted(async () => {
   border-radius: 8px;
   text-align: center;
 	margin: 1rem auto;
+	
 }
 
 .avatar {
