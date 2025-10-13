@@ -198,7 +198,8 @@ function onVisit(id)  { emit('visit', id) }
   }
   
   .rating {
-    padding: 0.1rem;
+	  width: 1rem;
+    padding: 0.3rem;
     font-size: 0.75rem;
   }
 }
