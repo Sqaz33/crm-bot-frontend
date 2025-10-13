@@ -170,10 +170,11 @@ function saveProfile() {
 .btn-save:hover {
   background-color: #155ecb;
 }
-@media (max-width: 992px) {
-  .sidebar {
-    display: none; 
-  }
+@media (max-width: 390px) {
+  .profile-form-container 
+	{
+	  width: 270px;
+	}
 }
 </style>
  

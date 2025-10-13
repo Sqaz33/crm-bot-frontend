@@ -88,7 +88,7 @@ function onVisit(id)  { emit('visit', id) }
 
 <style scoped>
 .staff-view {
-  max-width: min(600px, 90%);
+  max-width: min(600px, 80%);
   margin: 0 auto;
 	padding-left: 50px;
 }
@@ -159,4 +159,39 @@ function onVisit(id)  { emit('visit', id) }
   border-radius: 999px;
   font-size: 0.85rem;
 }
+
+@media (max-width: 360px) {
+  .staff-view {
+    padding: 0 0.5rem;
+  }
+  
+  .staff-card {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+  
+  .avatar {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .tab {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+  }
+  
+  .name {
+    font-size: 0.9rem;
+  }
+  
+  .spec {
+    font-size: 0.75rem;
+  }
+  
+  .rating {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
+}
+
 </style>
