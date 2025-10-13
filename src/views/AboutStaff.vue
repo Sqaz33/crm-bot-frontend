@@ -92,6 +92,7 @@ onMounted(async () => {
   padding: 1rem;
   background: #f5f8fd;
   border-radius: 8px;
+	border: red solid 1px;
 }
 
 .btn-back {
@@ -107,6 +108,7 @@ onMounted(async () => {
   padding: 1rem;
   border-radius: 8px;
   text-align: center;
+	margin: 1rem auto;
 }
 
 .avatar {
@@ -201,16 +203,14 @@ onMounted(async () => {
 @media (max-width: 765px)
 {
 .staff-view {
-  max-width: 400px;
-	margin: 0;
+  max-width: 350px;
 	}
 	
 }
 
 @media (max-width: 480px) {
   .staff-view {
-		max-width: 300px;
-		margin: 0;
+		max-width: 250px;
   }
 	}
 </style>
