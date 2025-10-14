@@ -151,8 +151,8 @@ function switchTab(tab) {
 }
 
 function formatDate(iso) {
-  const d = new Date(iso + 'Z')
-
+  const d = new Date(iso.endsWith('Z') ? iso : iso + 'Z');
+  
   return d.toLocaleString(undefined, {
     year: 'numeric',
     month: 'long',

@@ -15,7 +15,7 @@
           <div class="spec">{{ staff.specializations?.join(', ') }}</div>
         </div>
         <div class="datetime">
-          {{ formatDate(visit.visit_date_time) }}
+          {{ formatDate(visit.value.visit_date_time) }}
         </div>
       </div>
 
