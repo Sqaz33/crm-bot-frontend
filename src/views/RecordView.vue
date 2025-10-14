@@ -115,6 +115,8 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '../api'
 
+defineOptions({ name: 'RecordView' })
+
 // --- КЭШ --- //
 const staffCache = {}
 const servicesCache = {}
@@ -264,8 +266,6 @@ async function goToDatetime() {
       visit_date_time: visitDateISO, 
       will_come: visit.value.will_come 
     });
-    visit.value = { ...visit.value, visit_date_time: visitTime }
-    await loadVisit();
     
   } catch (err) {
     console.error(err);
