@@ -199,7 +199,9 @@ async function toggleWillCome() {
     })
   } catch (err) {
     console.error('Ошибка toggleWillCome:', err)
-    visitError.value = err?.response?.data || err.message || 'Ошибка при обновлении статуса визита.'
+    visitError.value = typeof err.response?.data === 'string' 
+                       ? err.response.data 
+                       : err.response?.data?.detail || err.message || 'Ошибка при обновлении статуса визита.'
   } finally {
     processing.value = false
   }
@@ -215,7 +217,9 @@ async function cancelVisit() {
     router.push('/records')
   } catch (err) {
     console.error('Ошибка cancelVisit:', err)
-    visitError.value = err?.response?.data || err.message || 'Не удалось отменить запись.'
+    visitError.value = typeof err.response?.data === 'string' 
+                       ? err.response.data 
+                       : err.response?.data?.detail || err.message || 'Не удалось отменить запись.'
   } finally {
     deleting.value = false
   }
@@ -360,7 +364,9 @@ async function submitReview() {
       reviewError.value = err.response.data.detail
     else
       console.error('Ошибка submitReview:', err)
-      reviewError.value = err?.response?.data?.detail || err.message || 'Ошибка при отправке отзыва'
+      reviewError.value = typeof err.response?.data === 'string' 
+                                 ? err.response.data 
+                                 : err.response?.data?.detail || err.message || 'Ошибка при отправке отзыва'
   } finally {
     sending.value = false
   }
