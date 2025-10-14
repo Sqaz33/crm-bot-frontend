@@ -14,9 +14,9 @@
           <div class="name">{{ staff.name }}</div>
           <div class="spec">{{ staff.specializations?.join(', ') }}</div>
         </div>
-          <div class="datetime">
-            {{ visit?.value?.visit_date_time ? formatDate(visit.value.visit_date_time) : '—' }}
-          </div>
+        <div class="datetime">
+          {{ formatDate(visit.visit_date_time) }}
+        </div>
       </div>
 
       <!-- Детали -->
@@ -265,6 +265,7 @@ async function goToDatetime() {
       will_come: visit.value.will_come 
     });
     visit.value = { ...visit.value, visit_date_time: visitTime }
+    await loadVisit();
     
   } catch (err) {
     console.error(err);
@@ -280,10 +281,10 @@ async function goToDatetime() {
   }
 }
 
+
 function formatDate(iso) {
-  const d = new Date(iso.endsWith('Z') ? iso : iso + 'Z');
-  
-  return d.toLocaleString(undefined, {
+  const d = new Date(iso)
+  return d.toLocaleString('ru-RU', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
