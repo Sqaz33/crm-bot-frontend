@@ -111,7 +111,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '../api'
 
@@ -146,7 +146,7 @@ const loading = ref(true)
 const deleting = ref(false)
 const processing = ref(false)
 const error = ref('')
-const visit = ref(null)
+const visit = reactive({})
 const staff = ref({})
 const service = ref({})
 
@@ -156,7 +156,7 @@ async function loadVisit() {
   error.value = ''
   try {
     const { data } = await api.get(`/visits/${visitId}`)
-    visit.value = data
+    Object.assign(visit, data) 
     staff.value = await getStaff(data.staff_id)
     service.value = await getService(data.service_id)
   } catch (err) {
@@ -166,7 +166,6 @@ async function loadVisit() {
     loading.value = false
   }
 }
-
 // --- STATE --- //
 const visitError = ref('')
 
@@ -262,9 +261,9 @@ async function goToDatetime() {
     const visitDateISO = visitTime.toISOString();
     await api.patch(`/visits/${visitId}`, { 
       visit_date_time: visitDateISO, 
-      will_come: visit.value.will_come 
+      will_come: visit.will_come 
     });
-    visit.value = { ...visit.value, visit_date_time: visitTime }
+    visit.visit_date_time = visitTime
     
   } catch (err) {
     console.error(err);
