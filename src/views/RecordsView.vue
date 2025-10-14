@@ -152,7 +152,7 @@ function switchTab(tab) {
 
 function formatDate(iso) {
   const d = new Date(iso)
-  return d.toLocaleString('ru-RU', {
+  return d.toLocaleString(undefined, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
