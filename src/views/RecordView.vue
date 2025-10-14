@@ -115,8 +115,6 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '../api'
 
-defineOptions({ name: 'RecordView' })
-
 // --- КЭШ --- //
 const staffCache = {}
 const servicesCache = {}

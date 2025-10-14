@@ -11,9 +11,7 @@
 			
       />
       <main class="main-content">
-        <keep-alive include="RecordView">
-          <router-view />
-        </keep-alive>
+        <router-view />
       </main>
     </div>
   </div>
