@@ -198,8 +198,8 @@ async function toggleWillCome() {
       will_come: visit.value.will_come
     })
   } catch (err) {
-    console.error(err)
-    visitError.value = 'Ошибка при обновлении статуса визита.'
+    console.error('Ошибка toggleWillCome:', err)
+    visitError.value = err?.response?.data || err.message || 'Ошибка при обновлении статуса визита.'
   } finally {
     processing.value = false
   }
@@ -214,8 +214,8 @@ async function cancelVisit() {
     await api.delete(`/visits/${visitId}`)
     router.push('/records')
   } catch (err) {
-    console.error(err)
-    visitError.value = 'Не удалось отменить запись.'
+    console.error('Ошибка cancelVisit:', err)
+    visitError.value = err?.response?.data || err.message || 'Не удалось отменить запись.'
   } finally {
     deleting.value = false
   }
@@ -359,7 +359,8 @@ async function submitReview() {
     if (err.response?.status === 400 && err.response?.data?.detail)
       reviewError.value = err.response.data.detail
     else
-      reviewError.value = 'Ошибка при отправке отзыва'
+      console.error('Ошибка submitReview:', err)
+      reviewError.value = err?.response?.data?.detail || err.message || 'Ошибка при отправке отзыва'
   } finally {
     sending.value = false
   }
