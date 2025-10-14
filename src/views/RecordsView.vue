@@ -151,7 +151,12 @@ function switchTab(tab) {
 }
 
 function formatDate(iso) {
-  const d = new Date(iso)
+  const [datePart, timePart] = iso.split('T')
+  const [year, month, day] = datePart.split('-').map(Number)
+  const [hour, minute, second] = timePart.split(':').map(Number)
+
+  const d = new Date(year, month - 1, day, hour, minute, second)
+
   return d.toLocaleString(undefined, {
     year: 'numeric',
     month: 'long',
