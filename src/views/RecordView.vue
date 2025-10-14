@@ -280,10 +280,10 @@ async function goToDatetime() {
   }
 }
 
-
 function formatDate(iso) {
-  const d = new Date(iso)
-  return d.toLocaleString('ru-RU', {
+  const d = new Date(iso.endsWith('Z') ? iso : iso + 'Z');
+  
+  return d.toLocaleString(undefined, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
