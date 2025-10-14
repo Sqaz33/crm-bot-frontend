@@ -14,9 +14,9 @@
           <div class="name">{{ staff.name }}</div>
           <div class="spec">{{ staff.specializations?.join(', ') }}</div>
         </div>
-        <div class="datetime">
-          {{ formatDate(visit.value.visit_date_time) }}
-        </div>
+          <div class="datetime">
+            {{ visit.visit_date_time ? formatDate(visit.visit_date_time) : '—' }}
+          </div>
       </div>
 
       <!-- Детали -->
