@@ -245,15 +245,17 @@ async function waitForVisitTime(timeoutMs = 60000, intervalMs = 500) {
   throw new Error('Дата визита не появилась в localStorage за отведенное время.');
 }
 
-function onWillComeChange() {
-  // если пользователь вручную поставил галочку — показываем подтверждение
-  if (visit.value.will_come) {
-    // отменяем временно изменение, пока не подтвердит
-    visit.value.will_come = false
+function onWillComeChange(event) {
+  const newValue = event.target.checked
+
+  // если пользователь поставил галочку
+  if (newValue) {
     confirmAction.value = async () => {
       visit.value.will_come = true
       await toggleWillCome()
     }
+    // откатываем галочку до подтверждения
+    event.target.checked = false
     showConfirmModal.value = true
   }
 }
