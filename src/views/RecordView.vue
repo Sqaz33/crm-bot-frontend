@@ -39,8 +39,8 @@
           <label class="switch-label">Подтверждаю визит</label>
           <input
             type="checkbox"
-            v-model="visit.will_come"
-            @change="toggleWillCome"
+            :checked="visit.will_come"
+            @change="onWillComeChange"
             :disabled="visit.will_come || processing"
           />
         </div>
@@ -106,6 +106,21 @@
           <div v-if="reviewError" class="modal-error">{{ reviewError }}</div>
         </div>
       </div>
+
+      <div v-if="showConfirmModal" class="modal-overlay">
+        <div class="modal">
+          <h3>Подтверждение визита</h3>
+          <p>Вы действительно хотите подтвердить, что придёте на приём?</p>
+          <div class="modal-buttons">
+            <button @click="confirmAction(); showConfirmModal = false" :disabled="processing">
+              Да, подтверждаю
+            </button>
+            <button @click="showConfirmModal = false" :disabled="processing">
+              Отмена
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -149,6 +164,8 @@ const error = ref('')
 const visit = ref(null)
 const staff = ref({})
 const service = ref({})
+const showConfirmModal = ref(false)
+const confirmAction = ref(null)
 
 // --- API: Загрузка данных --- //
 async function loadVisit() {
@@ -226,6 +243,19 @@ async function waitForVisitTime(timeoutMs = 60000, intervalMs = 500) {
 
   // если дата не появилась за timeoutMs
   throw new Error('Дата визита не появилась в localStorage за отведенное время.');
+}
+
+function onWillComeChange() {
+  // если пользователь вручную поставил галочку — показываем подтверждение
+  if (visit.value.will_come) {
+    // отменяем временно изменение, пока не подтвердит
+    visit.value.will_come = false
+    confirmAction.value = async () => {
+      visit.value.will_come = true
+      await toggleWillCome()
+    }
+    showConfirmModal.value = true
+  }
 }
 
 // --- Перенос визита --- //
@@ -566,6 +596,11 @@ input:disabled {
   color: red;
   font-size: 0.85rem;
   margin-top: 0.5rem;
+}
+
+.modal p {
+  margin-bottom: 1rem;
+  color: #444;
 }
 
 </style>
