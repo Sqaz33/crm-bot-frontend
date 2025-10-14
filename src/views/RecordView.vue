@@ -308,11 +308,14 @@ async function submitReview() {
   sending.value = true
   reviewError.value = ''
   try {
-    await api.post('/salon/reviews', {
+    const review = {
       staff_id: staff.value.id,
       rating: review.value.rating,
       comment: review.value.comment
-    })
+    }
+    console.log("Отзыв: ")
+    console.log(review)
+    await api.post('/salon/reviews', {review})
     alert('Спасибо за ваш отзыв!')
     showReviewModal.value = false
     review.value = { rating: 0, comment: '' }
