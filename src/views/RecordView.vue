@@ -264,8 +264,8 @@ async function goToDatetime() {
       visit_date_time: visitDateISO, 
       will_come: visit.value.will_come 
     });
-    visit.value.visit_date_time = visitTime;
-
+    visit.value = { ...visit.value, visit_date_time: visitTime }
+    
   } catch (err) {
     console.error(err);
     visitError.value = 'Не удалось обновить дату и время визита.';
