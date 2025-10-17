@@ -276,12 +276,24 @@ async function goToDatetime() {
   let backupVisitData = null;
 
   try {
+    // сохраняем текущее значение визита
+    const raw = localStorage.getItem(VISIT_KEY);
+    if (raw) {
+      try {
+        backupVisitData = JSON.parse(raw);
+      } catch (e) {
+        console.error('Ошибка парсинга localStorage при резервировании:', e);
+      }
+    }
+
     // очищаем значение для редиректа
     localStorage.removeItem(VISIT_KEY);
 
     // добавить значения для получения свободного времени
     if (staff_id && service_id) {
-      let params = { staff_id, service_id };
+      let params = { staff_id:'', services_id:[], visit_time:{start_time:'',end:''}, comment:'' }
+      params.staff_id = staff_id
+      params.services_id = service_id
       localStorage.setItem(VISIT_KEY, JSON.stringify(params));
     }
 
@@ -306,10 +318,14 @@ async function goToDatetime() {
   } catch (err) {
     console.error(err);
     visitError.value = 'Не удалось обновить дату и время визита.';
-    
+
+    // если дата не выбрана — восстанавливаем старое значение
+    if (backupVisitData) {
+      localStorage.setItem(VISIT_KEY, JSON.stringify(backupVisitData));
+    }
+
   } finally {
     processing.value = false;
-    localStorage.removeItem(VISIT_KEY);
   }
 }
 
