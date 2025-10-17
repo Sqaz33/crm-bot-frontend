@@ -66,10 +66,27 @@ async function loadSpecializations() {
 }
 
 async function loadStaff(specId) {
-  let url = `/salon/staff`
-  if (specId && specId !== 'all') {
-    url += `?specialization_id=${specId}`
+  const raw = localStorage.getItem(VISIT_KEY)
+  const visit = raw
+    ? JSON.parse(raw)
+    : { staff_id:'', services_id:[], visit_time:{start_time:'',end:''}, comment:'' }
+  
+  const params = new URLSearchParams()
+
+  if (visit?.services_id) {
+    params.append('service_id', visit.services_id)
   }
+
+  if (visit?.visit_time?.start_time) {
+    params.append('start_time', encodeURIComponent(visit.visit_time.start_time))
+  }
+
+  if (specId && specId !== 'all') {
+    params.append('specialization_id', specId)
+  }
+
+  const url = `/your-endpoint?${params.toString()}`
+
   const { data } = await api.get(url)
   staffList.value = data
 }
