@@ -73,23 +73,21 @@ async function loadStaff(specId) {
     ? JSON.parse(raw)
     : { staff_id:'', services_id:[], visit_time:{start_time:'',end:''}, comment:'' }
   
-  const params = new URLSearchParams()
+  const params = {}
 
   if (visit?.services_id) {
-    params.append('service_id', visit.services_id)
+    params.service_id = visit.services_id
   }
 
   if (visit?.visit_time?.start_time) {
-    params.append('start_time', encodeURIComponent(visit.visit_time.start_time))
+    params.start_time = visit.visit_time.start_time
   }
 
   if (specId && specId !== 'all') {
-    params.append('specialization_id', specId)
+    params.specialization_id = specId
   }
 
-  const url = `/salon/staff?${params.toString()}`
-
-  const { data } = await api.get(url)
+  const { data } = await api.get('/salon/staff', {params})
   staffList.value = data
 }
 
