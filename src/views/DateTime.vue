@@ -173,12 +173,16 @@ export default {
     // — вот этот метод исправлен —
     async loadFreeSlots() {
       let staff_id = null
+      let service_id = null
       const raw = localStorage.getItem(VISIT_KEY)
       if (raw) {
         try { staff_id = JSON.parse(raw).staff_id } catch {}
+        try { service_id = JSON.parse(raw).service_id } catch {}
       }
+
       const params = { date: this.selectedDate }
       if (staff_id) params.staff_id = staff_id
+      if (service_id) params.service_id = service_id
 
       try {
         const { data } = await api.get('/salon/free_time', { params })
