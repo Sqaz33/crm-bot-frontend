@@ -291,7 +291,7 @@ async function goToDatetime() {
 
     // добавить значения для получения свободного времени
     if (staff_id && service_id) {
-      params = { staff_id, service_id };
+      let params = { staff_id, service_id };
       localStorage.setItem(VISIT_KEY, JSON.stringify(params));
     }
 
