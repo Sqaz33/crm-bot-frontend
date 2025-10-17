@@ -87,7 +87,7 @@ async function loadStaff(specId) {
     params.append('specialization_id', specId)
   }
 
-  const url = `/your-endpoint?${params.toString()}`
+  const url = `/salon/staff?${params.toString()}`
 
   const { data } = await api.get(url)
   staffList.value = data
