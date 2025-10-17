@@ -167,6 +167,10 @@ const service = ref({})
 const showConfirmModal = ref(false)
 const confirmAction = ref(null)
 
+// -- MODULE VARS -- //
+let service_id = null
+let staff_id = null;
+
 // --- API: Загрузка данных --- //
 async function loadVisit() {
   loading.value = true
@@ -176,6 +180,8 @@ async function loadVisit() {
     visit.value = data
     staff.value = await getStaff(data.staff_id)
     service.value = await getService(data.service_id)
+    staff_id = data.staff_id
+    service_id = data.service_id
   } catch (err) {
     console.error(err)
     error.value = 'Ошибка при загрузке данных о визите'
@@ -225,7 +231,7 @@ async function cancelVisit() {
   }
 }
 
-async function waitForVisitTime(timeoutMs = 60000, intervalMs = 500) {
+async function waitForVisitTime(timeoutMs = 300000, intervalMs = 100) {
   const VISIT_KEY = 'visit_data';
   const start = Date.now();
 
@@ -282,6 +288,12 @@ async function goToDatetime() {
 
     // очищаем значение для редиректа
     localStorage.removeItem(VISIT_KEY);
+
+    // добавить значения для получения свободного времени
+    if (staff_id && service_id) {
+      params = { staff_id, service_id };
+      localStorage.setItem(VISIT_KEY, JSON.stringify(params));
+    }
 
     // переходим на страницу выбора даты и времени
     await router.push({ 
