@@ -58,6 +58,8 @@ const tabs = ref([{ label: 'Все', value: 'all' }])
 const activeTab = ref('all')
 const staffList = ref([])
 
+const VISIT_KEY   = 'visit_data'
+
 async function loadSpecializations() {
   const { data } = await api.get('/salon/specializations')
   data.forEach(spec =>
