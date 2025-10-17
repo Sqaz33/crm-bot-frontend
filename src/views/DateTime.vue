@@ -212,10 +212,10 @@ export default {
         : { staff_id:'', services_id:[], visit_time:{start_time:'',end:''}, comment:'' }
 
       visit.visit_time.start_time = this.selectedTime
-      visit.staff_id = id
+      visit.staff_id ??= id
       visit.comment ??= ''
       visit.services_id ??= []
-      
+
       localStorage.setItem(VISIT_KEY, JSON.stringify(visit))
       document.cookie = `visit_data=${encodeURIComponent(JSON.stringify(visit))}; path=/; SameSite=Lax;`
       const redirect = this.$route?.query?.redirect || '/appointmant';
