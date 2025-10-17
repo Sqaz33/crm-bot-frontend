@@ -38,9 +38,9 @@ function startVisitById(id) {
   }
 
   visit.staff_id = id
-  visit.visit_time = { start: '', end: '' }
-  visit.comment = ''
-  visit.services_id = []
+  // visit.visit_time = { start: '', end: '' }
+  // visit.comment = ''
+  // visit.services_id = []
 
   const json = JSON.stringify(visit)
   localStorage.setItem(VISIT_KEY, json)
