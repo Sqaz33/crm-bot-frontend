@@ -152,6 +152,7 @@ onMounted(async () => {
 	padding: 0.3rem 1rem 0.4rem 0.9rem;
 	border-radius: 32px;
   display: inline-block;
+  margin: 0.5rem auto 0;
 }
 .description,
 .reviews {
