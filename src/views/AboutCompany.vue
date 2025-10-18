@@ -205,10 +205,10 @@ onMounted(async () => {
 .review-text {
   margin: 0;
 }
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
   .layout {
-    padding-left: clamp(4rem, 12vw, 15rem);
-    padding-right: clamp(1rem, 8vw, 10rem);
+    padding-left: clamp(3rem, 12vw, 15rem);
+    padding-right: clamp(0.2rem, 3vw, 4rem);
   }
 }
 </style>
