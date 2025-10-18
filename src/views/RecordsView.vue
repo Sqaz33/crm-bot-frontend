@@ -116,8 +116,8 @@
         <div v-else class="empty-content">
           <img
             :src="activeTab === 'past'
-              ? '../assets/emptyRecordPast.svg'
-              : '../assets/emptyRecord.svg'"
+              ? 'src/assets/emptyRecordPast.svg'
+              : 'src/assets/emptyRecord.svg'"
             alt="Нет записей"
             class="empty-icon"
           />
