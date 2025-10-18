@@ -198,7 +198,7 @@ async function toggleWillCome() {
   processing.value = true
   visitError.value = ''
   try {
-    let iso = visit.value.datetime
+    let iso = visit.value.visit_date_time
     let d = new Date(iso.endsWith('Z') ? iso : iso + 'Z');
     const visitDateISO = d.toISOString()
     await api.patch(`/visits/${visitId}`, {
