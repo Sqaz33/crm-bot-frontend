@@ -198,7 +198,9 @@ async function toggleWillCome() {
   processing.value = true
   visitError.value = ''
   try {
-    const visitDateISO = new Date(visit.value.visit_date_time).toISOString()
+    let iso = visit.value.datetime
+    let d = new Date(iso.endsWith('Z') ? iso : iso + 'Z');
+    const visitDateISO = d.toISOString()
     await api.patch(`/visits/${visitId}`, {
       visit_date_time: visitDateISO,
       will_come: visit.value.will_come
@@ -332,7 +334,7 @@ async function goToDatetime() {
 
 function formatDate(iso) {
   const d = new Date(iso.endsWith('Z') ? iso : iso + 'Z');
-  
+
   return d.toLocaleString('ru-RU', {
     year: 'numeric',
     month: 'long',
