@@ -143,6 +143,7 @@ onMounted(async () => {
 .info .name {
   font-size: clamp(1rem, 3vw, 1.2rem);
   font-weight: bold;
+  text-align: center;
   font-family:var(--font-primary) ;
 }
 .info .rating {
@@ -150,6 +151,7 @@ onMounted(async () => {
 	background: #ccc;
 	padding: 0.3rem 1rem 0.4rem 0.9rem;
 	border-radius: 32px;
+  display: inline-block;
 }
 .description,
 .reviews {
