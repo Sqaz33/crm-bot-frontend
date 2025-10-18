@@ -187,24 +187,45 @@ export default {
       try {
         const { data } = await api.get('/salon/free_time', { params })
 
+        // Определяем смещение часового пояса пользователя (в минутах)
+        const tzOffset = new Date().getTimezoneOffset() // в минутах
+        // Преобразуем в часы со знаком, чтобы добавить к строке
+        const tzHours = Math.floor(Math.abs(tzOffset) / 60)
+        const tzMinutes = Math.abs(tzOffset) % 60
+        const tzSign = tzOffset > 0 ? '-' : '+'
+        const tzString = `${tzSign}${String(tzHours).padStart(2, '0')}:${String(tzMinutes).padStart(2, '0')}`
+
         this.freeSlots = data.map(slot => {
           const s = slot.start
+          let isoTime
 
-          // Собираем полный UTC-временной штамп
-          const utcDateTime = s.includes('T')
-            ? s // уже ISO
-            : `${this.selectedDate}T${s}:00Z` // добавляем Z => означает UTC
+          if (s.includes('T')) {
+            isoTime = s
+          } else {
+            isoTime = `${this.selectedDate}T${s}:00`
+          }
 
-          // Преобразуем в локальное время устройства
-          const local = new Date(utcDateTime)
+          // Добавляем таймзону (если ее нет)
+          if (!isoTime.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(isoTime)) {
+            isoTime += tzString
+          }
 
-          // Форматируем в локальное "HH:MM"
-          const hours = local.getHours().toString().padStart(2, '0')
-          const minutes = local.getMinutes().toString().padStart(2, '0')
-
-          // Возвращаем строку в локальном времени
-          return `${hours}:${minutes}`
+          return isoTime
         })
+
+        /*
+        const { data } = await api.get('/salon/free_time', { params })
+        this.freeSlots = data.map(slot => {
+          const s = slot.start
+          if (s.includes('T')) {
+            return s
+          } else {
+            return `${this.selectedDate}T${s}:00`
+          }
+        })
+        
+        */
+
         console.log('Loaded freeSlots:', this.freeSlots)
       } catch (err) {
         console.error('Не удалось загрузить слоты:', err)
