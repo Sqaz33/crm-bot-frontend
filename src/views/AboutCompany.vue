@@ -83,23 +83,32 @@ onMounted(async () => {
 <style scoped>
 .layout {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
+  background-color: var(--light-color);
+  font-family:var(--font-primary) ;
+	padding: 1rem clamp(1rem, 12vw, 20rem);
 	
 }
+
 .main-content {
   flex: 1;
-  overflow-y: auto;
-  padding: 1rem clamp(2rem, 15vw, 20rem);
-  background: var(--color-light);
-	height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(2rem, 5vw, 4rem) clamp(0.5rem, 3vw, 2rem);
+	margin: 0;
+  
 }
 
+
 .container {
-  margin: 5rem 3.5rem 0; 
-	background: #fff;
-	border-radius: 32px;
-	height: 100vh;
-	padding: 0 1.5rem 0.5rem;
+  width: 100%;
+  max-width: 800px;
+  background-color: #ffffff;
+  padding: 1.2rem;
+  border-radius: 32px 32px 0 0;
+	margin: 0;
+  min-height: 100vh;
 }
 
 .description,
@@ -125,8 +134,8 @@ onMounted(async () => {
 	bottom: 50px;
 }
 .avatar {
-  width: 100px;
-  height: 100px;
+  width:clamp(5rem, 10vw, 6rem);
+  height: clamp(5rem, 10vw, 6rem);
   background: #ccc;
   border-radius: 50%;
 
@@ -195,6 +204,12 @@ onMounted(async () => {
 }
 .review-text {
   margin: 0;
+}
+@media (max-width: 1024px) {
+  .layout {
+    padding-left: clamp(4rem, 12vw, 15rem);
+    padding-right: clamp(1rem, 8vw, 10rem);
+  }
 }
 </style>
 
