@@ -186,13 +186,24 @@ export default {
 
       try {
         const { data } = await api.get('/salon/free_time', { params })
+
         this.freeSlots = data.map(slot => {
           const s = slot.start
-          if (s.includes('T')) {
-            return s
-          } else {
-            return `${this.selectedDate}T${s}:00`
-          }
+
+          // Собираем полный UTC-временной штамп
+          const utcDateTime = s.includes('T')
+            ? s // уже ISO
+            : `${this.selectedDate}T${s}:00Z` // добавляем Z => означает UTC
+
+          // Преобразуем в локальное время устройства
+          const local = new Date(utcDateTime)
+
+          // Форматируем в локальное "HH:MM"
+          const hours = local.getHours().toString().padStart(2, '0')
+          const minutes = local.getMinutes().toString().padStart(2, '0')
+
+          // Возвращаем строку в локальном времени
+          return `${hours}:${minutes}`
         })
         console.log('Loaded freeSlots:', this.freeSlots)
       } catch (err) {
