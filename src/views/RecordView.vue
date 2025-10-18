@@ -331,7 +331,8 @@ async function goToDatetime() {
 
 
 function formatDate(iso) {
-  const d = new Date(iso)
+  const d = new Date(iso.endsWith('Z') ? iso : iso + 'Z');
+  
   return d.toLocaleString('ru-RU', {
     year: 'numeric',
     month: 'long',
