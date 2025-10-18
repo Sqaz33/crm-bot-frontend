@@ -186,22 +186,29 @@ export default {
 
       try {
         const { data } = await api.get('/salon/free_time', { params })
-
         this.freeSlots = data.map(slot => {
-          // slot.start может быть "10:00" или "2025-10-18T10:00:00"
-          const s = slot.start.includes('T')
-            ? slot.start
-            : `${this.selectedDate}T${slot.start}:00Z` // считаем, что серверное время — UTC
+          const s = slot.start
 
-          // Преобразуем в локальное ISO (с учетом часового пояса браузера)
-          const local = new Date(s)
-          // Возвращаем строку в локальном времени, обрезаем миллисекунды и Z
-          const localISO = local.toISOString().slice(0, 19)
+          // Получаем ISO-дату (в UTC)
+          let utcString
+          if (s.includes('T')) {
+            utcString = s
+          } else {
+            utcString = `${this.selectedDate}T${s}:00Z` // "Z" = UTC
+          }
 
-          return localISO
+          // Преобразуем в локальное время устройства
+          const local = new Date(utcString)
+
+          // Получаем строку ISO в локальном часовом поясе (без 'Z')
+          const localIso = new Date(local.getTime() - local.getTimezoneOffset() * 60000)
+            .toISOString()
+            .slice(0, 19) // "YYYY-MM-DDTHH:mm:ss"
+
+          return localIso
         })
 
-        console.log('Converted freeSlots (local time):', this.freeSlots)
+        console.log('Loaded freeSlots (local time):', this.freeSlots)
       } catch (err) {
         console.error('Не удалось загрузить слоты:', err)
         this.freeSlots = []
