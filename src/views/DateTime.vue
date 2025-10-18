@@ -187,46 +187,21 @@ export default {
       try {
         const { data } = await api.get('/salon/free_time', { params })
 
-        // Определяем смещение часового пояса пользователя (в минутах)
-        const tzOffset = new Date().getTimezoneOffset() // в минутах
-        // Преобразуем в часы со знаком, чтобы добавить к строке
-        const tzHours = Math.floor(Math.abs(tzOffset) / 60)
-        const tzMinutes = Math.abs(tzOffset) % 60
-        const tzSign = tzOffset > 0 ? '-' : '+'
-        const tzString = `${tzSign}${String(tzHours).padStart(2, '0')}:${String(tzMinutes).padStart(2, '0')}`
-
         this.freeSlots = data.map(slot => {
-          const s = slot.start
-          let isoTime
+          // slot.start может быть "10:00" или "2025-10-18T10:00:00"
+          const s = slot.start.includes('T')
+            ? slot.start
+            : `${this.selectedDate}T${slot.start}:00Z` // считаем, что серверное время — UTC
 
-          if (s.includes('T')) {
-            isoTime = s
-          } else {
-            isoTime = `${this.selectedDate}T${s}:00`
-          }
+          // Преобразуем в локальное ISO (с учетом часового пояса браузера)
+          const local = new Date(s)
+          // Возвращаем строку в локальном времени, обрезаем миллисекунды и Z
+          const localISO = local.toISOString().slice(0, 19)
 
-          // Добавляем таймзону (если ее нет)
-          if (!isoTime.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(isoTime)) {
-            isoTime += tzString
-          }
-
-          return isoTime
+          return localISO
         })
 
-        /*
-        const { data } = await api.get('/salon/free_time', { params })
-        this.freeSlots = data.map(slot => {
-          const s = slot.start
-          if (s.includes('T')) {
-            return s
-          } else {
-            return `${this.selectedDate}T${s}:00`
-          }
-        })
-        
-        */
-
-        console.log('Loaded freeSlots:', this.freeSlots)
+        console.log('Converted freeSlots (local time):', this.freeSlots)
       } catch (err) {
         console.error('Не удалось загрузить слоты:', err)
         this.freeSlots = []
