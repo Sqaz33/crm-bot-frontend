@@ -1,7 +1,5 @@
 <template>
   <div class="records-page">
-    <SidebarMenu :items="menuItems" class="sidebar" />
-
     <div class="records-container review-view">
       <h2 class="records-title">Мои записи</h2>
 
