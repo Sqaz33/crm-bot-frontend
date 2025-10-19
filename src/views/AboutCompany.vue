@@ -209,7 +209,7 @@ onMounted(async () => {
   color: #777;
 }
 .review-rating {
-  margin-left: 0;
+  margin-left: auto;
   color: #777;
   background: #e0e0e0;
   padding: 0rem 0.7rem;
