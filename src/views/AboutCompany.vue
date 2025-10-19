@@ -118,6 +118,7 @@ onMounted(async () => {
 
 .description{
   text-align: center;
+  border-radius: 8px;
 }
 
 .about-company {
@@ -223,6 +224,10 @@ onMounted(async () => {
   }
   .review-text {
   font-size: 0.7rem;
+
+  .review-rating {
+  font-size: 0.8rem;
+}
 }
 }
 
