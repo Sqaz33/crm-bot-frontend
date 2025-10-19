@@ -221,11 +221,12 @@ onMounted(async () => {
 .review-text {
   margin: 0;
 }
-@media (max-width: 768px) {
+@media (max-width: 765px) {
   .layout {
     padding-left: clamp(3rem, 12vw, 15rem);
     padding-right: clamp(0.2rem, 3vw, 4rem);
-    margin-left: 20px;
+    margin-right: -20px;
+    
   }
   .reviewer-info .reviewer-name {
 	font-size: 0.75rem;
