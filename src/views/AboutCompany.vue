@@ -210,6 +210,10 @@ onMounted(async () => {
 .review-rating {
   margin-left: 0;
   color: #777;
+  background: #e0e0e0;
+  padding: 0rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
 }
 .review-text {
   margin: 0;
@@ -224,12 +228,14 @@ onMounted(async () => {
   }
   .review-text {
   font-size: 0.7rem;
-
+  }
   .review-rating {
-  font-size: 0.8rem;
+    width: 2.5rem;
+    padding: 0.3rem;
+    font-size: 0.75rem;
 }
 }
-}
+
 
 </style>
 
