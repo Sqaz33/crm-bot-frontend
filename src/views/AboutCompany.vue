@@ -165,6 +165,7 @@ onMounted(async () => {
   font-family:var(--font-primary);
 	font-weight: normal;
 	color: black;
+  text-align: center;
 }
 
 .count {
