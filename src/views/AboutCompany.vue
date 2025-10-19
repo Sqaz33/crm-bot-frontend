@@ -198,6 +198,7 @@ onMounted(async () => {
   height: 32px;
   background: #ccc;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 .reviewer-info .reviewer-name {
   font-weight: bold;
