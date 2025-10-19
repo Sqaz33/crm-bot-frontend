@@ -151,8 +151,9 @@ onMounted(async () => {
 	background: #ccc;
 	padding: 0.3rem 1rem 0.4rem 0.9rem;
 	border-radius: 32px;
-  display: inline-block;
+  display: block;
   margin: 0.5rem auto 0;
+  width: fit-content;
 }
 .description,
 .reviews {
@@ -185,7 +186,7 @@ onMounted(async () => {
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
-	font-size: clamp(1rem, 3vw, 1.2rem);
+	font-size: clamp(0.75rem,4vw,1.2rem);
 }
 .reviewer-avatar {
   width: 32px;
@@ -195,14 +196,14 @@ onMounted(async () => {
 }
 .reviewer-info .reviewer-name {
   font-weight: bold;
-	font-size: clamp(1rem, 3vw, 1.2rem);
+	font-size: clamp(0.75rem,4vw,1.2rem);
 }
 .reviewer-info .review-date {
   font-size: 0.75rem;
   color: #777;
 }
 .review-rating {
-  margin-left: auto;
+  margin-left: 0;
   color: #777;
 }
 .review-text {
