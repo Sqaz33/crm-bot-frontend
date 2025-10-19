@@ -111,7 +111,7 @@
         </div>
 
         <!-- Если записей нет -->
-        <div v-else class="empty-content">
+        <div v-else class="content">
           <img
             :src="activeTab === 'past'
               ? 'src/assets/emptyRecordPast.svg'
@@ -255,6 +255,24 @@ onMounted(() => fetchVisits(activeTab.value))
 
 
 <style scoped>
+
+
+
+.content {
+  flex: 1;
+  display: flex;
+  padding: 6rem;
+  align-items: center;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.content p1 {
+  font-size: clamp(0.75rem,4vw,1.2rem);
+}
+
+.content p2{
+  font-size: clamp(0.6rem,3vw,1rem);
+}
 .records-page {
   display: flex;
   min-height: 100vh;
