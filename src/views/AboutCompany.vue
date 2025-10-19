@@ -219,10 +219,10 @@ onMounted(async () => {
     padding-right: clamp(0.2rem, 3vw, 4rem);
   }
   .reviewer-info .reviewer-name {
-	font-size: 0.85rem;
+	font-size: 0.75rem;
   }
   .review-text {
-  font-size: 0.85rem;
+  font-size: 0.7rem;
 }
 }
 
