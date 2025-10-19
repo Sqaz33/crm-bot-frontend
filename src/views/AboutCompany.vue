@@ -215,6 +215,8 @@ onMounted(async () => {
   padding: 0rem 0.7rem;
   border-radius: 999px;
   font-size: 0.85rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .review-text {
   margin: 0;
