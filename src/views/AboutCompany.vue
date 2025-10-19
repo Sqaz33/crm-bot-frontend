@@ -212,7 +212,7 @@ onMounted(async () => {
   margin-left: 0;
   color: #777;
   background: #e0e0e0;
-  padding: 0rem 0.5rem;
+  padding: 0rem 0.7rem;
   border-radius: 999px;
   font-size: 0.85rem;
 }
