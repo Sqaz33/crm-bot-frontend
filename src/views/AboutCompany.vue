@@ -218,7 +218,7 @@ onMounted(async () => {
 	font-size: 0.85rem;
   }
   .review-text {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
 }
 }
 
