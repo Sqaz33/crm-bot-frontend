@@ -7,7 +7,8 @@
       <p2>Скоро Вы сможете что-то купить...</p2>        
     </main>
 
-</div>
+  </div>
+</template>
 
 <script>
 </script>
