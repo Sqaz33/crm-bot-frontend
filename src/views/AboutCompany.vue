@@ -103,7 +103,7 @@ onMounted(async () => {
 
 .container {
   width: 100%;
-  max-width: 800px;
+  max-width: 950px;
   background-color: #ffffff;
   padding: 1.2rem;
   border-radius: 32px 32px 0 0;
@@ -222,6 +222,7 @@ onMounted(async () => {
   .layout {
     padding-left: clamp(3rem, 12vw, 15rem);
     padding-right: clamp(0.2rem, 3vw, 4rem);
+    margin-left: 20px;
   }
   .reviewer-info .reviewer-name {
 	font-size: 0.75rem;
