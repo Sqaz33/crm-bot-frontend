@@ -103,7 +103,7 @@ onMounted(async () => {
 
 .container {
   width: 100%;
-  max-width: 800px;
+  max-width: 950px;
   background-color: #ffffff;
   padding: 1.2rem;
   border-radius: 32px 32px 0 0;
@@ -114,6 +114,11 @@ onMounted(async () => {
 .description,
 .review {
   background: var(--color-light);
+}
+
+.description{
+  text-align: center;
+  border-radius: 8px;
 }
 
 .about-company {
@@ -151,8 +156,9 @@ onMounted(async () => {
 	background: #ccc;
 	padding: 0.3rem 1rem 0.4rem 0.9rem;
 	border-radius: 32px;
-  display: inline-block;
+  display: block;
   margin: 0.5rem auto 0;
+  width: fit-content;
 }
 .description,
 .reviews {
@@ -185,17 +191,18 @@ onMounted(async () => {
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
-	font-size: clamp(1rem, 3vw, 1.2rem);
+	font-size: 1.2rem;
 }
 .reviewer-avatar {
   width: 32px;
   height: 32px;
   background: #ccc;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 .reviewer-info .reviewer-name {
   font-weight: bold;
-	font-size: clamp(1rem, 3vw, 1.2rem);
+	font-size: 1.2rem;
 }
 .reviewer-info .review-date {
   font-size: 0.75rem;
@@ -204,15 +211,36 @@ onMounted(async () => {
 .review-rating {
   margin-left: auto;
   color: #777;
+  background: #e0e0e0;
+  padding: 0rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .review-text {
   margin: 0;
 }
-@media (max-width: 768px) {
+@media (max-width: 765px) {
   .layout {
     padding-left: clamp(3rem, 12vw, 15rem);
     padding-right: clamp(0.2rem, 3vw, 4rem);
+    margin-right: -20px;
+    
   }
+  .reviewer-info .reviewer-name {
+	font-size: 0.75rem;
+  }
+  .review-text {
+  font-size: 0.7rem;
+  }
+  .review-rating {
+    width: 2.5rem;
+    padding: 0.3rem;
+    font-size: 0.75rem;
 }
+}
+
+
 </style>
 

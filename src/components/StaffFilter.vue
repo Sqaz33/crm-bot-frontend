@@ -172,11 +172,13 @@ function onVisit(id)  { emit('visit', id) }
   color: #555;
 }
 .rating {
-  margin-left: 0;
+  margin-left: auto;
   background: #e0e0e0;
   padding: 0rem 0.5rem;
   border-radius: 999px;
   font-size: 0.85rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 @media (max-width: 765px)
