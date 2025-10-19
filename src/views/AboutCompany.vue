@@ -116,6 +116,10 @@ onMounted(async () => {
   background: var(--color-light);
 }
 
+.description{
+  text-align: center;
+}
+
 .about-company {
   max-width: 600px;
   margin: 0 auto;
@@ -165,7 +169,6 @@ onMounted(async () => {
   font-family:var(--font-primary);
 	font-weight: normal;
 	color: black;
-  text-align: center;
 }
 
 .count {
