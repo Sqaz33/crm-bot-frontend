@@ -48,14 +48,13 @@
         <div class="buttons">
         <button
           class="cancel-btn"
-          @click="() => { cancelAction.value = cancelVisit; showCancelModal.value = true }"
+          @click="openCancelModal"
           :disabled="visit.will_come || deleting || processing"
         >
           Отменить запись
         </button>
-
-
-          <button
+        
+        <button
             class="move-btn"
             @click="goToDatetime"
             :disabled="visit.will_come || processing"
@@ -191,6 +190,11 @@ const cancelAction = ref(null)
 // -- MODULE VARS -- //
 let service_id = null
 let staff_id = null;
+
+function openCancelModal() {
+  cancelAction.value = cancelVisit
+  showCancelModal.value = true
+}
 
 // --- API: Загрузка данных --- //
 async function loadVisit() {
