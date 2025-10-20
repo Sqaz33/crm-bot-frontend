@@ -46,13 +46,14 @@
         </div>
 
         <div class="buttons">
-          <button
-            class="cancel-btn"
-            @click="cancelVisit"
-            :disabled="visit.will_come || deleting || processing"
-          >
-            Отменить запись
-          </button>
+        <button
+          class="cancel-btn"
+          @click="() => { cancelAction.value = cancelVisit; showCancelModal.value = true }"
+          :disabled="visit.will_come || deleting || processing"
+        >
+          Отменить запись
+        </button>
+
 
           <button
             class="move-btn"
@@ -76,7 +77,7 @@
         Оставить отзыв
       </button>
 
-      <!-- Модалка для отзыва (без изменений) -->
+      <!-- Модалка для отзыва -->
       <div v-if="showReviewModal" class="modal-overlay">
         <div class="modal">
           <h3>Отзыв для {{ staff.name }}</h3>
@@ -107,6 +108,7 @@
         </div>
       </div>
 
+      <!-- Модалка для подтверждения визита -->
       <div v-if="showConfirmModal" class="modal-overlay">
         <div class="modal">
           <h3>Подтверждение визита</h3>
@@ -121,6 +123,23 @@
           </div>
         </div>
       </div>
+
+      <!-- Модалка отмены визита -->
+    <div v-if="showCancelModal" class="modal-overlay">
+      <div class="modal">
+        <h3>Отмена визита</h3>
+        <p>Вы уверены, что хотите отменить запись на приём?</p>
+        <div class="modal-buttons">
+          <button @click="cancelAction(); showCancelModal = false" :disabled="deleting">
+            Да, отменить
+          </button>
+          <button @click="showCancelModal = false" :disabled="deleting">
+            Отмена
+          </button>
+        </div>
+      </div>
+    </div>
+
     </div>
   </div>
 </template>
@@ -166,6 +185,8 @@ const staff = ref({})
 const service = ref({})
 const showConfirmModal = ref(false)
 const confirmAction = ref(null)
+const showCancelModal = ref(false)
+const cancelAction = ref(null)
 
 // -- MODULE VARS -- //
 let service_id = null
@@ -217,7 +238,6 @@ async function toggleWillCome() {
 
 // --- Отмена визита --- //
 async function cancelVisit() {
-  if (!confirm('Вы уверены, что хотите отменить запись?')) return
   deleting.value = true
   visitError.value = ''
   try {
@@ -225,9 +245,9 @@ async function cancelVisit() {
     router.push('/records')
   } catch (err) {
     console.error('Ошибка cancelVisit:', err)
-    visitError.value = typeof err.response?.data === 'string' 
-                       ? err.response.data 
-                       : err.response?.data?.detail || err.message || 'Не удалось отменить запись.'
+    visitError.value = typeof err.response?.data === 'string'
+      ? err.response.data
+      : err.response?.data?.detail || err.message || 'Не удалось отменить запись.'
   } finally {
     deleting.value = false
   }
