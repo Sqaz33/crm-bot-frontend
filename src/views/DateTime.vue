@@ -242,15 +242,15 @@ export default {
 <style scoped>
 .booking-page { display: flex; min-height: 100vh; background: var(--light-color); }
 .booking-container {
-  flex: 1; max-width: clamp(250px, 70%, 900px);  margin: 32px auto; padding: 32px;
-  background: #fff; border-radius: 18px;
+  flex: 1; ; max-width: clamp(300px, 70%, 900px);  margin: 32px auto; padding:15px;
+  background: #fff; border-radius: 10px;
   box-shadow: 0 2px 18px rgba(31,70,255,0.1);
   border: 2px solid #1976ff;
 }
 .month-navigation {
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 18px; font-size: 1.1rem; font-weight: 500;
-  background: #f6f8fa; border-radius: 10px; padding: 12px 0;
+  margin-bottom: 18px; font-size: clamp(16px, 60%, 20px); font-weight: 500;
+  background: #f6f8fa; border-radius: 10px; padding: clamp(2px, 3vw,12px) 0;
 }
 .nav-button {
   background: none; border: none; font-size: 22px;
@@ -259,16 +259,16 @@ export default {
 .weekdays {
   display: grid; grid-template-columns: repeat(7,1fr);
   text-align: center; margin-bottom: 8px;
-  font-size: 15px; color: #9ea5b1;
+  font-size: clamp(12px, 60%, 18px); color: #9ea5b1;
 }
 .days-grid {
-  display: grid; grid-template-columns: repeat(7,1fr); gap: 5%; margin-left: 40px;
+  display: grid; grid-template-columns: repeat(7,1fr); gap:5px;
 }
 .day {
-  height: 38px; width: 38px; display: flex; align-items: center; justify-content: center;
-  border-radius: 8px; font-size: 16px; background: #f6f8fa;
+  height: clamp(20px, 3vw, 38px); width:  clamp(20px, 3vw, 38px); display: flex; align-items: center; justify-content: center;
+  border-radius:  8px; font-size: clamp(12px, 60%, 18px); background: #f6f8fa;
   color: #222; cursor: pointer; transition: background .1s,color .1s;
-  border: none;
+  border: none; margin: auto; /**/ 
 }
 .day.other-month,
 .day.day-past {
@@ -313,6 +313,27 @@ export default {
 }
 
 .calendar-section {
-  padding: 0 32px; 
+  padding: 0; 
+}
+
+@media (max-width: 900px) 
+{
+.booking-page { display: flex; min-height: 100vh; background: var(--light-color);  padding: 1rem clamp(1rem, 5vw, 15rem) 1rem  clamp(2rem, 15vw, 15rem)}
+.booking-container {
+  flex: 1; ; max-width: clamp(275px, 70%, 900px);  margin-top: 2px; padding:15px;
+  background: #fff; border-radius: 10px;
+  box-shadow: 0 2px 18px rgba(31,70,255,0.1);
+  border: 2px solid #1976ff;
+}
+.days-grid {
+  display: grid; grid-template-columns: repeat(7,1fr); gap:1px; row-gap: 6px;
+}
+.day {
+  height: clamp(20px, 3vw, 38px); width:  clamp(20px, 3vw, 38px); display: flex; align-items: center; justify-content: center;
+  border-radius:  3px; font-size: clamp(12px, 60%, 18px); background: #f6f8fa;
+  color: #222; cursor: pointer; transition: background .1s,color .1s;
+  border: none; margin: auto; /**/ 
+}
+
 }
 </style>
