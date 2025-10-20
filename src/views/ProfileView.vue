@@ -1,29 +1,32 @@
 <template>
   <div class="profile-page">
-    
-
     <div class="profile-form-container">
       <form @submit.prevent="saveProfile" class="profile-form">
         <div class="field">
           <label for="firstName">Имя</label>
           <input id="firstName" v-model="form.firstName" />
         </div>
+
         <div class="field">
           <label for="lastName">Фамилия</label>
           <input id="lastName" v-model="form.lastName" />
         </div>
+
         <div class="field">
           <label for="middleName">Отчество</label>
           <input id="middleName" v-model="form.middleName" />
         </div>
+
         <div class="field">
           <label for="phone">Телефон</label>
-          <input id="phone" v-model="form.phone" />
+          <input id="phone" v-model="form.phone" readonly />
         </div>
+
         <div class="field">
           <label for="email">E-mail</label>
-          <input id="email" v-model="form.email" />
+          <input id="email" v-model="form.email" readonly />
         </div>
+
         <button type="submit" class="btn-save">Сохранить</button>
       </form>
     </div>
