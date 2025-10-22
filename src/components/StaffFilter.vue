@@ -154,6 +154,7 @@ function onVisit(id)  { emit('visit', id) }
   background-size: cover;
   background-position: center;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 .avatar--empty {
   width: 40px;
