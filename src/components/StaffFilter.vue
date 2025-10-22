@@ -210,11 +210,11 @@ function onVisit(id)  { emit('visit', id) }
   }
   
   .name {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
   }
   
   .spec {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
   
   .rating {
