@@ -161,6 +161,7 @@ function onVisit(id)  { emit('visit', id) }
   height: 40px;
   background-color: #ccc;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 .info {
   margin-left: 0.5rem;
