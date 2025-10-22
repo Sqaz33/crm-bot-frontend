@@ -1,7 +1,7 @@
 <template>
   <div class="records-page">
     <div class="records-container review-view">
-      <h2 class="records-title">Мои записи</h2>
+      
 
       <!-- Tabs -->
       <div class="tabs-container">
