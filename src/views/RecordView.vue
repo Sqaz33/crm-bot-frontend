@@ -424,6 +424,7 @@ async function submitReview() {
   background-color: #f6f9fc;
   min-height: 100vh;
   font-family: var(--font-primary);
+  margin: 0;
 }
 
 .record-card {
@@ -431,8 +432,9 @@ async function submitReview() {
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   width: 320px;
-  padding: 1.25rem;
+  padding:clamp(0.6rem, 1.2vw, 1.5rem);
 }
+
 
 .header {
   display: flex;
