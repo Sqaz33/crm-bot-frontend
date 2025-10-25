@@ -420,7 +420,7 @@ async function submitReview() {
   display: flex;
   justify-content: center;
   align-items: start;
-  padding: 2rem;
+  padding: 1rem;
   background-color: #f6f9fc;
   min-height: 100vh;
   font-family: var(--font-primary);
@@ -440,12 +440,12 @@ async function submitReview() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 
 .avatar {
-  width: 48px;
-  height: 48px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   background-color: #ccc;
 }
