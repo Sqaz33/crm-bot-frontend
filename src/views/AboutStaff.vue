@@ -27,7 +27,7 @@
 						<div class="rev-name">{{ r.client_name }}</div>
 						<div class="rev-date">{{ formatDate(r.created_at) }}</div>
 						</div>
-          <div class="rating">⭐ {{ r.rating }}</div>
+          <div class="rev-rating ">⭐ {{ r.rating }}</div>
         </div>
         <p class="rev-text">{{ r.comment }}</p>
       </div>
@@ -197,7 +197,7 @@ onMounted(async () => {
 .rev-rating {
   margin-left: auto;
   background: #e0e0e0;
-  padding: 0.25rem 0.75rem;
+  padding: 0.25rem;
   border-radius: 12px;
 }
 
