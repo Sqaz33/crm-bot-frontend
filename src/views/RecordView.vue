@@ -37,28 +37,16 @@
       <div v-if="!isOld" class="control-panel">
         <div class="switch-row">
           <label class="switch-label">Подтверждаю визит</label>
-          <input
-            type="checkbox"
-            :checked="visit.will_come"
-            @change="onWillComeChange"
-            :disabled="visit.will_come || processing"
-          />
+          <input type="checkbox" :checked="visit.will_come" @change="onWillComeChange"
+            :disabled="visit.will_come || processing" />
         </div>
 
         <div class="buttons">
-        <button
-          class="cancel-btn"
-          @click="openCancelModal"
-          :disabled="visit.will_come || deleting || processing"
-        >
-          Отменить запись
-        </button>
-        
-        <button
-            class="move-btn"
-            @click="goToDatetime"
-            :disabled="visit.will_come || processing"
-          >
+          <button class="cancel-btn" @click="openCancelModal" :disabled="visit.will_come || deleting || processing">
+            Отменить запись
+          </button>
+
+          <button class="move-btn" @click="goToDatetime" :disabled="visit.will_come || processing">
             Перенести запись
           </button>
         </div>
@@ -68,11 +56,7 @@
 
 
       <!-- Кнопка оставить отзыв -->
-      <button
-        v-else-if="isOld"
-        class="review-btn"
-        @click="showReviewModal = true"
-      >
+      <button v-else-if="isOld" class="review-btn" @click="showReviewModal = true">
         Оставить отзыв
       </button>
 
@@ -82,19 +66,11 @@
           <h3>Отзыв для {{ staff.name }}</h3>
 
           <div class="stars">
-            <span
-              v-for="n in 5"
-              :key="n"
-              class="star"
-              :class="{ filled: n <= review.rating }"
-              @click="review.rating = n"
-            >★</span>
+            <span v-for="n in 5" :key="n" class="star" :class="{ filled: n <= review.rating }"
+              @click="review.rating = n">★</span>
           </div>
 
-          <textarea
-            v-model="review.comment"
-            placeholder="Напишите ваш комментарий..."
-          ></textarea>
+          <textarea v-model="review.comment" placeholder="Напишите ваш комментарий..."></textarea>
 
           <div class="modal-buttons">
             <button @click="submitReview" :disabled="sending">
@@ -124,20 +100,20 @@
       </div>
 
       <!-- Модалка отмены визита -->
-    <div v-if="showCancelModal" class="modal-overlay">
-      <div class="modal">
-        <h3>Отмена визита</h3>
-        <p>Вы уверены, что хотите отменить запись на приём?</p>
-        <div class="modal-buttons">
-          <button @click="cancelAction(); showCancelModal = false" :disabled="deleting">
-            Да, отменить
-          </button>
-          <button @click="showCancelModal = false" :disabled="deleting">
-            Отмена
-          </button>
+      <div v-if="showCancelModal" class="modal-overlay">
+        <div class="modal">
+          <h3>Отмена визита</h3>
+          <p>Вы уверены, что хотите отменить запись на приём?</p>
+          <div class="modal-buttons">
+            <button @click="cancelAction(); showCancelModal = false" :disabled="deleting">
+              Да, отменить
+            </button>
+            <button @click="showCancelModal = false" :disabled="deleting">
+              Отмена
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
     </div>
   </div>
@@ -232,9 +208,9 @@ async function toggleWillCome() {
     })
   } catch (err) {
     console.error('Ошибка toggleWillCome:', err)
-    visitError.value = typeof err.response?.data === 'string' 
-                       ? err.response.data 
-                       : err.response?.data?.detail || err.message || 'Ошибка при обновлении статуса визита.'
+    visitError.value = typeof err.response?.data === 'string'
+      ? err.response.data
+      : err.response?.data?.detail || err.message || 'Ошибка при обновлении статуса визита.'
   } finally {
     processing.value = false
   }
@@ -297,64 +273,71 @@ function onWillComeChange(event) {
 }
 
 // --- Перенос визита --- //
-async function goToDatetime() {
+function goToDatetime() {
   const VISIT_KEY = 'visit_data';
-  let backupVisitData = null;
 
   try {
-    // сохраняем текущее значение визита
-    const raw = localStorage.getItem(VISIT_KEY);
-    if (raw) {
-      try {
-        backupVisitData = JSON.parse(raw);
-      } catch (e) {
-        console.error('Ошибка парсинга localStorage при резервировании:', e);
-      }
-    }
-
     // очищаем значение для редиректа
     localStorage.removeItem(VISIT_KEY);
 
     // добавить значения для получения свободного времени
     if (staff_id && service_id) {
-      let params = { staff_id:'', services_id:[], visit_time:{start_time:'',end:''}, comment:'' }
+      let params = { staff_id: '', services_id: [], visit_time: { start_time: '', end: '' }, comment: '' }
       params.staff_id = staff_id
       params.services_id = service_id
       localStorage.setItem(VISIT_KEY, JSON.stringify(params));
     }
 
-    // переходим на страницу выбора даты и времени
-    await router.push({ 
-      path: '/datetime', 
-      query: { redirect: router.currentRoute.value.fullPath } 
+    // переходим на страницу выбора даты и времени с флагом переноса
+    router.push({
+      path: '/datetime',
+      query: {
+        redirect: router.currentRoute.value.fullPath,
+        moveVisit: visitId
+      }
     });
 
-    processing.value = true;
+  } catch (err) {
+    console.error(err);
+    visitError.value = 'Ошибка при переходе к выбору даты.';
+  }
+}
+
+// Обработка возврата со страницы выбора даты/времени
+async function handleMoveVisitReturn() {
+  const VISIT_KEY = 'visit_data';
+  processing.value = true;
+  visitError.value = '';
+
+  try {
+    // сначала загружаем текущий визит, если его ещё нет
+    if (!visit.value) {
+      await loadVisit();
+    }
 
     // ждем, пока в localStorage появится новое время визита
     const visitTime = await waitForVisitTime();
 
     // когда дата появится, отправляем на сервер
     const visitDateISO = visitTime.toISOString();
-    await api.patch(`/visits/${visitId}`, { 
-      visit_date_time: visitDateISO, 
-      will_come: visit.value.will_come 
+    await api.patch(`/visits/${visitId}`, {
+      visit_date_time: visitDateISO,
+      will_come: visit.value?.will_come || false
     });
-    
+
+    // очищаем localStorage
+    localStorage.removeItem(VISIT_KEY);
+
+    // перезагружаем данные визита
+    await loadVisit();
+
   } catch (err) {
     console.error(err);
     visitError.value = 'Не удалось обновить дату и время визита.';
-
-    // если дата не выбрана — восстанавливаем старое значение
-    if (backupVisitData) {
-      localStorage.setItem(VISIT_KEY, JSON.stringify(backupVisitData));
-    }
-
   } finally {
     processing.value = false;
   }
 }
-
 
 function formatDate(iso) {
   const d = new Date(iso.endsWith('Z') ? iso : iso + 'Z');
@@ -368,7 +351,20 @@ function formatDate(iso) {
   })
 }
 
-onMounted(loadVisit)
+onMounted(() => {
+  loadVisit();
+
+  // проверяем, вернулись ли мы со страницы выбора даты/времени
+  if (route.query.fromDatetime === 'true') {
+    handleMoveVisitReturn();
+
+    // очищаем query параметр из URL
+    router.replace({
+      path: route.path,
+      query: { isOld: route.query.isOld }
+    });
+  }
+})
 
 // --- Модалка отзыва --- //
 const showReviewModal = ref(false)
@@ -405,9 +401,9 @@ async function submitReview() {
       reviewError.value = err.response.data.detail
     else
       console.error('Ошибка submitReview:', err)
-      reviewError.value = typeof err.response?.data === 'string' 
-                                 ? err.response.data 
-                                 : err.response?.data?.detail || err.message || 'Ошибка при отправке отзыва'
+    reviewError.value = typeof err.response?.data === 'string'
+      ? err.response.data
+      : err.response?.data?.detail || err.message || 'Ошибка при отправке отзыва'
   } finally {
     sending.value = false
   }
@@ -525,7 +521,7 @@ async function submitReview() {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -538,7 +534,7 @@ async function submitReview() {
   border-radius: 10px;
   width: 320px;
   max-width: 90%;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .stars {
@@ -654,5 +650,4 @@ input:disabled {
   margin-bottom: 1rem;
   color: #444;
 }
-
 </style>
