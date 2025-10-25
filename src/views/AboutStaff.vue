@@ -197,7 +197,7 @@ onMounted(async () => {
 .rev-rating {
   margin-left: auto;
   background: #e0e0e0;
-  padding: 0.25rem 0.75rem;
+  padding: 0;
   border-radius: 12px;
 	display: flex;
 	flex-direction: row;
