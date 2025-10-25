@@ -96,7 +96,6 @@ onMounted(async () => {
   padding: 1rem;
   background: #f5f8fd;
   border-radius: 8px;
-	border: red solid 1px;
 }
 
 .btn-back {
