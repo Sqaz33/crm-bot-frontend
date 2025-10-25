@@ -27,7 +27,7 @@
 						<div class="rev-name">{{ r.client_name }}</div>
 						<div class="rev-date">{{ formatDate(r.created_at) }}</div>
 						</div>
-          <div class="rev-rating ">⭐{{ r.rating }}</div>
+          <div class="rev-rating ">⭐ {{ r.rating }}</div>
         </div>
         <p class="rev-text">{{ r.comment }}</p>
       </div>
@@ -201,7 +201,7 @@ onMounted(async () => {
   border-radius: 12px;
 	display: flex;
 	flex-direction: row;
-	max-height: 1.2rem;
+	max-height: 1.4rem;
 	font-size: 0.9rem;
 	gap: 0.3rem;
 }
