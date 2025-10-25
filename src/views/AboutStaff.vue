@@ -23,9 +23,11 @@
       <h3>Отзывы ({{ reviews.length }})</h3>
       <div v-for="r in reviews" :key="r.id" class="review">
         <div class="rev-header">
-          <div class="rev-name">{{ r.client_name }}</div>
-          <div class="rev-date">{{ formatDate(r.created_at) }}</div>
-          <div class="rev-rating">⭐ {{ r.rating }}</div>
+				  <div class="name-date">
+						<div class="rev-name">{{ r.client_name }}</div>
+						<div class="rev-date">{{ formatDate(r.created_at) }}</div>
+						</div>
+          <div class="rating">⭐ {{ r.rating }}</div>
         </div>
         <p class="rev-text">{{ r.comment }}</p>
       </div>
@@ -209,6 +211,12 @@ onMounted(async () => {
   max-width: 350px;
 	}
 	
+}
+
+.name-date
+{
+  display: flex;
+	flex-direction: column;
 }
 
 @media (max-width: 480px) {
