@@ -430,8 +430,8 @@ async function submitReview() {
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  width: 360px;
-  padding: 1.5rem;
+  width: 320px;
+  padding: 1.25rem;
 }
 
 .header {
