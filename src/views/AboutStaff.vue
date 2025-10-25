@@ -96,7 +96,6 @@ onMounted(async () => {
   padding: 1rem;
   background: #f5f8fd;
   border-radius: 8px;
-	border: red solid 1px;
 }
 
 .btn-back {
@@ -143,7 +142,7 @@ onMounted(async () => {
   background: #e0e0e0;
   display: inline-block;
   padding: 0.25rem 0.75rem;
-  border-radius: 12px;
+  border-radius: 15px;
   margin-bottom: 1rem;
 }
 
@@ -154,7 +153,7 @@ onMounted(async () => {
 /* Кнопка «Выбрать» */
 .btn-select {
   display: block;
-  width: 120px;
+  width: 130px;
   margin: 0.5rem auto 1.5rem;
   padding: 0.5rem 1rem;
   background: #007bff;
@@ -162,6 +161,7 @@ onMounted(async () => {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+	font-size: 1rem;
 }
 .btn-select:hover {
   background: #0056b3;
