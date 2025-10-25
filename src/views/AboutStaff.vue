@@ -201,8 +201,10 @@ onMounted(async () => {
   border-radius: 12px;
 	display: flex;
 	flex-direction: row;
-	max-height: 0.75rem;
+	max-height: 1.5rem;
+	font-size: 0.9rem;
 }
+
 
 .rev-text {
   margin: 0;
