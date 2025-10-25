@@ -203,7 +203,8 @@ onMounted(async () => {
 	flex-direction: row;
 	max-height: 1.4rem;
 	font-size: 0.9rem;
-	gap: 0.3rem;
+	align-items: center;
+	white-space: nowrap;
 }
 
 
