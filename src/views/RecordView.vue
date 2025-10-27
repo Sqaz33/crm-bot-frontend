@@ -658,5 +658,8 @@ input:disabled {
 .datetime {
   font-size: 0.7rem;
 }
+.switch-row {
+  font-size: 0.75rem;
+}
 }
 </style>
