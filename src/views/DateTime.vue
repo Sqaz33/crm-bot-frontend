@@ -36,9 +36,11 @@
             {{ formatTime(start) }}
           </button>
         </div>
-        <button class="book-button" :disabled="!selectedTime" @click="bookTime">
-          Занять
-        </button>
+        <div class="book-button-container">
+          <button class="book-button" :disabled="!selectedTime" @click="bookTime">
+            Занять
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -246,194 +248,165 @@ export default {
 </script>
 
 <style scoped>
-.booking-page {
-  display: flex;
-  min-height: 100vh;
-  background: var(--light-color);
+.booking-page { 
+  display: flex; 
+  min-height: 100vh; 
+  background: var(--light-color); 
 }
-
 .booking-container {
-  flex: 1;
-  ;
-  max-width: clamp(300px, 70%, 900px);
-  margin: 32px auto;
-  padding: 15px;
+  flex: 1; ; max-width: clamp(300px, 70%, 900px);
+  margin: 32px auto; 
+  padding:0;
   background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 18px rgba(31, 70, 255, 0.1);
-  border: 2px solid #1976ff;
+  border-radius: 10px; 
+  border: 1.2px solid #1976ff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
+  
 }
-
 .month-navigation {
-  display: flex;
-  justify-content: space-between;
+  display: flex; 
+  justify-content: space-between; 
   align-items: center;
-  margin-bottom: 18px;
-  font-size: clamp(16px, 60%, 20px);
+  margin-bottom: 18px; 
+  font-size: clamp(16px, 60%, 20px); 
   font-weight: 500;
-  background: #f6f8fa;
-  border-radius: 10px;
-  padding: clamp(2px, 3vw, 12px) 0;
+  background: #edf2fa; 
+  border-radius: 10px 10px 0 0; 
+  padding: clamp(2px, 3vw,12px) 0;
+  
 }
-
 .nav-button {
-  background: none;
-  border: none;
+  background: none; 
+  border: none; 
   font-size: 22px;
-  cursor: pointer;
-  color: #1976ff;
+  cursor: pointer; 
+  color: #1976ff; 
+  margin: 0 1.2rem;
 }
-
 .weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
+  display: grid; 
+  grid-template-columns: repeat(7,1fr);
+  text-align: center; 
   margin-bottom: 8px;
-  font-size: clamp(12px, 60%, 18px);
-  color: #9ea5b1;
+  font-size: clamp(12px, 60%, 18px); 
+  color: #9ea5b1;  padding: 0 2rem;
 }
-
 .days-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
+  display: grid; 
+  grid-template-columns: repeat(7,1fr); gap:5px;  padding: 0 2rem; 
 }
-
 .day {
-  height: clamp(20px, 3vw, 38px);
-  width: clamp(20px, 3vw, 38px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  font-size: clamp(12px, 60%, 18px);
+  height: clamp(20px, 3vw, 38px); width:  clamp(20px, 3vw, 38px); 
+  display: flex; align-items: center; justify-content: center;
+  border-radius:  6px; font-size: clamp(12px, 60%, 18px); 
   background: #f6f8fa;
-  color: #222;
-  cursor: pointer;
-  transition: background .1s, color .1s;
-  border: none;
-  margin: auto;
-  /**/
+  color: #222; 
+  cursor: pointer; 
+  transition: background .1s,color .1s;
+  border: none; 
+  margin: auto; 
 }
-
 .day.other-month,
 .day.day-past {
-  color: #c4c4c4 !important;
+  color: #c4c4c4 !important; 
   cursor: not-allowed;
 }
-
 .day.selected {
-  background: #1976ff !important;
-  color: #fff !important;
+  background: #1976ff !important; color: #fff !important;
   font-weight: bold;
 }
-
 .day.current-day:not(.selected) {
   border: 1.5px solid #1976ff;
 }
-
 .time-section {
+  margin-top: 24px ;
+  padding: 0 0px 30px 0px ; 
   border-top: 1px solid #ececec;
-  padding-top: 24px;
 }
-
 .time-title {
-  font-size: 19px;
-  font-weight: bold;
-  margin-bottom: 22px;
+  font-size: clamp(14px, 3vw ,19px); font-weight: bold; 
+  margin-bottom: 22px;  margin-left:15px;
 }
-
 .time-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  display: flex; flex-wrap: wrap; gap: 12px;
   margin-bottom: 12px;
 }
-
 .time-btn {
-  min-width: 74px;
-  padding: 8px 0;
-  border: 1.5px solid #1976ff;
-  background: #fff;
-  color: #1976ff;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
+  min-width: 74px; padding: 8px 0;
+  border: 1.5px solid #1976ff; background: #fff;
+  color: #1976ff; border-radius: 8px;
+  font-size: 15px; font-weight: 500; cursor: pointer;
   transition: background .2s, color .2s, border .2s;
 }
-
 .time-btn.selected {
-  background: #1976ff;
-  color: #fff;
+  background: #1976ff; color: #fff;
 }
-
+.book-button-container {
+  display: flex;
+  justify-content: center;
+  margin: 14px 0 0 0;
+}
 .book-button {
-  width: 100%;
-  padding: 15px;
-  margin-top: 14px;
-  background: #1976ff;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 17px;
-  font-weight: 600;
-  cursor: pointer;
+  margin: 14px 15% 0 15%;
+  width: 70%; height:2.7rem;
+  background: #1976ff; color: #fff;
+  border: none; border-radius: 8px;
+  font-size: 17px; font-weight: 600; cursor: pointer;
+  font-display: center;
   transition: background .2s;
 }
-
 .book-button:disabled {
-  background: #c4c4c4;
-  cursor: not-allowed;
+  background: #c4c4c4; cursor: not-allowed;
 }
 
 .calendar-section {
-  padding: 0;
+  padding: 0; 
+}
+.month-header {
+  color: rgb(0, 0, 0); font-weight: 400;
+}
+.month-name {
+  margin-right: 10px;
+}
+@media (max-width: 900px) 
+{
+.booking-page { 
+  display: flex; min-height: 100vh; background: var(--light-color);  
+  padding: 1rem clamp(0.1rem, 1vw, 15rem) 1rem  clamp(2rem, 15vw, 15rem)
+}
+.booking-container {
+  flex: 1; ; max-width: clamp(275px, 70%, 900px);  margin-top: 2px; padding:0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1.2px solid #1976ff;
+}
+.day {
+  height: clamp(20px, 3vw, 45px); width:  clamp(23px, 3vw, 38px); display: flex; align-items: center; justify-content: center;
+  border-radius:  3px; font-size: clamp(12px, 60%, 18px); background: #f6f8fa;
+  border: none; margin: auto; 
+}
+.weekdays {
+  display: grid; grid-template-columns: repeat(7,1fr);
+  text-align: center; margin-bottom: 8px;
+  font-size: clamp(12px, 60%, 18px); color: #9ea5b1;  padding: 0;
+}
+.days-grid {
+  display: grid; grid-template-columns: repeat(7,1fr); gap:5px; padding: 0;
+}
+.time-section {
+  margin-top: 15px ;padding: 0 0 0 0 ; border-top: 1px solid #ececec;
+  
+}
+.book-button-container {
+  display: flex;
+  justify-content: center;
+  margin: 14px 0 0 0;
 }
 
-@media (max-width: 900px) {
-  .booking-page {
-    display: flex;
-    min-height: 100vh;
-    background: var(--light-color);
-    padding: 1rem clamp(1rem, 5vw, 15rem) 1rem clamp(2rem, 15vw, 15rem)
-  }
-
-  .booking-container {
-    flex: 1;
-    ;
-    max-width: clamp(275px, 70%, 900px);
-    margin-top: 2px;
-    padding: 15px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 18px rgba(31, 70, 255, 0.1);
-    border: 2px solid #1976ff;
-  }
-
-  .days-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 1px;
-    row-gap: 6px;
-  }
-
-  .day {
-    height: clamp(20px, 3vw, 38px);
-    width: clamp(20px, 3vw, 38px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 3px;
-    font-size: clamp(12px, 60%, 18px);
-    background: #f6f8fa;
-    color: #222;
-    cursor: pointer;
-    transition: background .1s, color .1s;
-    border: none;
-    margin: auto;
-    /**/
-  }
-
+.book-button {
+  
+  margin: 14px 0 0 0;
+  width: 70%; height:1.7rem;;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+}
 }
 </style>
