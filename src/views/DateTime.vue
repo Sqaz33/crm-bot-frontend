@@ -395,7 +395,10 @@ export default {
 }
 .time-section {
   margin-top: 15px ;padding: 0 0 0 0 ; border-top: 1px solid #ececec;
-  
+}
+.time-title {
+  font-size: clamp(14px, 3vw ,19px); font-weight: bold; 
+  margin-bottom: 15px;  margin-left:15px;
 }
 .book-button-container {
   display: flex;
@@ -404,9 +407,8 @@ export default {
 }
 
 .book-button {
-  
   margin: 14px 0 0 0;
-  width: 70%; height:2rem;;
+  width: 70%; height:2.3rem;;
   font-size: 14px; font-weight: 600; cursor: pointer;
 }
 }
