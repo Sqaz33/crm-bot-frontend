@@ -329,8 +329,8 @@ export default {
 }
 .time-buttons {
   justify-content: center;
-  display: flex; flex-wrap: wrap; column-gap: 15px; row-gap: 5px;
-  margin-bottom: 12px; margin: 15px;
+  display: flex; flex-wrap: wrap; column-gap: 15px; row-gap: 10px;
+  margin-bottom: 12px; margin: 15px; margin-top: 10px; 
 }
 .time-btn {
   min-width: 70px; padding: 8px 0;
@@ -407,7 +407,7 @@ export default {
   
   margin: 14px 0 0 0;
   width: 70%; height:2rem;;
-  font-size: 12px; font-weight: 600; cursor: pointer;
+  font-size: 14px; font-weight: 600; cursor: pointer;
 }
 }
 </style>
