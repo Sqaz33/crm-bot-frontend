@@ -328,11 +328,12 @@ export default {
   margin-bottom: 22px;  margin-left:15px;
 }
 .time-buttons {
-  display: flex; flex-wrap: wrap; gap: 12px;
+  justify-content: center;
+  display: flex; flex-wrap: wrap; gap: 17px; background: #c4c4c4;
   margin-bottom: 12px; margin: 15px;
 }
 .time-btn {
-  min-width: 60px; padding: 8px 0;
+  min-width: 68px; padding: 8px 0;
   border: 1.2px solid #1976ff; background: #fff;
   color: #1976ff; border-radius: 8px;
   font-size: 15px; font-weight: 500; cursor: pointer;
