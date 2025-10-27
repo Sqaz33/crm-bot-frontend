@@ -498,7 +498,7 @@ async function submitReview() {
 }
 
 .cancel-btn {
-  background-color: #e53935;
+  background-color: #007bff;
 }
 
 .review-btn {
@@ -627,7 +627,7 @@ textarea {
 }
 
 .move-btn {
-  background-color: #8e24aa;
+  background-color: #007bff;
 }
 
 .confirm-btn {
