@@ -650,4 +650,10 @@ input:disabled {
   margin-bottom: 1rem;
   color: #444;
 }
+
+@media (max-width: 765px) {
+  .name {
+    font-size: 0.75rem;
+}
+}
 </style>
