@@ -332,8 +332,8 @@ export default {
   margin-bottom: 12px; margin: 15px;
 }
 .time-btn {
-  min-width: 74px; padding: 8px 0;
-  border: 1.5px solid #1976ff; background: #fff;
+  min-width: 60px; padding: 8px 0;
+  border: 1.2px solid #1976ff; background: #fff;
   color: #1976ff; border-radius: 8px;
   font-size: 15px; font-weight: 500; cursor: pointer;
   transition: background .2s, color .2s, border .2s;
