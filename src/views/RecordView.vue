@@ -655,5 +655,8 @@ input:disabled {
   .name {
     font-size: 0.75rem;
 }
+.datetime {
+  font-size: 0.7rem;
+}
 }
 </style>
