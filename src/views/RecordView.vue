@@ -498,7 +498,7 @@ async function submitReview() {
 }
 
 .cancel-btn {
-  background-color: #007bff;
+  background-color: #eb2936;
 }
 
 .review-btn {
@@ -606,7 +606,7 @@ textarea {
 
 .switch-label {
   font-weight: 500;
-  color: #333;
+  color: #007bff;
 }
 
 .buttons {
