@@ -328,7 +328,7 @@ export default {
   margin-bottom: 22px;  margin-left:15px;
 }
 .time-buttons {
-  display: flex; flex-wrap: wrap; gap: 12px;
+  display: flex; flex-wrap: wrap; gap: 17px; background: #c4c4c4;
   margin-bottom: 12px; margin: 15px;
 }
 .time-btn {
