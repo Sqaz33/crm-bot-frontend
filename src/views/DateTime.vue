@@ -329,7 +329,7 @@ export default {
 }
 .time-buttons {
   display: flex; flex-wrap: wrap; gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 12px; margin: 15px;
 }
 .time-btn {
   min-width: 74px; padding: 8px 0;
@@ -405,7 +405,7 @@ export default {
 .book-button {
   
   margin: 14px 0 0 0;
-  width: 70%; height:1.7rem;;
+  width: 70%; height:2rem;;
   font-size: 12px; font-weight: 600; cursor: pointer;
 }
 }
