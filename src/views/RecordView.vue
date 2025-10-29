@@ -416,7 +416,7 @@ async function submitReview() {
   display: flex;
   justify-content: center;
   align-items: start;
-  padding: 2rem 1rem;
+  padding: 4rem;
   background-color: #f6f9fc;
   min-height: 100vh;
   font-family: var(--font-primary);
@@ -661,5 +661,11 @@ input:disabled {
 .switch-row {
   font-size: 0.75rem;
 }
+}
+@media (max-width: 900px) {
+  .review-view {
+  padding: 1rem clamp(1rem, 5vw, 15rem) 1rem  clamp(2rem, 14vw, 15rem);
+  width: 100%;
+  }
 }
 </style>
