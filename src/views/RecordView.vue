@@ -344,7 +344,7 @@ function formatDate(iso) {
 
   return d.toLocaleString('ru-RU', {
     year: 'numeric',
-    month: 'long',
+    month: 'numeric',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
@@ -427,7 +427,7 @@ async function submitReview() {
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  width: 290px;
+  max-width: clamp(285px, 70%, 900px); 
   padding:clamp(0.6rem, 1.2vw, 1.5rem);
 }
 
