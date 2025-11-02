@@ -24,12 +24,15 @@
 </script>
 <style>
 .form-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
-  padding:auto;
+  justify-content: center;
   align-items: center;
-	text-align: center;
   flex-direction: column;
-  overflow-y: auto;  
 }
 
 .form-container p1 {
