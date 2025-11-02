@@ -28,7 +28,7 @@
   display: flex;
   padding:0;
 	position: absolute;
-  top: 300px;
+  top: 250px;
   left: 0;
   right: 0;
   bottom: 0;
