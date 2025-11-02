@@ -68,6 +68,8 @@ body {
   display: flex;
   flex-direction: row;
   min-height: 100vh;
+	justify-content: center; 
+  align-items: center;
   background-color: var(--color-background);
   width: 100%;
   font-family: var(--font-primary);
