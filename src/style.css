@@ -9,6 +9,8 @@
   --color-warning:   #f2c94c; /* жёлтый */
 	--color-header:    #edf2fa;
 	
+	--color-background: #F6F5F6;
+	
 
   --font-primary: 'Inter';
 }
@@ -66,7 +68,7 @@ body {
   display: flex;
   flex-direction: row;
   min-height: 100vh;
-  background-color: var(--color-light);
+  background-color: var(--color-background);
   width: 100%;
   font-family: var(--font-primary);
   

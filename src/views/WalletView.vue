@@ -26,7 +26,7 @@
 .form-container {
   flex: 1;
   display: flex;
-  padding:6rem;
+  padding:auto;
   align-items: center;
   flex-direction: column;
   overflow-y: auto;
@@ -51,7 +51,7 @@
 
 @media (max-width: 768px) {
   .form-container {
-    padding-right: 3rem; 
+    
   }
 }
 
