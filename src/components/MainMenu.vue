@@ -2,7 +2,7 @@
   <header class="main-header">
     <div class="salon-info">
       <div class="salon-logo">
-        <!-- <img src="@/assets/logo.svg" alt="Логотип" /> -->
+        <img src="../assets/logo.svg" alt="Логотип" />
       </div>
       <div class="salon-text">
         <div class="salon-name">{{ salon.name }}</div>
