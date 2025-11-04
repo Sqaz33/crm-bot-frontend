@@ -1,24 +1,42 @@
 <template>
+  <div class="base">
 
-  <div class="base" style="flex-direction: column; padding: 0.2rem;">
+    <!-- Верхняя кнопка -->
+    <button class="main-button" @click="goTo('appointment')">
+      Персональные услуги
+    </button>
 
-    <h2 class="section-title" @click="goTo('appointmant')">Персональные услуги</h2>
-
+    <!-- Список карточек -->
     <div class="cards">
       <div class="card" @click="goTo('wallet')">
-        <span>Кошелёк</span>
-        <span class="badge">0</span>
+        <div class="left">
+          <i class="icon">👛</i>
+          <span>Кошелёк</span>
+        </div>
+        <span class="badge orange">0</span>
       </div>
+
       <div class="card" @click="goTo('shop')">
-        <span>Магазин</span>
+        <div class="left">
+          <i class="icon">👜</i>
+          <span>Магазин</span>
+        </div>
         <span class="arrow">›</span>
       </div>
+
       <div class="card" @click="goTo('reviews')">
-        <span>Отзывы</span>
-        <span class="badge">{{ reviewCount }}</span>
+        <div class="left">
+          <i class="icon">⭐</i>
+          <span>Отзывы</span>
+        </div>
+        <span class="badge blue">{{ reviewCount }}</span>
       </div>
+
       <div class="card" @click="goTo('company')">
-        <span>О компании</span>
+        <div class="left">
+          <i class="icon">🏢</i>
+          <span>О компании</span>
+        </div>
         <span class="arrow">›</span>
       </div>
     </div>
@@ -33,7 +51,6 @@ import api from '../api'
 const router = useRouter()
 const reviewCount = ref(0)
 
-// можно заранее подгрузить количество отзывов
 onMounted(async () => {
   try {
     const { data: reviews } = await api.get('/salon/reviews')
@@ -44,46 +61,101 @@ onMounted(async () => {
 })
 
 function goTo(name) {
-  // в зависимости от имени маршрута
   router.push({ name })
 }
 </script>
 
 <style scoped>
-.section-title {
-  text-align: center;
-  font-size: clamp(0.75rem,5vw,1.2rem);
-  font-weight: bold;  
-  display: block;
-  padding:clamp(1rem,5vw,1.5rem);
-  border-radius: 8px;
-  margin: 1rem auto;
-  width: min(85%, 35rem);
-  box-sizing: border-box;
-}
-
-.cards {
+.base {
   display: flex;
   flex-direction: column;
-  gap: clamp(0.5rem,3vw,1rem);
-  padding: 0 clamp(0.5rem,3vw,1rem);  
+  align-items: center;
+  background-color: #f7f6f8;
+  min-height: 100vh;
+  padding-top: 2rem;
 }
 
+/* Главная кнопка */
+.main-button {
+  background-color: #6267ee;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  width: min(90%, 400px);
+  transition: background 0.2s;
+  margin-bottom: 1.5rem;
+}
+
+.main-button:hover {
+  background-color: #4f54d8;
+}
+
+/* Список карточек */
+.cards {
+  width: min(90%, 1000px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/* Карточки */
 .card {
-  border-radius: 12px;
-  padding:clamp(1rem, 5vw, 1.5rem);
-  font-size: clamp(0.75rem, 4vw, 1rem);
+  background: white;
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   cursor: pointer;
+  transition: transform 0.1s ease-in-out, box-shadow 0.1s;
 }
 
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+/* Левая часть с иконкой */
+.left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #3a3a3a;
+  font-weight: 500;
+}
+
+/* Иконки (можно заменить на svg или fontawesome) */
+.icon {
+  font-size: 1.2rem;
+}
+
+/* Индикаторы */
 .badge {
   border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
   padding: 0.2rem 0.6rem;
-  font-size: clamp(0.7rem, 3vw, 0.9rem);
-  font-weight: bold;
+  min-width: 20px;
+  text-align: center;
+}
+
+.orange {
+  background-color: #fbbf24;
+  color: white;
+}
+
+.blue {
+  background-color: #d9dcff;
+  color: #3a3a3a;
+}
+
+/* Стрелка */
+.arrow {
+  color: #888;
+  font-size: 1.3rem;
 }
 </style>

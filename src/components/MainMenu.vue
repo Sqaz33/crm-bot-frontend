@@ -1,8 +1,13 @@
 <template>
-  <div class="main-menu">
+  <header class="main-header">
     <div class="salon-info">
-      <div class="salon-name">{{ salon.name }}</div>
-      <div class="salon-desc">{{ salon.description }}</div>
+      <div class="salon-logo">
+        <!-- <img src="@/assets/logo.svg" alt="Логотип" /> -->
+      </div>
+      <div class="salon-text">
+        <div class="salon-name">{{ salon.name }}</div>
+        <div class="salon-desc">{{ salon.description }}</div>
+      </div>
     </div>
 
     <nav class="menu">
@@ -13,9 +18,7 @@
         :class="{ active: activeItem === item.path }"
         @click="navigate(item)"
       >
-        <span class="icon">
-          <img :src="item.icon" :class="item.iconSize" alt="icon" />
-        </span>
+        <img :src="item.icon" :class="item.iconSize" alt="icon" />
         <span>{{ item.label }}</span>
       </div>
     </nav>
@@ -23,7 +26,7 @@
     <Modal :visible="showShareModal" @close="showShareModal = false">
       <ShareModal />
     </Modal>
-  </div>
+  </header>
 </template>
 
 <script setup>
@@ -45,8 +48,8 @@ const activeItem = ref(route.path)
 const showShareModal = ref(false)
 
 const salon = ref({
-  name: 'Загрузка...',
-  description: '',
+  name: 'Название',
+  description: 'тип заведения',
   address_url: ''
 })
 
@@ -55,7 +58,7 @@ onMounted(async () => {
     const { data } = await api.get('/salon/info')
     salon.value = {
       name: data.name,
-      description: data.description,
+      description: data.description || 'тип заведения',
       address_url: data.address_url || ''
     }
   } catch {
@@ -73,20 +76,16 @@ watch(() => route.path, (p) => {
 
 const items = [
   { label: 'Адрес', path: '/address', icon: AddressIcon, iconSize: 'icon1' },
-  { label: 'Записи', path: '/records', icon: RecordsIcon, iconSize: 'icon2' },
+  { label: 'Записи', path: '/records', icon: RecordsIcon, iconSize: 'icon1' },
   { label: 'Поделиться', path: '/share', icon: ShareIcon, iconSize: 'icon1' },
-  { label: 'Профиль', path: '/profile', icon: ProfileIcon, iconSize: 'icon2' }
+  { label: 'Профиль', path: '/profile', icon: ProfileIcon, iconSize: 'icon1' }
 ]
 
 function navigate(item) {
   if (item.label === 'Адрес') {
     if (salon.value.address_url) {
       const win = window.open(salon.value.address_url, '_blank')
-      if (win) {
-        win.opener = null
-      } else {
-        console.log('Браузер заблокировал всплывающее окно. Разрешите их в настройках.')
-      }
+      if (win) win.opener = null
     } else {
       console.log('Ссылка на адрес недоступна')
     }
@@ -100,88 +99,83 @@ function navigate(item) {
 </script>
 
 <style scoped>
-.main-menu, .salon-info {
+.main-header {
   display: flex;
-	box-sizing: border-box;
-}
-
-.main-menu { 
   align-items: center;
-  flex-wrap: wrap;
-  justify-content: space-between; 
-  padding: 0; 
+  justify-content: space-between;
+  flex-wrap: nowrap;
   width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  padding: 0.6rem 1.5rem;
+  box-sizing: border-box;
 }
 
+/* Левая часть — логотип и текст */
 .salon-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.salon-logo img {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: #6267ee;
+  padding: 4px;
+}
+
+.salon-text {
+  display: flex;
   flex-direction: column;
-  padding: clamp(0.75rem,4vw,1rem);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
-  text-align: center;
+  justify-content: center;
 }
 
 .salon-name {
-  font-size: clamp(0.75rem, 4vw, 1rem);
-  font-weight: bold;
-  
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #222;
 }
 
 .salon-desc {
-  font-size: clamp(0.3rem,2vw,0.6rem);
-  opacity: 0.7;
-  margin-top: 0.25rem;
-  
+  font-size: 0.75rem;
+  color: #888;
 }
 
+/* Меню справа */
 .menu {
   display: flex;
-  flex-wrap: nowrap;
-  padding: 0.5rem 1rem;
-  box-sizing: border-box;
-  width: clamp(25rem, 100%, 30rem);
-  justify-content: space-between;
+  align-items: center;
+  gap: 2.5rem;
 }
 
 .menu-item {
-  text-align: center;
-  padding: clamp(0.5rem, 2vw, 0.75rem);
-  cursor: pointer;
-  transition: background-color 0.2s;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-sizing: border-box;
-  }
- 
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: #333;
+  transition: color 0.2s;
+}
+
+.menu-item:hover {
+  color: #6267ee;
+}
 
 .menu-item.active {
-  background-color:var(--color-secondary);
+  color: #6267ee;
 }
 
-.menu-item:hover:not(.active) {
-  background-color: rgba(0, 123, 255, 0.2);
+.menu-item img {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 0.2rem;
 }
 
-.menu-item .icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;       
-  margin-bottom: 0.3rem;
-  
-}
-
-.menu-item .icon img {
-  object-fit: contain;
-}
 .icon1 {
-  width: clamp(1.9rem, 6vw, 2.4rem);
-  height: clamp(1.9rem, 6vw, 2.4rem);
-}
-
-.icon2{
-  width: clamp(1.6rem, 5vw, 1.6rem);
-  height: clamp(1.6rem, 5vw, 1.6rem);
+  width: 22px;
+  height: 22px;
 }
 </style>
