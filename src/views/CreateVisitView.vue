@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <form class="visit-form" @submit.prevent="openConfirmModal">
+    <form class="visit-form" @submit.prevent="submitVisit">
       <div class="form-label">ПРОФИЛЬ КЛИЕНТА</div>
       <div class="client-block">
         <span class="client-icon">👤</span>
@@ -60,26 +60,58 @@
       <button class="btn-submit" type="submit" :disabled="submitting || !accepted">Записаться</button>
 
       <div v-if="errorMsg" class="error-msg">{{ errorMsg }}</div>
-      <div v-if="success" class="success-msg">Запись успешно создана!</div>
     </form>
 
-    <!-- Модальное окно подтверждения -->
-    <div v-if="showConfirmModal" class="modal-overlay">
-      <div class="modal">
-        <h3>Подтверждение записи</h3>
-        <p>Вы уверены, что хотите оформить запись с указанными данными?</p>
-        <div class="modal-buttons">
-          <button @click="confirmBooking" :disabled="submitting">
-            Да, подтверждаю
+    <TermsModal :visible="showTerms" @close="showTerms = false" />
+    
+    <!-- Модальное окно успешной записи -->
+    <div v-if="showSuccessModal" class="modal-overlay" @click.self="closeSuccessModal">
+      <div class="success-modal">
+        <!-- Крестик закрытия -->
+        <button class="close-btn" @click="closeSuccessModal">
+          <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15.5 5L5.5 15M5.5 5L15.5 15" stroke="#454558" stroke-width="1.5286" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <!-- Контент модального окна -->
+        <div class="modal-content">
+          <!-- Карточка салона -->
+          <div class="salon-card">
+            <div class="salon-logo">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.5 13.5V21C7.5 21 7.5 27 13.5 27H22.5C28.5 27 28.5 21 28.5 21V13.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M28.5 16.2857V27H31.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4.5 16.2857V27H7.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M7.5 14.625L13.5 12L18 6L22.5 12L28.5 14.625" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="salon-info">
+              <div class="salon-name">{{ salonInfo.name }}</div>
+              <div class="salon-type">{{ salonInfo.description }}</div>
+            </div>
+          </div>
+
+          <!-- Основной текст -->
+          <div class="success-text">
+            ✏️ <strong>{{ clientName }}</strong>, Вы успешно записаны на <strong>{{ summary.service?.name }}</strong>
+            <br>
+            👤 К специалисту - <strong>{{ summary.staff?.name }}</strong>
+            <br>
+            ⏰ Дата и время: <strong>{{ summary.date }}, {{ summary.time }}</strong>
+          </div>
+
+          <!-- Кнопки -->
+          <button class="btn-my-records" @click="goToRecords">
+            Мои записи
           </button>
-          <button @click="showConfirmModal = false" :disabled="submitting">
-            Отмена
+          
+          <button class="btn-ask-admin" @click="askAdmin">
+            Задать вопрос администратору
           </button>
         </div>
       </div>
     </div>
-
-    <TermsModal :visible="showTerms" @close="showTerms = false" />
   </div>
 </template>
 
@@ -94,15 +126,15 @@ const PROFILE_KEY = 'profile_data'
 const router = useRouter()
 
 const summary = reactive({ date: '', time: '', staff: null, service: null })
+const salonInfo = reactive({ name: 'Загрузка...', description: '' })
 
 const comment = ref('')
 const remindLeadHours = ref(0) 
 const submitting = ref(false)
 const errorMsg = ref('')
-const success = ref(false)
+const showSuccessModal = ref(false)
 const accepted = ref(false)
 const showTerms = ref(false)
-const showConfirmModal = ref(false)
 
 const staffId = ref(null)
 const serviceId = ref(null)
@@ -148,7 +180,22 @@ function clearVisitData() {
   document.cookie = `${VISIT_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`
 }
 
+async function loadSalonInfo() {
+  try {
+    const { data } = await api.get('/salon/info')
+    salonInfo.name = data.name || 'Название салона'
+    salonInfo.description = data.description || 'тип заведения'
+  } catch (e) {
+    console.error('[LoadSalon] Ошибка:', e)
+    salonInfo.name = 'Название салона'
+    salonInfo.description = 'тип заведения'
+  }
+}
+
 onMounted(async () => {
+  // Загружаем информацию о салоне
+  await loadSalonInfo()
+  
   try {
     const raw = localStorage.getItem(VISIT_KEY)
     if (!raw) { errorMsg.value = 'Не выбраны данные для записи.'; return }
@@ -179,7 +226,7 @@ onMounted(async () => {
   }
 })
 
-function openConfirmModal() {
+async function submitVisit() {
   if (!staffId.value || !serviceId.value || !visitDateISO.value) {
     errorMsg.value = 'Заполните сотрудника, услугу и дату.'
     return
@@ -188,13 +235,9 @@ function openConfirmModal() {
     errorMsg.value = 'Необходимо принять условия использования.'
     return
   }
-  
-  errorMsg.value = ''
-  showConfirmModal.value = true
-}
 
-async function confirmBooking() {
   submitting.value = true
+  errorMsg.value = ''
 
   try {
     const payload = {
@@ -209,13 +252,11 @@ async function confirmBooking() {
     const res = await api.post('/visits/', payload)
     console.log('[VisitCreate] OK', res.status, res.data)
 
-    showConfirmModal.value = false
-    success.value = true
+    // Показываем модальное окно вместо редиректа
+    showSuccessModal.value = true
     clearVisitData()
-    setTimeout(() => router.push({ name: 'home' }), 1200)
   } catch (e) {
     console.error('[VisitCreate] Ошибка:', e)
-    showConfirmModal.value = false
     const s = e?.response?.status
     const detail = e?.response?.data?.detail
     errorMsg.value =
@@ -226,6 +267,22 @@ async function confirmBooking() {
   } finally {
     submitting.value = false
   }
+}
+
+function closeSuccessModal() {
+  showSuccessModal.value = false
+  router.push({ name: 'home' })
+}
+
+function goToRecords() {
+  showSuccessModal.value = false
+  router.push('/records')
+}
+
+function askAdmin() {
+  // Открываем Telegram бота для вопросов
+  const botLink = 'https://t.me/CheckAuthorization_bot'
+  window.open(botLink, '_blank')
 }
 </script>
 
@@ -238,23 +295,27 @@ async function confirmBooking() {
   padding: 1rem; 
   box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
 }
+
 .visit-summary {
-   background: #fff;
-   border-radius: 8px; 
-   padding: 1rem; 
-   margin-bottom: 1rem; 
-   font-size: 1.1rem; 
-  }
+  background: #fff;
+  border-radius: 8px; 
+  padding: 1rem; 
+  margin-bottom: 1rem; 
+  font-size: 1.1rem; 
+}
+
 .date-row { 
   display: flex; 
   justify-content: space-between; 
   margin-bottom: 1rem; 
 }
+
 .staff-block { 
   display: flex; 
   align-items: center; 
   margin-bottom: 1rem; 
 }
+
 .avatar { 
   width: 48px; 
   height: 48px; 
@@ -263,24 +324,30 @@ async function confirmBooking() {
   object-fit: cover; 
   background: #eee; 
 }
+
 .staff-info { 
   flex: 1; 
 }
+
 .staff-name {
-   font-weight: bold; 
-  }
+  font-weight: bold; 
+}
+
 .staff-role { 
   font-size: .92em; 
   color: #888; 
 }
+
 .service-block, .total-block { 
   margin-bottom: 1rem; 
 }
+
 .service-price, .total-price { 
   font-weight: bold; 
   font-size: 1.2em; 
   float: right; 
 }
+
 .total-block { 
   background: #a3ddff; 
   border-radius: 6px; 
@@ -291,11 +358,13 @@ async function confirmBooking() {
   justify-content: space-between; 
   align-items: center; 
 }
+
 .visit-form {
-   background: #fff; 
-   border-radius: 8px; 
-   padding: 1rem; 
-  }
+  background: #fff; 
+  border-radius: 8px; 
+  padding: 1rem; 
+}
+
 .form-label { 
   font-size: .88em; 
   font-weight: bold; 
@@ -303,6 +372,7 @@ async function confirmBooking() {
   margin: 1.1em 0 .4em; 
   letter-spacing: .03em; 
 }
+
 .client-block { 
   background: #e5f5ff; 
   padding: .6em 1em; 
@@ -313,6 +383,7 @@ async function confirmBooking() {
   margin-bottom: 1em; 
   gap: .7em; 
 }
+
 .client-icon { 
   font-size: 1.25em; 
   background: #00b172; 
@@ -320,12 +391,15 @@ async function confirmBooking() {
   padding: .2em .45em; 
   border-radius: 6px; 
 }
+
 .client-name { 
   font-size: 1em; 
 }
+
 .form-section { 
   margin-bottom: 1.1rem;
- }
+}
+
 textarea { 
   width: 100%; 
   border-radius: 6px; 
@@ -334,6 +408,7 @@ textarea {
   padding: .5em; 
   font-size: 1em; 
 }
+
 select { 
   border-radius: 4px; 
   padding: .3em; 
@@ -341,6 +416,7 @@ select {
   font-size: 1em; 
   width: 100%; 
 }
+
 .legal-row { 
   display: flex;
   align-items: center; 
@@ -348,15 +424,18 @@ select {
   gap: .5em; 
   margin-bottom: 1.1em; 
 }
+
 .legal-row input[type="checkbox"] {
   width: 1.1em;
   height: 1.1em; 
 }
+
 .legal-row a {
-   color: #3471d6; 
-   text-decoration: underline; 
-   cursor: pointer; 
-  }
+  color: #3471d6; 
+  text-decoration: underline; 
+  cursor: pointer; 
+}
+
 .btn-submit { 
   width: 100%; 
   background: #2F80EC; 
@@ -369,77 +448,311 @@ select {
   font-weight: bold; 
   margin-top: 1em; 
 }
+
 .btn-submit[disabled] { 
   background: #ccc; 
   cursor: not-allowed;
- }
+}
+
 .error-msg { 
   color: #c00; 
   margin-top: 1em; 
   text-align: center;
- }
-.success-msg { 
-  color: #2d9400; 
-  margin-top: 1em; 
-  text-align: center; 
 }
 
-/* Модальное окно - стили как в RecordView.vue */
+/* МОДАЛЬНОЕ ОКНО УСПЕШНОЙ ЗАПИСИ - FLEXBOX + РАЗМЕРЫ ИЗ FIGMA */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(69, 69, 88, 0.525);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 9999;
 }
 
-.modal {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 10px;
-  width: 320px;
+.success-modal {
+  position: relative;
+  width: 905px;
   max-width: 90%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  background: #FFFFFF;
+  border-radius: 12px;
+  box-sizing: border-box;
 }
 
-.modal h3 {
-  margin: 0 0 1rem 0;
-}
-
-.modal p {
-  margin-bottom: 1rem;
-  color: #444;
-}
-
-.modal-buttons {
+.modal-content {
   display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
+  flex-direction: column;
+  padding: 48px 0 60px 0;
+  gap: 0;
 }
 
-.modal-buttons button {
-  padding: 0.5rem 1rem;
+.close-btn {
+  position: absolute;
+  top: 28px;
+  right: 54px;
+  background: none;
   border: none;
-  border-radius: 6px;
   cursor: pointer;
+  padding: 0;
+  width: 21px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
 }
 
-.modal-buttons button:first-child {
-  background-color: #1e88e5;
-  color: white;
+.close-btn:hover {
+  opacity: 0.7;
 }
 
-.modal-buttons button:last-child {
-  background-color: #ccc;
+.salon-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0 16px 41px;
+  background: #FFFFFF;
+  border-radius: 10px;
+  margin-left: 39px;
+  margin-right: 33px;
+  margin-bottom: 71px;
 }
 
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.salon-logo {
+  width: 64px;
+  height: 64px;
+  background: #666FE8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.salon-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.salon-name {
+  font-family: 'Geometria', 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 28px;
+  color: #454558;
+}
+
+.salon-type {
+  font-family: 'Geometria', 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 24px;
+  color: #454558;
+}
+
+.success-text {
+  font-family: 'Geometria', 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 29px;
+  color: #454558;
+  margin-left: 80px;
+  margin-right: 116px;
+  margin-bottom: 57px;
+}
+
+.success-text strong {
+  font-weight: 500;
+  font-family: 'Geometria', 'Inter', sans-serif;
+}
+
+.btn-my-records {
+  width: 745px;
+  height: 56px;
+  margin-left: 80px;
+  margin-right: 80px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #666FE8;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Geometria', 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 24px;
+  color: #FFFFFF;
+  transition: background 0.2s;
+  box-sizing: border-box;
+}
+
+.btn-my-records:hover {
+  background: #5459c9;
+}
+
+.btn-ask-admin {
+  width: 745px;
+  height: 56px;
+  margin-left: 80px;
+  margin-right: 80px;
+  padding: 16px;
+  background: #EBEEF6;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Geometria', 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 24px;
+  color: #454558;
+  transition: background 0.2s;
+  box-sizing: border-box;
+}
+
+.btn-ask-admin:hover {
+  background: #dde0e8;
+}
+
+/* Адаптивность для планшетов */
+@media (max-width: 920px) {
+  .success-modal {
+    width: 95%;
+    max-width: 700px;
+  }
+  
+  .modal-content {
+    padding: 40px 0 50px 0;
+  }
+  
+  .salon-card {
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-left: 20px;
+  }
+  
+  .salon-name {
+    font-size: 22px;
+    line-height: 26px;
+  }
+  
+  .salon-type {
+    font-size: 18px;
+    line-height: 22px;
+  }
+  
+  .success-text {
+    margin-left: 30px;
+    margin-right: 30px;
+    font-size: 20px;
+    line-height: 26px;
+    margin-bottom: 40px;
+  }
+  
+  .btn-my-records {
+    width: calc(100% - 60px);
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-bottom: 16px;
+    font-size: 18px;
+  }
+  
+  .btn-ask-admin {
+    width: calc(100% - 60px);
+    margin-left: 30px;
+    margin-right: 30px;
+    font-size: 18px;
+  }
+  
+  .close-btn {
+    right: 30px;
+  }
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 600px) {
+  .success-modal {
+    width: 95%;
+    max-width: 100%;
+  }
+  
+  .modal-content {
+    padding: 32px 0 40px 0;
+  }
+  
+  .salon-card {
+    margin-left: 16px;
+    margin-right: 16px;
+    gap: 12px;
+    padding: 12px 0 12px 16px;
+    margin-bottom: 40px;
+  }
+  
+  .salon-logo {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .salon-logo svg {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .salon-name {
+    font-size: 18px;
+    line-height: 22px;
+  }
+  
+  .salon-type {
+    font-size: 16px;
+    line-height: 20px;
+  }
+  
+  .success-text {
+    font-size: 16px;
+    line-height: 22px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .btn-my-records {
+    margin-left: 20px;
+    margin-right: 20px;
+    width: calc(100% - 40px);
+    height: 48px;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  
+  .btn-ask-admin {
+    margin-left: 20px;
+    margin-right: 20px;
+    width: calc(100% - 40px);
+    height: 48px;
+    font-size: 16px;
+  }
+  
+  .close-btn {
+    top: 16px;
+    right: 16px;
+  }
 }
 </style>
