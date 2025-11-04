@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <form class="visit-form" @submit.prevent="submitVisit">
+    <form class="visit-form" @submit.prevent="openConfirmModal">
       <div class="form-label">ПРОФИЛЬ КЛИЕНТА</div>
       <div class="client-block">
         <span class="client-icon">👤</span>
@@ -63,6 +63,22 @@
       <div v-if="success" class="success-msg">Запись успешно создана!</div>
     </form>
 
+    <!-- Модальное окно подтверждения -->
+    <div v-if="showConfirmModal" class="modal-overlay">
+      <div class="modal">
+        <h3>Подтверждение записи</h3>
+        <p>Вы уверены, что хотите оформить запись с указанными данными?</p>
+        <div class="modal-buttons">
+          <button @click="confirmBooking" :disabled="submitting">
+            Да, подтверждаю
+          </button>
+          <button @click="showConfirmModal = false" :disabled="submitting">
+            Отмена
+          </button>
+        </div>
+      </div>
+    </div>
+
     <TermsModal :visible="showTerms" @close="showTerms = false" />
   </div>
 </template>
@@ -86,6 +102,7 @@ const errorMsg = ref('')
 const success = ref(false)
 const accepted = ref(false)
 const showTerms = ref(false)
+const showConfirmModal = ref(false)
 
 const staffId = ref(null)
 const serviceId = ref(null)
@@ -162,7 +179,7 @@ onMounted(async () => {
   }
 })
 
-async function submitVisit() {
+function openConfirmModal() {
   if (!staffId.value || !serviceId.value || !visitDateISO.value) {
     errorMsg.value = 'Заполните сотрудника, услугу и дату.'
     return
@@ -171,9 +188,13 @@ async function submitVisit() {
     errorMsg.value = 'Необходимо принять условия использования.'
     return
   }
-
-  submitting.value = true
+  
   errorMsg.value = ''
+  showConfirmModal.value = true
+}
+
+async function confirmBooking() {
+  submitting.value = true
 
   try {
     const payload = {
@@ -188,11 +209,13 @@ async function submitVisit() {
     const res = await api.post('/visits/', payload)
     console.log('[VisitCreate] OK', res.status, res.data)
 
+    showConfirmModal.value = false
     success.value = true
     clearVisitData()
     setTimeout(() => router.push({ name: 'home' }), 1200)
   } catch (e) {
     console.error('[VisitCreate] Ошибка:', e)
+    showConfirmModal.value = false
     const s = e?.response?.status
     const detail = e?.response?.data?.detail
     errorMsg.value =
@@ -307,7 +330,8 @@ textarea {
   width: 100%; 
   border-radius: 6px; 
   border: 1px solid #d3d3d3; 
-  min-height: 50px; padding: .5em; 
+  min-height: 50px; 
+  padding: .5em; 
   font-size: 1em; 
 }
 select { 
@@ -326,7 +350,8 @@ select {
 }
 .legal-row input[type="checkbox"] {
   width: 1.1em;
-  height: 1.1em; }
+  height: 1.1em; 
+}
 .legal-row a {
    color: #3471d6; 
    text-decoration: underline; 
@@ -357,5 +382,64 @@ select {
   color: #2d9400; 
   margin-top: 1em; 
   text-align: center; 
-  }
+}
+
+/* Модальное окно - стили как в RecordView.vue */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 320px;
+  max-width: 90%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal h3 {
+  margin: 0 0 1rem 0;
+}
+
+.modal p {
+  margin-bottom: 1rem;
+  color: #444;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.modal-buttons button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-buttons button:first-child {
+  background-color: #1e88e5;
+  color: white;
+}
+
+.modal-buttons button:last-child {
+  background-color: #ccc;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 </style>
