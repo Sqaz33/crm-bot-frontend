@@ -2,7 +2,7 @@
   <div class="base">
 
     <!-- Верхняя кнопка -->
-    <button class="main-button" @click="goTo('appointment')">
+    <button class="main-button" @click="goTo('appointmant')">
       Персональные услуги
     </button>
 
