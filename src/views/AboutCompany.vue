@@ -8,7 +8,7 @@
 					<div class="avatar" v-else></div>
 					<div class="info">
 						<div class="name">{{ company.name }}</div>
-						<div class="rating">⭐ {{ company.rating }}</div>
+						<!-- <div class="rating">⭐ {{ company.rating }}</div> -->
 						<p>{{ company.description }}</p>
 					</div>
 				</div>
@@ -17,7 +17,7 @@
 					<p>{{ company.about_company }}</p>
 				</section>
 
-				<section class="reviews">
+				<!-- <section class="reviews">
 					<h2>Отзывы <span class="count">{{ reviews.length }}</span></h2>
 					<div v-for="review in reviews" :key="review.id" class="review">
 						<div class="review-header">
@@ -30,7 +30,7 @@
 						</div>
 						<p class="review-text">{{ review.text }}</p>
 					</div>
-				</section>
+				</section> -->
 			</div>
     </main>
 		
@@ -50,7 +50,7 @@ const company = ref({
   photo: ''
 })
 
-const reviews = ref([])
+// const reviews = ref([])
 
 onMounted(async () => {
   try {
@@ -65,14 +65,14 @@ onMounted(async () => {
     }
 
     
-    const { data: rev } = await api.get('/salon/reviews')
-    reviews.value = rev.map(r => ({
-      id: r.id,
-      author: r.client_name,
-      date: new Date(r.created_at).toLocaleDateString(),
-      rating: r.rating,
-      text: r.comment
-    }))
+    // const { data: rev } = await api.get('/salon/reviews')
+    // reviews.value = rev.map(r => ({
+    //   id: r.id,
+    //   author: r.client_name,
+    //   date: new Date(r.created_at).toLocaleDateString(),
+    //   rating: r.rating,
+    //   text: r.comment
+    // }))
   } catch (e) {
     console.error('Ошибка загрузки данных компании/отзывов:', e)
   }

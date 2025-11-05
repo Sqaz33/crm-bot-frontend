@@ -11,7 +11,7 @@
       <div v-else class="avatar avatar--empty"/>
       <h2 class="name">{{ staff.name }}</h2>
       <div class="spec">{{ staff.specialization }}</div>
-      <div class="rating">⭐ {{ staff.rating }}</div>
+      <!-- <div class="rating">⭐ {{ staff.rating }}</div> -->
       <p class="about">{{ staff.about || 'Информация отсутствует.' }}</p>
     </div>
 
@@ -19,7 +19,7 @@
       Выбрать
     </button>
 
-    <section class="reviews">
+    <!-- <section class="reviews">
       <h3>Отзывы ({{ reviews.length }})</h3>
       <div v-for="r in reviews" :key="r.id" class="review">
         <div class="rev-header">
@@ -31,7 +31,7 @@
         </div>
         <p class="rev-text">{{ r.comment }}</p>
       </div>
-    </section>
+    </section> -->
   </div>
 </div>
 </template>

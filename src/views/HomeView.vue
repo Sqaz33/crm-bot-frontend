@@ -24,13 +24,13 @@
         <span class="arrow">›</span>
       </div>
 
-      <div class="card" @click="goTo('reviews')">
+      <!-- <div class="card" @click="goTo('reviews')">
         <div class="left">
           <i class="icon">⭐</i>
           <span>Отзывы</span>
         </div>
         <span class="badge blue">{{ reviewCount }}</span>
-      </div>
+      </div> -->
 
       <div class="card" @click="goTo('company')">
         <div class="left">

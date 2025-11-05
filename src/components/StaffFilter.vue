@@ -40,10 +40,10 @@
             >{{ spec }}<span v-if="i < staff.specializations.length - 1">, </span></span>
           </div>
         </div>
-        <div
+        <!-- <div
           class="rating"
           @click.stop="onReview(staff.id)"
-        >⭐ {{ staff.rating }}</div>
+        >⭐ {{ staff.rating }}</div> -->
       </div>
     </div>
   </div>
