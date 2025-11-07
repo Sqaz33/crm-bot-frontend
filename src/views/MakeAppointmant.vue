@@ -70,7 +70,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api'
 
