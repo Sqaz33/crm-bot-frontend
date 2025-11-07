@@ -98,7 +98,7 @@
             </div>
 
             <!-- Кнопка "Оставить отзыв" только для прошедших -->
-            <div
+            <!-- <div
               v-if="activeTab === 'past'"
               class="leave-review"
               @click.stop
@@ -106,7 +106,7 @@
               <button class="leave-review-btn">
                 Оставить отзыв
               </button>
-            </div>
+            </div> -->
           </div>
         </div>
 
