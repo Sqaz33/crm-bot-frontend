@@ -312,4 +312,32 @@ function confirmProfile() {
 .btn-submit:hover {
   background: #0056b3;
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 320px;
+}
+.field {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
 </style>
