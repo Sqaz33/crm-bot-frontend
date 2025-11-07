@@ -41,6 +41,7 @@ deploy-dev:
         -p 127.0.0.1:5173:5173 \
         "$REGISTRY_URL/$PROJECT_NAME/frontend:$CI_COMMIT_REF_SLUG"
 
+
 deploy-prod:
   stage: deploy
   tags: [deploy]
