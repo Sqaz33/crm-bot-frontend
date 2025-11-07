@@ -34,7 +34,7 @@
   <!-- Модалка для редактирования профиля -->
   <div v-if="showProfileModal" class="modal-overlay">
     <div class="modal">
-      <h3>Ваши данные. При необходимости вы можете их изменить.</h3>
+      <h3>Проверьте данные</h3>
 
       <div class="field">
         <label for="firstName">Имя</label>
