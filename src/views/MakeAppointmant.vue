@@ -16,20 +16,57 @@
         <div class="label">
           Услуги:
           {{ summary.totalPrice !== null
-             ? (summary.totalPrice > 0 ? summary.totalPrice + ' ₽' : '0 ₽')
-             : '—'
+            ? (summary.totalPrice > 0 ? summary.totalPrice + ' ₽' : '0 ₽')
+            : '—'
           }}
         </div>
         <div class="arrow">›</div>
       </li>
-      
     </ul>
   </div>
+
   <button class="btn-submit"
     :disabled="!canSubmit"
-    @click="submitBooking">
+    @click="openProfileModal">
     Оформить запись
   </button>
+
+  <!-- Модалка для редактирования профиля -->
+  <div v-if="showProfileModal" class="modal-overlay">
+    <div class="modal">
+      <h3>Ваши данные. При необходимости вы можете их изменить.</h3>
+
+      <div class="field">
+        <label for="firstName">Имя</label>
+        <input id="firstName" v-model="form.firstName" />
+      </div>
+
+      <div class="field">
+        <label for="lastName">Фамилия</label>
+        <input id="lastName" v-model="form.lastName" />
+      </div>
+
+      <div class="field">
+        <label for="middleName">Отчество</label>
+        <input id="middleName" v-model="form.middleName" />
+      </div>
+
+      <div class="field">
+        <label for="phone">Телефон</label>
+        <input id="phone" v-model="form.phone" readonly />
+      </div>
+
+      <div class="field">
+        <label for="email">E-mail</label>
+        <input id="email" v-model="form.email" readonly />
+      </div>
+
+      <div class="modal-buttons">
+        <button @click="confirmProfile">Продолжить</button>
+        <button @click="showProfileModal = false">Отмена</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -37,6 +74,9 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api'
 
+
+const STORAGE_KEY = 'profile_data'
+const COOKIE_KEY  = 'profile_data'
 const router = useRouter()
 const VISIT_KEY = 'visit_data'
 const summary = ref({
@@ -47,6 +87,35 @@ const summary = ref({
   visit_time: null,
   services_id: []
 })
+
+function readProfileStorage() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}
+  } catch {
+    return {}
+  }
+}
+
+function writeProfileStorage(obj) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(obj))
+}
+
+function writeProfileCookie(obj) {
+  const json = encodeURIComponent(JSON.stringify(obj))
+  document.cookie =
+    `${COOKIE_KEY}=${json}` +
+    `; path=/; max-age=${365*24*60*60}`
+}
+
+const form = reactive({
+  firstName: '',
+  lastName: '',
+  middleName: '',
+  phone: '',
+  email: ''
+})
+
+const showProfileModal = ref(false)
 
 async function loadSummary() {
   const raw = localStorage.getItem(VISIT_KEY)
@@ -116,16 +185,43 @@ function goTo(stepName) {
   router.push({ name: stepName })
 }
 
-function goBack() {
-  router.back()
-}
-
 function submitBooking() {
   if (!canSubmit.value) return
   router.push({ name: 'createvisit' })
 }
 
-onMounted(loadSummary)
+onMounted(() => {
+  loadSummary()
+  const saved = readProfileStorage()
+  form.firstName = saved.firstName ?? ''
+  form.lastName = saved.lastName ?? ''
+  form.middleName = saved.middleName ?? ''
+  form.phone = saved.phone ?? ''
+  form.email = saved.email ?? ''
+})
+
+function saveProfile() {
+  const payload = {
+    firstName: form.firstName,
+    lastName: form.lastName,
+    middleName: form.middleName,
+    phone: form.phone,
+    email: form.email
+  }
+  writeProfileStorage(payload)
+  writeProfileCookie(payload)
+}
+
+function openProfileModal() {
+  showProfileModal.value = true
+}
+
+function confirmProfile() {
+  saveProfile()
+  showProfileModal.value = false
+  submitBooking() 
+}
+
 </script>
 
 
