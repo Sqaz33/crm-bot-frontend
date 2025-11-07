@@ -103,51 +103,65 @@ function navigate(item) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: nowrap;
   width: 100%;
   background-color: #ffffff;
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  padding: 0.6rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   box-sizing: border-box;
+  min-height: 60px;
 }
 
 /* Левая часть — логотип и текст */
 .salon-info {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.salon-logo {
+  flex-shrink: 0;
 }
 
 .salon-logo img {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 8px;
   background-color: #6267ee;
-  padding: 4px;
+  padding: 6px;
+  display: block;
 }
 
 .salon-text {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 0; /* Для корректной работы text-overflow */
 }
 
 .salon-name {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #222;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .salon-desc {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Меню справа */
 .menu {
   display: flex;
   align-items: center;
-  gap: 2.5rem;
+  gap: 2rem;
+  flex-shrink: 0;
 }
 
 .menu-item {
@@ -158,6 +172,7 @@ function navigate(item) {
   font-size: 0.75rem;
   color: #333;
   transition: color 0.2s;
+  white-space: nowrap;
 }
 
 .menu-item:hover {
@@ -169,13 +184,127 @@ function navigate(item) {
 }
 
 .menu-item img {
-  width: 22px;
-  height: 22px;
-  margin-bottom: 0.2rem;
+  width: 24px;
+  height: 24px;
+  margin-bottom: 0.25rem;
 }
 
 .icon1 {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
+}
+
+/* Адаптация для планшетов */
+@media (max-width: 1024px) {
+  .main-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .menu {
+    gap: 1.5rem;
+  }
+  
+  .salon-logo img {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .salon-name {
+    font-size: 0.9rem;
+  }
+  
+  .salon-desc {
+    font-size: 0.75rem;
+  }
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+  .main-header {
+    padding: 0.5rem 0.75rem;
+    min-height: 56px;
+  }
+  
+  .salon-info {
+    gap: 0.5rem;
+    max-width: 40%;
+  }
+  
+  .salon-logo img {
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+  }
+  
+  .salon-name {
+    font-size: 0.85rem;
+  }
+  
+  .salon-desc {
+    font-size: 0.7rem;
+  }
+  
+  .menu {
+    gap: 1rem;
+  }
+  
+  .menu-item {
+    font-size: 0.65rem;
+  }
+  
+  .menu-item img {
+    width: 20px;
+    height: 20px;
+    margin-bottom: 0.15rem;
+  }
+  
+  .icon1 {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 480px) {
+  .main-header {
+    padding: 0.5rem;
+  }
+  
+  .salon-info {
+    gap: 0.4rem;
+    max-width: 35%;
+  }
+  
+  .salon-logo img {
+    width: 28px;
+    height: 28px;
+    padding: 3px;
+  }
+  
+  .salon-name {
+    font-size: 0.75rem;
+  }
+  
+  .salon-desc {
+    font-size: 0.65rem;
+  }
+  
+  .menu {
+    gap: 0.75rem;
+  }
+  
+  .menu-item {
+    font-size: 0.6rem;
+  }
+  
+  .menu-item img {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .icon1 {
+    width: 18px;
+    height: 18px;
+  }
 }
 </style>
