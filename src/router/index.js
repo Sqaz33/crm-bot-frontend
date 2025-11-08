@@ -31,7 +31,7 @@ const routes = [
         path: 'records',
         name: 'records',
         component: RecordsView,
-        meta: { title: 'Записи' }
+        meta: { title: 'Мои записи' }
       },
      {
         path: 'profile',

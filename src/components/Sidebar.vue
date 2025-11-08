@@ -12,7 +12,10 @@
           :class="{ active: route.path === item.path }"
         >
           <RouterLink :to="item.path" class="menu-link" @click="closeSidebar">
-            <span class="icon"></span>
+            <span class="icon" v-if="item.icon">
+              <img :src="item.icon" :alt="item.label" />
+            </span>
+            <span class="icon-placeholder" v-else></span>
             <span class="label">{{ item.label }}</span>
             <span class="arrow">›</span>
           </RouterLink>
@@ -31,36 +34,31 @@
 </template>
 
 <script setup>
-import { RouterLink, useRoute, useRouter} from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const props = defineProps({
   items: {
     type: Array,
-    required: true,
-    default: () => [],
+    default: () => []
   },
   isOpen: {
     type: Boolean,
-    default: false
-  },
-  sidebarButtonClicked: {
-    type: Boolean,
-    default: false
+    default: true
   }
 })
 
-const emit = defineEmits(['close'])
 const route = useRoute()
 const router = useRouter()
-
-function goBack() {
-  router.push('/')
-}
+const emit = defineEmits(['close'])
 
 function closeSidebar() {
   emit('close')
 }
 
+function goBack() {
+  router.back()
+  closeSidebar()
+}
 </script>
 
 <style scoped>
@@ -99,7 +97,6 @@ function closeSidebar() {
   height: 100%;
   display: flex;
   flex-direction: column;
-  
   box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   z-index: 1000;
@@ -141,13 +138,27 @@ function closeSidebar() {
   font-weight: bold;
 }
 
-.icon {
+.icon,
+.icon-placeholder {
   width: 24px;
   height: 24px;
-  background-color: #ddd;
   border-radius: 4px;
   margin-right: 1rem;
   transition: margin-right 0.3s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-placeholder {
+  background-color: #ddd;
+}
+
+.icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .label {
@@ -217,7 +228,8 @@ function closeSidebar() {
   transition: all 0.3s ease 0.1s;
 }
 
-.sidebar.collapsed .icon {
+.sidebar.collapsed .icon,
+.sidebar.collapsed .icon-placeholder {
   margin-right: 0;
   transition: margin-right 0.3s ease 0.1s;
 }
@@ -248,7 +260,8 @@ function closeSidebar() {
   transition: all 0.3s ease 0.1s;
 }
 
-.sidebar:not(.collapsed) .icon {
+.sidebar:not(.collapsed) .icon,
+.sidebar:not(.collapsed) .icon-placeholder {
   margin-right: 1rem;
   transition: margin-right 0.3s ease 0.1s;
 }
@@ -279,7 +292,8 @@ function closeSidebar() {
   transition: all 0.3s ease 0.1s;
 }
 
-.sidebar.collapsed:hover .icon {
+.sidebar.collapsed:hover .icon,
+.sidebar.collapsed:hover .icon-placeholder {
   margin-right: 1rem;
   transition: margin-right 0.3s ease 0.1s;
 }
@@ -290,27 +304,3 @@ function closeSidebar() {
   transition: all 0.3s ease 0.2s;
 }
 </style>
-
-
-<!-- пример использования
-<script setup>
-import SidebarMenu from '../components/Sidebar.vue'
-
-const menuItems = [
-  { label: 'Кошелёк', path: '/wallet' },
-  { label: 'Магазин', path: '/shop' },
-  { label: 'Отзывы', path: '/reviews' },
-  { label: 'О компании', path: '/about' },
-]
-</script>
-
-<template>
-  <div class="layout">
-    <SidebarMenu :items="menuItems" />
-    <main class="main-content">
-      <router-view />
-    </main>
-  </div>
-</template>
-
- -->

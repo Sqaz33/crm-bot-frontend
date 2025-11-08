@@ -1,19 +1,17 @@
 <template>
   <div class="records-page">
-    <div class="records-container review-view">
-      
-
+    <div class="records-container">
       <!-- Tabs -->
       <div class="tabs-container">
         <button
-          class="tab-btn1"
+          class="tab-btn"
           :class="{ active: activeTab === 'current' }"
           @click="switchTab('current')"
         >
           Текущие
         </button>
         <button
-          class="tab-btn2"
+          class="tab-btn"
           :class="{ active: activeTab === 'past' }"
           @click="switchTab('past')"
         >
@@ -33,7 +31,6 @@
             :key="visit.id"
             class="appointment-card"
             @click="goToVisit(visit.id, activeTab === 'past')"
-            style="cursor: pointer;"
           >
             <div class="card-header">
               <img
@@ -96,53 +93,40 @@
               </div>
               <div class="total-price">{{ visit.service.price }} ₽</div>
             </div>
-
-            <!-- Кнопка "Оставить отзыв" только для прошедших -->
-            <!-- <div
-              v-if="activeTab === 'past'"
-              class="leave-review"
-              @click.stop
-            >
-              <button class="leave-review-btn">
-                Оставить отзыв
-              </button>
-            </div> -->
           </div>
         </div>
 
         <!-- Если записей нет -->
-        <div v-else class="content">
-          <img
-            :src="activeTab === 'past'
-              ? 'src/assets/emptyRecordPast.svg'
-              : 'src/assets/emptyRecord.svg'"
-            alt="Нет записей"
-            class="empty-icon"
-          />
-          <p1>
+        <div v-else class="empty-content">
+          <div class="empty-icon-wrapper">
+            <img
+              src="../assets/emptyRecord.svg"
+              alt="Нет записей"
+              class="empty-icon"
+            />
+          </div>
+          <p class="empty-title">
             {{
               activeTab === 'past'
                 ? 'Нет прошедших записей'
                 : 'Увы, ничего не запланировано'
             }}
-          </p1>
-          <p2>
+          </p>
+          <p class="empty-description">
             {{
               activeTab === 'past'
                 ? 'У Вас еще не было завершенных записей'
                 : 'У Вас ни одной активной записи'
             }}
-          </p2>
+          </p>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-
 <script setup>
 import { ref, onMounted } from 'vue'
-import SidebarMenu from '../components/Sidebar.vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
 
@@ -155,12 +139,6 @@ function goToVisit(id, isOld) {
     query: { isOld: isOld.toString() } 
   })
 }
-const menuItems = [
-  { label: 'Кошелёк', path: '/wallet' },
-  { label: 'Магазин', path: '/shop' },
-  // { label: 'Отзывы', path: '/reviews' },
-  { label: 'О компании', path: '/company' }
-]
 
 const visits = ref([])
 const loading = ref(true)
@@ -252,27 +230,7 @@ function formatDate(iso) {
 onMounted(() => fetchVisits(activeTab.value))
 </script>
 
-
-
 <style scoped>
-
-
-
-.content {
-  flex: 1;
-  display: flex;
-  padding: 6rem;
-  align-items: center;
-  flex-direction: column;
-  overflow-y: auto;
-}
-.content p1 {
-  font-size: clamp(0.75rem,4vw,1.2rem);
-}
-
-.content p2{
-  font-size: clamp(0.6rem,3vw,1rem);
-}
 .records-page {
   display: flex;
   min-height: 100vh;
@@ -280,251 +238,299 @@ onMounted(() => fetchVisits(activeTab.value))
   font-family: var(--font-primary);
 }
 
-.sidebar {
-  width: 200px;
-  background-color: #ffffff;
-  border-right: 1px solid #e0e0e0;
-  padding: 1rem;
-}
-
 .records-container {
   flex: 1;
-  padding: 1.5rem;
-  text-align: center;
-}
-
-.records-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
+  padding: 0;
+  max-width: 80%;
+  margin: 0 auto;
 }
 
 /* Tabs */
-.tabs {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-}
-.tab {
-  flex: 1;
-  max-width: 200px;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 6px;
-  background-color: #eaeaea;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.review-view {
-  padding: 1rem clamp(1rem, 10vw, 15rem);
-  width: 100%;
-  background-color: var(--light-color);
-}
-
 .tabs-container {
   display: flex;
-  justify-content: center;
-  box-shadow: 0 0.3px  #6f6f6f97;
-  border-radius: 10px;
-  margin-bottom: 1rem;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: #f6f9fc;
 }
-.tab-btn1,
-.tab-btn2 {
+
+.tab-btn {
   flex: 1;
-  padding: 0.75rem 1rem;
+  padding: 0.875rem 1.5rem;
   border: none;
   background-color: white;
   font-family: var(--font-primary);
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 500;
-  color: #6f6f6f97;
+  color: #6b7688;
   cursor: pointer;
-  font-size: 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
-.tab.active {
-  background-color: #d0d0d0;
+
+.tab-btn.active {
+  background-color: #5073f0;
+  color: white;
   font-weight: 600;
+  box-shadow: 0 2px 4px rgba(80, 115, 240, 0.2);
 }
-.tab-btn1 {
-  border-radius: 10px 0px 0px 10px;
+
+.tab-btn:hover:not(.active) {
+  background-color: #f8f9fb;
+  color: #5073f0;
 }
-.tab-btn2 {
-  border-radius: 0px 10px 10px 0px;
+
+/* Loading */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  font-size: 1rem;
+  color: #8b9aaa;
 }
-.tab-btn1.active,
-.tab-btn2.active {
-  background: #ddd;
-  color: var(--color-dark);
-}
-.tab-btn1:hover:not(.active),
-.tab-btn2:hover:not(.active) {
-  background: #f1f1f1;
-}
+
+/* Filled Content */
 .filled-content {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.75rem;
+  padding: 1rem;
 }
+
 .appointment-card {
-  border-radius: 10px;
-  box-shadow: 0 0.3px  #6f6f6f97;
-  padding: clamp(0.6rem, 1.2vw, 1.5rem);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 1.25rem;
   background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
+
+.appointment-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
 .card-header {
   display: flex;
-  gap: clamp(0.2rem, 0.7vw, 1rem);
+  gap: 1rem;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
 .employee-info {
   flex: 1;
+  min-width: 0;
 }
+
 .employee-name {
   font-weight: 600;
-  color: var(--color-dark);
+  color: #1a2233;
   font-size: 1rem;
   margin-bottom: 0.25rem;
 }
+
 .employee-specialty {
-  color: var(--color-dark);
+  color: #6b7688;
   font-size: 0.875rem;
 }
+
 .date-time {
   text-align: right;
+  flex-shrink: 0;
 }
+
 .date {
-  font-weight: 600;
-  color: var(--color-dark);
-  font-size: 1rem;
+  font-weight: 500;
+  color: #1a2233;
+  font-size: 0.9375rem;
   margin-bottom: 0.25rem;
 }
+
 .time {
-  color: var(--color-dark);
-  font-size: 1rem;
+  color: #6b7688;
+  font-size: 0.875rem;
 }
 
 .service-info {
   display: grid;
-  grid-template-columns: auto auto auto;
-  gap: clamp(0.1rem, 0.3vw, 0.5rem);
-  margin-bottom: 0.5rem;
-  padding: clamp(0.2rem, 2vw, 0.6rem) 0;
-  border-bottom: 1px solid #e0e0e0;
-  border-top: 1px solid #e0e0e0;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.75rem;
+  padding: 0.875rem 0;
+  border-bottom: 1px solid #e8eef5;
+  border-top: 1px solid #e8eef5;
+  margin-bottom: 1rem;
 }
-.service-name-small:nth-child(3), .price {
+
+.service-name-small {
+  font-weight: 400;
+  color: #9aa5b5;
+  font-size: 0.75rem;
+  margin-bottom: 0.375rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.service-name-small:nth-child(3), 
+.price {
   text-align: right;
 }
-.service-name-small {
-  font-weight: 300;
-  color: #a9a9a9;
-  font-size: 0.7rem;
-  margin-bottom: 0.2rem;
+
+.service-name, 
+.quantity, 
+.price {
+  color: #1a2233;
+  font-size: 0.9375rem;
 }
-.quantity, .service-name, .price  {
-  color: var(--color-dark);
-  font-size: 1rem;
+
+.service-name {
+  font-weight: 500;
 }
-.service-name, .price {
+
+.price {
   font-weight: 600;
 }
 
 .card-status {
   display: flex;
-  gap: clamp(0.2rem, 0.7vw, 1rem);
   justify-content: space-between;
-  padding: clamp(0.2rem, 2vw, 0.5rem) 0 0 clamp(0.2rem, 1.5vw, 0.5rem);
   align-items: flex-start;
-  margin-bottom: 0.5rem;
+  gap: 1rem;
 }
-.status-info{
+
+.status-info {
   display: flex;
-  gap: clamp(0.2rem, 0.7vw, 1rem);
+  gap: 0.75rem;
   align-items: flex-start;
 }
-.status-icon{
+
+.status-icon {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  flex-shrink: 0;
 }
-.status-badge-reason{
+
+.status-badge-reason {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
+
 .status-badge {
-  padding: 0;
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 500;
+  color: #1a2233;
 }
+
 .status-reason {
-  color: #666;
-  font-size: 0.875rem;
+  color: #8b9aaa;
+  font-size: 0.8125rem;
   line-height: 1.3;
   font-style: italic;
 }
+
 .total-price {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: var(--color-dark);
+  color: #1a2233;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-}
-.leave-review
-{
+/* Empty State */
+.empty-content {
   display: flex;
-  justify-content: right;
-  border-radius: 10px;
-  padding: 0 0 0 70%;
-  margin-bottom: 0rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
 }
-.leave-review-btn
-{
-  flex: 1;
-  padding: 0.75rem 1rem;
-  border: none;
-  background-color: #2F80EC;
-  font-family: var(--font-primary);
-  font-size: 1rem;
-  font-weight: 470;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 10px;
+
+.empty-icon-wrapper {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #e8eef5 0%, #f3f6fa 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
 }
-.leave-review-btn:hover:not(.active) 
-{
-  background: #3d91ff;
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  opacity: 0.7;
 }
-@media (max-width: 900px) {
-  .review-view {
-  padding: 1rem clamp(1rem, 5vw, 15rem) 1rem  clamp(2rem, 14vw, 15rem);
-  width: 100%;
+
+.empty-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1a2233;
+  margin-bottom: 0.5rem;
+}
+
+.empty-description {
+  font-size: 0.9375rem;
+  color: #8b9aaa;
+  max-width: 320px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filled-content {
+    padding: 0.75rem;
   }
-  .leave-review
-  {
-    padding: 0;
+
+  .appointment-card {
+    padding: 1rem;
   }
-  .leave-review-btn
-  {
-    padding: 0.6rem 1rem;
-    margin-top: 0.2rem;
+
+  .card-header {
+    gap: 0.75rem;
   }
-  .employee-name, .price, .total-price, .service-name, .status-badge
-  {
-    font-weight: 540;
+
+  .avatar {
+    width: 40px;
+    height: 40px;
   }
-  .status-badge{
-    font-weight: 470;
+
+  .employee-name {
+    font-size: 0.9375rem;
+  }
+
+  .service-info {
+    gap: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .total-price {
+    font-size: 1.125rem;
+  }
+
+  .empty-content {
+    padding: 3rem 1.5rem;
+  }
+
+  .empty-icon-wrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .empty-icon {
+    width: 56px;
+    height: 56px;
   }
 }
 </style>
