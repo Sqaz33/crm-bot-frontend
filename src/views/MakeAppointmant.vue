@@ -1,29 +1,29 @@
 <template>
-  <div class="booking-view">
-    <ul class="steps-list">
-      <li class="step-item" @click="goTo('choicestaff')">
-        <div class="checkbox"></div>
-        <div class="label">Сотрудник: {{ summary.staffName }}</div>
-        <div class="arrow">›</div>
-      </li>
-      <li class="step-item" @click="goTo('datetime')">
-        <div class="checkbox"></div>
-        <div class="label">Дата и время: {{ summary.visitTime }}</div>
-        <div class="arrow">›</div>
-      </li>
-      <li class="step-item" @click="goTo('services')">
-        <div class="checkbox"></div>
-        <div class="label">
-          Услуги:
-          {{ summary.totalPrice !== null
-            ? (summary.totalPrice > 0 ? summary.totalPrice + ' ₽' : '0 ₽')
-            : '—'
-          }}
-        </div>
-        <div class="arrow">›</div>
-      </li>
-    </ul>
-  </div>
+<div class="booking-view">
+  <ul class="steps-list">
+    <li class="step-item" @click="goTo('choicestaff')">
+      <img src="../assets/staffIcon.svg" alt="" class="step-icon" />
+      <div class="label">Сотрудник: {{ summary.staffName }}</div>
+      <div class="arrow">›</div>
+    </li>
+    <li class="step-item" @click="goTo('datetime')">
+      <img src="../assets/calendarIcon.svg" alt="" class="step-icon" />
+      <div class="label">Дата и время: {{ summary.visitTime }}</div>
+      <div class="arrow">›</div>
+    </li>
+    <li class="step-item" @click="goTo('services')">
+      <img src="../assets/servicesIcon.svg" alt="" class="step-icon" />
+      <div class="label">
+        Услуги:
+        {{ summary.totalPrice !== null
+          ? (summary.totalPrice > 0 ? summary.totalPrice + ' ₽' : '0 ₽')
+          : '—'
+        }}
+      </div>
+      <div class="arrow">›</div>
+    </li>
+  </ul>
+</div>
 
   <button class="btn-submit"
     :disabled="!canSubmit"
@@ -226,6 +226,13 @@ function confirmProfile() {
 
 
 <style scoped>
+.step-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
 .booking-view {
   max-width:  clamp(300px, 90%, 1140px);
   margin: clamp(0.5rem, 2vw, 2rem) auto;
