@@ -23,16 +23,20 @@ import { useRoute } from 'vue-router'
 import Header from '../components/Header.vue'
 import SidebarMenu from '../components/Sidebar.vue'
 
+import walletIcon from '../assets/walletIcon.svg'
+import shopIcon from '../assets/shopIcon.svg'
+import companyIcon from '../assets/companyIcon.svg'
+
 const isSidebarOpen = ref(false)
 const sidebarButtonClicked = ref(false)
 const route = useRoute()
 
 // Основное меню
 const mainMenuItems = [
-  { label: 'Кошелёк', path: '/wallet' },
-  { label: 'Магазин', path: '/shop' },
-  // { label: 'Отзывы', path: '/reviews' },
-  { label: 'О компании', path: '/company' }
+  { label: 'Кошелёк', path: '/wallet', icon: walletIcon },
+  { label: 'Магазин', path: '/shop', icon: shopIcon },
+  // { label: 'Отзывы', path: '/reviews', icon: reviewIcon },
+  { label: 'О компании', path: '/company', icon: companyIcon }
 ]
 
 // Специальное меню для страниц записи

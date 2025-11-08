@@ -1,33 +1,46 @@
 <template>
   <HomeMenu v-if="isHome" />
 
- 
   <template v-else>
-	
+    <!-- Top Bar (название бота) -->
     <div class="topbar">
-      <div class="bot-name" @click="goHome">{{ botName }}</div>
+      <div class="salon-logo">
+        <img src="../assets/logo.svg" alt="Логотип" />
+      </div>
+      <div class="salon-text">
+        <div class="salon-name">{{ salon.name }}</div>
+        <div class="salon-desc">{{ salon.description }}</div>
+      </div>
     </div>
-		
+    
     <header class="header">
-      		
-			<div class = "button-title">
-			  <div class="back-button" @click="goBack" v-if="notShowSidebarButton">
-					<span class="arrow-back">‹</span> Назад
-			  </div>
-						
-				<button class="button" @click="clickSidebarButton" v-if="!notShowSidebarButton">
-					<img src="../assets/sidebarIcon.svg"/>
-				</button>
-				
-        <h1 class="page-title">
-				  {{ title }}
-			  </h1>
-			</div>
-			
-			
-      <slot name="actions" />
+      <div class="header-content">
+        <!-- Кнопка меню (для страниц со сайдбаром) -->
+        <button 
+          v-if="!notShowSidebarButton" 
+          class="menu-button" 
+          @click="clickSidebarButton"
+        >
+          <img src="../assets/sidebarIcon.svg" alt="Меню" />
+        </button>
+
+        <!-- Кнопка назад (для остальных страниц) -->
+        <button 
+          v-if="notShowSidebarButton" 
+          class="back-button" 
+          @click="goBack"
+        >
+          <span class="arrow-back">←</span>
+          <span class="back-text">Назад</span>
+        </button>
+
+        <h1 class="page-title">{{ title }}</h1>
+        
+        <div class="header-actions">
+          <slot name="actions" />
+        </div>
+      </div>
     </header>
-		
   </template>
 </template>
 
@@ -37,17 +50,21 @@ import { useRoute, useRouter } from 'vue-router'
 import HomeMenu from './MainMenu.vue'
 import api from '../api' 
 
-const route  = useRoute()
+const route = useRoute()
 const router = useRouter()
 
-const isHome  = computed(() => route.name === 'home')
-const title   = computed(() => route.meta.title || route.name || 'Страница')
-
+const isHome = computed(() => route.name === 'home')
+const title = computed(() => route.meta.title || route.name || 'Страница')
 const botName = ref('') 
-
 const notShowSidebarButton = computed(() => route.name === 'appointmant')
 
 const emit = defineEmits(['sidebarButtonClick'])
+
+const salon = ref({
+  name: 'Название',
+  description: 'тип заведения',
+  address_url: ''
+})
 
 function clickSidebarButton() {
   emit('sidebarButtonClick') 
@@ -66,56 +83,220 @@ onMounted(async () => {
 function goHome() {
   router.push({ name: 'home' })
 }
+
 function goBack() {
   router.back()
 }
 </script>
 
 <style scoped>
-.button-title {
+/* Top Bar */
+.topbar {
+  padding: 0.875rem 1rem;
+  background-color: white;
+  border-bottom: 1px solid #e8eef5;
   display: flex;
-  justify-content: center; 
-  width: 100%; 
-  position: relative; 
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.page-title {
-  font-size: clamp(1rem, 3vw, 1.2rem);
-  font-weight: bold;
-  margin: 0 auto;
-  text-align: center;
+/* Salon Logo */
+.salon-logo {
+  flex-shrink: 0;
 }
 
-.button {
-  width: 24px;
-  height: 24px;
-  position: absolute; 
-  left: 0.7rem; 
-  margin: 0;
-  background: rgba(255, 255, 255, 0);
+.salon-logo img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #6267ee;
+  padding: 6px;
+  display: block;
+}
+
+/* Bot Name */
+.bot-name {
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #5073f0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.bot-name:hover {
+  color: #3d5dd4;
+}
+
+/* Header */
+.header { 
+  background-color: white;
+  border-bottom: 1px solid #e8eef5;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  gap: 1rem;
+  position: relative;
+}
+
+/* Menu Button */
+.menu-button {
+  width: 40px;
+  height: 40px;
+  background: transparent;
   border: none;
   display: flex;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
-  border-radius: 0px;
+  border-radius: 8px;
   padding: 0;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
 }
 
-.topbar {
-  padding: 0.75rem 1rem;
-  font-weight: bold;
-  font-size: 1rem;
+.menu-button:hover {
+  background-color: #f3f6fa;
 }
 
-.bot-name {
-  text-transform: uppercase;
+.menu-button img {
+  width: 24px;
+  height: 24px;
+}
+
+/* Back Button */
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
   cursor: pointer;
+  font-family: var(--font-primary);
+  font-size: 0.9375rem;
+  color: #5073f0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-.header { 
+.back-button:hover {
+  background-color: #f3f6fa;
+  color: #3d5dd4;
+}
+
+.arrow-back {
+  font-size: 1.25rem;
+  font-weight: 300;
+}
+
+.back-text {
+  font-weight: 500;
+}
+
+/* Page Title */
+.page-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1a2233;
+  margin: 0;
+  flex: 1;
   text-align: center;
-  padding: 1rem 0;
-	justify-content: center;
-  border-bottom: 1px solid #ccc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Header Actions */
+.header-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Salon Info (если понадобится) */
+.salon-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.salon-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.salon-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #222;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.salon-desc {
+  font-size: 0.8rem;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .topbar {
+    padding: 0.75rem 1rem;
+  }
+
+  .salon-logo img {
+    width: 36px;
+    height: 36px;
+    padding: 5px;
+  }
+
+  .bot-name {
+    font-size: 0.8125rem;
+  }
+
+  .header-content {
+    padding: 0.875rem 1rem;
+    gap: 0.75rem;
+  }
+
+  .menu-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .menu-button img {
+    width: 22px;
+    height: 22px;
+  }
+
+  .back-button {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .arrow-back {
+    font-size: 1.125rem;
+  }
+
+  .page-title {
+    font-size: 1rem;
+  }
 }
 </style>
