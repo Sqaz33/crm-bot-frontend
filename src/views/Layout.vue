@@ -27,6 +27,10 @@ import walletIcon from '../assets/walletIcon.svg'
 import shopIcon from '../assets/shopIcon.svg'
 import companyIcon from '../assets/companyIcon.svg'
 
+import staffIcon from '../assets/staffIcon.svg'
+import calendarIcon from '../assets/calendarIcon.svg'
+import servicesIcon from '../assets/servicesIcon.svg'
+
 const isSidebarOpen = ref(false)
 const sidebarButtonClicked = ref(false)
 const route = useRoute()
@@ -39,11 +43,11 @@ const mainMenuItems = [
   { label: 'О компании', path: '/company', icon: companyIcon }
 ]
 
-// Специальное меню для страниц записи
+// Меню для записи
 const appointmentMenuItems = [
-  { label: 'Сотрудник', path: '/choicestaff' },
-  { label: 'Дата и время', path: '/datetime' },
-  { label: 'Услуги', path: '/services' }
+  { label: 'Сотрудник', path: '/choicestaff', icon: staffIcon },
+  { label: 'Дата и время', path: '/datetime', icon: calendarIcon },
+  { label: 'Услуги', path: '/services', icon: servicesIcon }
 ]
 
 // Страницы со специальным меню

@@ -105,7 +105,7 @@ function onVisit(id)  { emit('visit', id) }
 
 <style scoped>
 .staff-view {
-  max-width: 600px;
+  max-width: 1000px;
   margin: 0 auto;
 	padding-left: 50px;
 }
