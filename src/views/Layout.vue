@@ -25,6 +25,7 @@ import SidebarMenu from '../components/Sidebar.vue'
 
 import walletIcon from '../assets/walletIcon.svg'
 import shopIcon from '../assets/shopIcon.svg'
+import reviewIcon from '../assets/reviewIcon.svg'
 import companyIcon from '../assets/companyIcon.svg'
 
 import staffIcon from '../assets/staffIcon.svg'
@@ -39,7 +40,7 @@ const route = useRoute()
 const mainMenuItems = [
   { label: 'Кошелёк', path: '/wallet', icon: walletIcon },
   { label: 'Магазин', path: '/shop', icon: shopIcon },
-  // { label: 'Отзывы', path: '/reviews', icon: reviewIcon },
+  { label: 'Отзывы', path: '/reviews', icon: reviewIcon },
   { label: 'О компании', path: '/company', icon: companyIcon }
 ]
 

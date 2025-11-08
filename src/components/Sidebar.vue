@@ -1,15 +1,15 @@
 <template>
-  <aside 
-    class="sidebar"
-    :class="{ 'collapsed': !isOpen, 'empty': items.length === 0 }" 
+  <aside
+      class="sidebar"
+      :class="{ 'collapsed': !isOpen, 'empty': items.length === 0 }"
   >
     <div v-if="items.length > 0">
       <ul class="menu-list">
         <li
-          v-for="item in items"
-          :key="item.path"
-          class="menu-item"
-          :class="{ active: route.path === item.path }"
+            v-for="item in items"
+            :key="item.path"
+            class="menu-item"
+            :class="{ active: route.path === item.path }"
         >
           <RouterLink :to="item.path" class="menu-link" @click="closeSidebar">
             <span class="icon" v-if="item.icon">
@@ -26,7 +26,7 @@
         <span class="back-label"> Назад</span>
       </div>
     </div>
-    
+
     <div v-else class="empty-state">
       Меню недоступно для этой страницы
     </div>
@@ -66,37 +66,27 @@ function goBack() {
   padding: 2rem;
   text-align: center;
   color: #888;
+  font-family: var(--font-primary);
 }
 
 .sidebar.empty {
-  display: none; 
-}
-
-.sidebar-toggle {
-  width: 50px;
-  position: sticky;
-  padding: 1rem 0.5rem;
-  background-color: var(--color-light);
-  border: none;
-  border-bottom: 2px solid #fff;
-  display: flex;
-  align-items: left;
-  cursor: pointer;
+  display: none;
 }
 
 .sidebar-container {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 220px;
-  max-width: 220px;
+  width: 320px;
+  max-width: 320px;
 }
 
 .sidebar {
-  width: 220px;
+  width: 320px;
   height: 100%;
   display: flex;
   flex-direction: column;
+  background: white;
   box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   z-index: 1000;
@@ -124,11 +114,15 @@ function goBack() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem;
-  background: var(--color-light);
+  padding: 14px 20px 14px 28px;
+  background: rgba(246, 245, 246, 0.40);
   text-decoration: none;
-  color: inherit;
-  max-height: 50px;
+  color: #454558;
+  font-family: var(--font-primary);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 24px;
+  max-height: 56px;
   box-sizing: border-box;
   transition: all 0.3s ease;
 }
@@ -140,10 +134,10 @@ function goBack() {
 
 .icon,
 .icon-placeholder {
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   border-radius: 4px;
-  margin-right: 1rem;
+  margin-right: 2rem;
   transition: margin-right 0.3s ease;
   flex-shrink: 0;
   display: flex;
@@ -163,17 +157,22 @@ function goBack() {
 
 .label {
   flex: 1;
-  margin-left: 0.5rem;
+  margin-left: 0;
   transition: all 0.3s ease;
   opacity: 1;
   visibility: visible;
   white-space: nowrap;
   overflow: hidden;
+  font-family: var(--font-primary);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 24px;
+  color: #454558;
 }
 
 .arrow {
-  color: #888;
-  font-size: 1.2rem;
+  color: #8097B1;
+  font-size: 1.5rem;
   transition: all 0.3s ease;
   opacity: 1;
   visibility: visible;
@@ -182,17 +181,32 @@ function goBack() {
 .back-button {
   position: sticky;
   bottom: 0;
-  padding: 1rem;
-  font-size: 0.95rem;
-  color: #333;
-  background-color: #fff;
-  border-top: 1px solid #ccc;
+  height: 56px; /* та же высота что у menu-link */
+  padding: 14px 20px 14px 28px; /* те же отступы что у menu-link */
+  font-size: 20px;
+  color: #8097B1;
+  font-family: var(--font-primary);
+  font-weight: 400;
+  line-height: 24px;
+  background-color: rgba(246, 245, 246, 0.40);
+  border-top: none;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   cursor: pointer;
-  font-weight: bold;
   transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.arrow-back {
+  width: 36px; /* та же ширина что у иконок */
+  height: 36px; /* та же высота что у иконок */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1.5rem; /* уменьшен отступ чтобы текст был ближе */
+  font-size: 1.5rem;
+  color: #B0BECF;
+  flex-shrink: 0;
 }
 
 .back-label {
@@ -201,15 +215,16 @@ function goBack() {
   visibility: visible;
   white-space: nowrap;
   overflow: hidden;
-}
-
-.arrow-back {
-  font-size: 1.2rem;
+  font-family: var(--font-primary);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 24px;
+  color: #8097B1;
 }
 
 /* свёрнутый сайдбар */
 .sidebar.collapsed {
-  width: 50px; 
+  width: 60px;
 }
 
 .sidebar.collapsed .label,
@@ -223,7 +238,7 @@ function goBack() {
 }
 
 .sidebar.collapsed .menu-link {
-  padding: 1rem 0.5rem;
+  padding: 14px 12px;
   justify-content: center;
   transition: all 0.3s ease 0.1s;
 }
@@ -236,13 +251,17 @@ function goBack() {
 
 .sidebar.collapsed .back-button {
   justify-content: center;
-  padding: 1rem 0.5rem;
+  padding: 14px 12px;
   transition: all 0.3s ease 0.2s;
+}
+
+.sidebar.collapsed .arrow-back {
+  margin-right: 0;
 }
 
 /* развёрнутый по клику */
 .sidebar:not(.collapsed) {
-  width: 220px;
+  width: 320px;
 }
 
 .sidebar:not(.collapsed) .label,
@@ -256,25 +275,25 @@ function goBack() {
 
 .sidebar:not(.collapsed) .menu-link {
   justify-content: space-between;
-  padding: 1rem;
+  padding: 14px 20px 14px 28px;
   transition: all 0.3s ease 0.1s;
 }
 
 .sidebar:not(.collapsed) .icon,
 .sidebar:not(.collapsed) .icon-placeholder {
-  margin-right: 1rem;
+  margin-right: 2rem;
   transition: margin-right 0.3s ease 0.1s;
 }
 
 .sidebar:not(.collapsed) .back-button {
   justify-content: flex-start;
-  padding: 1rem;
+  padding: 14px 20px 14px 28px;
   transition: all 0.3s ease 0.2s;
 }
 
 /* развёрнутый по наведению */
 .sidebar.collapsed:hover {
-  width: 220px;
+  width: 320px;
 }
 
 .sidebar.collapsed:hover .label,
@@ -288,19 +307,23 @@ function goBack() {
 
 .sidebar.collapsed:hover .menu-link {
   justify-content: space-between;
-  padding: 1rem;
+  padding: 14px 20px 14px 28px;
   transition: all 0.3s ease 0.1s;
 }
 
 .sidebar.collapsed:hover .icon,
 .sidebar.collapsed:hover .icon-placeholder {
-  margin-right: 1rem;
+  margin-right: 2rem;
   transition: margin-right 0.3s ease 0.1s;
 }
 
 .sidebar.collapsed:hover .back-button {
   justify-content: flex-start;
-  padding: 1rem;
+  padding: 14px 20px 14px 28px;
   transition: all 0.3s ease 0.2s;
+}
+
+.sidebar.collapsed:hover .arrow-back {
+  margin-right: 1rem;
 }
 </style>
