@@ -10,7 +10,7 @@
     <div class="cards">
       <div class="card" @click="goTo('wallet')">
         <div class="left">
-          <i class="icon">👛</i>
+          <img :src="walletIcon" alt="Кошелёк" class="icon" />
           <span>Кошелёк</span>
         </div>
         <span class="badge orange">0</span>
@@ -18,7 +18,7 @@
 
       <div class="card" @click="goTo('shop')">
         <div class="left">
-          <i class="icon">👜</i>
+          <img :src="shopIcon" alt="Магазин" class="icon" />
           <span>Магазин</span>
         </div>
         <span class="arrow">›</span>
@@ -26,7 +26,7 @@
 
       <!-- <div class="card" @click="goTo('reviews')">
         <div class="left">
-          <i class="icon">⭐</i>
+          <img :src="reviewIcon" alt="Отзывы" class="icon" />
           <span>Отзывы</span>
         </div>
         <span class="badge blue">{{ reviewCount }}</span>
@@ -34,7 +34,7 @@
 
       <div class="card" @click="goTo('company')">
         <div class="left">
-          <i class="icon">🏢</i>
+          <img :src="companyIcon" alt="О компании" class="icon" />
           <span>О компании</span>
         </div>
         <span class="arrow">›</span>
@@ -47,6 +47,12 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api'
+
+// Импорт SVG иконок
+import walletIcon from '../assets/walletIcon.svg'
+import shopIcon from '../assets/shopIcon.svg'
+// import reviewIcon from '../assets/reviewIcon.svg'
+import companyIcon from '../assets/companyIcon.svg'
 
 const router = useRouter()
 const reviewCount = ref(0)
@@ -128,9 +134,12 @@ function goTo(name) {
   font-weight: 500;
 }
 
-/* Иконки (можно заменить на svg или fontawesome) */
+/* SVG иконки */
 .icon {
-  font-size: 1.2rem;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  object-fit: contain;
 }
 
 /* Индикаторы */
