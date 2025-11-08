@@ -12,30 +12,30 @@
         <div class="salon-desc">{{ salon.description }}</div>
       </div>
     </div>
-    
+
     <header class="header">
       <div class="header-content">
         <!-- Кнопка меню (для страниц со сайдбаром) -->
-        <button 
-          v-if="!notShowSidebarButton" 
-          class="menu-button" 
-          @click="clickSidebarButton"
+        <button
+            v-if="!notShowSidebarButton"
+            class="menu-button"
+            @click="clickSidebarButton"
         >
           <img src="../assets/sidebarIcon.svg" alt="Меню" />
         </button>
 
         <!-- Кнопка назад (для остальных страниц) -->
-        <button 
-          v-if="notShowSidebarButton" 
-          class="back-button" 
-          @click="goBack"
+        <button
+            v-if="notShowSidebarButton"
+            class="back-button"
+            @click="goBack"
         >
           <span class="arrow-back">←</span>
           <span class="back-text">Назад</span>
         </button>
 
         <h1 class="page-title">{{ title }}</h1>
-        
+
         <div class="header-actions">
           <slot name="actions" />
         </div>
@@ -48,14 +48,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import HomeMenu from './MainMenu.vue'
-import api from '../api' 
+import api from '../api'
 
 const route = useRoute()
 const router = useRouter()
 
 const isHome = computed(() => route.name === 'home')
 const title = computed(() => route.meta.title || route.name || 'Страница')
-const botName = ref('') 
+const botName = ref('')
 const notShowSidebarButton = computed(() => route.name === 'appointmant')
 
 const emit = defineEmits(['sidebarButtonClick'])
@@ -67,7 +67,7 @@ const salon = ref({
 })
 
 function clickSidebarButton() {
-  emit('sidebarButtonClick') 
+  emit('sidebarButtonClick')
 }
 
 onMounted(async () => {
@@ -130,7 +130,7 @@ function goBack() {
 }
 
 /* Header */
-.header { 
+.header {
   background-color: white;
   border-bottom: 1px solid #e8eef5;
   position: sticky;
@@ -202,14 +202,17 @@ function goBack() {
   font-weight: 500;
 }
 
-/* Page Title */
+/* Page Title - ИСПРАВЛЕННЫЕ СТИЛИ ПОД FIGMA */
 .page-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1a2233;
+  font-family: 'Geometria', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 36px;
+  text-align: center;
+  color: #454558;
   margin: 0;
   flex: 1;
-  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -296,7 +299,15 @@ function goBack() {
   }
 
   .page-title {
-    font-size: 1rem;
+    font-size: 24px;
+    line-height: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 20px;
+    line-height: 24px;
   }
 }
 </style>
