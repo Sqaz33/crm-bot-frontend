@@ -8,7 +8,7 @@
           :key="tab.value"
           :class="['tab', { active: activeTab === tab.value }]"
           @click="selectTab(tab.value)"
-          ref="tabButtons"
+          :ref="el => (tabButtons[index] = el)" 
         >
           {{ tab.label }}
         </button>
@@ -209,6 +209,7 @@ function onVisit(id)  { emit('visit', id) }
   background: #FFFFFF;
   border-radius: 12px;
   overflow: hidden;
+  position: relative; z-index: 1;
 }
 
 .tabs-background {
@@ -263,6 +264,7 @@ function onVisit(id)  { emit('visit', id) }
   transition: all 0.3s ease;
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
   z-index: 1;
+  pointer-events: none;
 }
 
 /* Список сотрудников */
@@ -272,6 +274,7 @@ function onVisit(id)  { emit('visit', id) }
   gap: 12px;
   margin: 28px auto 0 auto;
   width: 1140px;
+  position: relative; z-index: 2; 
 }
 
 .no-staff {
@@ -293,6 +296,7 @@ function onVisit(id)  { emit('visit', id) }
   cursor: pointer;
   transition: transform 0.2s ease;
   box-sizing: border-box;
+  position: relative; z-index: 2;
 }
 
 .staff-card:hover {
