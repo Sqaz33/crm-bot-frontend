@@ -37,10 +37,8 @@
       <h3>Проверьте данные</h3>
 
       <div class="field">
-			  <div class="header-field">
-					<label for="firstName" class="label">Имя</label>
-				</div>
-        <input id="firstName class="input"" v-model="form.firstName" />
+        <label for="firstName">Имя</label>
+        <input id="firstName" v-model="form.firstName" />
       </div>
 
       <div class="field">
@@ -50,7 +48,7 @@
 
       <div class="field">
         <label for="middleName">Отчество</label>
-        <input id="middleName" class="input" v-model="form.middleName" />
+        <input id="middleName" v-model="form.middleName" />
       </div>
 
       <div class="field">
@@ -274,11 +272,7 @@ function confirmProfile() {
   margin: 0 clamp(0.5rem, 2vw, 1rem);
   flex: 1;
   font-size: clamp(0.85rem, 3vw, 1rem);
-	width: 176px;
-  color: var(--Color-Basic-Black, #454558);
-  font-weight: 500;
-  line-height: 24px;
-  text-align: left;
+  font-family: var(--font-primary);
 }
 
 .arrow, .arrow-back {
@@ -344,40 +338,10 @@ function confirmProfile() {
   width: 320px;
 }
 .field {
-	width: 100%;
-  height: 160px;
-  padding: 14px 0;
-  background: transparent;
-  border-radius: 10px;
+  margin-bottom: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 10px;
-  overflow: hidden;
 }
-
-.header-field {
-  width: 176px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.input {
-  width: 100%;
-  height: 48px;
-  padding: 12px 16px;
-  background: white;
-  border-radius: 8px;
-  border: 1px solid var(--Color-Grey-Grey-200, #E5E7EB);
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
-  box-sizing: border-box;
-}
-
 .modal-buttons {
   display: flex;
   justify-content: space-between;
