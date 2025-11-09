@@ -37,27 +37,37 @@
       <h3>Проверьте данные</h3>
 
       <div class="field">
-        <label for="firstName">Имя</label>
+        <div class="header-field">
+          <label class="label" for="firstName">Имя</label>
+        </div>
         <input id="firstName" v-model="form.firstName" />
       </div>
 
       <div class="field">
-        <label for="lastName">Фамилия</label>
+        <div class="header-field">
+          <label class="label" for="lastName">Фамилия</label>
+        </div>
         <input id="lastName" v-model="form.lastName" />
       </div>
 
       <div class="field">
-        <label for="middleName">Отчество</label>
+        <div class="header-field">
+          <label class="label" for="middleName">Отчество</label>
+        </div>
         <input id="middleName" v-model="form.middleName" />
       </div>
 
       <div class="field">
-        <label for="phone">Телефон</label>
+        <div class="header-field">
+          <label class="label" for="phone">Телефон</label>
+        </div>
         <input id="phone" v-model="form.phone" readonly />
       </div>
 
       <div class="field">
-        <label for="email">E-mail</label>
+        <div class="header-field">
+          <label class="label" for="email">E-mail</label>
+        </div>
         <input id="email" v-model="form.email" readonly />
       </div>
 
@@ -272,7 +282,11 @@ function confirmProfile() {
   margin: 0 clamp(0.5rem, 2vw, 1rem);
   flex: 1;
   font-size: clamp(0.85rem, 3vw, 1rem);
-  font-family: var(--font-primary);
+  width: 176px;
+  color: var(--Color-Basic-Black, #454558);
+  font-weight: 500;
+  line-height: 24px;
+  text-align: left;
 }
 
 .arrow, .arrow-back {
@@ -330,21 +344,102 @@ function confirmProfile() {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
+
 .modal {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 320px;
+  padding: 32px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
+
+.modal h3 {
+  color: var(--Color-Basic-Black, #454558);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 28px;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
 .field {
-  margin-bottom: 10px;
+  width: 100%;
+  height: auto;
+  padding: 14px 0;
+  background: transparent;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
 }
+
+.field .label {
+  width: 176px;
+  color: var(--Color-Basic-Black, #454558);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  text-align: left;
+  margin: 0;
+}
+
+.field input {
+  width: 100%;
+  height: 48px;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid var(--Color-Grey-Grey-200, #E5E7EB);
+  box-sizing: border-box;
+  color: var(--Color-Basic-Black, #454558);
+  font-size: 16px;
+  font-family: 'Geometria', sans-serif;
+  font-weight: 400;
+  line-height: 20px;
+  outline: none;
+}
+
 .modal-buttons {
   display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.modal-buttons button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.modal-buttons button:first-child {
+  background: var(--Color-Brand-Brand-500, #666FE8);
+  color: white;
+}
+
+.modal-buttons button:first-child:hover {
+  background: #5a63d4;
+}
+
+.modal-buttons button:last-child {
+  background: #f5f5f5;
+  color: #454558;
+  border: 1px solid #E5E7EB;
+}
+
+.modal-buttons button:last-child:hover {
+  background: #e8e8e8;
 }
 </style>
