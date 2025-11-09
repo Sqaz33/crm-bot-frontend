@@ -24,14 +24,14 @@
       </div>
 
       <div
-        v-for="staff in staffList"
-        :key="staff.id"
-        class="staff-card"
-        role="button"
-        tabindex="0"
-        @click="onSelect(staff)"
-        @keydown.enter="onSelect(staff)"
-      >
+          v-for="staff in staffList"
+          :key="staff.id"
+          class="staff-card"
+          role="button"
+          tabindex="0"
+          @click="onSelect(staff.id)"
+          @keydown.enter="onSelect(staff.id)"
+        >
         <!-- Аватар (не перехватывает клики) -->
         <div class="avatar-container" style="pointer-events:none;">
           <div
@@ -122,6 +122,10 @@ function selectTab(v) {
     updateActiveLine()
     scrollToActiveTab()
   })
+}
+function onSelect(id) {
+  if (!id) return
+  emit('select', id)
 }
 
 function getFirstLetter(name) {
