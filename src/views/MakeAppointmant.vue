@@ -279,13 +279,12 @@ function confirmProfile() {
 }
 
 .label {
-  margin: 0 clamp(0.5rem, 2vw, 1rem);
+  margin: 0 clamp(0.3rem, 2vw, 0.8rem);
   flex: 1;
   font-size: clamp(0.85rem, 3vw, 1rem);
   width: 176px;
   color: var(--Color-Basic-Black, #454558);
   font-weight: 500;
-  line-height: 24px;
   text-align: left;
 }
 
@@ -349,10 +348,10 @@ function confirmProfile() {
 
 .modal {
   background: white;
-  padding: 32px;
+  padding: 24px;
   border-radius: 12px;
   width: 80%;
-	max-height: 70vh;
+	max-height: 80vh;
   max-width: 500px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
@@ -378,7 +377,7 @@ function confirmProfile() {
   align-items: flex-start;
   gap: 10px;
   overflow: hidden;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .field .label {
@@ -411,7 +410,7 @@ function confirmProfile() {
   display: flex;
   gap: 16px;
   justify-content: center;
-  margin-top: 24px;
+  margin-top: 12px;
 }
 
 .modal-buttons button {
