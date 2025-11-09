@@ -348,7 +348,7 @@ function confirmProfile() {
 
 .modal {
   background: white;
-  padding: 16px;
+  padding: 24px;
   border-radius: 12px;
   width: 80%;
 	max-height: 80vh;
@@ -361,7 +361,7 @@ function confirmProfile() {
   color: var(--Color-Basic-Black, #454558);
   font-size: 24px;
   font-weight: 500;
-  line-height: 28px;
+  line-height: 26px;
   text-align: center;
 	margin: 0;
 }
@@ -376,7 +376,7 @@ function confirmProfile() {
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  gap: 10px;
+  gap: 5px;
   overflow: hidden;
   margin-bottom: 12px;
 }
@@ -412,6 +412,7 @@ function confirmProfile() {
   gap: 16px;
   justify-content: center;
   margin-top: 12px;
+	flex-direction: column;
 }
 
 .modal-buttons button {
@@ -467,7 +468,6 @@ function confirmProfile() {
   }
   
   .modal-buttons {
-    flex-direction: column;
     gap: 8px;
   }
   
