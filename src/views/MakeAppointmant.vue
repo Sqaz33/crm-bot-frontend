@@ -378,7 +378,7 @@ function confirmProfile() {
   align-items: flex-start;
   gap: 5px;
   overflow: hidden;
-  margin-bottom: 12px;
+  margin-bottom: 0px;
 }
 
 .field .label {
