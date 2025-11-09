@@ -34,10 +34,20 @@
             v-if="staff.photo"
             class="avatar"
             :style="{ backgroundImage: `url(${staff.photo})` }"
+            @click.stop="goStaff(staff)"
+            role="button"
+            tabindex="0"
+            @keydown.enter.prevent="goStaff(staff)"
+            @keydown.space.prevent="goStaff(staff)"
           ></div>
           <div
             v-else
             class="avatar avatar--empty"
+            @click.stop="goStaff(staff)"
+            role="button"
+            tabindex="0"
+            @keydown.enter.prevent="goStaff(staff)"
+            @keydown.space.prevent="goStaff(staff)"
           >
             <span class="avatar-letter">{{ getFirstLetter(staff.name) }}</span>
           </div>
@@ -202,6 +212,13 @@ function selectTab (v) {
   })
 }
 
+function goStaff(idOrStaff) {
+  const id = typeof idOrStaff === 'object' ? getStaffId(idOrStaff) : idOrStaff
+  if (!id) return
+  router.push({ name: 'staff', params: { id } })
+}
+
+
 function onSelect (idOrStaff) {
   const id = typeof idOrStaff === 'object' ? getStaffId(idOrStaff) : idOrStaff
   console.log('onSelect, id:', id)
@@ -365,6 +382,7 @@ onMounted(async () => {
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 .avatar--empty {
@@ -372,6 +390,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .avatar-letter {
