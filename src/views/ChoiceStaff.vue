@@ -6,7 +6,6 @@
         <button
           v-for="(tab, index) in tabs"
           :key="tab.value"
-          type="button"
           :class="['tab', { active: activeTab === tab.value }]"
           @click="selectTab(tab.value)"
           ref="tabButtons"
@@ -14,7 +13,7 @@
           {{ tab.label }}
         </button>
       </div>
-      <div class="active-line" ref="activeLine" style="pointer-events:none;"></div>
+      <div class="active-line" ref="activeLine"></div>
     </div>
 
     <!-- Список сотрудников -->
@@ -22,30 +21,29 @@
       <div v-if="staffList.length === 0" class="no-staff">
         Нет сотрудников
       </div>
-
       <div
-          v-for="staff in staffList"
-          :key="staff.id"
-          class="staff-card"
-          role="button"
-          tabindex="0"
-          @click="onSelect(staff.id)"
-          @keydown.enter="onSelect(staff.id)"
-        >
-        <!-- Аватар (не перехватывает клики) -->
-        <div class="avatar-container" style="pointer-events:none;">
+        v-for="staff in staffList"
+        :key="staff.id"
+        class="staff-card"
+        @click="onSelect(staff.id)"
+      >
+        <!-- Аватар -->
+        <div class="avatar-container">
           <div
             v-if="staff.photo"
             class="avatar"
             :style="{ backgroundImage: `url(${staff.photo})` }"
           ></div>
-          <div v-else class="avatar avatar--empty">
+          <div
+            v-else
+            class="avatar avatar--empty"
+          >
             <span class="avatar-letter">{{ getFirstLetter(staff.name) }}</span>
           </div>
         </div>
 
         <!-- Информация о сотруднике -->
-        <div class="staff-info" style="pointer-events:none;">
+        <div class="staff-info">
           <div class="staff-name">{{ staff.name }}</div>
           <div class="staff-position">
             <span
@@ -55,8 +53,8 @@
           </div>
         </div>
 
-        <!-- Рейтинг (заказчик не сделал) -->
-        <!-- <div class="rating-container" style="pointer-events:none;">
+        <!-- Рейтинг -->
+        <!-- <div class="rating-container">
           <div class="rating-badge">
             <div class="star-icon">
               <svg width="30" height="29" viewBox="0 0 30 29" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -70,7 +68,6 @@
     </div>
   </div>
 </template>
-
 
 <script setup>
 import { ref, onMounted, watch, nextTick } from 'vue'
@@ -122,10 +119,6 @@ function selectTab(v) {
     updateActiveLine()
     scrollToActiveTab()
   })
-}
-function onSelect(id) {
-  if (!id) return
-  emit('select', id)
 }
 
 function getFirstLetter(name) {
