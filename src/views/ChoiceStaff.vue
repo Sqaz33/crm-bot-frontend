@@ -6,6 +6,7 @@
         <button
           v-for="(tab, index) in tabs"
           :key="tab.value"
+          type="button"
           :class="['tab', { active: activeTab === tab.value }]"
           @click="selectTab(tab.value)"
           ref="tabButtons"
@@ -13,7 +14,7 @@
           {{ tab.label }}
         </button>
       </div>
-      <div class="active-line" ref="activeLine"></div>
+      <div class="active-line" ref="activeLine" style="pointer-events:none;"></div>
     </div>
 
     <!-- Список сотрудников -->
@@ -21,29 +22,30 @@
       <div v-if="staffList.length === 0" class="no-staff">
         Нет сотрудников
       </div>
+
       <div
         v-for="staff in staffList"
         :key="staff.id"
         class="staff-card"
-        @click="onSelect(staff.id)"
+        role="button"
+        tabindex="0"
+        @click="onSelect(staff)"
+        @keydown.enter="onSelect(staff)"
       >
-        <!-- Аватар -->
-        <div class="avatar-container">
+        <!-- Аватар (не перехватывает клики) -->
+        <div class="avatar-container" style="pointer-events:none;">
           <div
             v-if="staff.photo"
             class="avatar"
             :style="{ backgroundImage: `url(${staff.photo})` }"
-          />
-          <div
-            v-else
-            class="avatar avatar--empty"
-          >
+          ></div>
+          <div v-else class="avatar avatar--empty">
             <span class="avatar-letter">{{ getFirstLetter(staff.name) }}</span>
           </div>
         </div>
 
         <!-- Информация о сотруднике -->
-        <div class="staff-info">
+        <div class="staff-info" style="pointer-events:none;">
           <div class="staff-name">{{ staff.name }}</div>
           <div class="staff-position">
             <span
@@ -53,8 +55,8 @@
           </div>
         </div>
 
-        <!-- Рейтинг -->
-        <div class="rating-container">
+        <!-- Рейтинг (заказчик не сделал) -->
+        <!-- <div class="rating-container" style="pointer-events:none;">
           <div class="rating-badge">
             <div class="star-icon">
               <svg width="30" height="29" viewBox="0 0 30 29" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -63,11 +65,12 @@
             </div>
             <div class="rating-number">{{ staff.rating || 5 }}</div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted, watch, nextTick } from 'vue'
