@@ -543,13 +543,13 @@ export default {
 
 @media (max-width: 430px) {
   .booking-page {
-    --sidebar-mobile: 64px;
-    --gutter-mobile: 12px;
-    --top-gap-mobile: 12px;
-    padding: 0;
-    padding-top: var(--top-gap-mobile);
-    padding-left: calc(var(--sidebar-mobile) + var(--gutter-mobile));
-    padding-right: calc(var(--sidebar-mobile) + var(--gutter-mobile));
+    --sidebar-mobile: 12px;
+        --gutter-mobile: 36px;
+        --top-gap-mobile: 12px;
+        padding: 0;
+        padding-top: var(--top-gap-mobile);
+        padding-left: calc(var(--sidebar-mobile) + 2 * var(--gutter-mobile));
+        padding-right: calc(var(--sidebar-mobile) + var(--gutter-mobile));
     background: #f6f9fc;
   }
   .booking-container {

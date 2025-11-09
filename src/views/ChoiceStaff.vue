@@ -416,7 +416,7 @@ onMounted(async () => {
 @media (max-width: 430px) {
   
   .staff-view {
-    --sidebar-mobile: 56px;  
+    --sidebar-mobile: 72px;  
     --gutter-mobile: 12px;
 
     
