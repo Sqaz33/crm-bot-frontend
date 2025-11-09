@@ -352,6 +352,7 @@ function confirmProfile() {
   padding: 32px;
   border-radius: 12px;
   width: 90%;
+	max-height: 80vh;
   max-width: 500px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
@@ -441,5 +442,38 @@ function confirmProfile() {
 
 .modal-buttons button:last-child:hover {
   background: #e8e8e8;
+}
+
+@media (max-width: 480px) {
+  .modal {
+    padding: 20px;
+    width: 350px;
+  }
+  
+  .modal h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+  
+  .field {
+    padding: 6px 0;
+    margin-bottom: 10px;
+  }
+  
+  .field input {
+    height: 36px;
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+  
+  .modal-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .modal-buttons button {
+    width: 100%;
+    min-width: auto;
+  }
 }
 </style>
