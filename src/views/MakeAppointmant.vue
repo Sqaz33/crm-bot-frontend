@@ -354,6 +354,7 @@ function confirmProfile() {
 	max-height: 80vh;
   max-width: 500px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+	overflow: hidden;
 }
 
 .modal h3 {
@@ -362,7 +363,6 @@ function confirmProfile() {
   font-weight: 500;
   line-height: 28px;
   text-align: center;
-  margin-bottom: 32px;
 }
 
 .field {
