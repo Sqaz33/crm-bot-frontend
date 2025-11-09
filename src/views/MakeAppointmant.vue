@@ -351,7 +351,7 @@ function confirmProfile() {
   padding: 24px;
   border-radius: 12px;
   width: 80%;
-	max-height: 80vh;
+	max-height: 90vh;
   max-width: 500px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 	overflow: hidden;
@@ -412,7 +412,6 @@ function confirmProfile() {
   gap: 16px;
   justify-content: center;
   margin-top: 12px;
-	flex-direction: column;
 }
 
 .modal-buttons button {
