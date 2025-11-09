@@ -5,7 +5,7 @@
     <!-- Top Bar (название бота) -->
     <div class="topbar">
       <div class="salon-logo">
-        <img src="../assets/logo.svg" alt="Логотип" />
+        <img src="../assets/logo.svg" alt="Логотип" @click=" goHome()" />
       </div>
       <div class="salon-text">
         <div class="salon-name">{{ salon.name }}</div>

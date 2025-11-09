@@ -133,4 +133,9 @@ onMounted(initAuthAndProfile)
 }
 .fade-enter-active,.fade-leave-active{ transition:opacity .5s; }
 .fade-enter-from,.fade-leave-to{ opacity:0; }
+@media (max-width: 430px) {
+  ::v-deep(.modal-content) {
+    width: 85% !important;
+  }
+}
 </style>

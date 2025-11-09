@@ -258,25 +258,27 @@ onMounted(async () => {
 
 
 <style scoped>
+
 .staff-view {
+  --sidebar-mobile: 64px;   
+  --gutter-mobile: 20px;   
+
   width: 100%;
   max-width: 1140px;
   margin: 0 auto;
-  padding: 0;
+  padding: 0;               
   background: #F6F5F6;
 }
 
-/* Табы */
 .tabs-container {
   position: relative;
   width: 100%;
-  max-width: 1140px;
   height: 96px;
   margin: 24px auto 0 auto;
   background: #FFFFFF;
   border-radius: 12px;
   overflow: hidden;
-  position: relative; z-index: 1;
+  z-index: 1;
 }
 
 .tabs-background {
@@ -287,13 +289,10 @@ onMounted(async () => {
   overflow-y: hidden;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-
-.tabs-background::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
-}
+.tabs-background::-webkit-scrollbar { display: none; }
 
 .tab {
   display: flex;
@@ -303,7 +302,6 @@ onMounted(async () => {
   border: none;
   cursor: pointer;
   font-family: 'Geometria', sans-serif;
-  font-style: normal;
   font-weight: 500;
   font-size: 24px;
   line-height: 28px;
@@ -316,11 +314,7 @@ onMounted(async () => {
   flex-shrink: 0;
   min-width: fit-content;
 }
-
-.tab.active {
-  font-weight: 500;
-  color: #454558;
-}
+.tab.active { color: #454558; }
 
 .active-line {
   position: absolute;
@@ -329,19 +323,18 @@ onMounted(async () => {
   background: #666FE8;
   border-radius: 2.5px;
   transition: all 0.3s ease;
-  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.25));
   z-index: 1;
   pointer-events: none;
 }
 
-/* Список сотрудников */
 .staff-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin: 28px auto 0 auto;
-  width: 1140px;
-  position: relative; z-index: 2; 
+  width: 100%;
+  z-index: 2;
 }
 
 .no-staff {
@@ -355,7 +348,7 @@ onMounted(async () => {
 .staff-card {
   display: flex;
   align-items: center;
-  width: 1139px;
+  width: 100%;
   height: 96px;
   background: #FFFFFF;
   border-radius: 12px;
@@ -363,261 +356,84 @@ onMounted(async () => {
   cursor: pointer;
   transition: transform 0.2s ease;
   box-sizing: border-box;
-  position: relative; z-index: 2;
+  position: relative;
 }
-
 .staff-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-.avatar-container {
-  margin-right: 16px;
-}
-
+.avatar-container { margin-right: 16px; }
 .avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  flex-shrink: 0;
-  cursor: pointer;
+  width: 64px; height: 64px; border-radius: 50%;
+  background-size: cover; background-position: center;
+  flex-shrink: 0; cursor: pointer;
 }
-
 .avatar--empty {
   background: linear-gradient(135deg, #69FFDB 0%, #69FF03 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
 }
-
 .avatar-letter {
   font-family: 'Geometria', sans-serif;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 28px;
-  line-height: 33px;
-  color: #FFFFFF;
+  font-weight: 600; font-size: 28px; line-height: 33px; color: #FFFFFF;
 }
 
-.staff-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-}
-
+.staff-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
 .staff-name {
-  font-family: 'Geometria', sans-serif;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 24px;
-  color: #454558;
+  font-family: 'Geometria', sans-serif; font-weight: 500;
+  font-size: 20px; line-height: 24px; color: #454558;
 }
-
 .staff-position {
-  font-family: 'Geometria', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 24px;
-  color: #454558;
+  font-family: 'Geometria', sans-serif; font-weight: 400;
+  font-size: 20px; line-height: 24px; color: #454558;
 }
 
-.rating-container {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-}
-
-.rating-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 114px;
-  height: 46px;
-  background: #F6F5F6;
-  border-radius: 32px;
-  gap: 8px;
-  padding: 8px 16px;
-  box-sizing: border-box;
-}
-
-.star-icon {
-  width: 30px;
-  height: 29px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.rating-number {
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 24px;
-  line-height: 29px;
-  color: #454558;
-}
-
-/* Медиа-запросы для адаптивности */
 @media (max-width: 1200px) {
-  .staff-view {
-    padding: 0 1rem;
-  }
-  
-  .tabs-container,
-  .staff-list {
-    width: 100%;
-    max-width: calc(100vw - 2rem);
-  }
-  
-  .staff-card {
-    width: 100%;
-  }
+  .staff-view { max-width: 95%; }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 431px) and (max-width: 768px) {
   .staff-view {
-    padding: 0 0.5rem;
+    padding-left: calc(var(--sidebar-mobile) + var(--gutter-tablet));
+    padding-right: var(--gutter-tablet);
   }
-  
-  .tabs-container {
-    height: 64px;
-    margin: 16px auto 0 auto;
-  }
-  
+
+  .tabs-container { height: 64px; margin-top: 16px; }
   .tab {
-    font-size: 16px;
-    line-height: 20px;
-    min-height: 64px;
-    padding: 0 16px;
-    min-width: 120px; /* Минимальная ширина для удобства нажатия */
+    font-size: 16px; line-height: 20px;
+    min-height: 64px; padding: 0 16px; min-width: 120px;
   }
-  
-  .staff-list {
-    gap: 8px;
-    margin: 16px auto 0 auto;
-  }
-  
-  .staff-card {
-    height: 80px;
-    padding: 12px 16px;
-  }
-  
-  .avatar {
-    width: 48px;
-    height: 48px;
-  }
-  
-  .avatar-letter {
-    font-size: 20px;
-    line-height: 24px;
-  }
-  
-  .staff-name {
-    font-size: 16px;
-    line-height: 20px;
-  }
-  
-  .staff-position {
-    font-size: 14px;
-    line-height: 18px;
-  }
-  
-  .rating-badge {
-    width: 80px;
-    height: 36px;
-    gap: 4px;
-    padding: 4px 8px;
-  }
-  
-  .star-icon {
-    width: 20px;
-    height: 19px;
-  }
-  
-  .star-icon svg {
-    width: 20px;
-    height: 19px;
-  }
-  
-  .rating-number {
-    font-size: 16px;
-    line-height: 20px;
-  }
+
+  .staff-list { gap: 8px; margin-top: 16px; }
+  .staff-card { height: 80px; padding: 12px 16px; }
+
+  .avatar { width: 48px; height: 48px; }
+  .avatar-letter { font-size: 20px; line-height: 24px; }
+  .staff-name { font-size: 16px; line-height: 20px; }
+  .staff-position { font-size: 14px; line-height: 18px; }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 430px) {
   .staff-view {
-    padding: 0 0.25rem;
+    padding-left: calc(var(--sidebar-mobile) + var(--gutter-mobile));
+    padding-right: var(--gutter-mobile);
+    max-width: 100%;
   }
-  
-  .tabs-container {
-    height: 56px;
-    margin: 12px auto 0 auto;
-  }
-  
+
+  .tabs-container { height: 56px; margin: 12px 0 0 0; }
   .tab {
-    font-size: 14px;
-    line-height: 18px;
-    min-height: 56px;
-    padding: 0 12px;
-    min-width: 100px; /* Уменьшенная минимальная ширина для мобильных */
+    font-size: 14px; line-height: 18px;
+    min-height: 56px; padding: 0 12px; min-width: 100px;
   }
-  
-  .staff-card {
-    height: 72px;
-    padding: 8px 12px;
-  }
-  
-  .avatar-container {
-    margin-right: 12px;
-  }
-  
-  .avatar {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .avatar-letter {
-    font-size: 16px;
-    line-height: 20px;
-  }
-  
-  .staff-name {
-    font-size: 14px;
-    line-height: 18px;
-  }
-  
-  .staff-position {
-    font-size: 12px;
-    line-height: 16px;
-  }
-  
-  .rating-badge {
-    width: 60px;
-    height: 30px;
-    gap: 2px;
-    padding: 2px 6px;
-  }
-  
-  .star-icon {
-    width: 16px;
-    height: 15px;
-  }
-  
-  .star-icon svg {
-    width: 16px;
-    height: 15px;
-  }
-  
-  .rating-number {
-    font-size: 14px;
-    line-height: 18px;
-  }
+
+  .staff-list { gap: 8px; margin-top: 16px; width: 100%; }
+  .staff-card { height: 72px; padding: 8px 12px; }
+
+  .avatar-container { margin-right: 12px; }
+  .avatar { width: 40px; height: 40px; }
+  .avatar-letter { font-size: 16px; line-height: 20px; }
+
+  .staff-name { font-size: 14px; line-height: 18px; }
+  .staff-position { font-size: 12px; line-height: 16px; }
 }
 </style>

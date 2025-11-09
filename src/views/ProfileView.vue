@@ -144,11 +144,19 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+
 .profile-layout {
+  --sidebar-mobile: 64px;
+  --gutter-mobile: 20px;
+
+  --sidebar-desktop: 0px;
+
   display: flex;
   min-height: 100vh;
   background-color: var(--Color-Grey-Grey-100, #f6f5f6);
   font-family: 'Geometria', sans-serif;
+
+  padding-left: var(--sidebar-desktop);
 }
 
 .main-content {
@@ -157,9 +165,9 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   padding: 0;
+  width: 100%;
 }
 
-/* Контейнер формы */
 .profile-container {
   width: 1140px;
   max-width: 90%;
@@ -180,7 +188,6 @@ onMounted(async () => {
   gap: 0;
 }
 
-/* Поля формы */
 .form-field {
   width: 100%;
   height: 160px;
@@ -241,7 +248,6 @@ onMounted(async () => {
   color: #9CA3AF;
 }
 
-/* Кнопка сохранения */
 .save-section {
   width: 384px;
   height: 56px;
@@ -266,26 +272,64 @@ onMounted(async () => {
   transition: opacity 0.2s ease;
 }
 
-.save-button:hover:not(:disabled) {
-  opacity: 0.9;
-}
+.save-button:hover:not(:disabled) { opacity: 0.9; }
+.save-button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.save-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
 
-/* Адаптивность */
 @media (max-width: 1200px) {
-  .profile-container {
-    width: 95%;
-  }
+  .profile-container { width: 95%; }
 }
 
-@media (max-width: 768px) {
+
+@media (min-width: 431px) and (max-width: 768px) {
+  .profile-layout {
+    --gutter-tablet: 24px;
+    padding-left: calc(var(--sidebar-mobile) + var(--gutter-tablet));
+    padding-right: var(--gutter-tablet);
+  }
+
   .profile-form {
     height: auto;
-    padding: 20px;
+    padding: 20px 0;
+  }
+
+  .form-field {
+    height: auto;
+    padding: 10px 0;
+  }
+
+  .field-label { font-size: 18px; line-height: 22px; }
+  .input-wrapper { height: 56px; padding: 16px 20px; }
+  .form-input { font-size: 18px; line-height: 22px; }
+
+  .save-section {
+    width: 100%;
+    max-width: 360px;
+    height: 52px;
+  }
+
+  .save-button { font-size: 18px; line-height: 22px; }
+}
+
+
+@media (max-width: 430px) {
+  
+  .profile-layout {
+    padding-left: calc(var(--sidebar-mobile) + var(--gutter-mobile));
+    padding-right: var(--gutter-mobile);
+  }
+ .main-content { padding: 8px 0 72px; }
+
+  .profile-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0; 
+  }
+
+  .profile-form {
+    height: auto;
+    padding: 16px 0;
+    align-items: stretch;
   }
 
   .form-field {
@@ -294,13 +338,14 @@ onMounted(async () => {
   }
 
   .field-label {
-    font-size: 18px;
-    line-height: 22px;
+    font-size: 16px;
+    line-height: 20px;
+    width: auto;
   }
 
   .input-wrapper {
-    height: 50px;
-    padding: 15px 20px;
+    height: 52px;
+    padding: 14px 16px;
   }
 
   .form-input {
@@ -310,8 +355,9 @@ onMounted(async () => {
 
   .save-section {
     width: 100%;
-    max-width: 300px;
-    height: 50px;
+    max-width: 100%;
+    height: 52px;
+    border-radius: 12px;
   }
 
   .save-button {
@@ -320,23 +366,4 @@ onMounted(async () => {
   }
 }
 
-@media (max-width: 480px) {
-  .profile-container {
-    width: 100%;
-    padding: 0 15px;
-  }
-
-  .profile-form {
-    padding: 15px;
-  }
-
-  .input-wrapper {
-    padding: 12px 16px;
-  }
-
-  .form-input {
-    font-size: 16px;
-    line-height: 20px;
-  }
-}
 </style>

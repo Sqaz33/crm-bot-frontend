@@ -40,7 +40,7 @@ const route = useRoute()
 const mainMenuItems = [
   { label: 'Кошелёк', path: '/wallet', icon: walletIcon },
   { label: 'Магазин', path: '/shop', icon: shopIcon },
-  { label: 'Отзывы', path: '/reviews', icon: reviewIcon },
+  // { label: 'Отзывы', path: '/reviews', icon: reviewIcon },
   { label: 'О компании', path: '/company', icon: companyIcon }
 ]
 
