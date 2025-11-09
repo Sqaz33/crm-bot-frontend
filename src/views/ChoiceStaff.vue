@@ -213,7 +213,7 @@ function onSelect (idOrStaff) {
 
 
   emit('select', id)
-  router.push({ path: '/appointment' })
+  this.$router.push({ path: '/appointmant' })
 }
 
 function onReview (id) { emit('review', id) }
