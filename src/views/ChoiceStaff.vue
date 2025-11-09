@@ -73,48 +73,124 @@
 <script setup>
 import { ref, onMounted, watch, nextTick } from 'vue'
 import api from '../api'
+
 const emit = defineEmits(['select', 'review', 'visit'])
 
 const tabs = ref([{ label: 'Все', value: 'all' }])
 const activeTab = ref('all')
-const staffList = ref([])
 const tabButtons = ref([])
 const activeLine = ref(null)
 
+
+const staffList = ref([])
+const selectedId = ref(null)
+
 const VISIT_KEY = 'visit_data'
 
-async function loadSpecializations() {
-  const { data } = await api.get('/salon/specializations')
-  data.forEach(spec =>
-    tabs.value.push({ label: spec.name, value: spec.id })
-  )
+const defaultVisit = {
+  staff_id: '',
+  services_id: [],
+  visit_time: { start_time: '', end: '' },
+  comment: ''
 }
 
-async function loadStaff(specId) {
-  const raw = localStorage.getItem(VISIT_KEY)
-  const visit = raw
-    ? JSON.parse(raw)
-    : { staff_id:'', services_id:[], visit_time:{start_time:'',end:''}, comment:'' }
-  
+function readVisit () {
+  try {
+    const raw = localStorage.getItem(VISIT_KEY)
+    if (!raw) return { ...defaultVisit }
+    const parsed = JSON.parse(raw)
+    return { ...defaultVisit, ...parsed }
+  } catch {
+    return { ...defaultVisit }
+  }
+}
+
+function writeVisit (v) {
+  try {
+    localStorage.setItem(VISIT_KEY, JSON.stringify(v))
+  } catch (e) {
+    console.warn('writeVisit failed:', e)
+  }
+}
+
+
+function getStaffId (s) {
+  return s?.id ?? s?.staff_id ?? s?._id ?? s?.user_id ?? null
+}
+
+function getFirstLetter (name) {
+  return name && name.length > 0 ? name.charAt(0).toUpperCase() : ''
+}
+
+
+async function loadSpecializations () {
+  const { data } = await api.get('/salon/specializations')
+  data.forEach(spec => tabs.value.push({ label: spec.name, value: spec.id }))
+}
+
+async function loadStaff (specId) {
+  const visit = readVisit()
   const params = {}
 
-  if (visit?.services_id) {
-    params.service_id = visit.services_id
-  }
+  if (visit?.services_id?.length) params.service_id = visit.services_id
+  if (visit?.visit_time?.start_time) params.start_time = visit.visit_time.start_time
+  if (specId && specId !== 'all') params.specialization_id = specId
 
-  if (visit?.visit_time?.start_time) {
-    params.start_time = visit.visit_time.start_time
-  }
-
-  if (specId && specId !== 'all') {
-    params.specialization_id = specId
-  }
-
-  const { data } = await api.get('/salon/staff', {params})
+  const { data } = await api.get('/salon/staff', { params })
   staffList.value = data
+
+
+  if (selectedId.value && !staffList.value.some(s => getStaffId(s) === selectedId.value)) {
+    selectedId.value = null
+    const v = readVisit()
+    v.staff_id = ''
+    writeVisit(v)
+  }
 }
 
-function selectTab(v) { 
+
+function updateActiveLine () {
+  try {
+    if (!tabButtons.value || !activeLine.value) return
+    const idx = tabs.value.findIndex(t => t.value === activeTab.value)
+    if (idx === -1) return
+    const btn = tabButtons.value[idx]
+    if (!btn) return
+
+    const container = btn.parentElement
+    const containerRect = container.getBoundingClientRect()
+    const buttonRect = btn.getBoundingClientRect()
+    const left = buttonRect.left - containerRect.left + container.scrollLeft
+    const width = buttonRect.width
+
+    activeLine.value.style.left = `${left + width * 0.1}px`
+    activeLine.value.style.width = `${width * 0.8}px`
+  } catch (e) {
+    console.warn('updateActiveLine failed:', e)
+  }
+}
+
+function scrollToActiveTab () {
+  try {
+    if (!tabButtons.value) return
+    const idx = tabs.value.findIndex(t => t.value === activeTab.value)
+    if (idx === -1) return
+    const btn = tabButtons.value[idx]
+    const container = btn?.parentElement
+    if (!btn || !container) return
+
+    const containerWidth = container.clientWidth
+    const buttonLeft = btn.offsetLeft
+    const buttonWidth = btn.offsetWidth
+    const scrollTo = buttonLeft - (containerWidth / 2) + (buttonWidth / 2)
+
+    container.scrollTo({ left: Math.max(0, scrollTo), behavior: 'smooth' })
+  } catch (e) {
+    console.warn('scrollToActiveTab failed:', e)
+  }
+}
+
+function selectTab (v) {
   activeTab.value = v
   nextTick(() => {
     updateActiveLine()
@@ -122,77 +198,41 @@ function selectTab(v) {
   })
 }
 
-function getFirstLetter(name) {
-  return name && name.length > 0 ? name.charAt(0).toUpperCase() : ''
+function onSelect (idOrStaff) {
+  const id = typeof idOrStaff === 'object' ? getStaffId(idOrStaff) : idOrStaff
+  console.log('onSelect, id:', id)
+  if (!id) return
+
+  selectedId.value = id
+
+ 
+  const visit = readVisit()
+  visit.staff_id = id
+  writeVisit(visit)
+
+
+  emit('select', id)
 }
 
-function updateActiveLine() {
-  if (!tabButtons.value || !activeLine.value) return
-  
-  const activeIndex = tabs.value.findIndex(tab => tab.value === activeTab.value)
-  if (activeIndex === -1) return
-  
-  const activeButton = tabButtons.value[activeIndex]
-  if (!activeButton) return
-  
-  const containerRect = activeButton.parentElement.getBoundingClientRect()
-  const buttonRect = activeButton.getBoundingClientRect()
-  
-  // Учитываем прокрутку контейнера
-  const scrollLeft = activeButton.parentElement.scrollLeft
-  const left = buttonRect.left - containerRect.left + scrollLeft
-  const width = buttonRect.width
-  
-  // Центрируем линию под табом с небольшим отступом
-  activeLine.value.style.left = `${left + width * 0.1}px`
-  activeLine.value.style.width = `${width * 0.8}px`
-}
+function onReview (id) { emit('review', id) }
+function onVisit (id)  { emit('visit', id) }
 
-function scrollToActiveTab() {
-  if (!tabButtons.value) return
-  
-  const activeIndex = tabs.value.findIndex(tab => tab.value === activeTab.value)
-  if (activeIndex === -1) return
-  
-  const activeButton = tabButtons.value[activeIndex]
-  const container = activeButton.parentElement
-  
-  if (!activeButton || !container) return
-  
-  const containerWidth = container.clientWidth
-  const buttonLeft = activeButton.offsetLeft
-  const buttonWidth = activeButton.offsetWidth
-  
-  // Вычисляем позицию для центрирования активного таба
-  const scrollTo = buttonLeft - (containerWidth / 2) + (buttonWidth / 2)
-  
-  container.scrollTo({
-    left: Math.max(0, scrollTo),
-    behavior: 'smooth'
-  })
-}
 
 watch(activeTab, v => loadStaff(v))
 
 onMounted(async () => {
   await loadSpecializations()
   await loadStaff()
-  
-  nextTick(() => {
-    updateActiveLine()
-  })
-  
-  // Обновляем позицию линии при изменении размера окна
+
+
+  const v = readVisit()
+  if (v?.staff_id) selectedId.value = v.staff_id
+
+  nextTick(updateActiveLine)
   window.addEventListener('resize', updateActiveLine)
 })
-
-function onSelect(id) { 
-  console.log('onSelect, id:', id) 
-  emit('select', id) 
-}
-function onReview(id) { emit('review', id) }
-function onVisit(id)  { emit('visit', id) }
 </script>
+
 
 <style scoped>
 .staff-view {
