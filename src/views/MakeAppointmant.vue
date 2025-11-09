@@ -33,51 +33,49 @@
 
   <!-- Модалка для редактирования профиля -->
   <div v-if="showProfileModal" class="modal-overlay">
-	<div class="modal-wrapper">
-			<div class="modal">
-				<h3>Проверьте данные</h3>
+    <div class="modal">
+      <h3>Проверьте данные</h3>
 
-				<div class="field">
-					<div class="header-field">
-						<label class="label" for="firstName">Имя</label>
-					</div>
-					<input id="firstName" v-model="form.firstName" />
-				</div>
+      <div class="field">
+        <div class="header-field">
+          <label class="label" for="firstName">Имя</label>
+        </div>
+        <input id="firstName" v-model="form.firstName" />
+      </div>
 
-				<div class="field">
-					<div class="header-field">
-						<label class="label" for="lastName">Фамилия</label>
-					</div>
-					<input id="lastName" v-model="form.lastName" />
-				</div>
+      <div class="field">
+        <div class="header-field">
+          <label class="label" for="lastName">Фамилия</label>
+        </div>
+        <input id="lastName" v-model="form.lastName" />
+      </div>
 
-				<div class="field">
-					<div class="header-field">
-						<label class="label" for="middleName">Отчество</label>
-					</div>
-					<input id="middleName" v-model="form.middleName" />
-				</div>
+      <div class="field">
+        <div class="header-field">
+          <label class="label" for="middleName">Отчество</label>
+        </div>
+        <input id="middleName" v-model="form.middleName" />
+      </div>
 
-				<div class="field">
-					<div class="header-field">
-						<label class="label" for="phone">Телефон</label>
-					</div>
-					<input id="phone" v-model="form.phone" readonly />
-				</div>
+      <div class="field">
+        <div class="header-field">
+          <label class="label" for="phone">Телефон</label>
+        </div>
+        <input id="phone" v-model="form.phone" readonly />
+      </div>
 
-				<div class="field">
-					<div class="header-field">
-						<label class="label" for="email">E-mail</label>
-					</div>
-					<input id="email" v-model="form.email" readonly />
-				</div>
+      <div class="field">
+        <div class="header-field">
+          <label class="label" for="email">E-mail</label>
+        </div>
+        <input id="email" v-model="form.email" readonly />
+      </div>
 
-				<div class="modal-buttons">
-					<button @click="confirmProfile">Продолжить</button>
-					<button @click="showProfileModal = false">Отмена</button>
-				</div>
-			</div>
-		</div>
+      <div class="modal-buttons">
+        <button @click="confirmProfile">Продолжить</button>
+        <button @click="showProfileModal = false">Отмена</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -353,8 +351,8 @@ function confirmProfile() {
   background: white;
   padding: 32px;
   border-radius: 12px;
-  width: 90%;
-	max-height: 80vh;
+  width: 80%;
+	max-height: 70vh;
   max-width: 500px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
@@ -366,12 +364,6 @@ function confirmProfile() {
   line-height: 28px;
   text-align: center;
   margin-bottom: 32px;
-}
-
-.modal-wrapper {
-  max-height: 90vh;
-  overflow-y: auto;
-  margin: 20px;
 }
 
 .field {
