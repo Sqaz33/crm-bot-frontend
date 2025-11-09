@@ -1,48 +1,58 @@
 <template>
   <div class="services-view">
-    <h1>Выберите услугу</h1>
+    <h1 class="page-title">Выберите услугу</h1>
 
     <div v-if="loading" class="loading">Загрузка…</div>
-    <div v-else>
-      <div 
-        v-for="type in serviceTypes" 
-        :key="type.id" 
+
+    <div v-else class="types-wrap">
+      <section
+        v-for="type in serviceTypes"
+        :key="type.id"
         class="type-block"
+        :class="{ open: openType === type.id }"
       >
         <button class="type-header" @click="toggle(type.id)">
-          {{ type.name }}
-          <span class="count">{{ servicesByType[type.id]?.length || 0 }}</span>
-          <span class="arrow">{{ openType === type.id ? '▲' : '▼' }}</span>
+          <span class="type-title">{{ type.name }}</span>
+          <span class="type-meta">
+            <span class="count-badge">{{ (servicesByType[type.id] || []).length }}</span>
+            <span class="chev" :class="{ up: openType === type.id }">▾</span>
+          </span>
         </button>
-        <ul 
-          v-show="openType === type.id" 
-          class="service-list"
-        >
-          <li 
-            v-for="svc in servicesByType[type.id]" 
-            :key="svc.id" 
-            :class="{ selected: selectedServiceId === svc.id }"
+
+        <ul v-show="openType === type.id" class="service-list">
+          <li
+            v-for="svc in servicesByType[type.id]"
+            :key="svc.id"
+            class="service-item"
+            :class="{ selected: isSelected(svc.id) }"
           >
-            <label>
-              <input 
-                type="radio" 
-                name="service" 
-                :value="svc.id" 
-                v-model="selectedServiceId"
-              />
-              <span class="name">{{ svc.name }}</span>
-              <span class="price">{{ svc.price }} ₽</span>
-            </label>
+            <div class="svc-left">
+              <div class="svc-name">{{ svc.name }}</div>
+            </div>
+
+            <div class="svc-right">
+              <div class="svc-price">{{ svc.price.toLocaleString('ru-RU') }} ₽</div>
+
+              <button
+                class="icon-btn"
+                :class="isSelected(svc.id) ? 'danger' : 'primary'"
+                @click="toggleService(svc)"
+                type="button"
+              >
+                <span v-if="isSelected(svc.id)">×</span>
+                <span v-else>＋</span>
+              </button>
+            </div>
           </li>
         </ul>
-      </div>
+      </section>
 
-      <button 
-        class="btn-next" 
-        :disabled="!selectedServiceId" 
+      <button
+        class="btn-next"
+        :disabled="!selectedServiceIds.length"
         @click="confirm"
       >
-        Продолжить запись{{ selectedServiceId ? ' — ' + selectedService.price + ' ₽' : '' }}
+        Продолжить запись<span v-if="selectedServiceIds.length"> — {{ totalPrice.toLocaleString('ru-RU') }} ₽</span>
       </button>
     </div>
   </div>
@@ -57,45 +67,46 @@ const VISIT_KEY = 'visit_data'
 const router = useRouter()
 
 const loading = ref(true)
-const serviceTypes = ref([]) // [{id, name}]
-const services = ref([])     // [{id, name, price, ..., service_type_id}]
+const serviceTypes = ref([])
+const services = ref([])
 const openType = ref(null)
-const selectedServiceId = ref(null)
+const selectedServiceIds = ref([])
 
-function loadVisitData() {
-  const raw = localStorage.getItem(VISIT_KEY)
-  if (raw) {
-    try { return JSON.parse(raw) } catch {}
+function loadVisit() {
+  try {
+    const raw = localStorage.getItem(VISIT_KEY)
+    if (!raw) return { staff_id: null, services_id: [], visit_time: {}, comment: '' }
+    return JSON.parse(raw)
+  } catch {
+    return { staff_id: null, services_id: [], visit_time: {}, comment: '' }
   }
-  return { staff_id: null, services_id: [], visit_time: {}, comment: '' }
 }
 
-function saveVisit(data) {
-  const str = JSON.stringify(data)
+function saveVisit(v) {
+  const str = JSON.stringify(v)
   localStorage.setItem(VISIT_KEY, str)
-  document.cookie = `${VISIT_KEY}=${encodeURIComponent(str)}; path=/; max-age=${365*24*60*60}; SameSite=None; Secure`
+  document.cookie = `${VISIT_KEY}=${encodeURIComponent(str)}; path=/; SameSite=Lax;`
 }
 
-const visitData = ref(loadVisitData())
+const visit = ref(loadVisit())
 
 onMounted(async () => {
-  // 1) Получаем список типов услуг (id, name)
   const { data: types } = await api.get('/services/types/')
-  serviceTypes.value = types
+  serviceTypes.value = types || []
 
-  // 2) Получаем услуги, опционально фильтруем по staff_id
   const params = {}
-  if (visitData.value.staff_id) {
-    params.staff_id = visitData.value.staff_id
-  }
+  if (visit.value.staff_id) params.staff_id = visit.value.staff_id
   const { data: all } = await api.get('/services/', { params })
-  services.value = all
+  services.value = all || []
+
+  if (Array.isArray(visit.value.services_id)) {
+    selectedServiceIds.value = [...visit.value.services_id]
+  }
 
   loading.value = false
 })
 
 const servicesByType = computed(() => {
-  // Собираем услуги по service_type_id
   const map = {}
   serviceTypes.value.forEach(t => (map[t.id] = []))
   services.value.forEach(s => {
@@ -105,93 +116,188 @@ const servicesByType = computed(() => {
   return map
 })
 
-const selectedService = computed(() =>
-  services.value.find(s => s.id === selectedServiceId.value) || { price: 0 }
+const selectedServices = computed(() =>
+  services.value.filter(s => selectedServiceIds.value.includes(s.id))
+)
+
+const totalPrice = computed(() =>
+  selectedServices.value.reduce((sum, s) => sum + (Number(s.price) || 0), 0)
 )
 
 function toggle(typeId) {
   openType.value = openType.value === typeId ? null : typeId
 }
 
+function isSelected(id) {
+  return selectedServiceIds.value.includes(id)
+}
+
+function toggleService(svc) {
+  const idx = selectedServiceIds.value.indexOf(svc.id)
+  if (idx >= 0) selectedServiceIds.value.splice(idx, 1)
+  else selectedServiceIds.value.push(svc.id)
+}
+
 function confirm() {
-  if (!selectedService.value) return
-  visitData.value.services_id = [ selectedService.value.id ]
-  saveVisit(visitData.value)
+  if (!selectedServiceIds.value.length) return
+  visit.value.services_id = [...selectedServiceIds.value]
+  saveVisit(visit.value)
   router.push({ name: 'appointmant' })
 }
 </script>
 
 <style scoped>
 .services-view {
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 1rem;
-  background: #fff;
-  border-radius: 8px;
+  --sidebar-mobile: 64px;
+  --gutter-mobile: 12px;
+  --top-gap-mobile: 12px;
+  --brand: #5c6cf0;
+  --brand-100: #eef0ff;
+  --text: #2b3240;
+  --muted: #8d99ad;
+  --card: #ffffff;
+  --card-muted: #f3f5f8;
+  --stroke: #e6eaf2;
+
+  max-width: 720px;
+  margin: 24px auto;
+  padding: 0 12px;
+  color: var(--text);
 }
-.loading {
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
   text-align: center;
-  padding: 2rem;
+  margin: 0 0 12px 0;
 }
-.type-block {
-  border: 1px solid #eee;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-  overflow: hidden;
-}
+
+.loading { text-align: center; padding: 24px; }
+
+.types-wrap { display: flex; flex-direction: column; gap: 12px; }
+
+.type-block { background: transparent; border-radius: 14px; }
 .type-header {
   width: 100%;
-  padding: 0.75rem 1rem;
-  background: #f9f9f9;
   border: none;
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: var(--card-muted);
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 16px;
 }
+.type-block.open .type-header { background: var(--brand-100); }
+
+.type-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.type-meta { display: inline-flex; align-items: center; gap: 10px; }
+.count-badge {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--stroke);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+.chev { transition: transform .15s ease; }
+.chev.up { transform: rotate(180deg); }
+
 .service-list {
   list-style: none;
-  margin: 0;
-  padding: 0.5rem;
-  background: #fff;
+  margin: 10px 0 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-.service-list li {
-  padding: 0.5rem 0;
+.service-item {
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  padding: 14px 14px 14px 18px;
   display: flex;
   align-items: center;
-}
-.service-list li + li {
-  border-top: 1px solid #eee;
-}
-.service-list label {
-  width: 100%;
-  display: flex;
   justify-content: space-between;
-  cursor: pointer;
 }
-.service-list .name {
-  flex: 1;
+.service-item.selected {
+  border-color: #ffa940;
+  box-shadow: inset 3px 0 0 0 #ffa940;
 }
-.service-list .price {
-  margin-left: 1rem;
+
+.svc-left { min-width: 0; }
+.svc-name {
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.service-list li.selected {
-  background: #e6f7ff;
+
+.svc-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 12px;
+  flex-shrink: 0;
 }
+.svc-price { font-weight: 700; }
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 1;
+  border: 2px solid var(--brand);
+  color: var(--brand);
+  background: #fff;
+}
+.icon-btn.primary:hover { filter: brightness(0.96); }
+.icon-btn.danger {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+
 .btn-next {
   width: 100%;
-  padding: 0.75rem;
-  background: #007bff;
-  color: #fff;
+  padding: 14px 18px;
+  border-radius: 12px;
   border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  margin-top: 1rem;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  margin-top: 8px;
   cursor: pointer;
 }
-.btn-next:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+.btn-next:disabled { background: #c4cdd5; cursor: not-allowed; }
+
+@media (max-width: 430px) {
+  .services-view {
+    margin: 0;
+    padding-top: var(--top-gap-mobile);
+    padding-left: calc(var(--sidebar-mobile) + var(--gutter-mobile));
+    padding-right: calc(var(--sidebar-mobile) + var(--gutter-mobile));
+  }
+  .page-title { margin-bottom: 8px; font-size: 18px; }
+  .type-header { padding: 12px 14px; font-size: 15px; }
+  .count-badge { min-width: 30px; height: 30px; font-size: 14px; }
+  .service-item { padding: 12px 12px 12px 14px; }
+  .svc-name { font-size: 14px; }
+  .svc-price { font-size: 15px; }
+  .icon-btn { width: 34px; height: 34px; font-size: 18px; }
 }
 </style>
