@@ -123,7 +123,7 @@
       </div>
     </div>
   </div>
-</template>
+</template> 
 
 <script setup>
 import { ref, onMounted } from 'vue'
@@ -487,50 +487,82 @@ onMounted(() => fetchVisits(activeTab.value))
   max-width: 320px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .filled-content {
-    padding: 0.75rem;
+@media (max-width: 768px){
+  .filled-content{padding:12px}
+  .appointment-card{padding:16px}
+  .card-header{gap:12px}
+  .avatar{width:40px;height:40px}
+  .employee-name{font-size:.9375rem}
+  .service-info{gap:8px;font-size:.875rem}
+  .total-price{font-size:1.125rem}
+  .empty-content{padding:48px 24px}
+  .empty-icon-wrapper{width:100px;height:100px}
+  .empty-icon{width:56px;height:56px}
+}
+
+
+.records-page{--sidebar-mobile:64px;--gutter-mobile:16px}
+@media (max-width: 430px){
+  .records-page{
+    padding:0;
+    padding-top:12px;
+    padding-left:calc(var(--sidebar-mobile) + var(--gutter-mobile));
+    padding-right:var(--gutter-mobile);
+    min-height:100vh;
   }
 
-  .appointment-card {
-    padding: 1rem;
+  .records-container{
+    max-width:none;
+    width:calc(100vw - (var(--sidebar-mobile) + 2 * var(--gutter-mobile)));
+    margin:0;
+    padding:0;
   }
 
-  .card-header {
-    gap: 0.75rem;
+  .tabs-container{padding:12px 0;gap:10px}
+  .tab-btn{
+    padding:12px 14px;
+    font-size:.9rem;
+    border-radius:10px;
   }
 
-  .avatar {
-    width: 40px;
-    height: 40px;
+  .filled-content{padding:12px 0}
+  .appointment-card{
+    padding:14px;
+    border-radius:12px;
   }
 
-  .employee-name {
-    font-size: 0.9375rem;
-  }
+  .card-header{align-items:center}
+  .avatar{width:38px;height:38px}
+  .employee-name{font-size:.95rem}
+  .employee-specialty{font-size:.8rem}
+  .date-time{min-width:74px}
+  .date{font-size:.9rem}
+  .time{font-size:.8rem}
 
-  .service-info {
-    gap: 0.5rem;
-    font-size: 0.875rem;
+  .service-info{
+    grid-template-columns:1fr auto auto;
+    gap:8px;
+    padding:10px 0;
+    margin-bottom:12px;
   }
+  .service-name-small{font-size:.72rem;margin-bottom:6px}
+  .service-name,.quantity,.price{font-size:.9rem}
+  .price{text-align:right}
 
-  .total-price {
-    font-size: 1.125rem;
-  }
+  .status-icon{width:36px;height:36px}
+  .status-badge{font-size:.95rem}
+  .status-reason{font-size:.8rem}
+  .total-price{font-size:1.1rem}
+}
 
-  .empty-content {
-    padding: 3rem 1.5rem;
-  }
 
-  .empty-icon-wrapper {
-    width: 100px;
-    height: 100px;
-  }
-
-  .empty-icon {
-    width: 56px;
-    height: 56px;
-  }
+@media (max-width: 360px){
+  .records-page{--gutter-mobile:12px}
+  .tab-btn{padding:10px 12px;font-size:.85rem}
+  .appointment-card{padding:12px}
+  .employee-name{font-size:.9rem}
+  .service-name,.quantity,.price{font-size:.875rem}
+  .status-icon{width:32px;height:32px}
+  .total-price{font-size:1rem}
 }
 </style>

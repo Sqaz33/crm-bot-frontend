@@ -287,472 +287,161 @@ function askAdmin() {
 </script>
 
 <style scoped>
-.visit-create-view { 
-  max-width: 500px;
-  margin: 2rem auto; 
-  background: #f5f8ff; 
-  border-radius: 8px; 
-  padding: 1rem; 
-  box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
+
+
+.visit-create-view{
+  --sidebar-mobile:64px;
+  --gutter-mobile:12px;
+  --top-gap-mobile:12px;
+  --brand:#666FE8;
+  --text:#454558;
+  --muted:#7c8499;
+  --bg:#F6F9FC;
+  --card:#FFFFFF;
+  --stroke:#E6EAF2;
+  --soft:#EBEEF6;
+
+  background:var(--bg);
+  color:var(--text);
+  max-width:720px;
+  margin:24px auto;
+  padding:0 12px;
+  box-sizing:border-box;
 }
 
-.visit-summary {
-  background: #fff;
-  border-radius: 8px; 
-  padding: 1rem; 
-  margin-bottom: 1rem; 
-  font-size: 1.1rem; 
+.visit-summary,
+.visit-form{
+  background:var(--card);
+  border-radius:12px;
+  padding:16px;
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
+  margin-bottom:12px;
 }
 
-.date-row { 
-  display: flex; 
-  justify-content: space-between; 
-  margin-bottom: 1rem; 
+/* Summary */
+.date-row{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;
+}
+.date-cell .date{font-weight:600}
+.time-cell{font-weight:600}
+
+.staff-block{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#eee}
+.staff-info{min-width:0}
+.staff-name{font-weight:700}
+.staff-role{color:var(--muted);font-size:14px}
+
+.service-block{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin-bottom:10px}
+.service-name{grid-column:1/-1;font-weight:600}
+.service-desc{grid-column:1/-1;color:var(--muted);font-size:14px}
+.service-duration{color:var(--muted)}
+.service-price{font-weight:700}
+
+.total-block{display:flex;justify-content:space-between;align-items:center;background:#E7EDF9;border-radius:10px;padding:10px 12px;font-weight:700}
+
+/* Form */
+.form-label{font-size:12px;font-weight:700;color:var(--muted);margin:12px 0 6px;letter-spacing:.02em}
+.client-block{display:flex;align-items:center;gap:8px;background:#f6f9fc;border-radius:10px;padding:10px 12px;font-weight:600;margin-bottom:10px}
+.client-icon{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:#6267ee;color:#fff}
+
+.form-section{margin-bottom:12px}
+textarea{width:100%;min-height:96px;border:1px solid #D3D3D3;border-radius:10px;padding:10px 12px;font-size:14px;resize:vertical}
+select{width:100%;border:1px solid #D3D3D3;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff}
+
+.legal-row{display:flex;align-items:center;gap:8px;margin:10px 0}
+.legal-row input{width:16px;height:16px}
+.legal-row a{color:#3471D6;text-decoration:underline}
+
+.btn-submit{width:100%;height:52px;border:none;border-radius:12px;background:var(--brand);color:#fff;font-weight:700;font-size:16px;cursor:pointer}
+.btn-submit[disabled]{background:#C4CDD5;cursor:not-allowed}
+
+.error-msg{text-align:center;color:#C00;margin-top:10px}
+
+/* Success modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(69,69,88,.52);display:flex;align-items:center;justify-content:center;z-index:9999}
+.success-modal{position:relative;width:905px;max-width:90%;background:#fff;border-radius:12px;box-sizing:border-box}
+.modal-content{display:flex;flex-direction:column;padding:48px 0 60px}
+.close-btn{position:absolute;top:28px;right:54px;background:transparent;border:none;cursor:pointer;width:21px;height:20px}
+.close-btn:hover{opacity:.7}
+
+.salon-card{display:flex;align-items:center;gap:16px;padding:16px 0 16px 41px;background:#fff;border-radius:10px;margin:0 33px 71px 39px}
+.salon-logo{width:64px;height:64px;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center}
+.salon-info{display:flex;flex-direction:column}
+.salon-name{font-weight:500;font-size:24px;line-height:28px}
+.salon-type{font-weight:400;font-size:20px;line-height:24px}
+
+.success-text{font-weight:400;font-size:24px;line-height:29px;margin:0 116px 57px 80px}
+.success-text strong{font-weight:500}
+
+.btn-my-records,
+.btn-ask-admin{width:745px;height:56px;margin:0 80px 20px;background:var(--brand);color:#fff;border:none;border-radius:10px;font-weight:500;font-size:20px;display:flex;align-items:center;justify-content:center}
+.btn-ask-admin{background:#EBEEF6;color:var(--text);margin-bottom:0}
+.btn-my-records:hover{filter:brightness(.95)}
+.btn-ask-admin:hover{filter:brightness(.97)}
+
+/* Tablet */
+@media (max-width:920px){
+  .success-modal{width:95%;max-width:700px}
+  .modal-content{padding:40px 0 50px}
+  .salon-card{margin:0 20px 40px 20px;padding-left:20px}
+  .salon-name{font-size:22px;line-height:26px}
+  .salon-type{font-size:18px;line-height:22px}
+  .success-text{margin:0 30px 32px 30px;font-size:20px;line-height:26px}
+  .btn-my-records,.btn-ask-admin{width:calc(100% - 60px);margin:0 30px 16px}
+  .close-btn{right:30px}
 }
 
-.staff-block { 
-  display: flex; 
-  align-items: center; 
-  margin-bottom: 1rem; 
-}
-
-.avatar { 
-  width: 48px; 
-  height: 48px; 
-  border-radius: 50%; 
-  margin-right: 0.8rem; 
-  object-fit: cover; 
-  background: #eee; 
-}
-
-.staff-info { 
-  flex: 1; 
-}
-
-.staff-name {
-  font-weight: bold; 
-}
-
-.staff-role { 
-  font-size: .92em; 
-  color: #888; 
-}
-
-.service-block, .total-block { 
-  margin-bottom: 1rem; 
-}
-
-.service-price, .total-price { 
-  font-weight: bold; 
-  font-size: 1.2em; 
-  float: right; 
-}
-
-.total-block { 
-  background: #a3ddff; 
-  border-radius: 6px; 
-  padding: .7em 1em; 
-  font-weight: bold; 
-  font-size: 1.13em; 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
-}
-
-.visit-form {
-  background: #fff; 
-  border-radius: 8px; 
-  padding: 1rem; 
-}
-
-.form-label { 
-  font-size: .88em; 
-  font-weight: bold; 
-  color: #7c8499; 
-  margin: 1.1em 0 .4em; 
-  letter-spacing: .03em; 
-}
-
-.client-block { 
-  background: #e5f5ff; 
-  padding: .6em 1em; 
-  border-radius: 7px; 
-  display: flex; 
-  align-items: center; 
-  font-weight: bold; 
-  margin-bottom: 1em; 
-  gap: .7em; 
-}
-
-.client-icon { 
-  font-size: 1.25em; 
-  background: #00b172; 
-  color: #fff; 
-  padding: .2em .45em; 
-  border-radius: 6px; 
-}
-
-.client-name { 
-  font-size: 1em; 
-}
-
-.form-section { 
-  margin-bottom: 1.1rem;
-}
-
-textarea { 
-  width: 100%; 
-  border-radius: 6px; 
-  border: 1px solid #d3d3d3; 
-  min-height: 50px; 
-  padding: .5em; 
-  font-size: 1em; 
-}
-
-select { 
-  border-radius: 4px; 
-  padding: .3em; 
-  margin-top: .2em; 
-  font-size: 1em; 
-  width: 100%; 
-}
-
-.legal-row { 
-  display: flex;
-  align-items: center; 
-  font-size: .98em; 
-  gap: .5em; 
-  margin-bottom: 1.1em; 
-}
-
-.legal-row input[type="checkbox"] {
-  width: 1.1em;
-  height: 1.1em; 
-}
-
-.legal-row a {
-  color: #3471d6; 
-  text-decoration: underline; 
-  cursor: pointer; 
-}
-
-.btn-submit { 
-  width: 100%; 
-  background: #2F80EC; 
-  color: #fff; 
-  padding: .9em; 
-  font-size: 1.11em; 
-  border: none; 
-  border-radius: 6px; 
-  cursor: pointer; 
-  font-weight: bold; 
-  margin-top: 1em; 
-}
-
-.btn-submit[disabled] { 
-  background: #ccc; 
-  cursor: not-allowed;
-}
-
-.error-msg { 
-  color: #c00; 
-  margin-top: 1em; 
-  text-align: center;
-}
-
-/* МОДАЛЬНОЕ ОКНО УСПЕШНОЙ ЗАПИСИ - FLEXBOX + РАЗМЕРЫ ИЗ FIGMA */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(69, 69, 88, 0.525);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.success-modal {
-  position: relative;
-  width: 905px;
-  max-width: 90%;
-  background: #FFFFFF;
-  border-radius: 12px;
-  box-sizing: border-box;
-}
-
-.modal-content {
-  display: flex;
-  flex-direction: column;
-  padding: 48px 0 60px 0;
-  gap: 0;
-}
-
-.close-btn {
-  position: absolute;
-  top: 28px;
-  right: 54px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  width: 21px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
-}
-
-.close-btn:hover {
-  opacity: 0.7;
-}
-
-.salon-card {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 0 16px 41px;
-  background: #FFFFFF;
-  border-radius: 10px;
-  margin-left: 39px;
-  margin-right: 33px;
-  margin-bottom: 71px;
-}
-
-.salon-logo {
-  width: 64px;
-  height: 64px;
-  background: #666FE8;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.salon-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0;
-}
-
-.salon-name {
-  font-family: 'Geometria', 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 24px;
-  line-height: 28px;
-  color: #454558;
-}
-
-.salon-type {
-  font-family: 'Geometria', 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 24px;
-  color: #454558;
-}
-
-.success-text {
-  font-family: 'Geometria', 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 24px;
-  line-height: 29px;
-  color: #454558;
-  margin-left: 80px;
-  margin-right: 116px;
-  margin-bottom: 57px;
-}
-
-.success-text strong {
-  font-weight: 500;
-  font-family: 'Geometria', 'Inter', sans-serif;
-}
-
-.btn-my-records {
-  width: 745px;
-  height: 56px;
-  margin-left: 80px;
-  margin-right: 80px;
-  margin-bottom: 20px;
-  padding: 16px;
-  background: #666FE8;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Geometria', 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 24px;
-  color: #FFFFFF;
-  transition: background 0.2s;
-  box-sizing: border-box;
-}
-
-.btn-my-records:hover {
-  background: #5459c9;
-}
-
-.btn-ask-admin {
-  width: 745px;
-  height: 56px;
-  margin-left: 80px;
-  margin-right: 80px;
-  padding: 16px;
-  background: #EBEEF6;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Geometria', 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 24px;
-  color: #454558;
-  transition: background 0.2s;
-  box-sizing: border-box;
-}
-
-.btn-ask-admin:hover {
-  background: #dde0e8;
-}
-
-/* Адаптивность для планшетов */
-@media (max-width: 920px) {
-  .success-modal {
-    width: 95%;
-    max-width: 700px;
+/* Mobile / mini-app (Pixel-класс) */
+@media (max-width:430px){
+  .visit-create-view{
+    margin:0;
+    padding-top:var(--top-gap-mobile);
+    padding-left:calc(var(--sidebar-mobile) + var(--gutter-mobile));
+    padding-right:var(--gutter-mobile);
+    max-width:100vw;
   }
-  
-  .modal-content {
-    padding: 40px 0 50px 0;
+
+  .visit-summary,.visit-form{padding:12px;border-radius:12px}
+  .date-row{gap:8px}
+  .staff-role{font-size:13px}
+  .service-block{grid-template-columns:1fr auto;gap:4px 10px}
+  .service-desc{font-size:13px}
+  .total-block{padding:10px}
+
+  .client-block{padding:10px}
+  textarea{min-height:90px;
+      width: 90%;}
+  select{font-size:15px}
+
+  .btn-submit{height:50px}
+
+  .success-modal{
+    width:calc(100vw - (var(--sidebar-mobile) + 2*var(--gutter-mobile)));
+    max-width:none;
+    border-radius:12px;
   }
-  
-  .salon-card {
-    margin-left: 20px;
-    margin-right: 20px;
-    padding-left: 20px;
-  }
-  
-  .salon-name {
-    font-size: 22px;
-    line-height: 26px;
-  }
-  
-  .salon-type {
-    font-size: 18px;
-    line-height: 22px;
-  }
-  
-  .success-text {
-    margin-left: 30px;
-    margin-right: 30px;
-    font-size: 20px;
-    line-height: 26px;
-    margin-bottom: 40px;
-  }
-  
-  .btn-my-records {
-    width: calc(100% - 60px);
-    margin-left: 30px;
-    margin-right: 30px;
-    margin-bottom: 16px;
-    font-size: 18px;
-  }
-  
-  .btn-ask-admin {
-    width: calc(100% - 60px);
-    margin-left: 30px;
-    margin-right: 30px;
-    font-size: 18px;
-  }
-  
-  .close-btn {
-    right: 30px;
+  .modal-content{padding:28px 0 36px}
+  .close-btn{top:16px;right:16px}
+
+  .salon-card{margin:0 16px 28px 16px;gap:12px;padding:12px 0 12px 16px}
+  .salon-logo{width:48px;height:48px}
+  .salon-name{font-size:18px;line-height:22px}
+  .salon-type{font-size:16px;line-height:20px}
+
+  .success-text{font-size:16px;line-height:22px;margin:0 20px 24px 20px}
+
+  .btn-my-records,.btn-ask-admin{
+    width:calc(100% - 40px);
+    margin:0 20px 12px;
+    height:48px;
+    font-size:16px;
   }
 }
 
-/* Адаптивность для мобильных */
-@media (max-width: 600px) {
-  .success-modal {
-    width: 95%;
-    max-width: 100%;
-  }
-  
-  .modal-content {
-    padding: 32px 0 40px 0;
-  }
-  
-  .salon-card {
-    margin-left: 16px;
-    margin-right: 16px;
-    gap: 12px;
-    padding: 12px 0 12px 16px;
-    margin-bottom: 40px;
-  }
-  
-  .salon-logo {
-    width: 48px;
-    height: 48px;
-  }
-  
-  .salon-logo svg {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .salon-name {
-    font-size: 18px;
-    line-height: 22px;
-  }
-  
-  .salon-type {
-    font-size: 16px;
-    line-height: 20px;
-  }
-  
-  .success-text {
-    font-size: 16px;
-    line-height: 22px;
-    margin-left: 20px;
-    margin-right: 20px;
-    margin-bottom: 30px;
-  }
-  
-  .btn-my-records {
-    margin-left: 20px;
-    margin-right: 20px;
-    width: calc(100% - 40px);
-    height: 48px;
-    font-size: 16px;
-    margin-bottom: 12px;
-  }
-  
-  .btn-ask-admin {
-    margin-left: 20px;
-    margin-right: 20px;
-    width: calc(100% - 40px);
-    height: 48px;
-    font-size: 16px;
-  }
-  
-  .close-btn {
-    top: 16px;
-    right: 16px;
-  }
+/* Ultra-narrow */
+@media (max-width:360px){
+  .visit-create-view{--gutter-mobile:10px}
+  .success-text{font-size:15px}
 }
 </style>
+
