@@ -25,8 +25,9 @@
         v-for="staff in staffList"
         :key="staff.id"
         class="staff-card"
-        @click="onSelect(staff.id)"
+        @click="() => { console.log('click', staff.id); onSelect(staff.id) }"
       >
+
         <!-- Аватар -->
         <div class="avatar-container">
           <div
@@ -185,7 +186,10 @@ onMounted(async () => {
   window.addEventListener('resize', updateActiveLine)
 })
 
-function onSelect(id) { emit('select', id) }
+function onSelect(id) { 
+  console.log('onSelect, id:', id) 
+  emit('select', id) 
+}
 function onReview(id) { emit('review', id) }
 function onVisit(id)  { emit('visit', id) }
 </script>
