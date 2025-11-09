@@ -279,9 +279,9 @@ function confirmProfile() {
 }
 
 .label {
-  margin: 0 clamp(0.3rem, 2vw, 0.8rem);
+  margin: 0 clamp(0.2rem, 2vw, 0.5rem);
   flex: 1;
-  font-size: clamp(0.85rem, 3vw, 1rem);
+  font-size: clamp(0.7rem, 3vw, 0.8rem);
   width: 176px;
   color: var(--Color-Basic-Black, #454558);
   font-weight: 500;
@@ -348,7 +348,7 @@ function confirmProfile() {
 
 .modal {
   background: white;
-  padding: 24px;
+  padding: 16px;
   border-radius: 12px;
   width: 80%;
 	max-height: 80vh;
