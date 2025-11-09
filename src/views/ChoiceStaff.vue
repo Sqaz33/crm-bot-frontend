@@ -414,19 +414,34 @@ onMounted(async () => {
 }
 
 @media (max-width: 430px) {
+  
   .staff-view {
+    --sidebar-mobile: 56px;  
+    --gutter-mobile: 12px;
+
+    
     padding-left: calc(var(--sidebar-mobile) + var(--gutter-mobile));
     padding-right: var(--gutter-mobile);
-    max-width: 100%;
+
+    margin: 0;
+    max-width: 100vw;  
   }
 
-  .tabs-container { height: 56px; margin: 12px 0 0 0; }
+  .tabs-container,
+  .staff-list {
+    width: calc(100vw - (var(--sidebar-mobile) + 2 * var(--gutter-mobile)));
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .tabs-container { height: 56px; margin-top: 12px; }
   .tab {
     font-size: 14px; line-height: 18px;
     min-height: 56px; padding: 0 12px; min-width: 100px;
   }
 
-  .staff-list { gap: 8px; margin-top: 16px; width: 100%; }
+  .staff-list { gap: 8px; margin-top: 16px; }
   .staff-card { height: 72px; padding: 8px 12px; }
 
   .avatar-container { margin-right: 12px; }

@@ -1,31 +1,29 @@
 <template>
   <div class="booking-page">
     <div class="booking-container">
-      <!-- Навигация по месяцам -->
       <div class="month-navigation">
-        <button class="nav-button" @click="prevMonth">‹ Месяц</button>
+        <button class="nav-button" @click="prevMonth">{{ prevMonthName }}</button>
         <div class="month-header">
-          <span class="month-name">Месяц</span>
+          <span class="month-name">{{ monthTitle }}</span>
         </div>
-        <button class="nav-button" @click="nextMonth">Месяц ›</button>
+        <button class="nav-button" @click="nextMonth">{{ nextMonthName }}</button>
       </div>
 
-      <!-- Календарь -->
       <div class="calendar-section">
         <div class="weekdays">
           <div v-for="day in weekdayNames" :key="day" class="weekday">{{ day }}</div>
         </div>
         <div class="days-grid">
-          <div 
-            v-for="day in calendarDays" 
-            :key="day.date" 
+          <div
+            v-for="day in calendarDays"
+            :key="day.date"
             :class="{
               'day-cell': true,
               'other-month': !day.isCurrentMonth,
               'current-day': day.isToday,
               'selected': day.date === selectedDate,
               'day-past': day.isPast && day.isCurrentMonth
-            }" 
+            }"
             @click="!day.isPast && day.isCurrentMonth && selectDate(day)"
           >
             {{ day.dayNumber }}
@@ -33,18 +31,17 @@
         </div>
       </div>
 
-      <!-- Выбор времени -->
       <div class="time-section" v-if="selectedDate">
         <h3 class="time-title">Выберите время начала</h3>
-        
+
         <div class="time-category">
           <div class="category-label">Утро</div>
           <div class="time-buttons">
-            <button 
-              v-for="slot in morningSlots" 
-              :key="slot" 
+            <button
+              v-for="slot in morningSlots"
+              :key="slot"
               :class="['time-btn', { selected: slot === selectedTime }]"
-              @click="selectTime(slot)" 
+              @click="selectTime(slot)"
               type="button"
             >
               {{ formatTime(slot) }}
@@ -55,11 +52,11 @@
         <div class="time-category" v-if="afternoonSlots.length">
           <div class="category-label">День</div>
           <div class="time-buttons">
-            <button 
-              v-for="slot in afternoonSlots" 
-              :key="slot" 
+            <button
+              v-for="slot in afternoonSlots"
+              :key="slot"
               :class="['time-btn', { selected: slot === selectedTime }]"
-              @click="selectTime(slot)" 
+              @click="selectTime(slot)"
               type="button"
             >
               {{ formatTime(slot) }}
@@ -70,11 +67,11 @@
         <div class="time-category" v-if="eveningSlots.length">
           <div class="category-label">Вечер</div>
           <div class="time-buttons">
-            <button 
-              v-for="slot in eveningSlots" 
-              :key="slot" 
+            <button
+              v-for="slot in eveningSlots"
+              :key="slot"
               :class="['time-btn', { selected: slot === selectedTime }]"
-              @click="selectTime(slot)" 
+              @click="selectTime(slot)"
               type="button"
             >
               {{ formatTime(slot) }}
@@ -82,7 +79,6 @@
           </div>
         </div>
 
-        <!-- Кнопка "Занять" -->
         <div class="book-button-container">
           <button class="book-button" :disabled="!selectedTime" @click="bookTime">
             Занять
@@ -115,10 +111,22 @@ export default {
     currentYear() {
       return this.currentDate.getFullYear()
     },
+    monthTitle() {
+      return this.cap(this.currentMonthName)
+    },
+    prevMonthName() {
+      const d = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() - 1, 1)
+      return this.cap(d.toLocaleString('ru-RU', { month: 'long' }))
+    },
+    nextMonthName() {
+      const d = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1)
+      return this.cap(d.toLocaleString('ru-RU', { month: 'long' }))
+    },
     calendarDays() {
       const year = this.currentDate.getFullYear()
       const month = this.currentDate.getMonth()
-      const today = new Date(); today.setHours(0, 0, 0, 0)
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
 
       const firstDay = new Date(year, month, 1)
       let w = firstDay.getDay()
@@ -129,7 +137,8 @@ export default {
 
       for (let i = w; i > 0; i--) {
         const d = prevCount - i + 1
-        const dt = new Date(year, month - 1, d); dt.setHours(0, 0, 0, 0)
+        const dt = new Date(year, month - 1, d)
+        dt.setHours(0, 0, 0, 0)
         days.push({
           dayNumber: d,
           date: this.formatDate(dt),
@@ -138,9 +147,11 @@ export default {
           isPast: dt < today
         })
       }
+
       const thisCount = new Date(year, month + 1, 0).getDate()
       for (let i = 1; i <= thisCount; i++) {
-        const dt = new Date(year, month, i); dt.setHours(0, 0, 0, 0)
+        const dt = new Date(year, month, i)
+        dt.setHours(0, 0, 0, 0)
         days.push({
           dayNumber: i,
           date: this.formatDate(dt),
@@ -149,10 +160,12 @@ export default {
           isPast: dt < today
         })
       }
+
       const total = Math.ceil(days.length / 7) * 7
       const nextCount = total - days.length
       for (let i = 1; i <= nextCount; i++) {
-        const dt = new Date(year, month + 1, i); dt.setHours(0, 0, 0, 0)
+        const dt = new Date(year, month + 1, i)
+        dt.setHours(0, 0, 0, 0)
         days.push({
           dayNumber: i,
           date: this.formatDate(dt),
@@ -183,10 +196,13 @@ export default {
     }
   },
   methods: {
+    cap(s) {
+      return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''
+    },
     formatDate(d) {
-      const y = d.getFullYear(),
-        m = String(d.getMonth() + 1).padStart(2, '0'),
-        dd = String(d.getDate()).padStart(2, '0')
+      const y = d.getFullYear()
+      const m = String(d.getMonth() + 1).padStart(2, '0')
+      const dd = String(d.getDate()).padStart(2, '0')
       return `${y}-${m}-${dd}`
     },
     formatTime(iso) {
@@ -292,12 +308,14 @@ export default {
 }
 </script>
 
+
 <style scoped>
 .booking-page {
   display: flex;
   min-height: 100vh;
   background: #f6f9fc;
   padding: 1rem;
+  box-sizing: border-box;
 }
 
 .booking-container {
@@ -308,9 +326,9 @@ export default {
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  box-sizing: border-box;
 }
 
-/* Навигация */
 .month-navigation {
   display: flex;
   justify-content: space-between;
@@ -341,7 +359,6 @@ export default {
   color: #1a2233;
 }
 
-/* Календарь */
 .calendar-section {
   padding: 1rem 1.5rem 1.5rem;
 }
@@ -400,16 +417,15 @@ export default {
 
 .day-cell.current-day:not(.selected) {
   border-color: #5073f0;
-  background: white;
+  background: #ffffff;
 }
 
 .day-cell.selected {
   background: #5073f0;
-  color: white;
+  color: #ffffff;
   font-weight: 600;
 }
 
-/* Секция времени */
 .time-section {
   padding: 1.5rem;
   border-top: 1px solid #e8eef5;
@@ -444,7 +460,7 @@ export default {
   min-width: 70px;
   padding: 0.625rem 1rem;
   border: 1.5px solid #5073f0;
-  background: white;
+  background: #ffffff;
   color: #5073f0;
   border-radius: 8px;
   font-size: 0.9375rem;
@@ -459,11 +475,10 @@ export default {
 
 .time-btn.selected {
   background: #5073f0;
-  color: white;
+  color: #ffffff;
   font-weight: 600;
 }
 
-/* Кнопка "Занять" */
 .book-button-container {
   display: flex;
   justify-content: center;
@@ -475,7 +490,7 @@ export default {
   max-width: 400px;
   padding: 0.875rem 1.5rem;
   background: #5073f0;
-  color: white;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
@@ -493,44 +508,193 @@ export default {
   cursor: not-allowed;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .booking-page {
     padding: 0.5rem;
   }
-
   .month-navigation {
     padding: 0.875rem 1rem;
   }
-
   .calendar-section {
     padding: 1rem;
     max-width: 100%;
   }
-
   .weekday {
     font-size: 0.7rem;
     padding: 0.25rem 0;
   }
-
   .day-cell {
     font-size: 0.875rem;
     height: 44px;
   }
-
   .time-section {
     padding: 1rem;
   }
-
   .time-title {
     font-size: 0.9375rem;
     margin-bottom: 1rem;
   }
-
   .time-btn {
     min-width: 65px;
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
   }
 }
+
+@media (max-width: 430px) {
+  .booking-page {
+    --sidebar-mobile: 64px;
+    --gutter-mobile: 12px;
+    --top-gap-mobile: 12px;
+    padding: 0;
+    padding-top: var(--top-gap-mobile);
+    padding-left: calc(var(--sidebar-mobile) + var(--gutter-mobile));
+    padding-right: calc(var(--sidebar-mobile) + var(--gutter-mobile));
+    background: #f6f9fc;
+  }
+  .booking-container {
+    width: calc(100vw - 2 * (var(--sidebar-mobile) + var(--gutter-mobile)));
+    max-width: none;
+    margin: 0;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .month-navigation {
+    padding: 10px 12px;
+    background: transparent;
+    border-bottom: none;
+  }
+  .month-header {
+    background: #eef0ff;
+    color: #2b3240;
+    border-radius: 12px;
+    padding: 6px 16px;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.2px;
+  }
+  .nav-button {
+    color: #5c6cf0;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 6px 4px;
+  }
+  .calendar-section {
+    padding: 12px;
+    background: #ffffff;
+  }
+  .weekdays {
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .weekday {
+    color: #8d99ad;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 6px 0;
+  }
+  .days-grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .day-cell {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    margin: 0;
+    border-radius: 12px;
+    border: 1px solid #e6eaf2;
+    background: #ffffff;
+    color: #2b3240;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.15s ease;
+  }
+  .day-cell.other-month {
+    border-color: transparent;
+    background: #eef2f6;
+    color: #b7c0cc;
+  }
+  .day-cell.day-past {
+    color: #b7c0cc;
+    background: #fafbfc;
+    border-color: transparent;
+  }
+  .day-cell.current-day:not(.selected) {
+    background: #ffffff;
+    border: 2px solid #5c6cf0;
+    color: #5c6cf0;
+  }
+  .day-cell.selected {
+    background: #5c6cf0;
+    border-color: #5c6cf0;
+    color: #ffffff;
+  }
+  .time-section {
+    padding: 12px;
+    background: #ffffff;
+    border-top: 1px solid #eef1f5;
+  }
+  .time-title {
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e6eaf2;
+    color: #8d99ad;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+  }
+  .time-category {
+    margin-bottom: 14px;
+  }
+  .category-label {
+    margin-bottom: 8px;
+    color: #8d99ad;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .time-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .time-btn {
+    min-width: 0;
+    width: 100%;
+    padding: 10px 6px;
+    border: 2px solid #5c6cf0;
+    background: #ffffff;
+    color: #2b3240;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1;
+    transition: 0.15s ease;
+  }
+  .time-btn.selected {
+    background: #5c6cf0;
+    color: #ffffff;
+    border-color: #5c6cf0;
+  }
+  .book-button-container {
+    margin-top: 12px;
+  }
+  .book-button {
+    width: 100%;
+    max-width: none;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .time-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 </style>
