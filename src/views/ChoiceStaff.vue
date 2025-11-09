@@ -75,6 +75,9 @@ import { ref, onMounted, watch, nextTick } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
 
+const router = useRouter()
+
+
 const emit = defineEmits(['select', 'review', 'visit'])
 
 const tabs = ref([{ label: 'Все', value: 'all' }])
@@ -213,7 +216,8 @@ function onSelect (idOrStaff) {
 
 
   emit('select', id)
-  this.$router.push({ path: '/appointmant' })
+  router.push({ path: '/appointmant' })
+
 }
 
 function onReview (id) { emit('review', id) }
