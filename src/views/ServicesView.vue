@@ -1,6 +1,5 @@
 <template>
   <div class="services-view">
-    <h1 class="page-title">Выберите услугу</h1>
 
     <div v-if="loading" class="loading">Загрузка…</div>
 
@@ -287,17 +286,166 @@ function confirm() {
 
 @media (max-width: 430px) {
   .services-view {
+    --sidebar-mobile: 64px;
+    --gutter-mobile: 16px;
+    --top-gap-mobile: 12px;
+    --brand: #5c6cf0;
+    --brand-100: #eef0ff;
+    --text: #2b3240;
+    --muted: #8d99ad;
+    --card: #ffffff;
+    --card-muted: #f3f5f8;
+    --stroke: #e6eaf2;
+
     margin: 0;
     padding-top: var(--top-gap-mobile);
     padding-left: calc(var(--sidebar-mobile) + var(--gutter-mobile));
-    padding-right: calc(var(--sidebar-mobile) + var(--gutter-mobile));
+    padding-right: var(--gutter-mobile);
+    width: 100vw;
+    max-width: 100vw;
+    box-sizing: border-box;
+    color: var(--text);
   }
-  .page-title { margin-bottom: 8px; font-size: 18px; }
-  .type-header { padding: 12px 14px; font-size: 15px; }
-  .count-badge { min-width: 30px; height: 30px; font-size: 14px; }
-  .service-item { padding: 12px 12px 12px 14px; }
-  .svc-name { font-size: 14px; }
-  .svc-price { font-size: 15px; }
-  .icon-btn { width: 34px; height: 34px; font-size: 18px; }
+
+  .page-title {
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 8px 0;
+  }
+
+  .types-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .type-block { border-radius: 14px; }
+  .type-header {
+    width: 100%;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 14px;
+    background: var(--card-muted);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .type-block.open .type-header { background: var(--brand-100); }
+
+  .type-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .type-meta { display: inline-flex; align-items: center; gap: 10px; }
+  .count-badge {
+    min-width: 30px;
+    height: 30px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid var(--stroke);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .chev { transition: transform .15s ease; }
+  .chev.up { transform: rotate(180deg); }
+
+  .service-list {
+    list-style: none;
+    margin: 8px 0 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .service-item {
+    background: var(--card);
+    border: 1px solid var(--stroke);
+    border-radius: 14px;
+    padding: 12px 12px 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .service-item.selected {
+    border-color: #ffa940;
+    box-shadow: inset 3px 0 0 0 #ffa940;
+  }
+
+  .svc-left { min-width: 0; }
+  .svc-name {
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+  }
+
+  .svc-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 12px;
+    flex-shrink: 0;
+  }
+  .svc-price { font-weight: 700; font-size: 15px; }
+
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+    border: 2px solid var(--brand);
+    color: var(--brand);
+    background: #fff;
+  }
+  .icon-btn.danger {
+    background: var(--brand);
+    color: #fff;
+    border-color: var(--brand);
+  }
+
+  .btn-next {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: none;
+    background: var(--brand);
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+    margin-top: 8px;
+    cursor: pointer;
+  }
+  .btn-next:disabled { background: #c4cdd5; cursor: not-allowed; }
 }
+
+@media (max-width: 360px) {
+  .services-view {
+    --gutter-mobile: 12px;
+    padding-left: calc(var(--sidebar-mobile) + var(--gutter-mobile));
+    padding-right: var(--gutter-mobile);
+  }
+  .type-header { padding: 10px 12px; font-size: 14px; }
+  .service-item { padding: 10px 10px 10px 12px; }
+  .svc-price { font-size: 14px; }
+  .icon-btn { width: 32px; height: 32px; font-size: 16px; }
+}
+
 </style>
