@@ -422,7 +422,7 @@ function confirmProfile() {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 120px;
+  width: clamp(120px, 3vw, 320px);
 }
 
 .modal-buttons button:first-child {
