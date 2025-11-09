@@ -363,6 +363,7 @@ function confirmProfile() {
   font-weight: 500;
   line-height: 28px;
   text-align: center;
+	margin: 0;
 }
 
 .field {
