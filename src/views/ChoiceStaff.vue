@@ -73,6 +73,7 @@
 <script setup>
 import { ref, onMounted, watch, nextTick } from 'vue'
 import api from '../api'
+import { useRouter } from 'vue-router'
 
 const emit = defineEmits(['select', 'review', 'visit'])
 
@@ -212,6 +213,7 @@ function onSelect (idOrStaff) {
 
 
   emit('select', id)
+  router.push({ path: '/appointment' })
 }
 
 function onReview (id) { emit('review', id) }
