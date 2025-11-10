@@ -3,17 +3,22 @@
     <div
       v-if="visible"
       class="modal-overlay"
+      v-bind="$attrs"
       role="dialog"
       aria-modal="true"
-      @click.self="$emit('close')"
-      @keydown.esc="$emit('close')"
+      @click.self="emit('close')"
     >
-      <div class="modal-content" ref="content" tabindex="-1">
+      <div
+        class="modal-content"
+        ref="content"
+        tabindex="-1"
+        @keydown.esc.stop.prevent="emit('close')"
+      >
         <button
           class="modal-close"
           type="button"
           aria-label="Закрыть"
-          @click="$emit('close')"
+          @click="emit('close')"
         >
           ×
         </button>
@@ -26,16 +31,16 @@
 <script setup>
 import { ref, watch, nextTick, onBeforeUnmount } from 'vue'
 
+defineOptions({ inheritAttrs: false })      
+const emit = defineEmits(['close'])         
+
 const props = defineProps({ visible: Boolean })
 const content = ref(null)
 
 function setScrollLock(lock) {
   const html = document.documentElement
-  if (lock) {
-    html.classList.add('modal-open')
-  } else {
-    html.classList.remove('modal-open')
-  }
+  if (lock) html.classList.add('modal-open')
+  else html.classList.remove('modal-open')
 }
 
 watch(
@@ -44,7 +49,7 @@ watch(
     setScrollLock(v)
     if (v) {
       await nextTick()
-      content.value?.focus()
+      content.value?.focus()                
     }
   },
   { immediate: true }
@@ -66,7 +71,8 @@ onBeforeUnmount(() => setScrollLock(false))
   justify-content: center;
   align-items: center;
 
-  /* --hpad: max(16px, max(env(safe-area-inset-left), env(safe-area-inset-right))); */
+
+  --hpad: max(16px, max(env(safe-area-inset-left), env(safe-area-inset-right)));
   --vpad: max(16px, max(env(safe-area-inset-top),  env(safe-area-inset-bottom)));
   padding-inline: var(--hpad);
   padding-block: var(--vpad);
@@ -90,7 +96,7 @@ onBeforeUnmount(() => setScrollLock(false))
   outline: none;
   box-sizing: border-box;
 
-  /* inline-size: min(520px, calc(100dvw - 2 * var(--hpad))); */
+  inline-size: min(520px, calc(100dvw - 2 * var(--hpad)));
   margin-inline: auto;
 
   max-height: calc(100dvh - 2 * var(--vpad));
@@ -102,15 +108,15 @@ onBeforeUnmount(() => setScrollLock(false))
 
 @supports not (max-height: 100dvh) {
   .modal-content {
-    /* inline-size: min(520px, calc(100vw - 2 * var(--hpad))); */
+    inline-size: min(520px, calc(100vw - 2 * var(--hpad)));
     max-height: calc(100vh - 2 * var(--vpad));
   }
 }
 
 .modal-close {
   position: absolute;
-  inset-inline-end: 4px;   
-  inset-block-start: 4px;  
+  inset-inline-end: 4px;
+  inset-block-start: 4px;
   width: 44px;
   height: 44px;
   display: grid;
@@ -129,8 +135,6 @@ onBeforeUnmount(() => setScrollLock(false))
 }
 </style>
 
-
 <style>
 html.modal-open { overflow: hidden; }
 </style>
-
