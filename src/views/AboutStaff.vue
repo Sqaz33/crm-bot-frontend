@@ -15,10 +15,10 @@
       
       <h2 class="name">{{ staff.name }}</h2>
       
-      <div class="rating-container">
-        <!-- <span class="star">⭐</span> -->
+      <!-- <div class="rating-container">
+        <span class="star">⭐</span> 
         <span class="rating-value">{{ staff.rating }}</span>
-      </div>
+      </div> -->
 
       <div class="about-section">
         <div class="about-label">О себе</div>
@@ -132,7 +132,7 @@ onMounted(async () => {
   .container-sidebar { padding-left: var(--left-rail); }
 }
 @media (max-width: 380px) {
-  .container-sidebar { --left-rail: 64px; }
+  .container-sidebar { --left-rail: 40px; }
 }
 
 .staff-view {
