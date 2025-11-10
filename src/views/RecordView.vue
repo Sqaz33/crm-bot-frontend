@@ -443,7 +443,7 @@ onMounted(() => {
   border-radius:16px;
   /* box-shadow:var(--shadow); */
   padding-right:64px; padding-left:64px;
-  width:85%;
+  /* width:85%; */
   margin:0;
   overflow:hidden; 
   max-width:100%;

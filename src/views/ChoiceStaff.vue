@@ -429,7 +429,8 @@ onMounted(async () => {
 
   .tabs-container,
   .staff-list {
-    width: calc(100vw - (var(--sidebar-mobile) + 2 * var(--gutter-mobile)));
+    /* width: calc(100vw - (var(--sidebar-mobile) + 2 * var(--gutter-mobile))); */
+    width: 79%;
     max-width: none;
     margin-left: 0;
     margin-right: 0;

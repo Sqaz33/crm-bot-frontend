@@ -301,7 +301,7 @@ function confirm() {
     padding-top: var(--top-gap-mobile);
     padding-left: calc(var(--sidebar-mobile) + var(--gutter-mobile));
     padding-right: var(--gutter-mobile);
-    width: 100vw;
+    /* width: 100vw; */
     max-width: 100vw;
     box-sizing: border-box;
     color: var(--text);
