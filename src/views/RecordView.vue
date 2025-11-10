@@ -385,18 +385,16 @@ async function submitReview() {
 }
 </script>
 
-<!-- Добавь ЭТОТ глобальный блок в конец файла (вне scoped), чтобы убрать горизонтальный скролл на мобилках -->
 <style>
-:root { /* не трогаем — переменные объявим локально в компоненте */ }
+:root { /* при необходимости добавишь переменные */ }
 html, body, #app { overflow-x: hidden; }
 </style>
 
-<!-- Это ПОЛНЫЙ scoped CSS для компонента -->
 <style scoped>
-/* 0) Базовая геометрия: ничего не «выползает» за контейнер */
+/* 0) Базовая геометрия */
 *, *::before, *::after { box-sizing: border-box; }
 
-/* 1) Контейнер страницы + локальная палитра под макет */
+/* 1) Контейнер страницы + палитра */
 .record-view{
   --bg:#F6F7FB;
   --card:#FFFFFF;
@@ -412,16 +410,24 @@ html, body, #app { overflow-x: hidden; }
   display:flex;
   justify-content:center;
 }
+
 .page{
   width:100%;
   max-width:640px;
   margin:0 auto;
-  padding-inline:clamp(14px,4vw,16px);   /* РАВНЫЕ поля слева/справа */
-  padding-block:16px 24px;
-  overflow-x:hidden;                      /* страховка */
+
+  /* равные поля + учёт safe-area */
+  padding-top:16px;
+  padding-bottom:24px;
+  padding-left:max(16px, env(safe-area-inset-left));
+  padding-right:max(16px, env(safe-area-inset-right));
+
+  /* никаких горизонтальных сюрпризов */
+  overflow-x: clip;
+  max-width:100%;
 }
 
-/* 2) Центрированный заголовок «Просмотр записи» */
+/* 2) Центрированный заголовок */
 .page-title{
   text-align:center;
   font-weight:700;
@@ -443,9 +449,10 @@ html, body, #app { overflow-x: hidden; }
   width:100%;
   margin:0;
   overflow:hidden; /* радиусы/тени не выходят за края */
+  max-width:100%;
 }
 
-/* 4) Шапка карточки (светло-синяя подложка) */
+/* 4) Шапка карточки */
 .header{
   display:flex;
   justify-content:space-between;
@@ -455,7 +462,10 @@ html, body, #app { overflow-x: hidden; }
   border-radius:12px;
   padding:10px 12px;
   margin-bottom:12px;
+  max-width:100%;
 }
+.header > *{ min-width:0; }     /* ключ к анти-оверфлоу */
+
 .who{display:flex;align-items:center;gap:10px;min-width:0;}
 .avatar{
   width:24px;height:24px;border-radius:50%;
@@ -464,28 +474,40 @@ html, body, #app { overflow-x: hidden; }
   font-weight:800;font-size:12px;flex:0 0 24px;
 }
 .info{min-width:0;}
-.name{font-weight:800;font-size:14px;color:var(--text);line-height:1.1;}
+.name{
+  font-weight:800;font-size:14px;color:var(--text);line-height:1.1;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
 .spec{
   font-size:12px;color:var(--muted);margin-top:2px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.datetime{font-size:12px;color:#6f7a87;white-space:nowrap;}
+.datetime{
+  font-size:12px;color:#6f7a87;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;max-width:40%;
+}
 
 /* 5) Детали услуги */
 .details{
   background:#F3F5F8;border-radius:12px;padding:10px 12px;margin-bottom:12px;
-  overflow:hidden;
+  overflow:hidden;max-width:100%;
 }
-.row{display:flex;justify-content:space-between;gap:8px;min-width:0;}
+.row{
+  display:flex;justify-content:space-between;gap:8px;min-width:0;max-width:100%;
+}
+.row > *{ min-width:0; }
 .header-row{
   font-weight:700;color:#647089;
   padding-bottom:8px;border-bottom:1px solid #e6e9f0;margin-bottom:8px;
 }
-.service-name{min-width:0;max-width:70%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.service-name{
+  min-width:0;max-width:70%;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
 .price{font-weight:700;color:var(--text);}
 
-/* 6) Секции с СИНИМИ плашками */
-.section{margin-bottom:12px;}
+/* 6) Секции */
+.section{margin-bottom:12px;max-width:100%;}
 .section-bar{
   background:var(--primary);color:#fff;font-weight:800;
   padding:10px 12px;border-radius:10px 10px 0 0;
@@ -494,15 +516,19 @@ html, body, #app { overflow-x: hidden; }
 .toggle-row{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   background:#fff;border:1px solid var(--divider);border-top:none;
-  border-radius:0 0 12px 12px;padding:12px;
+  border-radius:0 0 12px 12px;padding:12px;max-width:100%;
 }
-.hint{font-size:13px;color:#6f7a87}
+.hint{
+  font-size:13px;color:#6f7a87;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
 
 /* 7) iOS-переключатель */
 .toggle{position:relative;display:inline-block;width:46px;height:28px;flex:0 0 auto}
 .toggle input{opacity:0;width:0;height:0}
 .slider{
-  position:absolute;inset:0;background:#D9DDE4;border-radius:999px;transition:.2s
+  position:absolute;inset:0;background:#D9DDE4;border-radius:999px;transition:.2s;
+  overflow:clip; /* не даём тени кружка выходить */
 }
 .slider:before{
   content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;background:#fff;border-radius:50%;
@@ -514,7 +540,7 @@ html, body, #app { overflow-x: hidden; }
 /* 8) Список действий */
 .list{
   background:#fff;border:1px solid var(--divider);border-top:none;
-  border-radius:0 0 12px 12px;overflow:hidden;
+  border-radius:0 0 12px 12px;overflow:hidden;max-width:100%;
 }
 .list-item{
   display:flex;align-items:center;gap:10px;padding:14px 12px;width:100%;
@@ -522,7 +548,10 @@ html, body, #app { overflow-x: hidden; }
 }
 .list-item:first-child{border-top:none}
 .list-item .icon{font-size:16px;opacity:.9}
-.list-item .text{flex:1 1 auto;color:var(--text)}
+.list-item .text{
+  flex:1 1 auto;color:var(--text);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
 .list-item .chevron{font-size:18px;opacity:.4}
 .list-item.disabled{opacity:.55;pointer-events:none}
 .list-item.danger .icon,.list-item.danger .text{color:#d9534f}
@@ -539,7 +568,8 @@ html, body, #app { overflow-x: hidden; }
   display:flex;justify-content:center;align-items:center;z-index:100;
 }
 .modal{
-  background:#fff;padding:16px;border-radius:12px;width:320px;max-width:90%;
+  background:#fff;padding:16px;border-radius:12px;
+  width:auto;max-width:min(90vw, 360px);
   box-shadow:0 10px 30px rgba(0,0,0,.2);
 }
 .stars{font-size:22px;margin-bottom:8px}
@@ -560,11 +590,14 @@ textarea{
 .error{color:#d9534f}
 .visit-error{color:#d9534f;font-size:13px;margin-top:6px}
 
-/* 12) Мобильные правки (Pixel 7 и ниже) */
+/* 12) Медиа */
 @media (max-width: 480px){
-  .page{ padding-inline:16px; } /* одинаковые поля слева/справа */
   .header{ padding:10px 12px; }
   .details{ padding:10px 12px; }
   .list-item{ padding:12px; }
 }
+
+/* 13) Универсальные страховки */
+img, svg, video{ max-width:100%; height:auto; }
+.header-row > *{ min-width:0; }
 </style>
