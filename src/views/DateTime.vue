@@ -549,11 +549,11 @@ export default {
         padding: 0;
         padding-top: var(--top-gap-mobile);
         padding-left: calc(var(--sidebar-mobile) + 2 * var(--gutter-mobile));
-        padding-right: calc(var(--sidebar-mobile) + var(--gutter-mobile));
+        /* padding-right: calc(var(--sidebar-mobile) + var(--gutter-mobile)); */
     background: #f6f9fc;
   }
   .booking-container {
-    width: calc(100vw - 2 * (var(--sidebar-mobile) + var(--gutter-mobile)));
+    /* width: calc(100vw - 2 * (var(--sidebar-mobile) + var(--gutter-mobile))); */
     max-width: none;
     margin: 0;
     border-radius: 14px;

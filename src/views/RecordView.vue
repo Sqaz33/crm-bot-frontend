@@ -401,7 +401,7 @@ onMounted(() => {
   --text:#1C2534;
   --muted:#8A95A6;
   --divider:#ECEFF5;
-  --green:#20C776;        /* зелёный аватар */
+  --green:#20C776;       
   --shadow:0 8px 20px rgba(23,35,68,.08);
 
   min-height:100vh;
@@ -433,7 +433,7 @@ onMounted(() => {
   /* border-top:1px solid var(--divider);
   border-bottom:1px solid var(--divider); */
   margin-bottom:12px;
-  background:#fff;
+  /* background:#fff; */
   border-radius:12px;
 }
 
@@ -441,8 +441,8 @@ onMounted(() => {
 .record-card{
  
   border-radius:16px;
-  box-shadow:var(--shadow);
-  padding:64px;
+  /* box-shadow:var(--shadow); */
+  padding-right:64px; padding-left:64px;
   width:85%;
   margin:0;
   overflow:hidden; 

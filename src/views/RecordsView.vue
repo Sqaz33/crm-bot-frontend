@@ -519,7 +519,7 @@ onMounted(() => fetchVisits(activeTab.value))
 
   .records-container{
     max-width:none;
-    width:calc(100vw - (var(--sidebar-mobile) + 2 * var(--gutter-mobile)));
+    /* width:calc(100vw - (var(--sidebar-mobile) + 2 * var(--gutter-mobile))); */
     margin:0;
     padding:0;
   }
