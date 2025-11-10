@@ -199,5 +199,8 @@
     justify-content: center;
     color: white;
   }
-  
+  @media (max-width: 430px){
+  .records-page{
+    width: 80%;
+  }}
   </style>
