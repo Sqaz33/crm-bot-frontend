@@ -201,6 +201,6 @@
   }
   @media (max-width: 430px){
   .records-page{
-    width: 80%;
+    width: 70%;
   }}
   </style>

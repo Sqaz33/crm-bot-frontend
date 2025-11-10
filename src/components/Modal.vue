@@ -73,7 +73,7 @@ onBeforeUnmount(() => setScrollLock(false))
 
 
   /* --hpad: max(16px, max(env(safe-area-inset-left), env(safe-area-inset-right))); */
-  --vpad: max(16px, max(env(safe-area-inset-top),  env(safe-area-inset-bottom)));
+  /* --vpad: max(16px, max(env(safe-area-inset-top),  env(safe-area-inset-bottom))); */
   padding-inline: var(--hpad);
   padding-block: var(--vpad);
 
