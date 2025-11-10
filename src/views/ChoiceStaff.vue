@@ -392,7 +392,7 @@ onMounted(async () => {
   .staff-view { max-width: 95%; }
 }
 
-@media (min-width: 431px) and (max-width: 768px) {
+/* @media (min-width: 431px) and (max-width: 768px) {
   .staff-view {
     padding-left: calc(var(--sidebar-mobile) + var(--gutter-tablet));
     padding-right: var(--gutter-tablet);
@@ -411,9 +411,9 @@ onMounted(async () => {
   .avatar-letter { font-size: 20px; line-height: 24px; }
   .staff-name { font-size: 16px; line-height: 20px; }
   .staff-position { font-size: 14px; line-height: 18px; }
-}
+} */
 
-@media (max-width: 430px) {
+@media (max-width: 768px) {
   
   .staff-view {
     --sidebar-mobile: 72px;  

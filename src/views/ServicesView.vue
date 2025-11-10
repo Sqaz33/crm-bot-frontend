@@ -284,7 +284,7 @@ function confirm() {
 }
 .btn-next:disabled { background: #c4cdd5; cursor: not-allowed; }
 
-@media (max-width: 430px) {
+@media (max-width: 768px) {
   .services-view {
     --sidebar-mobile: 64px;
     --gutter-mobile: 16px;

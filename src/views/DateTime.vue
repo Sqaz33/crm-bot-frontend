@@ -508,7 +508,7 @@ export default {
   cursor: not-allowed;
 }
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .booking-page {
     padding: 0.5rem;
   }
@@ -539,9 +539,9 @@ export default {
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
   }
-}
+} */
 
-@media (max-width: 430px) {
+@media (max-width: 768px) {
   .booking-page {
     --sidebar-mobile: 12px;
         --gutter-mobile: 36px;

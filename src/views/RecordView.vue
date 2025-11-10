@@ -385,8 +385,8 @@ onMounted(() => {
 </script>
 
 <style>
-:root { /* при необходимости добавишь переменные */ }
-html, body, #app { overflow-x: hidden; }
+:root {  }
+/* html, body, #app { overflow-x: hidden; } */
 </style>
 
 <style scoped>
@@ -420,9 +420,7 @@ html, body, #app { overflow-x: hidden; }
   padding-bottom:24px;
   padding-inline:16px;  
   padding-inline: max(16px, max(env(safe-area-inset-left), env(safe-area-inset-right)));
-
   
-  overflow-x:hidden;    
   overflow-x:clip;     
 }
 

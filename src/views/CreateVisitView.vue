@@ -380,7 +380,7 @@ select{width:100%;border:1px solid #D3D3D3;border-radius:10px;padding:10px 12px;
 .btn-ask-admin:hover{filter:brightness(.97)}
 
 /* Tablet */
-@media (max-width:920px){
+/* @media (max-width:920px){
   .success-modal{width:95%;max-width:700px}
   .modal-content{padding:40px 0 50px}
   .salon-card{margin:0 20px 40px 20px;padding-left:20px}
@@ -389,10 +389,10 @@ select{width:100%;border:1px solid #D3D3D3;border-radius:10px;padding:10px 12px;
   .success-text{margin:0 30px 32px 30px;font-size:20px;line-height:26px}
   .btn-my-records,.btn-ask-admin{width:calc(100% - 60px);margin:0 30px 16px}
   .close-btn{right:30px}
-}
+} */
 
 /* Mobile / mini-app (Pixel-класс) */
-@media (max-width:430px){
+@media (max-width: 768px){
   .visit-create-view{
     margin:0;
     padding-top:var(--top-gap-mobile);
