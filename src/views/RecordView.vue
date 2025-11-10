@@ -353,35 +353,35 @@ onMounted(() => {
 })
 
 // --- Модалка отзыва --- //
-const showReviewModal = ref(false)
-const review = ref({ rating: 0, comment: '' })
-const sending = ref(false)
-const reviewError = ref('')
-async function submitReview() {
-  if (review.value.rating === 0) {
-    reviewError.value = 'Пожалуйста, выберите количество звезд'
-    return
-  }
-  sending.value = true
-  reviewError.value = ''
-  try {
-    await api.post('/salon/reviews', {
-      staff_id: staff.value.id,
-      rating: review.value.rating,
-      comment: review.value.comment
-    })
-    alert('Спасибо за ваш отзыв!')
-    showReviewModal.value = false
-    review.value = { rating: 0, comment: '' }
-  } catch (err) {
-    console.error('Ошибка submitReview:', err)
-    reviewError.value = typeof err.response?.data === 'string'
-      ? err.response.data
-      : err.response?.data?.detail || err.message || 'Ошибка при отправке отзыва'
-  } finally {
-    sending.value = false
-  }
-}
+// const showReviewModal = ref(false)
+// const review = ref({ rating: 0, comment: '' })
+// const sending = ref(false)
+// const reviewError = ref('')
+// async function submitReview() {
+//   if (review.value.rating === 0) {
+//     reviewError.value = 'Пожалуйста, выберите количество звезд'
+//     return
+//   }
+//   sending.value = true
+//   reviewError.value = ''
+//   try {
+//     await api.post('/salon/reviews', {
+//       staff_id: staff.value.id,
+//       rating: review.value.rating,
+//       comment: review.value.comment
+//     })
+//     alert('Спасибо за ваш отзыв!')
+//     showReviewModal.value = false
+//     review.value = { rating: 0, comment: '' }
+//   } catch (err) {
+//     console.error('Ошибка submitReview:', err)
+//     reviewError.value = typeof err.response?.data === 'string'
+//       ? err.response.data
+//       : err.response?.data?.detail || err.message || 'Ошибка при отправке отзыва'
+//   } finally {
+//     sending.value = false
+//   }
+// }
 </script>
 
 <style>
@@ -432,8 +432,8 @@ html, body, #app { overflow-x: hidden; }
   font-weight:700;
   color:#5C6676;
   padding:12px 0;
-  border-top:1px solid var(--divider);
-  border-bottom:1px solid var(--divider);
+  /* border-top:1px solid var(--divider);
+  border-bottom:1px solid var(--divider); */
   margin-bottom:12px;
   background:#fff;
   border-radius:12px;
@@ -441,7 +441,7 @@ html, body, #app { overflow-x: hidden; }
 
 /* 3) Карточка записи */
 .record-card{
-  background:var(--card);
+ 
   border-radius:16px;
   box-shadow:var(--shadow);
   padding:64px;
@@ -482,7 +482,8 @@ html, body, #app { overflow-x: hidden; }
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .datetime{
-  font-size:12px;color:#6f7a87;white-space:nowrap;
+  font-size:12px;color:#6f7a87;
+  /* white-space:nowrap; */
   overflow:hidden;text-overflow:ellipsis;max-width:40%;
 }
 
@@ -564,7 +565,7 @@ html, body, #app { overflow-x: hidden; }
 /* 10) Модалки */
 .modal-overlay{
   position:fixed;inset:0;background:rgba(0,0,0,.4);
-  display:flex;justify-content:center;align-items:center;z-index:100;
+  display:flex;justify-content:center;align-items:center;z-index: 999999;
 }
 .modal{
   background:#fff;padding:16px;border-radius:12px;
