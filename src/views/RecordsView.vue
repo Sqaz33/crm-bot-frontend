@@ -493,7 +493,7 @@ onMounted(() => fetchVisits(activeTab.value))
 }
 
 
-@media (max-width: 768px){
+/* @media (max-width: 768px){
   .filled-content{padding:12px}
   .appointment-card{padding:16px}
   .card-header{gap:12px}
@@ -504,11 +504,11 @@ onMounted(() => fetchVisits(activeTab.value))
   .empty-content{padding:48px 24px}
   .empty-icon-wrapper{width:100px;height:100px}
   .empty-icon{width:56px;height:56px}
-}
+} */
 
 
 .records-page{--sidebar-mobile:64px;--gutter-mobile:16px}
-@media (max-width: 430px){
+@media (max-width: 768px){
   .records-page{
     padding:0;
     padding-top:12px;
