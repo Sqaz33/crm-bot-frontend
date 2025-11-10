@@ -92,7 +92,7 @@
         <div v-if="visitError" class="visit-error">{{ visitError }}</div>
 
         <!-- Кнопка отзыва для прошедшей записи -->
-        <button v-else class="review-btn" @click="showReviewModal = true">Оставить отзыв</button>
+        <!-- <button v-else class="review-btn" @click="showReviewModal = true">Оставить отзыв</button> -->
       </div>
 
  
@@ -397,7 +397,7 @@ html, body, #app { overflow-x: hidden; }
 .record-view{
   --bg:#F6F7FB;
   --card:#FFFFFF;
-  --primary:#2F80ED;      /* синяя плашка */
+  --primary:#666FE8;      
   --text:#1C2534;
   --muted:#8A95A6;
   --divider:#ECEFF5;
@@ -445,7 +445,7 @@ html, body, #app { overflow-x: hidden; }
   border-radius:16px;
   box-shadow:var(--shadow);
   padding:64px;
-  width:100%;
+  width:85%;
   margin:0;
   overflow:hidden; 
   max-width:100%;
@@ -467,10 +467,10 @@ html, body, #app { overflow-x: hidden; }
 
 .who{display:flex;align-items:center;gap:10px;min-width:0;}
 .avatar{
-  width:24px;height:24px;border-radius:50%;
+  width:24px;height:40px;border-radius:50%;
   background:var(--green);color:#fff;
   display:flex;align-items:center;justify-content:center;
-  font-weight:800;font-size:12px;flex:0 0 24px;
+  font-weight:800;font-size:16px;flex:0 0 40px;
 }
 .info{min-width:0;}
 .name{

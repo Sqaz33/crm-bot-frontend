@@ -1,7 +1,7 @@
 <template>
 <div class="container-sidebar">
   <div class="staff-view">
-    <button class="btn-back" @click="$router.back()">← Назад</button>
+    <!-- <button class="btn-back" @click="$router.back()">← Назад</button> -->
     
     <div class="card">
       <div
@@ -16,7 +16,7 @@
       <h2 class="name">{{ staff.name }}</h2>
       
       <div class="rating-container">
-        <span class="star">⭐</span>
+        <!-- <span class="star">⭐</span> -->
         <span class="rating-value">{{ staff.rating }}</span>
       </div>
 
@@ -30,7 +30,7 @@
       Выбрать
     </button>
 
-    <section class="reviews">
+    <!-- <section class="reviews">
       <h3 class="reviews-title">Отзывы ({{ reviews.length }})</h3>
       <div v-for="r in reviews" :key="r.id" class="review">
         <div class="rev-header">
@@ -55,7 +55,7 @@
         </div>
         <p class="rev-text">{{ r.comment }}</p>
       </div>
-    </section> -->
+    </section>  -->
   </div>
 </div>
 </template>
@@ -120,6 +120,19 @@ onMounted(async () => {
   display: flex;
   width: 100%;
   min-height: 100vh;
+  box-sizing: border-box;
+  overflow-x: clip;
+
+
+  --left-rail: 72px; 
+}
+
+
+@media (max-width: 920px) {
+  .container-sidebar { padding-left: var(--left-rail); }
+}
+@media (max-width: 380px) {
+  .container-sidebar { --left-rail: 64px; }
 }
 
 .staff-view {
@@ -130,7 +143,13 @@ onMounted(async () => {
   background: #F6F5F6;
   display: flex;
   flex-direction: column;
+
+
+  box-sizing: border-box;
+  overflow-x: clip;
+  padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
 }
+
 
 .btn-back {
   background: none;
@@ -142,6 +161,7 @@ onMounted(async () => {
   padding: 0;
   align-self: flex-start;
 }
+
 
 .card {
   background: #fff;
@@ -198,9 +218,7 @@ onMounted(async () => {
   width: fit-content;
 }
 
-.star {
-  font-size: clamp(1rem, 3vw, 1.2rem);
-}
+.star { font-size: clamp(1rem, 3vw, 1.2rem); }
 
 .rating-value {
   font-size: clamp(16px, 4vw, 24px);
@@ -239,6 +257,7 @@ onMounted(async () => {
   flex: 1;
 }
 
+
 .btn-select {
   align-self: center;
   width: clamp(200px, 90%, 390px);
@@ -256,14 +275,9 @@ onMounted(async () => {
   line-height: 1.3;
   transition: background 0.2s;
 }
+.btn-select:hover { background: #5563d9; }
+.btn-select:active { background: #4a52c0; }
 
-.btn-select:hover {
-  background: #5563d9;
-}
-
-.btn-select:active {
-  background: #4a52c0;
-}
 
 .reviews {
   margin-top: clamp(1rem, 4vw, 2rem);
@@ -298,9 +312,7 @@ onMounted(async () => {
   flex-wrap: wrap;
 }
 
-.rev-avatar {
-  flex-shrink: 0;
-}
+.rev-avatar { flex-shrink: 0; }
 
 .rev-avatar-img {
   width: clamp(44px, 12vw, 64px);
@@ -313,9 +325,7 @@ onMounted(async () => {
   justify-content: center;
 }
 
-.rev-avatar-empty {
-  background: linear-gradient(145deg, #69FFDB 0%, #69FF03 100%);
-}
+.rev-avatar-empty { background: linear-gradient(145deg, #69FFDB 0%, #69FF03 100%); }
 
 .avatar-letter-small {
   font-size: clamp(1rem, 4vw, 1.5rem);
@@ -360,9 +370,7 @@ onMounted(async () => {
   justify-content: center;
 }
 
-.star-small {
-  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-}
+.star-small { font-size: clamp(0.9rem, 2.5vw, 1.1rem); }
 
 .rating-small {
   font-size: clamp(14px, 3vw, 24px);
@@ -378,225 +386,59 @@ onMounted(async () => {
   line-height: 1.5;
 }
 
-/* ПЛАНШЕТЫ - max-width: 920px */
+
 @media (max-width: 920px) {
-  .staff-view {
-    padding: 1.5rem 1rem;
-  }
-
-  .card {
-    padding: 1.5rem 1rem;
-  }
-
-  .about-section {
-    min-height: 140px;
-    padding: 1.5rem;
-  }
-
-  .reviews {
-    margin-top: 1.5rem;
-  }
-
-  .review {
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
+  .staff-view { padding: 1.5rem 1rem; }
+  .card { padding: 1.5rem 1rem; }
+  .about-section { min-height: 140px; padding: 1.5rem; }
+  .reviews { margin-top: 1.5rem; }
+  .review { padding: 1.5rem; margin-bottom: 1.5rem; }
 }
 
-/* МОБИЛЬНЫЕ - max-width: 600px */
 @media (max-width: 600px) {
-  .staff-view {
-    padding: 1rem;
-    max-width: 100%;
-  }
-
-  .btn-back {
-    margin-bottom: 1rem;
-    font-size: 14px;
-  }
-
-  .card {
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    border-radius: 10px;
-  }
-
-  .avatar {
-    width: 100px;
-    height: 100px;
-    margin-bottom: 0.8rem;
-  }
-
-  .avatar-letter {
-    font-size: 2.2rem;
-  }
-
-  .name {
-    font-size: 20px;
-    margin: 0.5rem 0;
-  }
-
-  .rating-container {
-    margin: 0.5rem 0;
-    padding: 0.4rem 0.8rem;
-  }
-
-  .star {
-    font-size: 1rem;
-  }
-
-  .rating-value {
-    font-size: 18px;
-  }
-
-  .about-section {
-    min-height: 120px;
-    padding: 1rem;
-    margin-top: 0.8rem;
-    border-radius: 10px;
-  }
-
-  .about-label {
-    font-size: 16px;
-    margin-bottom: 0.5rem;
-  }
-
-  .about-text {
-    font-size: 13px;
-  }
-
-  .btn-select {
-    width: 90%;
-    height: 48px;
-    margin: 1rem auto;
-    font-size: 16px;
-    border-radius: 10px;
-  }
-
-  .reviews {
-    margin-top: 1.5rem;
-  }
-
-  .reviews-title {
-    font-size: 18px;
-    margin-bottom: 1rem;
-  }
-
-  .review {
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    min-height: 80px;
-  }
-
-  .rev-header {
-    gap: 0.8rem;
-    margin-bottom: 0.8rem;
-  }
-
-  .rev-avatar-img {
-    width: 48px;
-    height: 48px;
-  }
-
-  .avatar-letter-small {
-    font-size: 1.1rem;
-  }
-
-  .name-date {
-    min-width: auto;
-  }
-
-  .rev-name {
-    font-size: 16px;
-  }
-
-  .rev-date {
-    font-size: 12px;
-  }
-
-  .rev-rating {
-    width: 70px;
-    height: 36px;
-    padding: 0.3rem 0.6rem;
-  }
-
-  .star-small {
-    font-size: 0.95rem;
-  }
-
-  .rating-small {
-    font-size: 16px;
-  }
-
-  .rev-text {
-    margin-top: 0.5rem;
-    font-size: 13px;
-  }
+  .staff-view { padding: 1rem; max-width: 100%; }
+  .btn-back { margin-bottom: 1rem; font-size: 14px; }
+  .card { padding: 1rem; margin-bottom: 1.5rem; border-radius: 10px; }
+  .avatar { width: 100px; height: 100px; margin-bottom: 0.8rem; }
+  .avatar-letter { font-size: 2.2rem; }
+  .name { font-size: 20px; margin: 0.5rem 0; }
+  .rating-container { margin: 0.5rem 0; padding: 0.4rem 0.8rem; }
+  .star { font-size: 1rem; }
+  .rating-value { font-size: 18px; }
+  .about-section { min-height: 120px; padding: 1rem; margin-top: 0.8rem; border-radius: 10px; }
+  .about-label { font-size: 16px; margin-bottom: 0.5rem; }
+  .about-text { font-size: 13px; }
+  .btn-select { width: 90%; height: 48px; margin: 1rem auto; font-size: 16px; border-radius: 10px; }
+  .reviews { margin-top: 1.5rem; }
+  .reviews-title { font-size: 18px; margin-bottom: 1rem; }
+  .review { padding: 1rem; margin-bottom: 1rem; border-radius: 8px; min-height: 80px; }
+  .rev-header { gap: 0.8rem; margin-bottom: 0.8rem; }
+  .rev-avatar-img { width: 48px; height: 48px; }
+  .avatar-letter-small { font-size: 1.1rem; }
+  .name-date { min-width: auto; }
+  .rev-name { font-size: 16px; }
+  .rev-date { font-size: 12px; }
+  .rev-rating { width: 70px; height: 36px; padding: 0.3rem 0.6rem; }
+  .star-small { font-size: 0.95rem; }
+  .rating-small { font-size: 16px; }
+  .rev-text { margin-top: 0.5rem; font-size: 13px; }
 }
 
-/* ОЧЕНЬ МАЛЫЕ ЭКРАНЫ - max-width: 380px */
+
 @media (max-width: 380px) {
-  .staff-view {
-    padding: 0.8rem;
-  }
-
-  .card {
-    padding: 0.8rem;
-  }
-
-  .avatar {
-    width: 80px;
-    height: 80px;
-  }
-
-  .avatar-letter {
-    font-size: 1.8rem;
-  }
-
-  .name {
-    font-size: 18px;
-  }
-
-  .about-section {
-    padding: 0.8rem;
-    min-height: 100px;
-  }
-
-  .about-label {
-    font-size: 14px;
-  }
-
-  .about-text {
-    font-size: 12px;
-  }
-
-  .btn-select {
-    width: 95%;
-    height: 44px;
-    font-size: 14px;
-  }
-
-  .review {
-    padding: 0.8rem;
-    min-height: auto;
-  }
-
-  .rev-avatar-img {
-    width: 40px;
-    height: 40px;
-  }
-
-  .rev-name {
-    font-size: 14px;
-  }
-
-  .rev-date {
-    font-size: 11px;
-  }
-
-  .rev-text {
-    font-size: 12px;
-  }
+  .staff-view { padding: 0.8rem; }
+  .card { padding: 0.8rem; }
+  .avatar { width: 80px; height: 80px; }
+  .avatar-letter { font-size: 1.8rem; }
+  .name { font-size: 18px; }
+  .about-section { padding: 0.8rem; min-height: 100px; }
+  .about-label { font-size: 14px; }
+  .about-text { font-size: 12px; }
+  .btn-select { width: 95%; height: 44px; font-size: 14px; }
+  .review { padding: 0.8rem; min-height: auto; }
+  .rev-avatar-img { width: 40px; height: 40px; }
+  .rev-name { font-size: 14px; }
+  .rev-date { font-size: 11px; }
+  .rev-text { font-size: 12px; }
 }
 </style>
