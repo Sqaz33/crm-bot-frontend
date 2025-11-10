@@ -199,8 +199,13 @@ async function fetchVisits(tab) {
       })
     )
 
-    visits.value = mapped
-    console.log(`Всего обработано ${mapped.length} записей`)
+    // СОРТИРОВКА: последние записи первыми
+    const sortedVisits = mapped.sort((a, b) => {
+      return new Date(b.visit_date_time) - new Date(a.visit_date_time)
+    })
+
+    visits.value = sortedVisits
+    console.log(`Всего обработано ${mapped.length} записей, отсортировано`)
   } catch (err) {
     console.error('Ошибка при загрузке или обработке:', err)
     visits.value = []

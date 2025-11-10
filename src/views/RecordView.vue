@@ -591,7 +591,7 @@ textarea{
 .visit-error{color:#d9534f;font-size:13px;margin-top:6px}
 
 /* 12) Медиа */
-@media (max-width: 480px){
+@media (max-width: 768px){
   .header{ padding:10px 12px; }
   .details{ padding:10px 12px; }
   .list-item{ padding:12px; }
