@@ -66,15 +66,13 @@ onBeforeUnmount(() => setScrollLock(false))
   justify-content: center;
   align-items: center;
 
-  
-  padding:
-    max(16px, env(safe-area-inset-top))
-    max(16px, env(safe-area-inset-right))
-    max(16px, env(safe-area-inset-bottom))
-    max(16px, env(safe-area-inset-left));
+  --hpad: max(16px, max(env(safe-area-inset-left), env(safe-area-inset-right)));
+  --vpad: max(16px, max(env(safe-area-inset-top),  env(safe-area-inset-bottom)));
+  padding-inline: var(--hpad);
+  padding-block: var(--vpad);
 
   background-color: rgba(0, 0, 0, 0.5);
-  overscroll-behavior: contain; 
+  overscroll-behavior: contain;
 }
 
 @supports not (height: 100dvh) {
@@ -85,35 +83,34 @@ onBeforeUnmount(() => setScrollLock(false))
 }
 
 .modal-content {
-  background: #fff;
   position: relative;
+  background: #fff;
   border-radius: 16px;
+  box-shadow: 0 5px 15px rgba(0,0,0,.2);
+  outline: none;
+  box-sizing: border-box;
 
-  width: 100%;
-  max-width: 520px;
+  inline-size: min(520px, calc(100dvw - 2 * var(--hpad)));
+  margin-inline: auto;
 
- 
-  max-height: calc(100dvh - 48px);
+  max-height: calc(100dvh - 2 * var(--vpad));
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 
   padding: clamp(16px, 4vw, 24px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  outline: none;
 }
 
 @supports not (max-height: 100dvh) {
   .modal-content {
-    max-height: calc(100vh - 48px);
+    inline-size: min(520px, calc(100vw - 2 * var(--hpad)));
+    max-height: calc(100vh - 2 * var(--vpad));
   }
 }
 
 .modal-close {
   position: absolute;
-  top: 4px;
-  right: 4px;
-
-  /* тач-таргет по гайдам 44x44 */
+  inset-inline-end: 4px;   
+  inset-block-start: 4px;  
   width: 44px;
   height: 44px;
   display: grid;
@@ -136,3 +133,4 @@ onBeforeUnmount(() => setScrollLock(false))
 <style>
 html.modal-open { overflow: hidden; }
 </style>
+

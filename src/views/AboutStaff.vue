@@ -132,7 +132,7 @@ onMounted(async () => {
   .container-sidebar { padding-left: var(--left-rail); }
 }
 @media (max-width: 380px) {
-  .container-sidebar { --left-rail: 40px; }
+  .container-sidebar { --left-rail: 20px; }
 }
 
 .staff-view {
