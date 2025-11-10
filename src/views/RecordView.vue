@@ -1,53 +1,45 @@
 <template>
   <div class="record-view">
     <div v-if="loading" class="loading">Загрузка...</div>
+    <div v-else-if="error" class="error">{{ error }}</div>
 
-    <div v-else-if="error" class="error">
-      {{ error }}
-    </div>
+    <div v-else class="page">
+      <!-- Верхний инфоблок (название заведения может приходить сверху страницы) -->
+      <div class="page-title">Просмотр записи</div>
 
-    <div v-else class="record-card">
-      <!-- Верхняя карточка -->
-      <div class="header">
-        <div class="who">
-          <!-- Зелёный круг с инициалом -->
-          <div class="avatar" aria-hidden="true">{{ firstLetter }}</div>
-
-          <div class="info">
-            <div class="name">
-              {{ staff.name }}
-              <!-- рейтинг сотрудника скрыт в новом дизайне -->
-              <!-- <span class="rating">★ 4.7</span> -->
+      <div class="record-card">
+        <!-- Шапка карточки -->
+        <div class="header">
+          <div class="who">
+            <div class="avatar">{{ firstLetter }}</div>
+            <div class="info">
+              <div class="name">
+                {{ staff.name }}
+                <!-- <span class="rating">★ 4.7</span> -->
+              </div>
+              <div class="spec">{{ staff.specializations?.join(', ') }}</div>
             </div>
-            <div class="spec">{{ staff.specializations?.join(', ') }}</div>
+          </div>
+          <div class="datetime">{{ formatDate(visit.visit_date_time) }}</div>
+        </div>
+
+        <!-- Детали услуги -->
+        <div class="details">
+          <div class="row header-row">
+            <div>Услуга</div>
+            <div>Стоимость</div>
+          </div>
+          <div class="row">
+            <div class="service-name">{{ service.name }}</div>
+            <div class="price">{{ service.price }} ₽</div>
           </div>
         </div>
 
-        <div class="datetime">
-          {{ formatDate(visit.visit_date_time) }}
-        </div>
-      </div>
-
-      <!-- Детали -->
-      <div class="details">
-        <div class="row header-row">
-          <div>Услуга</div>
-          <div>Стоимость</div>
-        </div>
-        <div class="row">
-          <div class="service-name">{{ service.name }}</div>
-          <div class="price">{{ service.price }} ₽</div>
-        </div>
-      </div>
-
-      <!-- Панель управления визитом -->
-      <div v-if="!isOld" class="panel">
-        <div class="section">
-          <div class="section-title">Я точно приду</div>
+        <!-- Плашка: Я точно приду -->
+        <div v-if="!isOld" class="section">
+          <div class="section-bar">Я точно приду</div>
           <div class="toggle-row">
             <div class="hint">Нажимая, вы подтверждаете свой визит</div>
-
-            <!-- iOS-переключатель -->
             <label class="toggle">
               <input
                 type="checkbox"
@@ -60,8 +52,9 @@
           </div>
         </div>
 
-        <div class="section">
-          <div class="section-title">Изменения</div>
+        <!-- Плашка: Изменения -->
+        <div v-if="!isOld" class="section">
+          <div class="section-bar">Изменения</div>
           <div class="list">
             <button
               class="list-item danger"
@@ -85,8 +78,9 @@
           </div>
         </div>
 
-        <div class="section">
-          <div class="section-title">Оплата</div>
+        <!-- Плашка: Оплата -->
+        <div v-if="!isOld" class="section">
+          <div class="section-bar">Оплата</div>
           <div class="list">
             <div class="list-item disabled" tabindex="-1" aria-disabled="true">
               <span class="icon">🔒</span>
@@ -97,72 +91,53 @@
         </div>
 
         <div v-if="visitError" class="visit-error">{{ visitError }}</div>
+
+        <!-- Кнопка отзыва для прошедшей записи -->
+        <button v-else class="review-btn" @click="showReviewModal = true">Оставить отзыв</button>
       </div>
 
-      <!-- Кнопка оставить отзыв -->
-      <button v-else-if="isOld" class="review-btn" @click="showReviewModal = true">
-        Оставить отзыв
-      </button>
-
-      <!-- Модалка для отзыва -->
+ 
       <div v-if="showReviewModal" class="modal-overlay">
         <div class="modal">
           <h3>Отзыв для {{ staff.name }}</h3>
-
-          <!-- Это форма оценки пользователем, не «рейтинг сотрудника» на карточках. Оставляем. -->
           <div class="stars">
             <span v-for="n in 5" :key="n" class="star" :class="{ filled: n <= review.rating }"
-                  @click="review.rating = n">★</span>
+              @click="review.rating = n">★</span>
           </div>
-
           <textarea v-model="review.comment" placeholder="Напишите ваш комментарий..."></textarea>
-
           <div class="modal-buttons">
-            <button @click="submitReview" :disabled="sending">
-              {{ sending ? 'Отправка...' : 'Отправить' }}
-            </button>
+            <button @click="submitReview" :disabled="sending">{{ sending ? 'Отправка...' : 'Отправить' }}</button>
             <button @click="showReviewModal = false" :disabled="sending">Отмена</button>
           </div>
-
           <div v-if="reviewError" class="modal-error">{{ reviewError }}</div>
         </div>
       </div>
 
-      <!-- Модалка подтверждения визита -->
       <div v-if="showConfirmModal" class="modal-overlay">
         <div class="modal">
           <h3>Подтверждение визита</h3>
           <p>Вы действительно хотите подтвердить, что придёте на приём?</p>
           <div class="modal-buttons">
-            <button @click="confirmAction(); showConfirmModal = false" :disabled="processing">
-              Да, подтверждаю
-            </button>
-            <button @click="showConfirmModal = false" :disabled="processing">
-              Отмена
-            </button>
+            <button @click="confirmAction(); showConfirmModal = false" :disabled="processing">Да, подтверждаю</button>
+            <button @click="showConfirmModal = false" :disabled="processing">Отмена</button>
           </div>
         </div>
       </div>
 
-      <!-- Модалка отмены визита -->
       <div v-if="showCancelModal" class="modal-overlay">
         <div class="modal">
           <h3>Отмена визита</h3>
           <p>Вы уверены, что хотите отменить запись на приём?</p>
           <div class="modal-buttons">
-            <button @click="cancelAction(); showCancelModal = false" :disabled="deleting">
-              Да, отменить
-            </button>
-            <button @click="showCancelModal = false" :disabled="deleting">
-              Отмена
-            </button>
+            <button @click="cancelAction(); showCancelModal = false" :disabled="deleting">Да, отменить</button>
+            <button @click="showCancelModal = false" :disabled="deleting">Отмена</button>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
@@ -411,149 +386,138 @@ async function submitReview() {
 </script>
 
 <style scoped>
-:root {}
-.record-view{
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
-  padding:clamp(12px,4vw,32px);
-  background:#f7f8fb;
-  min-height:100vh;
-  font-family:var(--font-primary);
+/* Палитра, близкая к макету */
+:root{
+  --bg:#F6F7FB;
+  --card:#FFFFFF;
+  --primary:#2F80ED;            /* синяя плашка */
+  --text:#1C2534;
+  --muted:#8A95A6;
+  --divider:#ECEFF5;
+  --green:#20C776;              /* зелёный аватар */
+  --shadow:0 8px 20px rgba(23,35,68,.08);
 }
 
-.record-card{
+.record-view{min-height:100vh;background:var(--bg);display:flex;justify-content:center}
+.page{width:min(640px,100%);padding:16px 16px 24px}
+
+/* Центрированный заголовок блока, как на скрине */
+.page-title{
+  text-align:center;
+  font-weight:700;
+  color:#5C6676;
+  padding:12px 0;
+  border-top:1px solid var(--divider);
+  border-bottom:1px solid var(--divider);
+  margin-bottom:12px;
   background:#fff;
-  border-radius:16px;
-  box-shadow:0 2px 10px rgba(23,35,68,.06);
-  width:min(840px,100%);
-  padding:clamp(14px,2.2vw,20px);
+  border-radius:12px;
 }
 
-/* Header */
+/* Карточка */
+.record-card{
+  background:var(--card);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+  padding:12px;
+}
+
+/* Шапка карточки — светлая подложка */
 .header{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  background:#EEF3FF;           /* светло-синяя подложка из макета */
+  border-radius:12px;
+  padding:10px 12px;
   margin-bottom:12px;
 }
-.who{display:flex;align-items:center;gap:12px;min-width:0;}
-
+.who{display:flex;align-items:center;gap:10px;min-width:0}
 .avatar{
-  --green:#3ccb78;
-  width:40px;height:40px;border-radius:50%;
-  background:var(--green);
-  color:#fff;
-  display:flex;align-items:center;justify-content:center;
-  font-weight:700;font-size:18px;flex:0 0 40px;
+  width:24px;height:24px;border-radius:50%;
+  background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:12px;flex:0 0 24px;
 }
-
-.info{min-width:0;}
-.name{font-weight:700;font-size:15px;line-height:1.1;color:#1c2534}
-.spec{font-size:12px;color:#6f7a87;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info{min-width:0}
+.name{font-weight:800;font-size:14px;color:var(--text);line-height:1.1}
+.spec{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .datetime{font-size:12px;color:#6f7a87;white-space:nowrap}
 
-/* Details */
+/* Детали услуги */
 .details{
-  background:#f3f5f8;
-  border-radius:12px;
-  padding:12px;
-  margin:8px 0 16px;
+  background:#F3F5F8;border-radius:12px;padding:10px 12px;margin-bottom:12px
 }
-.row{display:flex;justify-content:space-between;gap:8px;font-size:14px}
-.header-row{font-weight:600;color:#647089;margin-bottom:6px}
-.service-name{max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.price{font-weight:600;color:#1c2534}
+.row{display:flex;justify-content:space-between;gap:8px}
+.header-row{font-weight:700;color:#647089;padding-bottom:8px;border-bottom:1px solid #e6e9f0;margin-bottom:8px}
+.service-name{max-width:70%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.price{font-weight:700;color:var(--text)}
 
-/* Sections */
-.panel{display:flex;flex-direction:column;gap:16px}
-.section{background:#fff;border-radius:12px;padding:0}
-.section-title{
-  font-size:11px;font-weight:700;color:#9aa3b2;
-  text-transform:uppercase;letter-spacing:.06em;
-  padding:10px 12px;
+/* Секции с синими плашками */
+.section{margin-bottom:12px}
+.section-bar{
+  background:var(--primary);color:#fff;font-weight:800;
+  padding:10px 12px;border-radius:10px;letter-spacing:.02em;text-transform:uppercase;
 }
-
-/* Toggle row */
 .toggle-row{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:12px;padding:8px 12px 14px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:#fff;border:1px solid var(--divider);
+  border-top:none;border-radius:0 0 12px 12px;
+  padding:12px;
 }
 .hint{font-size:13px;color:#6f7a87}
 
-/* iOS toggle */
+/* iOS-переключатель */
 .toggle{position:relative;display:inline-block;width:46px;height:28px;flex:0 0 auto}
 .toggle input{opacity:0;width:0;height:0}
 .slider{
-  position:absolute;cursor:pointer;inset:0;background:#d9dde4;border-radius:999px;
-  transition:.2s ease;
+  position:absolute;inset:0;background:#D9DDE4;border-radius:999px;transition:.2s
 }
 .slider:before{
-  content:"";position:absolute;height:22px;width:22px;left:3px;top:3px;
-  background:white;border-radius:50%;transition:.2s ease;
-  box-shadow:0 1px 3px rgba(0,0,0,.2);
+  content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;background:#fff;border-radius:50%;
+  box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s
 }
 .toggle input:checked + .slider{background:#3ccb78}
 .toggle input:checked + .slider:before{transform:translateX(18px)}
 
-/* List actions */
-.list{display:flex;flex-direction:column}
+/* Список действий */
+.list{background:#fff;border:1px solid var(--divider);border-top:none;border-radius:0 0 12px 12px}
 .list-item{
-  display:flex;align-items:center;gap:10px;
-  padding:14px 12px;border-top:1px solid #eff1f5;background:#fff;
-  font-size:14px;text-align:left;width:100%;
+  width:100%;display:flex;align-items:center;gap:10px;padding:14px 12px;
+  border-top:1px solid var(--divider);background:#fff;font-size:14px;text-align:left
 }
 .list-item:first-child{border-top:none}
 .list-item .icon{font-size:16px;opacity:.9}
-.list-item .text{flex:1 1 auto;color:#1c2534}
+.list-item .text{flex:1 1 auto;color:var(--text)}
 .list-item .chevron{font-size:18px;opacity:.4}
-.list-item:disabled{opacity:.55;cursor:not-allowed}
 .list-item.disabled{opacity:.55;pointer-events:none}
-.list-item.danger .icon{color:#d9534f}
-.list-item.danger .text{color:#d9534f}
+.list-item.danger .icon,.list-item.danger .text{color:#d9534f}
 
-/* Buttons (only for "Оставить отзыв") */
+/* Отзыв */
 .review-btn{
-  width:100%;padding:12px 14px;border:none;border-radius:10px;
-  background:#1e88e5;color:#fff;font-weight:700;cursor:pointer;
+  width:100%;padding:12px;border:none;border-radius:12px;margin-top:8px;
+  background:#1e88e5;color:#fff;font-weight:800;
 }
 
-/* Modals */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.4);
-  display:flex;justify-content:center;align-items:center;z-index:100;
-}
-.modal{
-  background:#fff;padding:16px;border-radius:12px;width:320px;max-width:90%;
-  box-shadow:0 10px 30px rgba(0,0,0,.2);
-}
+/* Модалки — без изменений по отступам */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;justify-content:center;align-items:center;z-index:100}
+.modal{background:#fff;padding:16px;border-radius:12px;width:320px;max-width:90%;box-shadow:0 10px 30px rgba(0,0,0,.2)}
 .stars{font-size:22px;margin-bottom:8px}
 .star{cursor:pointer;color:#d9d9d9}
 .star.filled{color:#f6c21c}
-textarea{
-  width:100%;min-height:90px;margin-bottom:12px;padding:8px;border-radius:10px;
-  border:1px solid #e2e6ec;resize:none
-}
+textarea{width:100%;min-height:90px;margin-bottom:12px;padding:8px;border-radius:10px;border:1px solid #e2e6ec;resize:none}
 .modal-buttons{display:flex;justify-content:flex-end;gap:8px}
-.modal-buttons button{
-  padding:8px 12px;border:none;border-radius:10px;cursor:pointer
-}
+.modal-buttons button{padding:8px 12px;border:none;border-radius:10px;cursor:pointer}
 .modal-buttons button:first-child{background:#1e88e5;color:#fff}
 .modal-buttons button:last-child{background:#e7e9ee}
 .modal-error{color:#d9534f;margin-top:6px;font-size:13px}
 
 .loading{font-size:16px;color:#555}
-.error{color:#d9534f;font-size:14px}
+.error{color:#d9534f}
 .visit-error{color:#d9534f;font-size:13px;margin-top:6px}
 
-
-@media (max-width: 768px){
-  .record-view{padding:12px}
-  .avatar{width:36px;height:36px;font-size:16px}
-  .name{font-size:14px}
-  .spec,.datetime{font-size:12px}
+/* Мобильные отступы */
+@media (max-width: 480px){
+  .page{padding:12px}
+  .header{padding:10px}
   .details{padding:10px}
-  .row{font-size:13px}
+  .list-item{padding:12px}
 }
 </style>
