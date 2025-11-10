@@ -1,16 +1,15 @@
 <template>
   <aside
-    class="sidebar"
-    :class="{ 'collapsed': !modelValue, 'empty': items.length === 0 }"
-    aria-hidden="true"
+      class="sidebar"
+      :class="{ 'collapsed': !isOpen, 'empty': items.length === 0 }"
   >
     <div v-if="items.length > 0">
       <ul class="menu-list">
         <li
-          v-for="item in items"
-          :key="item.path"
-          class="menu-item"
-          :class="{ active: route.path === item.path }"
+            v-for="item in items"
+            :key="item.path"
+            class="menu-item"
+            :class="{ active: route.path === item.path }"
         >
           <RouterLink :to="item.path" class="menu-link" @click="closeSidebar">
             <span class="icon" v-if="item.icon">
@@ -22,7 +21,6 @@
           </RouterLink>
         </li>
       </ul>
-
       <div class="back-button" @click="goHome">
         <span class="arrow-back">‹</span>
         <span class="back-label"> Назад</span>
@@ -38,40 +36,31 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
 
-// поддержка v-model:isOpen
 const props = defineProps({
-  items: { type: Array, default: () => [] },
-  isOpen: { type: Boolean, default: undefined } // для обратной совместимости
-})
-const emit = defineEmits(['update:isOpen', 'close'])
-
-/**
- * Единая модель: если передали isOpen — используем его; если нет — локальное состояние.
- * Но чтобы компонент не открывался сам по себе, дефолт — false.
- */
-const route = useRoute()
-const router = useRouter()
-
-// вычисляемое «значение модели»
-const modelValue = computed({
-  get() {
-    return props.isOpen ?? false
+  items: {
+    type: Array,
+    default: () => []
   },
-  set(v) {
-    emit('update:isOpen', v)
+  isOpen: {
+    type: Boolean,
+    default: true
   }
 })
 
+const route = useRoute()
+const router = useRouter()
+const emit = defineEmits(['close'])
+
 function closeSidebar() {
-  // закрываем только по явному действию
-  modelValue.value = false
   emit('close')
 }
 
+function goBack() {
+  router.back()
+  closeSidebar()
+}
 function goHome() {
   router.push({ name: 'home' })
-  // по переходу не открываем; можно закрыть:
-  modelValue.value = false
 }
 </script>
 
@@ -195,8 +184,8 @@ function goHome() {
 .back-button {
   position: sticky;
   bottom: 0;
-  height: 56px;
-  padding: 14px 20px 14px 28px;
+  height: 56px; 
+  padding: 14px 20px 14px 28px; 
   font-size: 20px;
   color: #8097B1;
   font-family: var(--font-primary);
@@ -213,11 +202,11 @@ function goHome() {
 
 .arrow-back {
   width: 36px;
-  height: 36px;
+  height: 36px; 
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 1.5rem;
+  margin-right: 1.5rem; 
   font-size: 1.5rem;
   color: #B0BECF;
   flex-shrink: 0;
@@ -236,7 +225,7 @@ function goHome() {
   color: #8097B1;
 }
 
-/* свёрнутый сайдбар */
+
 .sidebar.collapsed {
   width: 60px;
 }
@@ -273,5 +262,74 @@ function goHome() {
   margin-right: 0;
 }
 
+/* развёрнутый по клику */
+.sidebar:not(.collapsed) {
+  width: 320px;
+}
+
+.sidebar:not(.collapsed) .label,
+.sidebar:not(.collapsed) .arrow,
+.sidebar:not(.collapsed) .back-label {
+  opacity: 1;
+  visibility: visible;
+  width: auto;
+  transition: all 0.3s ease 0.2s;
+}
+
+.sidebar:not(.collapsed) .menu-link {
+  justify-content: space-between;
+  padding: 14px 20px 14px 28px;
+  transition: all 0.3s ease 0.1s;
+}
+
+.sidebar:not(.collapsed) .icon,
+.sidebar:not(.collapsed) .icon-placeholder {
+  margin-right: 2rem;
+  transition: margin-right 0.3s ease 0.1s;
+}
+
+.sidebar:not(.collapsed) .back-button {
+  justify-content: flex-start;
+  padding: 14px 20px 14px 28px;
+  transition: all 0.3s ease 0.2s;
+}
+
+/* отключено развёртывание при наведении */
+/*
+.sidebar.collapsed:hover {
+  width: 320px;
+}
+
+.sidebar.collapsed:hover .label,
+.sidebar.collapsed:hover .arrow,
+.sidebar.collapsed:hover .back-label {
+  opacity: 1;
+  visibility: visible;
+  width: auto;
+  transition: all 0.3s ease 0.2s;
+}
+
+.sidebar.collapsed:hover .menu-link {
+  justify-content: space-between;
+  padding: 14px 20px 14px 28px;
+  transition: all 0.3s ease 0.1s;
+}
+
+.sidebar.collapsed:hover .icon,
+.sidebar.collapsed:hover .icon-placeholder {
+  margin-right: 2rem;
+  transition: margin-right 0.3s ease 0.1s;
+}
+
+.sidebar.collapsed:hover .back-button {
+  justify-content: flex-start;
+  padding: 14px 20px 14px 28px;
+  transition: all 0.3s ease 0.2s;
+}
+
+.sidebar.collapsed:hover .arrow-back {
+  margin-right: 1rem;
+}
+*/
 
 </style>
