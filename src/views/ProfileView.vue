@@ -69,7 +69,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import api from '../api'
+import api from '../api' 
 
 const loading = ref(false)
 const saving  = ref(false)
@@ -82,38 +82,56 @@ const profileData = ref({
   email: ''
 })
 
-/** Хелперы преобразования ФИО
- * Предполагаем порядок "Имя Фамилия Отчество".
- * Если у вас хранится иначе — поменяйте маппинг в splitFullName/joinFullName.
- */
+
 function splitFullName(full) {
-  const parts = (full || '').trim().split(/\s+/).filter(Boolean)
-  const first  = parts[0] ?? ''
-  const last   = parts[1] ?? ''
-  const middle = parts.slice(2).join(' ')
-  return { first, last, middle }
+  const parts = String(full || '').trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return { firstName: '', lastName: '', middleName: '' }
+  if (parts.length === 1) return { firstName: parts[0], lastName: '', middleName: '' }
+  if (parts.length === 2) return { firstName: parts[0], lastName: parts[1], middleName: '' }
+  return { firstName: parts[0], lastName: parts[1], middleName: parts.slice(2).join(' ') }
 }
 function joinFullName({ firstName, lastName, middleName }) {
   return [firstName, lastName, middleName].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim()
 }
 
-const isFormValid = computed(() => {
-  const f = profileData.value
-  return f.firstName.trim() !== '' && f.lastName.trim() !== ''
-})
+const isFormValid = computed(() => profileData.value.firstName.trim().length > 0)
 
 async function loadMe() {
   loading.value = true
   try {
-    const { data } = await api.get('/auth/me')
-    const { first, last, middle } = splitFullName(data?.name || '')
-    profileData.value.firstName  = first
-    profileData.value.lastName   = last
-    profileData.value.middleName = middle
-    profileData.value.phone      = data?.phone || ''
-    profileData.value.email      = data?.email || ''
+    const { data } = await api.get('/auth/me', {
+      headers: { Accept: 'application/json' },
+      withCredentials: true
+    })
+    const fio = splitFullName(data?.name)
+    profileData.value = {
+      ...fio,
+      phone: data?.phone ?? '',
+      email: data?.email ?? ''
+    }
+    console.debug('[GET /auth/me] data:', data)
+  } catch (e) {
+    console.error('[GET /auth/me] error:', e?.response ?? e)
+    
   } finally {
     loading.value = false
+  }
+}
+
+async function updateMeName(payload) {
+  const cfg = { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
+  try {              
+    return await api.patch('/auth/me', payload, cfg)
+  } catch (e1) {
+    const s = e1?.response?.status
+    if (s !== 404 && s !== 405 && s !== 400) throw e1
+    try {              
+      return await api.put('/auth/me', payload, cfg)
+    } catch (e2) {
+      const s2 = e2?.response?.status
+      if (s2 !== 404 && s2 !== 405) throw e2
+      return await api.post('/auth/me', payload, cfg)
+    }
   }
 }
 
@@ -122,22 +140,20 @@ async function handleSave() {
   saving.value = true
   try {
     const payload = { name: joinFullName(profileData.value) }
-    // пробуем PATCH, если не поддерживается — PUT
-    try {
-      await api.patch('/auth/me', payload)
-    } catch (e) {
-      if (e?.response?.status === 405 || e?.response?.status === 404) {
-        await api.put('/auth/me', payload)
-      } else {
-        throw e
-      }
-    }
-    // после сохранения — перезагрузим me, чтобы синхронизировать состояние
+    console.debug('[SAVE /auth/me] payload:', payload)
+    await updateMeName(payload)
     await loadMe()
-    
-  } catch (error) {
-    console.error('Ошибка сохранения ФИО:', error)
-    
+    console.error('ФИО обновлено')
+  } catch (e) {
+    console.error('[SAVE /auth/me] error:', e?.response ?? e)
+    const code = e?.response?.status
+    if (code === 401) {
+      console.error('Сессия истекла. Войдите заново.')
+    } else if (code === 415) {
+      console.error('Сервер не принял формат данных (415). Проверьте Content-Type.')
+    } else {
+      console.error('Не удалось сохранить. Подробности в консоли.')
+    }
   } finally {
     saving.value = false
   }
@@ -145,6 +161,7 @@ async function handleSave() {
 
 onMounted(loadMe)
 </script>
+
 
 <style scoped>
 
