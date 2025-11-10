@@ -412,18 +412,18 @@ html, body, #app { overflow-x: hidden; }
 
 .page{
   width:100%;
-  max-width:640px;
+  max-width:640px;      
   margin:0 auto;
 
-  /* равные поля + учёт safe-area */
+
   padding-top:16px;
   padding-bottom:24px;
-  padding-left:max(16px, env(safe-area-inset-left));
-  padding-right:max(16px, env(safe-area-inset-right));
+  padding-inline:16px;  
+  padding-inline: max(16px, max(env(safe-area-inset-left), env(safe-area-inset-right)));
 
-  /* никаких горизонтальных сюрпризов */
-  overflow-x: clip;
-  max-width:100%;
+  
+  overflow-x:hidden;    
+  overflow-x:clip;     
 }
 
 /* 2) Центрированный заголовок */
@@ -447,7 +447,7 @@ html, body, #app { overflow-x: hidden; }
   padding:64px;
   width:100%;
   margin:0;
-  overflow:hidden; /* радиусы/тени не выходят за края */
+  overflow:hidden; 
   max-width:100%;
 }
 

@@ -21,7 +21,7 @@
           </RouterLink>
         </li>
       </ul>
-      <div class="back-button" @click="goBack">
+      <div class="back-button" @click="goHome">
         <span class="arrow-back">‹</span>
         <span class="back-label"> Назад</span>
       </div>
@@ -58,6 +58,9 @@ function closeSidebar() {
 function goBack() {
   router.back()
   closeSidebar()
+}
+function goHome() {
+  router.push({ name: 'home' })
 }
 </script>
 
