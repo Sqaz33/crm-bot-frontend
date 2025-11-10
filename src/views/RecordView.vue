@@ -4,8 +4,7 @@
     <div v-else-if="error" class="error">{{ error }}</div>
 
     <div v-else class="page">
-      <!-- Верхний инфоблок (название заведения может приходить сверху страницы) -->
-      <div class="page-title">Просмотр записи</div>
+   
 
       <div class="record-card">
         <!-- Шапка карточки -->
@@ -445,7 +444,7 @@ html, body, #app { overflow-x: hidden; }
   background:var(--card);
   border-radius:16px;
   box-shadow:var(--shadow);
-  padding:12px;
+  padding:64px;
   width:100%;
   margin:0;
   overflow:hidden; /* радиусы/тени не выходят за края */
@@ -581,7 +580,7 @@ textarea{
 }
 .modal-buttons{display:flex;justify-content:flex-end;gap:8px}
 .modal-buttons button{padding:8px 12px;border:none;border-radius:10px;cursor:pointer}
-.modal-buttons button:first-child{background:#1e88e5;color:#fff}
+.modal-buttons button:first-child{background:#666FE8;color:#fff}
 .modal-buttons button:last-child{background:#e7e9ee}
 .modal-error{color:#d9534f;margin-top:6px;font-size:13px}
 
