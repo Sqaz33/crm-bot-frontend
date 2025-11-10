@@ -1,94 +1,65 @@
 <template>
   <div class="profile-layout">
-    <!-- Основной контент -->
     <main class="main-content">
-      <!-- Форма профиля -->
       <div class="profile-container">
         <div class="profile-form">
-          <!-- Поле Имя -->
+          <!-- Имя -->
           <div class="form-field">
             <div class="field-header">
               <label class="field-label">Имя</label>
             </div>
             <div class="input-wrapper">
-              <input
-                  v-model="profileData.firstName"
-                  type="text"
-                  class="form-input"
-                  placeholder="Имя"
-              />
+              <input v-model="profileData.firstName" type="text" class="form-input" placeholder="Имя" />
             </div>
           </div>
 
-          <!-- Поле Фамилия -->
+          <!-- Фамилия -->
           <div class="form-field">
             <div class="field-header">
               <label class="field-label">Фамилия</label>
             </div>
             <div class="input-wrapper">
-              <input
-                  v-model="profileData.lastName"
-                  type="text"
-                  class="form-input"
-                  placeholder="Фамилия"
-              />
+              <input v-model="profileData.lastName" type="text" class="form-input" placeholder="Фамилия" />
             </div>
           </div>
 
-          <!-- Поле Отчество -->
+          <!-- Отчество -->
           <div class="form-field">
             <div class="field-header">
               <label class="field-label">Отчество</label>
             </div>
             <div class="input-wrapper">
-              <input
-                  v-model="profileData.middleName"
-                  type="text"
-                  class="form-input"
-                  placeholder="Отчество"
-              />
+              <input v-model="profileData.middleName" type="text" class="form-input" placeholder="Отчество" />
             </div>
           </div>
 
-          <!-- Поле Телефон -->
+          <!-- Телефон (readOnly) -->
           <div class="form-field">
             <div class="field-header">
               <label class="field-label">Телефон</label>
             </div>
             <div class="input-wrapper">
-              <input
-                  v-model="profileData.phone"
-                  type="tel"
-                  class="form-input"
-                  placeholder="Телефон"
-              />
+              <input v-model="profileData.phone" type="tel" class="form-input" placeholder="Телефон" readonly />
             </div>
           </div>
 
-          <!-- Поле E-mail -->
+          <!-- E-mail (readOnly) -->
           <div class="form-field">
             <div class="field-header">
               <label class="field-label">E-mail</label>
             </div>
             <div class="input-wrapper">
-              <input
-                  v-model="profileData.email"
-                  type="email"
-                  class="form-input"
-                  placeholder="example@mail.com"
-              />
+              <input v-model="profileData.email" type="email" class="form-input" placeholder="example@mail.com" readonly />
             </div>
           </div>
         </div>
 
         <!-- Кнопка сохранения -->
         <div class="save-section">
-          <button
-              class="save-button"
-              @click="handleSave"
-              :disabled="!isFormValid"
-          >
-            Сохранить
+          <button class="save-button"
+                  @click="handleSave"
+                  :disabled="!isFormValid || saving || loading">
+            {{ saving ? 'Сохранение…' : 'Сохранить' }}
           </button>
         </div>
       </div>
@@ -98,49 +69,81 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import api from '../api'
 
-// Данные профиля
+const loading = ref(false)
+const saving  = ref(false)
+
 const profileData = ref({
-  firstName: 'Иван',
-  lastName: 'Иванов',
-  middleName: 'Иванович',
-  phone: '123456789',
-  email: 'example@mail.com'
+  firstName: '',
+  lastName: '',
+  middleName: '',
+  phone: '',
+  email: ''
 })
 
-// Валидация формы
+/** Хелперы преобразования ФИО
+ * Предполагаем порядок "Имя Фамилия Отчество".
+ * Если у вас хранится иначе — поменяйте маппинг в splitFullName/joinFullName.
+ */
+function splitFullName(full) {
+  const parts = (full || '').trim().split(/\s+/).filter(Boolean)
+  const first  = parts[0] ?? ''
+  const last   = parts[1] ?? ''
+  const middle = parts.slice(2).join(' ')
+  return { first, last, middle }
+}
+function joinFullName({ firstName, lastName, middleName }) {
+  return [firstName, lastName, middleName].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim()
+}
+
 const isFormValid = computed(() => {
-  return profileData.value.firstName.trim() !== '' &&
-      profileData.value.lastName.trim() !== '' &&
-      profileData.value.phone.trim() !== '' &&
-      profileData.value.email.trim() !== ''
+  const f = profileData.value
+  return f.firstName.trim() !== '' && f.lastName.trim() !== ''
 })
 
-// Обработка сохранения
-const handleSave = async () => {
+async function loadMe() {
+  loading.value = true
   try {
-    console.log('Сохранение данных профиля:', profileData.value)
-    // Здесь будет API вызов для сохранения данных
-    // await api.post('/profile', profileData.value)
-
-    // Показать уведомление об успешном сохранении
-    alert('Данные профиля успешно сохранены!')
-  } catch (error) {
-    console.error('Ошибка при сохранении профиля:', error)
-    alert('Ошибка при сохранении данных')
+    const { data } = await api.get('/auth/me')
+    const { first, last, middle } = splitFullName(data?.name || '')
+    profileData.value.firstName  = first
+    profileData.value.lastName   = last
+    profileData.value.middleName = middle
+    profileData.value.phone      = data?.phone || ''
+    profileData.value.email      = data?.email || ''
+  } finally {
+    loading.value = false
   }
 }
 
-// Загрузка данных при монтировании
-onMounted(async () => {
+async function handleSave() {
+  if (!isFormValid.value) return
+  saving.value = true
   try {
-    // Здесь будет загрузка данных профиля из API
-    // const { data } = await api.get('/profile')
-    // profileData.value = data
+    const payload = { name: joinFullName(profileData.value) }
+    // пробуем PATCH, если не поддерживается — PUT
+    try {
+      await api.patch('/auth/me', payload)
+    } catch (e) {
+      if (e?.response?.status === 405 || e?.response?.status === 404) {
+        await api.put('/auth/me', payload)
+      } else {
+        throw e
+      }
+    }
+    // после сохранения — перезагрузим me, чтобы синхронизировать состояние
+    await loadMe()
+    
   } catch (error) {
-    console.error('Ошибка при загрузке профиля:', error)
+    console.error('Ошибка сохранения ФИО:', error)
+    
+  } finally {
+    saving.value = false
   }
-})
+}
+
+onMounted(loadMe)
 </script>
 
 <style scoped>
@@ -158,7 +161,10 @@ onMounted(async () => {
 
   padding-left: var(--sidebar-desktop);
 }
-
+.form-input[readonly] {
+  color: #6b7280;
+  cursor: default;
+}
 .main-content {
   flex: 1;
   display: flex;
