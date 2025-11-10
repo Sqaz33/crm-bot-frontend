@@ -385,7 +385,7 @@ onMounted(() => {
 </script>
 
 <style>
-:root {  }
+
 /* html, body, #app { overflow-x: hidden; } */
 </style>
 
@@ -594,7 +594,18 @@ textarea{
   .details{ padding:10px 12px; }
   .list-item{ padding:12px; }
 }
-
+@media (max-width: 412px) {
+  
+  .record-card{
+ 
+  border-radius:16px;
+  
+  padding-right:64px; padding-left:64px;
+  width:85%;
+  margin:0;
+  overflow:hidden; 
+  max-width:100%;
+    }}
 /* 13) Универсальные страховки */
 img, svg, video{ max-width:100%; height:auto; }
 .header-row > *{ min-width:0; }

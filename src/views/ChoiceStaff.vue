@@ -452,4 +452,12 @@ onMounted(async () => {
   .staff-name { font-size: 14px; line-height: 18px; }
   .staff-position { font-size: 12px; line-height: 16px; }
 }
+
+@media (max-width: 412px) {
+  
+   .staff-list {
+    width: calc(100vw - (var(--sidebar-mobile) + 2 * var(--gutter-mobile)));
+ 
+    
+  }}
 </style>
