@@ -129,7 +129,7 @@ onMounted(async () => {
 
 
 @media (max-width: 920px) {
-  .container-sidebar { padding-left: var(--left-rail); }
+  .container-sidebar {   --left-rail: 16px;  padding-left: var(--left-rail); }
 }
 @media (max-width: 380px) {
   .container-sidebar { --left-rail: 20px; }

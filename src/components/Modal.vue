@@ -66,7 +66,7 @@ onBeforeUnmount(() => setScrollLock(false))
   justify-content: center;
   align-items: center;
 
-  --hpad: max(16px, max(env(safe-area-inset-left), env(safe-area-inset-right)));
+  /* --hpad: max(16px, max(env(safe-area-inset-left), env(safe-area-inset-right))); */
   --vpad: max(16px, max(env(safe-area-inset-top),  env(safe-area-inset-bottom)));
   padding-inline: var(--hpad);
   padding-block: var(--vpad);
@@ -90,7 +90,7 @@ onBeforeUnmount(() => setScrollLock(false))
   outline: none;
   box-sizing: border-box;
 
-  inline-size: min(520px, calc(100dvw - 2 * var(--hpad)));
+  /* inline-size: min(520px, calc(100dvw - 2 * var(--hpad))); */
   margin-inline: auto;
 
   max-height: calc(100dvh - 2 * var(--vpad));
@@ -102,7 +102,7 @@ onBeforeUnmount(() => setScrollLock(false))
 
 @supports not (max-height: 100dvh) {
   .modal-content {
-    inline-size: min(520px, calc(100vw - 2 * var(--hpad)));
+    /* inline-size: min(520px, calc(100vw - 2 * var(--hpad))); */
     max-height: calc(100vh - 2 * var(--vpad));
   }
 }
