@@ -3,7 +3,7 @@
 
   <template v-else>
     <!-- Top Bar (название бота) -->
-    <!-- <div class="topbar">
+    <div class="topbar">
       <div class="salon-logo">
         <img src="../assets/logo.svg" alt="Логотип" @click=" goHome()" />
       </div>
@@ -11,7 +11,7 @@
         <div class="salon-name">{{ salon.name }}</div>
         <div class="salon-desc">{{ salon.description }}</div>
       </div>
-    </div> -->
+    </div>
 
     <header class="header">
       <div class="header-content">
@@ -308,6 +308,9 @@ function goBack() {
   .page-title {
     font-size: 20px;
     line-height: 24px;
+  }
+  .topbar{
+    display: none;
   }
 }
 </style>

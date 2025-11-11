@@ -384,10 +384,6 @@ onMounted(() => {
 // }
 </script>
 
-<style>
-
-/* html, body, #app { overflow-x: hidden; } */
-</style>
 
 <style scoped>
 /* 0) Базовая геометрия */
@@ -588,7 +584,7 @@ textarea{
 .error{color:#d9534f}
 .visit-error{color:#d9534f;font-size:13px;margin-top:6px}
 
-/* 12) Медиа */
+
 @media (max-width: 768px){
   .header{ padding:10px 12px; }
   .details{ padding:10px 12px; }
@@ -606,7 +602,7 @@ textarea{
   overflow:hidden; 
   max-width:100%;
     }}
-/* 13) Универсальные страховки */
+
 img, svg, video{ max-width:100%; height:auto; }
 .header-row > *{ min-width:0; }
 </style>
