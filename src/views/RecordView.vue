@@ -62,7 +62,7 @@
               <span class="text">Отменить запись</span>
               <span class="chevron">›</span>
             </button>
-<br>
+<div class="list-item-separator"></div>
             <button
               class="list-item"
               @click="goToDatetime"
@@ -80,7 +80,7 @@
           <div class="section-bar">Оплата</div>
           <div class="list">
             <div class="list-item disabled" tabindex="-1" aria-disabled="true">
-              <span class="icon-circle lock-icon">🔒</span>
+              <span class="icon-circle lock-icon"aria-hidden="true"><img src="../assets/castle.svg" alt="" /></span>
               <span class="text">Оплата недоступна</span>
               <span class="chevron">›</span>
             </div>
@@ -383,8 +383,7 @@ onMounted(() => {
 
 
 <style scoped>
-/* (Остальные стили без изменений) */
-/* 0) Базовая геометрия */
+
 *, *::before, *::after { box-sizing: border-box; }
 
 /* 1) Контейнер страницы + палитра */
@@ -395,7 +394,7 @@ onMounted(() => {
   --text:#1C2534;
   --muted:#8A95A6;
   --divider:#ECEFF5;
-  --green:#20C776;       
+  --green:linear-gradient(45deg, #69FFDB, #69FF03);       
   --shadow:0 8px 20px rgba(23,35,68,.08);
 
   min-height:100vh;
@@ -403,7 +402,11 @@ onMounted(() => {
   display:flex;
   justify-content:center;
 }
-
+.list-item-separator {
+  height: 1px;
+  background-color: var(--divider);
+  margin: 0 12px;
+}
 .page{
   width:100%;
   max-width:640px;      

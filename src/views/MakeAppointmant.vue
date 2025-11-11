@@ -330,7 +330,7 @@ function confirmProfile() {
 }
 
 .btn-submit:hover {
-  background: #0056b3;
+  background: #666FE8;
 }
 
 .modal-overlay {

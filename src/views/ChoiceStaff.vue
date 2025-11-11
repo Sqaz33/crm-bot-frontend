@@ -292,7 +292,7 @@ onMounted(async () => {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-.tabs-background::-webkit-scrollbar { display: none; }
+/* .tabs-background::-webkit-scrollbar { display: none; } */
 
 .tab {
   display: flex;
@@ -457,7 +457,8 @@ onMounted(async () => {
   
    .staff-list {
     width: calc(100vw - (var(--sidebar-mobile) + 2 * var(--gutter-mobile)));
- 
+    
     
   }}
+  .tabs-background::-webkit-scrollbar { display: none; }
 </style>

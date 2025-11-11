@@ -345,7 +345,7 @@ function askAdmin() {
 .client-icon{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:#6267ee;color:#fff}
 
 .form-section{margin-bottom:12px}
-textarea{width:100%;min-height:96px;border:1px solid #D3D3D3;border-radius:10px;padding:10px 12px;font-size:14px;resize:vertical}
+textarea{width:95%;min-height:96px;border:1px solid #D3D3D3;border-radius:10px;padding:10px 12px;font-size:14px;resize:vertical}
 select{width:100%;border:1px solid #D3D3D3;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff}
 
 .legal-row{display:flex;align-items:center;gap:8px;margin:10px 0}
