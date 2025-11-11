@@ -80,7 +80,7 @@
           <div class="section-bar">Оплата</div>
           <div class="list">
             <div class="list-item disabled" tabindex="-1" aria-disabled="true">
-              <span class="icon-circle lock-icon"aria-hidden="true"><img src="../assets/castle.svg" alt="" /></span>
+              <span class="icon-circle lock-icon"aria-hidden="true"><img src="../assets/castle.svg" alt="" class="icon-14" /></span>
               <span class="text">Оплата недоступна</span>
               <span class="chevron">›</span>
             </div>
@@ -94,7 +94,7 @@
       </div>
 
       <!-- Модалки -->
-      <div v-if="showReviewModal" class="modal-overlay">
+      <!-- <div v-if="showReviewModal" class="modal-overlay">
         <div class="modal">
           <h3>Отзыв для {{ staff.name }}</h3>
           <div class="stars">
@@ -108,7 +108,7 @@
           </div>
           <div v-if="reviewError" class="modal-error">{{ reviewError }}</div>
         </div>
-      </div>
+      </div> -->
 
       <div v-if="showConfirmModal" class="modal-overlay">
         <div class="modal">
@@ -607,6 +607,7 @@ textarea{
 .loading{font-size:16px;color:#555}
 .error{color:#d9534f}
 .visit-error{color:#d9534f;font-size:13px;margin-top:6px}
+.icon-14 {max-width: 60%;}
 
 @media (max-width: 768px){
   .header{ padding:10px 12px; }
@@ -622,6 +623,7 @@ textarea{
     overflow:hidden; 
     max-width:100%;
   }
+  /* .icon-14 {max-width: 60%;} */
 }
 
 img, svg, video{ max-width:100%; height:auto; }
