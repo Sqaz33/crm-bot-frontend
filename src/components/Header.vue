@@ -28,7 +28,7 @@
         <button
             v-if="notShowSidebarButton"
             class="back-button"
-            @click="goHome()"
+            @click="goBack()"
         >
           <span class="arrow-back">←</span>
           <span class="back-text">Назад</span>
