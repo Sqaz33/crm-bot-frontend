@@ -62,7 +62,7 @@
               <span class="text">Отменить запись</span>
               <span class="chevron">›</span>
             </button>
-
+<br>
             <button
               class="list-item"
               @click="goToDatetime"
@@ -391,7 +391,7 @@ onMounted(() => {
 .record-view{
   --bg:#F6F7FB;
   --card:#FFFFFF;
-  --primary:#666FE8;      
+  /* --primary:#666FE8;       */
   --text:#1C2534;
   --muted:#8A95A6;
   --divider:#ECEFF5;
@@ -453,7 +453,7 @@ onMounted(() => {
   margin-bottom:12px;
   max-width:100%;
 }
-.header > *{ min-width:0; }     /* ключ к анти-оверфлоу */
+.header > *{ min-width:0; }    
 
 .who{display:flex;align-items:center;gap:10px;min-width:0;}
 .avatar{
@@ -536,7 +536,7 @@ onMounted(() => {
   display:flex;align-items:center;gap:10px;padding:14px 12px;width:100%;
   border-top:1px solid var(--divider);background:#fff;text-align:left;
 }
-.list-item:first-child{border-top:none}
+.list-item{border:none}
 /* .list-item .icon{font-size:16px;opacity:.9} */
 .list-item .text{
   flex:1 1 auto;color:var(--text);
