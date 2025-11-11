@@ -4,8 +4,6 @@
     <div v-else-if="error" class="error">{{ error }}</div>
 
     <div v-else class="page">
-   
-
       <div class="record-card">
         <!-- Шапка карточки -->
         <div class="header">
@@ -60,8 +58,8 @@
               @click="openCancelModal"
               :disabled="visit.will_come || deleting || processing"
             >
-              <span class="icon">✖</span>
-              <span class="text">Удалить запись</span>
+              <span class="icon-circle danger-icon">✖</span>
+              <span class="text">Отменить запись</span>
               <span class="chevron">›</span>
             </button>
 
@@ -70,7 +68,7 @@
               @click="goToDatetime"
               :disabled="visit.will_come || processing"
             >
-              <span class="icon">⤴</span>
+              <span class="icon-circle neutral-icon">⤴</span>
               <span class="text">Перенести запись</span>
               <span class="chevron">›</span>
             </button>
@@ -82,7 +80,7 @@
           <div class="section-bar">Оплата</div>
           <div class="list">
             <div class="list-item disabled" tabindex="-1" aria-disabled="true">
-              <span class="icon">🔒</span>
+              <span class="icon-circle lock-icon">🔒</span>
               <span class="text">Оплата недоступна</span>
               <span class="chevron">›</span>
             </div>
@@ -95,7 +93,7 @@
         <!-- <button v-else class="review-btn" @click="showReviewModal = true">Оставить отзыв</button> -->
       </div>
 
- 
+      <!-- Модалки -->
       <div v-if="showReviewModal" class="modal-overlay">
         <div class="modal">
           <h3>Отзыв для {{ staff.name }}</h3>
@@ -136,7 +134,6 @@
     </div>
   </div>
 </template>
-
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
@@ -386,6 +383,7 @@ onMounted(() => {
 
 
 <style scoped>
+/* (Остальные стили без изменений) */
 /* 0) Базовая геометрия */
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -411,7 +409,6 @@ onMounted(() => {
   max-width:640px;      
   margin:0 auto;
 
-
   padding-top:16px;
   padding-bottom:24px;
   padding-inline:16px;  
@@ -435,7 +432,6 @@ onMounted(() => {
 
 /* 3) Карточка записи */
 .record-card{
- 
   border-radius:16px;
   /* box-shadow:var(--shadow); */
   padding-right:64px; padding-left:64px;
@@ -503,7 +499,7 @@ onMounted(() => {
 /* 6) Секции */
 .section{margin-bottom:12px;max-width:100%;}
 .section-bar{
-  background:var(--primary);color:#fff;font-weight:800;
+  background:var(--primary);color:#8097B1;font-weight:400;
   padding:10px 12px;border-radius:10px 10px 0 0;
   letter-spacing:.02em;text-transform:uppercase;
 }
@@ -541,22 +537,47 @@ onMounted(() => {
   border-top:1px solid var(--divider);background:#fff;text-align:left;
 }
 .list-item:first-child{border-top:none}
-.list-item .icon{font-size:16px;opacity:.9}
+/* .list-item .icon{font-size:16px;opacity:.9} */
 .list-item .text{
   flex:1 1 auto;color:var(--text);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .list-item .chevron{font-size:18px;opacity:.4}
 .list-item.disabled{opacity:.55;pointer-events:none}
-.list-item.danger .icon,.list-item.danger .text{color:#d9534f}
+.list-item.danger .text{color:#d9534f}
 
-/* 9) Кнопка «Оставить отзыв» */
+/* 9) Круглые иконки */
+.icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 14px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.danger-icon {
+  background-color: #DE5D93; 
+  color: white;
+}
+.neutral-icon {
+  background-color: #0098B3; 
+  color: white;
+}
+.lock-icon {
+  background-color: #7F8287; 
+  color: #020202;
+}
+
+/* 10) Кнопка «Оставить отзыв» */
 .review-btn{
   width:100%;padding:12px;border:none;border-radius:12px;margin-top:8px;
   background:#1e88e5;color:#fff;font-weight:800;
 }
 
-/* 10) Модалки */
+/* 11) Модалки */
 .modal-overlay{
   position:fixed;inset:0;background:rgba(0,0,0,.4);
   display:flex;justify-content:center;align-items:center;z-index: 999999;
@@ -579,11 +600,10 @@ textarea{
 .modal-buttons button:last-child{background:#e7e9ee}
 .modal-error{color:#d9534f;margin-top:6px;font-size:13px}
 
-/* 11) Служебные состояния */
+/* 12) Служебные состояния */
 .loading{font-size:16px;color:#555}
 .error{color:#d9534f}
 .visit-error{color:#d9534f;font-size:13px;margin-top:6px}
-
 
 @media (max-width: 768px){
   .header{ padding:10px 12px; }
@@ -591,17 +611,15 @@ textarea{
   .list-item{ padding:12px; }
 }
 @media (max-width: 412px) {
-  
   .record-card{
- 
-  border-radius:16px;
-  
-  padding-right:64px; padding-left:64px;
-  width:85%;
-  margin:0;
-  overflow:hidden; 
-  max-width:100%;
-    }}
+    border-radius:16px;
+    padding-right:64px; padding-left:64px;
+    width:85%;
+    margin:0;
+    overflow:hidden; 
+    max-width:100%;
+  }
+}
 
 img, svg, video{ max-width:100%; height:auto; }
 .header-row > *{ min-width:0; }
