@@ -226,11 +226,11 @@ function navigate(item) {
     flex: initial;
   }
 
-  .salon-logo img {
+  /* .salon-logo img {
     width: 32px;
     height: 32px;
     padding: 4px;
-  }
+  } */
 
   .salon-name {
     font-size: 0.95rem;

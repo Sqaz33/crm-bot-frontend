@@ -55,15 +55,15 @@ const router = useRouter()
 
 const isHome = computed(() => route.name === 'home')
 const title = computed(() => route.meta.title || route.name || 'Страница')
-const botName = ref('')
+
 const notShowSidebarButton = computed(() => route.name === 'appointmant')
 
 const emit = defineEmits(['sidebarButtonClick'])
 
 const salon = ref({
-  name: 'Название',
-  description: 'тип заведения',
-  address_url: ''
+  name: '',
+  description: '',
+
 })
 
 function clickSidebarButton() {
@@ -73,10 +73,16 @@ function clickSidebarButton() {
 onMounted(async () => {
   try {
     const { data } = await api.get('/salon/info')
-    botName.value = data.bot_name || 'Загрузка...'
-  } catch (e) {
-    botName.value = 'Загрузка...'
-    console.error('Ошибка загрузки bot_name:', e)
+    salon.value = {
+      name: data.name,
+      description: data.description || 'тип заведения',
+      address_url: data.address_url || ''
+    }
+  } catch {
+    salon.value = {
+      name: 'Ошибка загрузки',
+      description: ''
+    }
   }
 })
 
@@ -312,5 +318,6 @@ function goBack() {
   .topbar{
     display: none;
   }
+  .back-button{display: none;}
 }
 </style>
