@@ -1,6 +1,5 @@
 <template>
   <div class="services-view">
-
     <div v-if="loading" class="loading">Загрузка…</div>
 
     <div v-else class="types-wrap">
@@ -90,27 +89,44 @@ function saveVisit(v) {
 const visit = ref(loadVisit())
 
 onMounted(async () => {
-  const { data: types } = await api.get('/services/types/')
-  serviceTypes.value = types || []
+  try {
+    // Убедитесь что используем правильные endpoints
+    const { data: types } = await api.get('/services/types') // Убрал trailing slash
+    serviceTypes.value = types || []
 
-  const params = {}
-  if (visit.value.staff_id) params.staff_id = visit.value.staff_id
-  const { data: all } = await api.get('/services/', { params })
-  services.value = all || []
+    const params = {}
+    if (visit.value.staff_id) params.staff_id = visit.value.staff_id
+    
+    const { data: all } = await api.get('/services', { params }) // Убрал trailing slash
+    services.value = all || []
 
-  if (Array.isArray(visit.value.services_id)) {
-    selectedServiceIds.value = [...visit.value.services_id]
+    if (Array.isArray(visit.value.services_id)) {
+      selectedServiceIds.value = [...visit.value.services_id]
+    }
+
+    // Автоматически открыть первый тип, если есть услуги
+    if (serviceTypes.value.length > 0) {
+      const firstTypeWithServices = serviceTypes.value.find(type => 
+        servicesByType.value[type.id]?.length > 0
+      )
+      if (firstTypeWithServices) {
+        openType.value = firstTypeWithServices.id
+      }
+    }
+  } catch (error) {
+    console.error('Error loading services:', error)
+  } finally {
+    loading.value = false
   }
-
-  loading.value = false
 })
 
 const servicesByType = computed(() => {
   const map = {}
   serviceTypes.value.forEach(t => (map[t.id] = []))
   services.value.forEach(s => {
-    if (!map[s.service_type_id]) map[s.service_type_id] = []
-    map[s.service_type_id].push(s)
+    if (s.service_type_id && map[s.service_type_id]) {
+      map[s.service_type_id].push(s)
+    }
   })
   return map
 })
@@ -133,17 +149,25 @@ function isSelected(id) {
 
 function toggleService(svc) {
   const idx = selectedServiceIds.value.indexOf(svc.id)
-  if (idx >= 0) selectedServiceIds.value.splice(idx, 1)
-  else selectedServiceIds.value.push(svc.id)
+  if (idx >= 0) {
+    selectedServiceIds.value.splice(idx, 1)
+  } else {
+    selectedServiceIds.value.push(svc.id)
+  }
+  
+
+  visit.value.services_id = [...selectedServiceIds.value]
+  saveVisit(visit.value)
 }
 
 function confirm() {
   if (!selectedServiceIds.value.length) return
   visit.value.services_id = [...selectedServiceIds.value]
   saveVisit(visit.value)
-  router.push({ name: 'appointmant' })
+  router.push({ name: 'choicestaff' }) 
 }
 </script>
+
 
 <style scoped>
 .services-view {

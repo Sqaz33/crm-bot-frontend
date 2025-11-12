@@ -149,7 +149,7 @@ async function loadSummary() {
   let staffName = null
   if (staff_id) {
     try {
-      const { data: staff } = await api.get(`/salon/staff/${staff_id}`)
+      const { data: staff } = await api.get(`/staff/${staff_id}`)
       staffName = staff.name
     } catch {
       staffName = '—'
