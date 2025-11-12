@@ -1,79 +1,92 @@
 <template>
-<div class="booking-view">
-  <ul class="steps-list">
-    <li class="step-item" @click="goTo('choicestaff')">
-      <img src="../assets/staffIcon.svg" alt="" class="step-icon" />
-      <div class="label">Сотрудник: {{ summary.staffName }}</div>
-      <div class="arrow">›</div>
-    </li>
-    <li class="step-item" @click="goTo('datetime')">
-      <img src="../assets/calendarIcon.svg" alt="" class="step-icon" />
-      <div class="label">Дата и время: {{ summary.visitTime }}</div>
-      <div class="arrow">›</div>
-    </li>
-    <li class="step-item" @click="goTo('services')">
-      <img src="../assets/servicesIcon.svg" alt="" class="step-icon" />
-      <div class="label">
-        Услуги:
-        {{ summary.totalPrice !== null
-          ? (summary.totalPrice > 0 ? summary.totalPrice + ' ₽' : '0 ₽')
-          : '—'
-        }}
-      </div>
-      <div class="arrow">›</div>
-    </li>
-  </ul>
-</div>
-
-  <button class="btn-submit"
-    :disabled="!canSubmit"
-    @click="openProfileModal">
-    Оформить запись
-  </button>
-
-  <!-- Модалка для редактирования профиля -->
-  <div v-if="showProfileModal" class="modal-overlay">
-    <div class="modal">
-      <h3>Проверьте данные</h3>
-
-      <div class="field">
-        <div class="header-field">
-          <label class="label" for="firstName">Имя</label>
+  <div class="booking-view">
+    <ul class="steps-list">
+      <li 
+        class="step-item" 
+        :class="{ 'step-disabled': !hasServices }"
+        @click="hasServices && goTo('services')"
+      >
+        <img src="../assets/servicesIcon.svg" alt="" class="step-icon" />
+        <div class="label">
+          Услуги:
+          {{ summary.totalPrice !== null
+            ? (summary.totalPrice > 0 ? summary.totalPrice + ' ₽' : '0 ₽')
+            : '—'
+          }}
         </div>
-        <input id="firstName" v-model="form.firstName" />
-      </div>
+        <div class="arrow">›</div>
+      </li>
 
-      <div class="field">
-        <div class="header-field">
-          <label class="label" for="lastName">Фамилия</label>
+      <li 
+        class="step-item" 
+        :class="{ 'step-disabled': !hasServices }"
+        @click="hasServices && goTo('choicestaff')"
+      >
+        <img src="../assets/staffIcon.svg" alt="" class="step-icon" />
+        <div class="label">Сотрудник: {{ summary.staffName || '—' }}</div>
+        <div class="arrow">›</div>
+      </li>
+
+      <li 
+        class="step-item" 
+        :class="{ 'step-disabled': !hasServices || !hasStaff }"
+        @click="(hasServices && hasStaff) && goTo('datetime')"
+      >
+        <img src="../assets/calendarIcon.svg" alt="" class="step-icon" />
+        <div class="label">Дата и время: {{ summary.visitTime || '—' }}</div>
+        <div class="arrow">›</div>
+      </li>
+    </ul>
+
+    <button class="btn-submit"
+      :disabled="!canSubmit"
+      @click="openProfileModal">
+      Оформить запись
+    </button>
+
+    <div v-if="showProfileModal" class="modal-overlay">
+      <div class="modal">
+        <h3>Проверьте данные</h3>
+
+        <div class="field">
+          <div class="header-field">
+            <label class="label" for="firstName">Имя</label>
+          </div>
+          <input id="firstName" v-model="form.firstName" />
         </div>
-        <input id="lastName" v-model="form.lastName" />
-      </div>
 
-      <div class="field">
-        <div class="header-field">
-          <label class="label" for="middleName">Отчество</label>
+        <div class="field">
+          <div class="header-field">
+            <label class="label" for="lastName">Фамилия</label>
+          </div>
+          <input id="lastName" v-model="form.lastName" />
         </div>
-        <input id="middleName" v-model="form.middleName" />
-      </div>
 
-      <div class="field">
-        <div class="header-field">
-          <label class="label" for="phone">Телефон</label>
+        <div class="field">
+          <div class="header-field">
+            <label class="label" for="middleName">Отчество</label>
+          </div>
+          <input id="middleName" v-model="form.middleName" />
         </div>
-        <input id="phone" v-model="form.phone" readonly />
-      </div>
 
-      <div class="field">
-        <div class="header-field">
-          <label class="label" for="email">E-mail</label>
+        <div class="field">
+          <div class="header-field">
+            <label class="label" for="phone">Телефон</label>
+          </div>
+          <input id="phone" v-model="form.phone" readonly />
         </div>
-        <input id="email" v-model="form.email" readonly />
-      </div>
 
-      <div class="modal-buttons">
-        <button @click="confirmProfile">Продолжить</button>
-        <button @click="showProfileModal = false">Отмена</button>
+        <div class="field">
+          <div class="header-field">
+            <label class="label" for="email">E-mail</label>
+          </div>
+          <input id="email" v-model="form.email" readonly />
+        </div>
+
+        <div class="modal-buttons">
+          <button @click="confirmProfile">Продолжить</button>
+          <button @click="showProfileModal = false">Отмена</button>
+        </div>
       </div>
     </div>
   </div>
@@ -84,11 +97,11 @@ import { ref, onMounted, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api'
 
-
 const STORAGE_KEY = 'profile_data'
 const COOKIE_KEY  = 'profile_data'
 const router = useRouter()
 const VISIT_KEY = 'visit_data'
+
 const summary = ref({
   staffName: null,
   visitTime: null,
@@ -97,6 +110,19 @@ const summary = ref({
   visit_time: null,
   services_id: []
 })
+
+
+const hasServices = computed(() => 
+  Array.isArray(summary.value.services_id) && summary.value.services_id.length > 0
+)
+
+const hasStaff = computed(() => 
+  !!summary.value.staff_id
+)
+
+const hasDateTime = computed(() => 
+  !!summary.value.visitTime
+)
 
 function readProfileStorage() {
   try {
@@ -134,7 +160,6 @@ async function loadSummary() {
   const data = JSON.parse(raw)
   const { staff_id, services_id = [], visit_time = {} } = data
 
-  // Дата и время
   const visitTime = visit_time.start_time
     ? new Date(visit_time.start_time).toLocaleString('ru-RU', {
         day: '2-digit',
@@ -145,7 +170,6 @@ async function loadSummary() {
       })
     : null
 
-  // Имя сотрудника
   let staffName = null
   if (staff_id) {
     try {
@@ -162,7 +186,7 @@ async function loadSummary() {
     try {
       const prices = await Promise.all(
         services_id.map(async id => {
-          const { data } = await api.get('/services/', { params: { service_id: id } })
+          const { data } = await api.get('/services', { params: { service_id: id } })
           return data[0]?.price || 0
         })
       )
@@ -184,11 +208,9 @@ async function loadSummary() {
   }
 }
 
-// Доступность кнопки
+
 const canSubmit = computed(() =>
-  !!summary.value.staff_id &&
-  !!summary.value.visitTime &&
-  Array.isArray(summary.value.services_id) && summary.value.services_id.length > 0
+  hasServices.value && hasStaff.value && hasDateTime.value
 )
 
 function goTo(stepName) {
@@ -231,9 +253,7 @@ function confirmProfile() {
   showProfileModal.value = false
   submitBooking() 
 }
-
 </script>
-
 
 <style scoped>
 .step-icon {
@@ -264,10 +284,25 @@ function confirmProfile() {
   padding: clamp(0.3rem, 2vw, 1rem);
   border-bottom: 1px solid #ececec;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .step-item:last-of-type {
   border-bottom: none;
+}
+
+.step-item:hover:not(.step-disabled) {
+  background: #f8f9fa;
+}
+
+.step-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f5f5f5;
+}
+
+.step-disabled .label {
+  color: #999;
 }
 
 .checkbox {
@@ -302,6 +337,10 @@ function confirmProfile() {
   flex-shrink: 0;
 }
 
+.step-disabled .arrow {
+  color: #ccc;
+}
+
 .back-item .checkbox { 
   display: none;
 }
@@ -327,10 +366,16 @@ function confirmProfile() {
   border-radius: 6px;
   font-size: clamp(1rem, 3vw, 1.1rem);
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 
-.btn-submit:hover {
+.btn-submit:hover:not(:disabled) {
   background: #666FE8;
+}
+
+.btn-submit:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
 .modal-overlay {
