@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
       host: env.VITE_DEV_HOST || 'localhost',
       allowedHosts: env.VITE_DEV_HOST ? [env.VITE_DEV_HOST] : [],
       proxy: {
-        '/api/v2': {
+        '/api': {
           target: env.VITE_API_BASE,
           changeOrigin: true,
           secure: true,
