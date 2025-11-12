@@ -1,10 +1,9 @@
 <template>
   <div class="booking-view">
     <ul class="steps-list">
-      <li 
+          <li 
         class="step-item" 
-        :class="{ 'step-disabled': !hasServices }"
-        @click="hasServices && goTo('services')"
+        @click="goTo('services')"
       >
         <img src="../assets/servicesIcon.svg" alt="" class="step-icon" />
         <div class="label">
@@ -16,6 +15,7 @@
         </div>
         <div class="arrow">›</div>
       </li>
+
 
       <li 
         class="step-item" 
