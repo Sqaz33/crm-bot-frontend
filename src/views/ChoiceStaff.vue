@@ -138,7 +138,7 @@ function getFirstLetter (name) {
 
 
 async function loadSpecializations () {
-  const { data } = await api.get('/salon/specializations')
+  const { data } = await api.get('/staff/specializations')
   data.forEach(spec => tabs.value.push({ label: spec.name, value: spec.id }))
 }
 
@@ -150,7 +150,7 @@ async function loadStaff (specId) {
   if (visit?.visit_time?.start_time) params.start_time = visit.visit_time.start_time
   if (specId && specId !== 'all') params.specialization_id = specId
 
-  const { data } = await api.get('/salon/staff', { params })
+  const { data } = await api.get('/staff', { params })
   staffList.value = data
 
 

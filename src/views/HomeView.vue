@@ -57,14 +57,14 @@ import companyIcon from '../assets/companyIcon.svg'
 const router = useRouter()
 const reviewCount = ref(0)
 
-onMounted(async () => {
-  try {
-    const { data: reviews } = await api.get('/salon/reviews')
-    reviewCount.value = Array.isArray(reviews) ? reviews.length : 0
-  } catch {
-    reviewCount.value = 0
-  }
-})
+// onMounted(async () => {
+//   try {
+//     const { data: reviews } = await api.get('/salon/reviews')
+//     reviewCount.value = Array.isArray(reviews) ? reviews.length : 0
+//   } catch {
+//     reviewCount.value = 0
+//   }
+// })
 
 function goTo(name) {
   router.push({ name })
