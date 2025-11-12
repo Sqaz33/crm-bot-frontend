@@ -86,15 +86,12 @@ import api from '../api'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-
-
 const emit = defineEmits(['select', 'review', 'visit'])
 
 const tabs = ref([{ label: 'Все', value: 'all' }])
 const activeTab = ref('all')
 const tabButtons = ref([])
 const activeLine = ref(null)
-
 
 const staffList = ref([])
 const selectedId = ref(null)
@@ -127,7 +124,6 @@ function writeVisit (v) {
   }
 }
 
-
 function getStaffId (s) {
   return s?.id ?? s?.staff_id ?? s?._id ?? s?.user_id ?? null
 }
@@ -136,32 +132,45 @@ function getFirstLetter (name) {
   return name && name.length > 0 ? name.charAt(0).toUpperCase() : ''
 }
 
-
 async function loadSpecializations () {
-  const { data } = await api.get('/staff/specializations')
-  data.forEach(spec => tabs.value.push({ label: spec.name, value: spec.id }))
-}
-
-async function loadStaff (specId) {
-  const visit = readVisit()
-  const params = {}
-
-  if (visit?.services_id?.length) params.service_id = visit.services_id
-  if (visit?.visit_time?.start_time) params.start_time = visit.visit_time.start_time
-  if (specId && specId !== 'all') params.specialization_id = specId
-
-  const { data } = await api.get('/staff', { params })
-  staffList.value = data
-
-
-  if (selectedId.value && !staffList.value.some(s => getStaffId(s) === selectedId.value)) {
-    selectedId.value = null
-    const v = readVisit()
-    v.staff_id = ''
-    writeVisit(v)
+  try {
+    const { data } = await api.get('/staff/specializations')
+    // data - это массив строк, преобразуем в объекты
+    tabs.value = [
+      { label: 'Все', value: 'all' },
+      ...data.map(spec => ({ 
+        label: spec, 
+        value: spec // используем саму строку как value
+      }))
+    ]
+  } catch (error) {
+    console.error('Error loading specializations:', error)
   }
 }
 
+async function loadStaff (specId) {
+  try {
+    const visit = readVisit()
+    const params = {}
+
+    if (visit?.services_id?.length) params.service_id = visit.services_id
+    if (visit?.visit_time?.start_time) params.start_time = visit.visit_time.start_time
+    // Для specialization_id передаем строку, а не 'all'
+    if (specId && specId !== 'all') params.specialization = specId
+
+    const { data } = await api.get('/staff/', { params })
+    staffList.value = data
+
+    if (selectedId.value && !staffList.value.some(s => getStaffId(s) === selectedId.value)) {
+      selectedId.value = null
+      const v = readVisit()
+      v.staff_id = ''
+      writeVisit(v)
+    }
+  } catch (error) {
+    console.error('Error loading staff:', error)
+  }
+}
 
 function updateActiveLine () {
   try {
@@ -218,7 +227,6 @@ function goStaff(idOrStaff) {
   router.push({ name: 'staff', params: { id } })
 }
 
-
 function onSelect (idOrStaff) {
   const id = typeof idOrStaff === 'object' ? getStaffId(idOrStaff) : idOrStaff
   console.log('onSelect, id:', id)
@@ -226,27 +234,22 @@ function onSelect (idOrStaff) {
 
   selectedId.value = id
 
- 
   const visit = readVisit()
   visit.staff_id = id
   writeVisit(visit)
 
-
   emit('select', id)
   router.push({ path: '/appointmant' })
-
 }
 
 function onReview (id) { emit('review', id) }
 function onVisit (id)  { emit('visit', id) }
-
 
 watch(activeTab, v => loadStaff(v))
 
 onMounted(async () => {
   await loadSpecializations()
   await loadStaff()
-
 
   const v = readVisit()
   if (v?.staff_id) selectedId.value = v.staff_id
