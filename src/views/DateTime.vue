@@ -34,48 +34,56 @@
       <div class="time-section" v-if="selectedDate">
         <h3 class="time-title">Выберите время начала</h3>
 
-        <div class="time-category">
-          <div class="category-label">Утро</div>
-          <div class="time-buttons">
-            <button
-              v-for="slot in morningSlots"
-              :key="slot"
-              :class="['time-btn', { selected: slot === selectedTime }]"
-              @click="selectTime(slot)"
-              type="button"
-            >
-              {{ formatTime(slot) }}
-            </button>
-          </div>
+        <div v-if="loadingSlots" class="loading-slots">Загрузка доступного времени...</div>
+        
+        <div v-else-if="freeSlots.length === 0" class="no-slots">
+          Нет доступного времени на выбранную дату
         </div>
 
-        <div class="time-category" v-if="afternoonSlots.length">
-          <div class="category-label">День</div>
-          <div class="time-buttons">
-            <button
-              v-for="slot in afternoonSlots"
-              :key="slot"
-              :class="['time-btn', { selected: slot === selectedTime }]"
-              @click="selectTime(slot)"
-              type="button"
-            >
-              {{ formatTime(slot) }}
-            </button>
+        <div v-else>
+          <div class="time-category" v-if="morningSlots.length">
+            <div class="category-label">Утро</div>
+            <div class="time-buttons">
+              <button
+                v-for="slot in morningSlots"
+                :key="slot"
+                :class="['time-btn', { selected: slot === selectedTime }]"
+                @click="selectTime(slot)"
+                type="button"
+              >
+                {{ formatTime(slot) }}
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div class="time-category" v-if="eveningSlots.length">
-          <div class="category-label">Вечер</div>
-          <div class="time-buttons">
-            <button
-              v-for="slot in eveningSlots"
-              :key="slot"
-              :class="['time-btn', { selected: slot === selectedTime }]"
-              @click="selectTime(slot)"
-              type="button"
-            >
-              {{ formatTime(slot) }}
-            </button>
+          <div class="time-category" v-if="afternoonSlots.length">
+            <div class="category-label">День</div>
+            <div class="time-buttons">
+              <button
+                v-for="slot in afternoonSlots"
+                :key="slot"
+                :class="['time-btn', { selected: slot === selectedTime }]"
+                @click="selectTime(slot)"
+                type="button"
+              >
+                {{ formatTime(slot) }}
+              </button>
+            </div>
+          </div>
+
+          <div class="time-category" v-if="eveningSlots.length">
+            <div class="category-label">Вечер</div>
+            <div class="time-buttons">
+              <button
+                v-for="slot in eveningSlots"
+                :key="slot"
+                :class="['time-btn', { selected: slot === selectedTime }]"
+                @click="selectTime(slot)"
+                type="button"
+              >
+                {{ formatTime(slot) }}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -101,7 +109,8 @@ export default {
       selectedDate: null,
       selectedTime: null,
       weekdayNames: ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'],
-      freeSlots: []
+      freeSlots: [],
+      loadingSlots: false
     }
   },
   computed: {
@@ -228,46 +237,65 @@ export default {
       this.loadFreeSlots()
     },
     async loadFreeSlots() {
+      if (!this.selectedDate) return
+      
       let staff_id = null
-      let service_id = null
+      let service_ids = []
       const raw = localStorage.getItem(VISIT_KEY)
       if (raw) {
         try {
           const parsed = JSON.parse(raw)
           staff_id = parsed.staff_id
-          if (Array.isArray(parsed.services_id) && parsed.services_id.length > 0) {
-            service_id = parsed.services_id[0]
+          if (Array.isArray(parsed.services_id)) {
+            service_ids = parsed.services_id
           } else if (parsed.services_id) {
-            service_id = parsed.services_id
+            service_ids = [parsed.services_id]
           }
         } catch (e) {
           console.error('Ошибка парсинга visit_data:', e)
         }
       }
 
-      const params = { date: this.selectedDate }
-      if (staff_id) params.staff_id = staff_id
-      if (service_id) params.service_id = service_id
+      // Если нет выбранных услуг или сотрудника, показываем сообщение
+      if (!staff_id && service_ids.length === 0) {
+        console.warn('Не выбран сотрудник или услуги')
+        this.freeSlots = []
+        return
+      }
 
+      this.loadingSlots = true
+      
       try {
-        const { data } = await api.get('/salon/free_time', { params })
-        this.freeSlots = data.map(slot => {
-          const s = slot.start
-          let utcString
-          if (s.includes('T')) {
-            utcString = s
-          } else {
-            utcString = `${this.selectedDate}T${s}:00Z`
-          }
-          const local = new Date(utcString)
-          const localIso = new Date(local.getTime() - local.getTimezoneOffset() * 60000)
-            .toISOString()
-            .slice(0, 19)
-          return localIso
-        })
+        const params = { 
+          date: this.selectedDate 
+        }
+        
+        if (staff_id) params.staff_id = staff_id
+        if (service_ids.length > 0) params.service_ids = service_ids.join(',')
+
+        const { data } = await api.get('/staff/free_time/', { params })
+        
+        // Обрабатываем ответ API
+        if (Array.isArray(data)) {
+          this.freeSlots = data.map(slot => {
+            // Предполагаем, что слот приходит в формате ISO
+            if (typeof slot === 'string') {
+              return slot
+            } else if (slot.start) {
+              return slot.start
+            } else {
+              return slot
+            }
+          }).filter(slot => slot) // Фильтруем пустые значения
+        } else {
+          console.warn('Неожиданный формат данных:', data)
+          this.freeSlots = []
+        }
       } catch (err) {
         console.error('Не удалось загрузить слоты:', err)
         this.freeSlots = []
+      } finally {
+        this.loadingSlots = false
       }
     },
     selectTime(start) {
