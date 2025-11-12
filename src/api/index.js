@@ -6,7 +6,7 @@ import axios from 'axios'
  */
 
 const api = axios.create({
-  baseURL: '/api/v2',
+  baseURL: '/api',
   timeout: 15000,
   headers: {
     Accept: 'application/json',
