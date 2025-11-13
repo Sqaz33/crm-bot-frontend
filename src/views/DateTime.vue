@@ -255,7 +255,6 @@ export default {
         return
       }
 
-<<<<<<< Updated upstream
       const params = {
         date: this.selectedDate,
         service_id: service_id
@@ -264,11 +263,6 @@ export default {
       if (staff_id) {
         params.staff_id = staff_id
       }
-=======
-      const params = { date: this.selectedDate }
-      if (staff_id) params.staff_id = parseInt(staff_id)
-      if (service_id) params.service_id = parseInt(service_id)
->>>>>>> Stashed changes
 
       try {
         const { data } = await api.get('/staff/free_time', { params })
