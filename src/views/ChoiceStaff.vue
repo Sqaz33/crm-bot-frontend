@@ -4,11 +4,11 @@
     <div class="tabs-container">
       <div class="tabs-background">
         <button
-          v-for="(tab, index) in tabs"
-          :key="tab.value"
-          :class="['tab', { active: activeTab === tab.value }]"
-          @click="selectTab(tab.value)"
-          :ref="el => (tabButtons[index] = el)" 
+            v-for="(tab, index) in tabs"
+            :key="tab.value"
+            :class="['tab', { active: activeTab === tab.value }]"
+            @click="selectTab(tab.value)"
+            :ref="el => (tabButtons[index] = el)"
         >
           {{ tab.label }}
         </button>
@@ -22,32 +22,32 @@
         Нет сотрудников
       </div>
       <div
-        v-for="staff in staffList"
-        :key="staff.id"
-        class="staff-card"
-        @click="() => { console.log('click', staff.id); onSelect(staff.id) }"
+          v-for="staff in staffList"
+          :key="staff.id"
+          class="staff-card"
+          @click="() => { console.log('click', staff.id); onSelect(staff.id) }"
       >
 
         <!-- Аватар -->
         <div class="avatar-container">
           <div
-            v-if="staff.photo"
-            class="avatar"
-            :style="{ backgroundImage: `url(${staff.photo})` }"
-            @click.stop="goStaff(staff)"
-            role="button"
-            tabindex="0"
-            @keydown.enter.prevent="goStaff(staff)"
-            @keydown.space.prevent="goStaff(staff)"
+              v-if="staff.photo"
+              class="avatar"
+              :style="{ backgroundImage: `url(${staff.photo})` }"
+              @click.stop="goStaff(staff)"
+              role="button"
+              tabindex="0"
+              @keydown.enter.prevent="goStaff(staff)"
+              @keydown.space.prevent="goStaff(staff)"
           ></div>
           <div
-            v-else
-            class="avatar avatar--empty"
-            @click.stop="goStaff(staff)"
-            role="button"
-            tabindex="0"
-            @keydown.enter.prevent="goStaff(staff)"
-            @keydown.space.prevent="goStaff(staff)"
+              v-else
+              class="avatar avatar--empty"
+              @click.stop="goStaff(staff)"
+              role="button"
+              tabindex="0"
+              @keydown.enter.prevent="goStaff(staff)"
+              @keydown.space.prevent="goStaff(staff)"
           >
             <span class="avatar-letter">{{ getFirstLetter(staff.name) }}</span>
           </div>
@@ -58,8 +58,8 @@
           <div class="staff-name">{{ staff.name }}</div>
           <div class="staff-position">
             <span
-              v-for="(spec, i) in staff.specializations"
-              :key="i"
+                v-for="(spec, i) in staff.specializations"
+                :key="i"
             >{{ spec }}<span v-if="i < staff.specializations.length - 1">, </span></span>
           </div>
         </div>
@@ -138,9 +138,9 @@ async function loadSpecializations () {
 
     tabs.value = [
       { label: 'Все', value: 'all' },
-      ...data.map(spec => ({ 
-        label: spec, 
-        value: spec 
+      ...data.map(spec => ({
+        label: spec,
+        value: spec
       }))
     ]
   } catch (error) {
@@ -153,9 +153,10 @@ async function loadStaff (specId) {
     const visit = readVisit()
     const params = {}
 
-    if (visit?.services_id?.length) params.service_id = visit.services_id
+    // ИСПРАВЛЕНО: теперь передается только первая услуга (integer), а не массив
+    if (visit?.services_id?.length) params.service_id = visit.services_id[0]
     if (visit?.visit_time?.start_time) params.start_time = visit.visit_time.start_time
-   
+
     if (specId && specId !== 'all') params.specialization = specId
 
     const { data } = await api.get('/staff/', { params })
