@@ -268,7 +268,7 @@ export default {
           if (s.includes('T')) {
             utcString = s
           } else {
-            utcString = `${this.selectedDate}T${s}:00Z`
+            utcString = `${this.selectedDate}T${s}Z`
           }
           const local = new Date(utcString)
           const localIso = new Date(local.getTime() - local.getTimezoneOffset() * 60000)
