@@ -149,12 +149,14 @@ function isSelected(id) {
 
 function toggleService(svc) {
   const idx = selectedServiceIds.value.indexOf(svc.id)
+
   if (idx >= 0) {
+    // Если услуга уже выбрана - снимаем выбор
     selectedServiceIds.value.splice(idx, 1)
   } else {
-    selectedServiceIds.value.push(svc.id)
+    // Если услуга не выбрана - очищаем массив и добавляем только эту услугу
+    selectedServiceIds.value = [svc.id]
   }
-  
 
   visit.value.services_id = [...selectedServiceIds.value]
   saveVisit(visit.value)
