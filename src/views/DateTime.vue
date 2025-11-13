@@ -234,7 +234,11 @@ export default {
       if (raw) {
         try {
           const parsed = JSON.parse(raw)
-          staff_id = parsed.staff_id
+          
+          if (parsed.staff_id && parsed.staff_id !== '') {
+            staff_id = parsed.staff_id
+          }
+          
           if (Array.isArray(parsed.services_id) && parsed.services_id.length > 0) {
             service_id = parsed.services_id[0]
           } else if (parsed.services_id) {
@@ -244,10 +248,21 @@ export default {
           console.error('Ошибка парсинга visit_data:', e)
         }
       }
+      
+      if (!service_id) {
+        console.warn('service_id обязателен для загрузки свободных слотов')
+        this.freeSlots = []
+        return
+      }
 
-      const params = { date: this.selectedDate }
-      if (staff_id) params.staff_id = staff_id
-      if (service_id) params.service_id = service_id
+      const params = {
+        date: this.selectedDate,
+        service_id: service_id
+      }
+      
+      if (staff_id) {
+        params.staff_id = staff_id
+      }
 
       try {
         const { data } = await api.get('/staff/free_time', { params })
@@ -261,8 +276,8 @@ export default {
           }
           const local = new Date(utcString)
           const localIso = new Date(local.getTime() - local.getTimezoneOffset() * 60000)
-            .toISOString()
-            .slice(0, 19)
+              .toISOString()
+              .slice(0, 19)
           return localIso
         })
       } catch (err) {
