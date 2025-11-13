@@ -364,11 +364,7 @@ function confirmProfile() {
   margin-left: 0;
 }
 
-@media (max-width: 992px){
-  .back-item {
-      display: none;
-  }
-}
+
 
 .btn-submit {
   display: block;
