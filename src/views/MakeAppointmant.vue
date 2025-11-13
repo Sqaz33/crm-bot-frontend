@@ -153,7 +153,7 @@ async function readProfile() {
 
 async function writeProfile(obj) {
   try {
-    await api.put("/auth/me", obj);
+    await api.patch("/auth/me", obj);
   } catch (error) {
     console.error("Ошибка при сохранении профиля:", error);
   }
