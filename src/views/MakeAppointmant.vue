@@ -128,7 +128,7 @@ const hasDateTime = computed(() =>
   !!summary.value.visitTime
 )
 
-function readProfile() {
+async function readProfile() {
   try {
     const response = await api.get("/auth/me");
     const profile = response.data;
@@ -151,7 +151,7 @@ function readProfile() {
   }
 }
 
-function writeProfile(obj) {
+async function writeProfile(obj) {
   try {
     await api.put("/auth/me", obj);
   } catch (error) {
@@ -224,7 +224,6 @@ async function loadSummary() {
   }
 }
 
-
 const canSubmit = computed(() =>
   hasServices.value && hasStaff.value && hasDateTime.value
 )
@@ -241,9 +240,9 @@ function goHome() {
   router.push({ name: 'home' })
 }
 
-onMounted(() => {
-  loadSummary()
-  const saved = readProfile()
+onMounted(async () => {
+  await loadSummary()
+  const saved = await readProfile()
   form.firstName = saved.firstName ?? ''
   form.lastName = saved.lastName ?? ''
   form.middleName = saved.middleName ?? ''
