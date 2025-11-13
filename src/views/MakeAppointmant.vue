@@ -251,7 +251,7 @@ onMounted(async () => {
 })
 
 function saveProfile() {
-  n = `${form.lastName} ${form.firstName} ${form.middleName}`
+  const n = `${form.lastName} ${form.firstName} ${form.middleName}`
   const payload = { name: n, email: null }
   writeProfile(payload)
 }
