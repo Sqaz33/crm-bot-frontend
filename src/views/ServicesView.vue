@@ -105,14 +105,14 @@ onMounted(async () => {
     }
 
     // Автоматически открыть первый тип, если есть услуги
-    if (serviceTypes.value.length > 0) {
-      const firstTypeWithServices = serviceTypes.value.find(type => 
-        servicesByType.value[type.id]?.length > 0
-      )
-      if (firstTypeWithServices) {
-        openType.value = firstTypeWithServices.id
-      }
-    }
+    // if (serviceTypes.value.length > 0) {
+    //   const firstTypeWithServices = serviceTypes.value.find(type => 
+    //     servicesByType.value[type.id]?.length > 0
+    //   )
+    //   if (firstTypeWithServices) {
+    //     openType.value = firstTypeWithServices.id
+    //   }
+    // }
   } catch (error) {
     console.error('Error loading services:', error)
   } finally {
