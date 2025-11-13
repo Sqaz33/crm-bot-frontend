@@ -1,7 +1,7 @@
 <template>
   <div class="booking-view">
     <ul class="steps-list">
-          <li 
+      <li 
         class="step-item" 
         @click="goTo('services')"
       >
@@ -15,7 +15,6 @@
         </div>
         <div class="arrow">›</div>
       </li>
-
 
       <li 
         class="step-item" 
@@ -36,13 +35,13 @@
         <div class="label">Дата и время: {{ summary.visitTime || '—' }}</div>
         <div class="arrow">›</div>
       </li>
-        <li 
+      
+      <li 
         class="step-item back-item"
         @click="goHome"
       >
-        <img src="../assets/homeIcon.svg" alt="" class="step-icon" />
+        <div class="arrow-back">‹</div>
         <div class="label">На главную</div>
-        <div class="arrow">›</div>
       </li>
     </ul>
 
@@ -339,10 +338,8 @@ function confirmProfile() {
   color: #999;
   font-size: clamp(0.7rem, 5vw, 1.4rem);
   font-family: var(--font-primary);
-
   width: clamp(30px, 10vw, 40px);
   height: clamp(30px, 10vw, 40px);
-
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
@@ -352,12 +349,19 @@ function confirmProfile() {
   color: #ccc;
 }
 
-.back-item .checkbox { 
-  display: none;
+
+.back-item {
+  display: flex;
+  align-items: center;
 }
 
 .back-item .arrow-back {
-  display: flex;
+  margin-right: 0.75rem;
+  font-size: clamp(1rem, 5vw, 1.8rem);
+}
+
+.back-item .label {
+  margin-left: 0;
 }
 
 @media (max-width: 992px){
