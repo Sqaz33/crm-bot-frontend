@@ -261,7 +261,7 @@ export default {
 
       try {
         const { data } = await api.get('/staff/free_time/', { params })
-        const slots = data.available_slots
+        const slots = data[0].available_slots
         this.freeSlots = slots.map(slot => {
           const s = slot.start
           let utcString
