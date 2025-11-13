@@ -19,10 +19,10 @@
 					</div>
 				</div>
 
-				<section class="description" v-if="company.about_company">
+				<section class="description" v-if="company?.about_company || company?.address">
           <p v-if="company?.address">Мы находимся по адресу: {{ company.address }}</p>
           <p v-if="company?.about_company">{{ company.about_company }}</p>
-				</section>
+        </section>
 
 				<!-- <section class="reviews">
 					<h2>Отзывы <span class="count">{{ reviews.length }}</span></h2>
@@ -69,6 +69,7 @@ onMounted(async () => {
       rating: info.rating,
       description: info.description || '',
       about_company: info.about_company || '',
+      address: info.address || '',
       photo: info.photo || ''
     }
 
