@@ -10,7 +10,7 @@
 					
 					
 					<div class="avatar">
-						<img src="@/assets/logo.svg" alt="Company Logo" class="logo" />
+						<img src="../assets/logo.svg" alt="Company Logo" class="logo" />
 					</div>
 					<div class="info">
 						<div class="name">{{ company.name }}</div>
