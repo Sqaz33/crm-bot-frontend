@@ -469,4 +469,11 @@ onMounted(async () => {
     font-size: 16px; line-height: 20px;
     min-height: 64px; padding: 0 16px; min-width: 120px;
   }
+  .tabs-container, .staff-list {
+    
+    width: 75%;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+}
 </style>

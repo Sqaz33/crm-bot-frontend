@@ -36,6 +36,14 @@
         <div class="label">Дата и время: {{ summary.visitTime || '—' }}</div>
         <div class="arrow">›</div>
       </li>
+        <li 
+        class="step-item back-item"
+        @click="goHome"
+      >
+        <img src="../assets/homeIcon.svg" alt="" class="step-icon" />
+        <div class="label">На главную</div>
+        <div class="arrow">›</div>
+      </li>
     </ul>
 
     <button class="btn-submit"
@@ -220,6 +228,9 @@ function goTo(stepName) {
 function submitBooking() {
   if (!canSubmit.value) return
   router.push({ name: 'createvisit' })
+}
+function goHome() {
+  router.push({ name: 'home' })
 }
 
 onMounted(() => {

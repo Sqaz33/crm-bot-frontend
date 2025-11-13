@@ -5,33 +5,51 @@
         <div class="profile-form">
           <!-- Имя -->
           <div class="form-field">
-            <div class="field-header">
-              <label class="field-label">Имя</label>
-            </div>
-            <div class="input-wrapper">
-              <input v-model="profileData.firstName"   @input="profileData.middleName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')" type="text" class="form-input" placeholder="Имя" />
-            </div>
-          </div>
+  <div class="field-header">
+    <label class="field-label">Имя</label>
+  </div>
+  <div class="input-wrapper">
+    <input 
+      v-model="profileData.firstName" 
+      @input="profileData.firstName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')" 
+      type="text" 
+      class="form-input" 
+      placeholder="Имя" 
+    />
+  </div>
+</div>
 
-          <!-- Фамилия -->
-          <div class="form-field">
-            <div class="field-header">
-              <label class="field-label">Фамилия</label>
-            </div>
-            <div class="input-wrapper">
-              <input v-model="profileData.lastName"   @input="profileData.middleName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')" type="text" class="form-input" placeholder="Фамилия" />
-            </div>
-          </div>
+<!-- Фамилия -->
+<div class="form-field">
+  <div class="field-header">
+    <label class="field-label">Фамилия</label>
+  </div>
+  <div class="input-wrapper">
+    <input 
+      v-model="profileData.lastName" 
+      @input="profileData.lastName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')" 
+      type="text" 
+      class="form-input" 
+      placeholder="Фамилия" 
+    />
+  </div>
+</div>
 
-          <!-- Отчество -->
-          <div class="form-field">
-            <div class="field-header">
-              <label class="field-label">Отчество</label>
-            </div>
-            <div class="input-wrapper">
-              <input v-model="profileData.middleName"   @input="profileData.middleName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')" type="text"  class="form-input" placeholder="Отчество" />
-            </div>
-          </div>
+<!-- Отчество -->
+<div class="form-field">
+  <div class="field-header">
+    <label class="field-label">Отчество</label>
+  </div>
+  <div class="input-wrapper">
+    <input 
+      v-model="profileData.middleName" 
+      @input="profileData.middleName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')" 
+      type="text" 
+      class="form-input" 
+      placeholder="Отчество" 
+    />
+  </div>
+</div>
 
           <!-- Телефон (readOnly) -->
           <div class="form-field">
