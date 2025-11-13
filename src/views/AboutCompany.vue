@@ -20,7 +20,8 @@
 				</div>
 
 				<section class="description" v-if="company.about_company">
-					<p>{{ company.about_company }}</p>
+          <p v-if="company?.address">Мы находимся по адресу: {{ company.address }}</p>
+          <p v-if="company?.about_company">{{ company.about_company }}</p>
 				</section>
 
 				<!-- <section class="reviews">
@@ -52,6 +53,7 @@ const company = ref({
   name: '',
   rating: 0,
   description: '',
+  address:'',
   about_company: '',
   photo: ''
 })
@@ -65,7 +67,7 @@ onMounted(async () => {
     company.value = {
       name: info.name,
       rating: info.rating,
-      description: info.description || 'Описание компании отсутствует.',
+      description: info.description || '',
       about_company: info.about_company || '',
       photo: info.photo || ''
     }
