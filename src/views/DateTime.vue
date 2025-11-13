@@ -260,7 +260,7 @@ export default {
       if (service_id) params.service_id = parseInt(service_id)
 
       try {
-        const { data } = await api.get('/staff/free_time//', { params })
+        const { data } = await api.get('/staff/free_time/', { params })
         this.freeSlots = data.map(slot => {
           const s = slot.start
           let utcString
