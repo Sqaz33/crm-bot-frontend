@@ -239,7 +239,7 @@ function onSelect (idOrStaff) {
   writeVisit(visit)
 
   emit('select', id)
-  router.push({ path: '/appointmant' })
+  router.push({ path: '/datetime' })
 }
 
 function onReview (id) { emit('review', id) }

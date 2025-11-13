@@ -438,7 +438,7 @@ select{width:100%;border:1px solid #D3D3D3;border-radius:10px;padding:10px 12px;
   }
 }
 
-/* Ultra-narrow */
+
 @media (max-width:360px){
   .visit-create-view{--gutter-mobile:10px}
   .success-text{font-size:15px}
