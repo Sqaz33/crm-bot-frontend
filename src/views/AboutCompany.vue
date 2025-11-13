@@ -4,8 +4,14 @@
     <main class="main-content">
 		<div class="container">
 				<div class="company-card">
-					<div class="avatar" v-if="company.photo" :style="{ backgroundImage: `url(${company.photo})`, backgroundSize: 'cover' }"></div>
-					<div class="avatar" v-else></div>
+					
+					<!-- <div class="avatar" v-if="company.photo" :style="{ backgroundImage: `url(${company.photo})`, backgroundSize: 'cover' }"></div> -->
+					<!-- <div class="avatar" v-else></div> -->
+					
+					
+					<div class="avatar">
+						<img src="@/assets/logo.svg" alt="Company Logo" class="logo" />
+					</div>
 					<div class="info">
 						<div class="name">{{ company.name }}</div>
 						<!-- <div class="rating">⭐ {{ company.rating }}</div> -->
@@ -143,7 +149,15 @@ onMounted(async () => {
   height: clamp(5rem, 10vw, 6rem);
   background: #ccc;
   border-radius: 50%;
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 .info .name {
   font-size: clamp(1rem, 3vw, 1.2rem);
@@ -243,4 +257,3 @@ onMounted(async () => {
 
 
 </style>
-

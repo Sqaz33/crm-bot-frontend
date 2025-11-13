@@ -21,7 +21,7 @@
           </RouterLink>
         </li>
       </ul>
-      <div class="back-button" @click="goHome">
+      <div class="back-button" @click="goBack">
         <span class="arrow-back">‹</span>
         <span class="back-label"> Назад</span>
       </div>

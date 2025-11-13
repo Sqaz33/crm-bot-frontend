@@ -25,14 +25,14 @@
         </button>
 
         <!-- Кнопка назад (для остальных страниц) -->
-        <button
+        <!-- <button
             v-if="notShowSidebarButton"
             class="back-button"
             @click="goBack()"
         >
           <span class="arrow-back">←</span>
           <span class="back-text">Назад</span>
-        </button>
+        </button> -->
 
         <h1 class="page-title">{{ title }}</h1>
 
