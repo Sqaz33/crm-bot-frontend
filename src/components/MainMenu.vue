@@ -48,8 +48,8 @@ const activeItem = ref(route.path)
 const showShareModal = ref(false)
 
 const salon = ref({
-  name: 'Название',
-  description: 'тип заведения',
+  name: '',
+  description: '',
   address_url: ''
 })
 
@@ -58,7 +58,7 @@ onMounted(async () => {
     const { data } = await api.get('/salon/info')
     salon.value = {
       name: data.name,
-      description: data.description || 'тип заведения',
+      description: data.description || '',
       address_url: data.address_url || ''
     }
   } catch {
