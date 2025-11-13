@@ -104,8 +104,6 @@ import { ref, onMounted, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api'
 
-const STORAGE_KEY = 'profile_data'
-const COOKIE_KEY  = 'profile_data'
 const router = useRouter()
 const VISIT_KEY = 'visit_data'
 
@@ -117,7 +115,6 @@ const summary = ref({
   visit_time: null,
   services_id: []
 })
-
 
 const hasServices = computed(() => 
   Array.isArray(summary.value.services_id) && summary.value.services_id.length > 0
@@ -131,23 +128,35 @@ const hasDateTime = computed(() =>
   !!summary.value.visitTime
 )
 
-function readProfileStorage() {
+async function readProfile() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}
+    const response = await api.get("/auth/me");
+    const profile = response.data;
+    
+    return {
+      firstName: profile.name?.split(' ')[0] || '', 
+      lastName: profile.name?.split(' ')[1] || '', 
+      middleName: profile.name?.split(' ')[2] || '', 
+      phone: profile.phone || '',
+      email: profile.email || ''
+    };
   } catch {
-    return {}
+    return {
+      firstName: '',
+      lastName: '',
+      middleName: '',
+      phone: '',
+      email: ''
+    };
   }
 }
 
-function writeProfileStorage(obj) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(obj))
-}
-
-function writeProfileCookie(obj) {
-  const json = encodeURIComponent(JSON.stringify(obj))
-  document.cookie =
-    `${COOKIE_KEY}=${json}` +
-    `; path=/; max-age=${365*24*60*60}`
+async function writeProfile(obj) {
+  try {
+    await api.put("/auth/me", obj);
+  } catch (error) {
+    console.error("Ошибка при сохранении профиля:", error);
+  }
 }
 
 const form = reactive({
@@ -234,7 +243,7 @@ function goHome() {
 
 onMounted(() => {
   loadSummary()
-  const saved = readProfileStorage()
+  const saved = readProfile()
   form.firstName = saved.firstName ?? ''
   form.lastName = saved.lastName ?? ''
   form.middleName = saved.middleName ?? ''
@@ -243,15 +252,9 @@ onMounted(() => {
 })
 
 function saveProfile() {
-  const payload = {
-    firstName: form.firstName,
-    lastName: form.lastName,
-    middleName: form.middleName,
-    phone: form.phone,
-    email: form.email
-  }
-  writeProfileStorage(payload)
-  writeProfileCookie(payload)
+  n = `${form.lastName} ${form.firstName} ${form.middleName}`
+  const payload = { name: n, email: null }
+  writeProfile(payload)
 }
 
 function openProfileModal() {
