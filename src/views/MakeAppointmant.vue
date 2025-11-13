@@ -128,7 +128,7 @@ const hasDateTime = computed(() =>
   !!summary.value.visitTime
 )
 
-async function readProfile() {
+function readProfile() {
   try {
     const response = await api.get("/auth/me");
     const profile = response.data;
@@ -151,7 +151,7 @@ async function readProfile() {
   }
 }
 
-async function writeProfile(obj) {
+function writeProfile(obj) {
   try {
     await api.put("/auth/me", obj);
   } catch (error) {
