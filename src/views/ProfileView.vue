@@ -9,7 +9,7 @@
               <label class="field-label">Имя</label>
             </div>
             <div class="input-wrapper">
-              <input v-model="profileData.firstName" type="text" class="form-input" placeholder="Имя" />
+              <input v-model="profileData.firstName"   @input="profileData.middleName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')" type="text" class="form-input" placeholder="Имя" />
             </div>
           </div>
 
@@ -19,7 +19,7 @@
               <label class="field-label">Фамилия</label>
             </div>
             <div class="input-wrapper">
-              <input v-model="profileData.lastName" type="text" class="form-input" placeholder="Фамилия" />
+              <input v-model="profileData.lastName"   @input="profileData.middleName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')" type="text" class="form-input" placeholder="Фамилия" />
             </div>
           </div>
 
@@ -29,7 +29,7 @@
               <label class="field-label">Отчество</label>
             </div>
             <div class="input-wrapper">
-              <input v-model="profileData.middleName" type="text" class="form-input" placeholder="Отчество" />
+              <input v-model="profileData.middleName"   @input="profileData.middleName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')" type="text"  class="form-input" placeholder="Отчество" />
             </div>
           </div>
 
