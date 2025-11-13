@@ -263,7 +263,7 @@ export default {
         const { data } = await api.get('/staff/free_time/', { params })
         const slots = data[0].available_slots
         this.freeSlots = slots.map(slot => {
-          const s = slot.start
+          const s = slot.start_time
           let utcString
           if (s.includes('T')) {
             utcString = s
