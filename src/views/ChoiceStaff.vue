@@ -464,4 +464,9 @@ onMounted(async () => {
     
   }}
   .tabs-background::-webkit-scrollbar { display: none; }
+   .tabs-container { height: 64px; margin-top: 16px; }
+  .tab {
+    font-size: 16px; line-height: 20px;
+    min-height: 64px; padding: 0 16px; min-width: 120px;
+  }
 </style>
