@@ -135,12 +135,12 @@ function getFirstLetter (name) {
 async function loadSpecializations () {
   try {
     const { data } = await api.get('/staff/specializations')
-    // data - это массив строк, преобразуем в объекты
+
     tabs.value = [
       { label: 'Все', value: 'all' },
       ...data.map(spec => ({ 
         label: spec, 
-        value: spec // используем саму строку как value
+        value: spec 
       }))
     ]
   } catch (error) {
@@ -155,7 +155,7 @@ async function loadStaff (specId) {
 
     if (visit?.services_id?.length) params.service_id = visit.services_id
     if (visit?.visit_time?.start_time) params.start_time = visit.visit_time.start_time
-    // Для specialization_id передаем строку, а не 'all'
+   
     if (specId && specId !== 'all') params.specialization = specId
 
     const { data } = await api.get('/staff/', { params })

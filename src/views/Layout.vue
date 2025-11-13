@@ -46,9 +46,10 @@ const mainMenuItems = [
 
 // Меню для записи
 const appointmentMenuItems = [
+  { label: 'Услуги', path: '/services', icon: servicesIcon },
   { label: 'Сотрудник', path: '/choicestaff', icon: staffIcon },
   { label: 'Дата и время', path: '/datetime', icon: calendarIcon },
-  { label: 'Услуги', path: '/services', icon: servicesIcon }
+  
 ]
 
 // Страницы со специальным меню
