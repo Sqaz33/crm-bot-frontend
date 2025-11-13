@@ -253,9 +253,12 @@ onMounted(() => fetchVisits(activeTab.value))
 /* Tabs */
 .tabs-container {
   display: flex;
-  gap: 0.75rem;
+  gap: 0;
   padding: 1rem;
   background-color: #f6f9fc;
+  border-radius: 12px;
+  background-color: transparent;
+  position: relative;
 }
 
 .tab-btn {
@@ -268,16 +271,31 @@ onMounted(() => fetchVisits(activeTab.value))
   font-weight: 500;
   color: #6b7688;
   cursor: pointer;
-  border-radius: 8px;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 1;
 }
 
+/* Первая кнопка - скругления слева */
+.tab-btn:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+/* Последняя кнопка - скругления справа */
+.tab-btn:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+/* Активная кнопка - другой стиль */
 .tab-btn.active {
   background-color: #5073f0;
   color: white;
   font-weight: 600;
-  box-shadow: 0 2px 4px rgba(80, 115, 240, 0.2);
+}
+
+/* Убираем скругления у средних кнопок (если будет больше двух) */
+.tab-btn:not(:first-child):not(:last-child) {
+  border-radius: 0;
 }
 
 .tab-btn:hover:not(.active) {
@@ -492,21 +510,6 @@ onMounted(() => fetchVisits(activeTab.value))
   max-width: 320px;
 }
 
-
-/* @media (max-width: 768px){
-  .filled-content{padding:12px}
-  .appointment-card{padding:16px}
-  .card-header{gap:12px}
-  .avatar{width:40px;height:40px}
-  .employee-name{font-size:.9375rem}
-  .service-info{gap:8px;font-size:.875rem}
-  .total-price{font-size:1.125rem}
-  .empty-content{padding:48px 24px}
-  .empty-icon-wrapper{width:100px;height:100px}
-  .empty-icon{width:56px;height:56px}
-} */
-
-
 .records-page{--sidebar-mobile:64px;--gutter-mobile:16px}
 @media (max-width: 768px){
   .records-page{
@@ -519,16 +522,22 @@ onMounted(() => fetchVisits(activeTab.value))
 
   .records-container{
     max-width:none;
-    /* width:calc(100vw - (var(--sidebar-mobile) + 2 * var(--gutter-mobile))); */
     margin:0;
     padding:0;
   }
 
-  .tabs-container{padding:12px 0;gap:10px}
+  .tabs-container{
+    padding:12px 0;
+    gap:0;
+  }
   .tab-btn{
     padding:12px 14px;
     font-size:.9rem;
-    border-radius:10px;
+    border-radius:10px 0 0 10px;
+  }
+  
+  .tab-btn:last-child {
+    border-radius:0 10px 10px 0;
   }
 
   .filled-content{padding:12px 0}
@@ -563,13 +572,20 @@ onMounted(() => fetchVisits(activeTab.value))
 
 @media (max-width: 360px){
   .records-page{--gutter-mobile:12px}
-  .tab-btn{padding:10px 12px;font-size:.85rem}
+  .tab-btn{
+    padding:10px 12px;
+    font-size:.85rem;
+    border-radius:8px 0 0 8px;
+  }
+  
+  .tab-btn:last-child {
+    border-radius:0 8px 8px 0;
+  }
+  
   .appointment-card{padding:12px}
   .employee-name{font-size:.9rem}
   .service-name,.quantity,.price{font-size:.875rem}
   .status-icon{width:32px;height:32px}
   .total-price{font-size:1rem}
 }
-
-
 </style>
