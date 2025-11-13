@@ -102,7 +102,7 @@ const processedItems = computed(() => {
     
     
     if (item.path === '/datetime') {
-      const accessible = Array.isArray(visitData.services_id) && visitData.services_id.length > 0 && 
+      const accessible = Array.isArray(visitData.staff_id) && visitData.staff_id.length > 0 && 
                         !!visitData.staff_id
       return { ...item, accessible }
     }
