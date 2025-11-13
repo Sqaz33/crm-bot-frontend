@@ -74,9 +74,9 @@ const staffId = route.params.id
 const staff   = ref({ name:'', specialization:'', photo:'', about:'', rating:0 })
 const reviews = ref([])
 
-function formatDate(iso) {
-  return new Date(iso).toLocaleDateString()
-}
+// function formatDate(iso) {
+//   return new Date(iso).toLocaleDateString()
+// }
 
 function getFirstLetter(name) {
   return name ? name.charAt(0).toUpperCase() : ''
@@ -105,10 +105,10 @@ function chooseStaff() {
 
 onMounted(async () => {
   try {
-    const { data: s }   = await api.get(`/salon/staff/${staffId}`)
-    const { data: rev } = await api.get(`/salon/reviews?staff_id=${staffId}`)
+    const { data: s }   = await api.get(`/staff/${staffId}`)
+    // const { data: rev } = await api.get(`/salon/reviews?staff_id=${staffId}`)
     staff.value   = s
-    reviews.value = rev
+    // reviews.value = rev
   } catch (e) {
     console.error('Ошибка загрузки данных:', e)
   }
