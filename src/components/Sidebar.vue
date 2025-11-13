@@ -6,12 +6,19 @@
     <div v-if="items.length > 0">
       <ul class="menu-list">
         <li
-            v-for="item in items"
+            v-for="item in processedItems"
             :key="item.path"
             class="menu-item"
-            :class="{ active: route.path === item.path }"
+            :class="{ 
+              active: route.path === item.path,
+              disabled: !item.accessible 
+            }"
         >
-          <RouterLink :to="item.path" class="menu-link" @click="closeSidebar">
+          <RouterLink 
+            :to="item.accessible ? item.path : ''" 
+            class="menu-link" 
+            @click="item.accessible && closeSidebar"
+          >
             <span class="icon" v-if="item.icon">
               <img :src="item.icon" :alt="item.label" />
             </span>
@@ -35,6 +42,7 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
+import { computed } from 'vue'
 
 const props = defineProps({
   items: {
@@ -51,6 +59,58 @@ const route = useRoute()
 const router = useRouter()
 const emit = defineEmits(['close'])
 
+
+const getVisitData = () => {
+  try {
+    return JSON.parse(localStorage.getItem('visit_data')) || {
+      staff_id: "",
+      services_id: [],
+      visit_time: { start_time: "" },
+      comment: ""
+    }
+  } catch (error) {
+    console.error('Ошибка чтения visit_data:', error)
+    return {
+      staff_id: "",
+      services_id: [],
+      visit_time: { start_time: "" },
+      comment: ""
+    }
+  }
+}
+
+
+const processedItems = computed(() => {
+  const visitData = getVisitData()
+  
+  return props.items.map(item => {
+    
+    if (!['/services', '/choicestaff', '/datetime'].includes(item.path)) {
+      return { ...item, accessible: true }
+    }
+    
+ 
+    if (item.path === '/services') {
+      return { ...item, accessible: true }
+    }
+    
+  
+    if (item.path === '/choicestaff') {
+      const accessible = Array.isArray(visitData.services_id) && visitData.services_id.length > 0
+      return { ...item, accessible }
+    }
+    
+    
+    if (item.path === '/datetime') {
+      const accessible = Array.isArray(visitData.services_id) && visitData.services_id.length > 0 && 
+                        !!visitData.staff_id
+      return { ...item, accessible }
+    }
+    
+    return { ...item, accessible: true }
+  })
+})
+
 function closeSidebar() {
   emit('close')
 }
@@ -58,9 +118,6 @@ function closeSidebar() {
 function goBack() {
   router.back()
   closeSidebar()
-}
-function goHome() {
-  router.push({ name: 'home' })
 }
 </script>
 
@@ -133,6 +190,12 @@ function goHome() {
 .menu-item.active .menu-link {
   background-color: #E6E6E6;
   font-weight: bold;
+}
+
+.menu-item.disabled .menu-link {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .icon,
@@ -331,5 +394,4 @@ function goHome() {
   margin-right: 1rem;
 }
 */
-
 </style>
