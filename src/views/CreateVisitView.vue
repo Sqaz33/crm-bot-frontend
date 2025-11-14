@@ -16,7 +16,7 @@
 
       <div class="service-block" v-if="summary.service">
         <div class="service-name">{{ summary.service.name }}</div>
-        <div class="service-desc">{{ summary.service.name }}</div>
+        <!-- Убрано отображение description, так как его нет в API -->
         <div class="service-duration">{{ summary.service.duration }} мин</div>
         <div class="service-price">{{ summary.service.price }} ₽</div>
       </div>
@@ -361,9 +361,9 @@ function askAdmin() {
 .staff-name{font-weight:700}
 .staff-role{color:var(--muted);font-size:14px}
 
+/* Обновленная сетка для service-block - убрана строка с description */
 .service-block{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin-bottom:10px}
 .service-name{grid-column:1/-1;font-weight:600}
-.service-desc{grid-column:1/-1;color:var(--muted);font-size:14px}
 .service-duration{color:var(--muted)}
 .service-price{font-weight:700}
 
@@ -423,7 +423,6 @@ select{width:100%;border:1px solid #D3D3D3;border-radius:10px;padding:10px 12px;
   .date-row{gap:8px}
   .staff-role{font-size:13px}
   .service-block{grid-template-columns:1fr auto;gap:4px 10px}
-  .service-desc{font-size:13px}
   .total-block{padding:10px}
 
   .client-block{padding:10px}
