@@ -55,7 +55,7 @@ const salon = ref({
 
 onMounted(async () => {
   try {
-    const { data } = await api.get('/salon/info')
+    const { data } = await api.get('/salon/info/')
     salon.value = {
       name: data.name,
       description: data.description || '',

@@ -61,7 +61,7 @@ const staffList = ref([])
 const VISIT_KEY   = 'visit_data'
 
 async function loadSpecializations() {
-  const { data } = await api.get('/salon/specializations')
+  const { data } = await api.get('/staff/specializations/')
   data.forEach(spec =>
     tabs.value.push({ label: spec.name, value: spec.id })
   )
@@ -87,7 +87,7 @@ async function loadStaff(specId) {
     params.specialization_id = specId
   }
 
-  const { data } = await api.get('/salon/staff', {params})
+  const { data } = await api.get('/staff/', {params})
   staffList.value = data
 }
 
