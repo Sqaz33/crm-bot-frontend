@@ -54,9 +54,9 @@
   margin-bottom: 1rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 430px) {
   .form-container {
-    
+           padding-right: 3rem!important;
   }
 }
 
