@@ -151,7 +151,7 @@ const clientNameFromAPI = computed(() => {
 // Функция для загрузки данных клиента
 async function loadClientData() {
   try {
-    const { data } = await api.get('/auth/me', {
+    const { data } = await api.get('/auth/me/', {
       headers: { Accept: 'application/json' },
       withCredentials: true
     })
@@ -195,7 +195,7 @@ function clearVisitData() {
 
 async function loadSalonInfo() {
   try {
-    const { data } = await api.get('/salon/info')
+    const { data } = await api.get('/salon/info/')
     salonInfo.name = data.name || 'Название салона'
     salonInfo.description = data.description || 'тип заведения'
   } catch (e) {

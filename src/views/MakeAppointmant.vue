@@ -130,7 +130,7 @@ const hasDateTime = computed(() =>
 
 async function readProfile() {
   try {
-    const response = await api.get("/auth/me");
+    const response = await api.get("/auth/me/");
     const profile = response.data;
     
     return {
@@ -153,7 +153,7 @@ async function readProfile() {
 
 async function writeProfile(obj) {
   try {
-    await api.patch("/auth/me", obj);
+    await api.patch("/auth/me/", obj);
   } catch (error) {
     console.error("Ошибка при сохранении профиля:", error);
   }
@@ -202,7 +202,7 @@ async function loadSummary() {
     try {
       const prices = await Promise.all(
         services_id.map(async id => {
-          const { data } = await api.get('/services', { params: { service_id: id } })
+          const { data } = await api.get('/services/', { params: { service_id: id } })
           return data[0]?.price || 0
         })
       )

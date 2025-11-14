@@ -41,6 +41,8 @@
 
 @media (max-width: 768px) {
   .form-container {
+
+    padding: initial;
     padding-right: 3rem!important;
   }
 }

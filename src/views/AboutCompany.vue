@@ -63,7 +63,7 @@ const company = ref({
 onMounted(async () => {
   try {
    
-    const { data: info } = await api.get('/salon/info')
+    const { data: info } = await api.get('/salon/info/')
     company.value = {
       name: info.name,
       rating: info.rating,

@@ -134,7 +134,7 @@ function getFirstLetter (name) {
 
 async function loadSpecializations () {
   try {
-    const { data } = await api.get('/staff/specializations')
+    const { data } = await api.get('/staff/specializations/')
 
     tabs.value = [
       { label: 'Все', value: 'all' },

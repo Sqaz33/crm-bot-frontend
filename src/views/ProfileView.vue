@@ -117,7 +117,7 @@ const isFormValid = computed(() => profileData.value.firstName.trim().length > 0
 async function loadMe() {
   loading.value = true
   try {
-    const { data } = await api.get('/auth/me', {
+    const { data } = await api.get('/auth/me/', {
       headers: { Accept: 'application/json' },
       withCredentials: true
     })
@@ -139,16 +139,16 @@ async function loadMe() {
 async function updateMeName(payload) {
   const cfg = { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
   try {              
-    return await api.patch('/auth/me', payload, cfg)
+    return await api.patch('/auth/me/', payload, cfg)
   } catch (e1) {
     const s = e1?.response?.status
     if (s !== 404 && s !== 405 && s !== 400) throw e1
     try {              
-      return await api.put('/auth/me', payload, cfg)
+      return await api.put('/auth/me/', payload, cfg)
     } catch (e2) {
       const s2 = e2?.response?.status
       if (s2 !== 404 && s2 !== 405) throw e2
-      return await api.post('/auth/me', payload, cfg)
+      return await api.post('/auth/me/', payload, cfg)
     }
   }
 }

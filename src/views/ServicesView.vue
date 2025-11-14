@@ -91,13 +91,13 @@ const visit = ref(loadVisit())
 onMounted(async () => {
   try {
     // Убедитесь что используем правильные endpoints
-    const { data: types } = await api.get('/services/types') // Убрал trailing slash
+    const { data: types } = await api.get('/services/types/') // Убрал trailing slash
     serviceTypes.value = types || []
 
     const params = {}
     if (visit.value.staff_id) params.staff_id = visit.value.staff_id
     
-    const { data: all } = await api.get('/services', { params }) // Убрал trailing slash
+    const { data: all } = await api.get('/services/', { params }) // Убрал trailing slash
     services.value = all || []
 
     if (Array.isArray(visit.value.services_id)) {
