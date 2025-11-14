@@ -513,6 +513,8 @@ onMounted(() => fetchVisits(activeTab.value))
 .records-page{--sidebar-mobile:64px;--gutter-mobile:16px}
 @media (max-width: 768px){
   .records-page{
+    --sidebar-mobile: 54px;
+    --gutter-mobile: 16px;
     padding:0;
     padding-top:12px;
     padding-left:calc(var(--sidebar-mobile) + var(--gutter-mobile));
