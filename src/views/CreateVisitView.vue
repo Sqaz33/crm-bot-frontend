@@ -16,7 +16,7 @@
 
       <div class="service-block" v-if="summary.service">
         <div class="service-name">{{ summary.service.name }}</div>
-        <div class="service-desc">{{ summary.service.description }}</div>
+        <div class="service-desc">{{ summary.service.name }}</div>
         <div class="service-duration">{{ summary.service.duration }} мин</div>
         <div class="service-price">{{ summary.service.price }} ₽</div>
       </div>
@@ -94,7 +94,7 @@
 
           <!-- Основной текст -->
           <div class="success-text">
-            ✏️ <strong>{{ clientNameFromAPI }}</strong>, Вы успешно записаны на <strong>{{ summary.service?.name }}</strong>
+            ✏️ <strong>{{ clientNameFromAPI }}</strong>, Вы успешно записаны на услугу <strong>{{ summary.service?.name }}</strong>
             <br>
             👤 К специалисту - <strong>{{ summary.staff?.name }}</strong>
             <br>
