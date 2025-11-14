@@ -31,7 +31,7 @@
       <div class="form-label">ПРОФИЛЬ КЛИЕНТА</div>
       <div class="client-block">
         <span class="client-icon">👤</span>
-        <span class="client-name">{{ clientName }}</span>
+        <span class="client-name">{{ clientNameFromAPI }}</span>
       </div>
 
       <div class="form-label">НАПОМИНАНИЕ О ВИЗИТЕ</div>
@@ -94,7 +94,7 @@
 
           <!-- Основной текст -->
           <div class="success-text">
-            ✏️ <strong>{{ clientName }}</strong>, Вы успешно записаны на <strong>{{ summary.service?.name }}</strong>
+            ✏️ <strong>{{ clientNameFromAPI }}</strong>, Вы успешно записаны на <strong>{{ summary.service?.name }}</strong>
             <br>
             👤 К специалисту - <strong>{{ summary.staff?.name }}</strong>
             <br>
@@ -128,6 +128,9 @@ const router = useRouter()
 const summary = reactive({ date: '', time: '', staff: null, service: null })
 const salonInfo = reactive({ name: 'Загрузка...', description: '' })
 
+// Добавляем реактивное состояние для данных клиента
+const clientData = ref(null)
+
 const comment = ref('')
 const remindLeadHours = ref(0) 
 const submitting = ref(false)
@@ -140,14 +143,24 @@ const staffId = ref(null)
 const serviceId = ref(null)
 const visitDateISO = ref(null)
 
-const clientName = computed(() => {
-  try {
-    const raw = localStorage.getItem(PROFILE_KEY)
-    if (!raw) return '—'
-    const p = JSON.parse(raw)
-    return [p.firstName, p.lastName].filter(Boolean).join(' ') || '—'
-  } catch { return '—' }
+// Заменяем computed на вызов API
+const clientNameFromAPI = computed(() => {
+  return clientData.value?.name || '—'
 })
+
+// Функция для загрузки данных клиента
+async function loadClientData() {
+  try {
+    const { data } = await api.get('/auth/me', {
+      headers: { Accept: 'application/json' },
+      withCredentials: true
+    })
+    clientData.value = data
+  } catch (error) {
+    console.error('Ошибка загрузки данных клиента:', error)
+    clientData.value = null
+  }
+}
 
 function toISO(value) {
   if (!value) return null
@@ -193,6 +206,9 @@ async function loadSalonInfo() {
 }
 
 onMounted(async () => {
+  // Загружаем данные клиента
+  await loadClientData()
+  
   // Загружаем информацию о салоне
   await loadSalonInfo()
   
@@ -212,10 +228,26 @@ onMounted(async () => {
       null
 
     if (staffId.value) {
-      try { const { data: staff } = await api.get(`/salon/staff/${staffId.value}`); summary.staff = staff } catch { summary.staff = null }
+      try { 
+        const { data: staff } = await api.get(`/staff/${staffId.value}`)
+        // Исправляем структуру данных сотрудника
+        summary.staff = {
+          id: staff.id,
+          name: staff.name,
+          photo: staff.photo,
+          specialization: staff.specializations?.[0] || 'мастер' // берем первую специализацию
+        }
+      } catch { 
+        summary.staff = null 
+      }
     }
     if (serviceId.value) {
-      try { const { data: list } = await api.get('/services/', { params: { service_id: serviceId.value } }); summary.service = list?.[0] ?? null } catch { summary.service = null }
+      try { 
+        const { data: list } = await api.get('/services/', { params: { service_id: serviceId.value } })
+        summary.service = list?.[0] ?? null 
+      } catch { 
+        summary.service = null 
+      }
     }
 
     const h = humanize(visitDateISO.value)
@@ -287,8 +319,6 @@ function askAdmin() {
 </script>
 
 <style scoped>
-
-
 .visit-create-view{
   --sidebar-mobile:64px;
   --gutter-mobile:12px;
@@ -379,18 +409,6 @@ select{width:100%;border:1px solid #D3D3D3;border-radius:10px;padding:10px 12px;
 .btn-my-records:hover{filter:brightness(.95)}
 .btn-ask-admin:hover{filter:brightness(.97)}
 
-/* Tablet */
-/* @media (max-width:920px){
-  .success-modal{width:95%;max-width:700px}
-  .modal-content{padding:40px 0 50px}
-  .salon-card{margin:0 20px 40px 20px;padding-left:20px}
-  .salon-name{font-size:22px;line-height:26px}
-  .salon-type{font-size:18px;line-height:22px}
-  .success-text{margin:0 30px 32px 30px;font-size:20px;line-height:26px}
-  .btn-my-records,.btn-ask-admin{width:calc(100% - 60px);margin:0 30px 16px}
-  .close-btn{right:30px}
-} */
-
 /* Mobile / mini-app (Pixel-класс) */
 @media (max-width: 768px){
   .visit-create-view{
@@ -438,10 +456,8 @@ select{width:100%;border:1px solid #D3D3D3;border-radius:10px;padding:10px 12px;
   }
 }
 
-
 @media (max-width:360px){
   .visit-create-view{--gutter-mobile:10px}
   .success-text{font-size:15px}
 }
 </style>
-
