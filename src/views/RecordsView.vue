@@ -150,7 +150,7 @@ const servicesCache = {}
 
 async function getStaff(staff_id) {
   if (staffCache[staff_id]) return staffCache[staff_id]
-  const { data } = await api.get(`/salon/staff/${staff_id}`)
+  const { data } = await api.get(`/staff/${staff_id}`)
   staffCache[staff_id] = data
   return data
 }
