@@ -72,7 +72,7 @@
           <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M15.5 5L5.5 15M5.5 5L15.5 15" stroke="#454558" stroke-width="1.5286" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-        </button>
+        </button>``
 
         <!-- Контент модального окна -->
         <div class="modal-content">
@@ -127,6 +127,8 @@ const router = useRouter()
 
 const summary = reactive({ date: '', time: '', staff: null, service: null })
 const salonInfo = reactive({ name: 'Загрузка...', description: '' })
+
+const adminContactUrl = import.meta.env.VITE_ADMIN_CONTACT_URL || '#'; 
 
 // Добавляем реактивное состояние для данных клиента
 const clientData = ref(null)
@@ -313,8 +315,13 @@ function goToRecords() {
 
 function askAdmin() {
   // Открываем Telegram бота для вопросов
-  const botLink = 'https://t.me/CheckAuthorization_bot'
-  window.open(botLink, '_blank')
+  // const botLink = 'https://t.me/CheckAuthorization_bot'
+  // window.open(botLink, '_blank')
+  if (adminContactUrl && adminContactUrl !== '#') {
+    window.open(adminContactUrl, '_blank');
+  } else {
+    alert('Ссылка для связи с администратором не настроена.');
+  }
 }
 </script>
 
