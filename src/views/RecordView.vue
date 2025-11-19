@@ -52,7 +52,7 @@
         <!-- Плашка: Изменения -->
         <div v-if="!isOld" class="section">
           <div class="section-bar">Изменения</div>
-          <div class="list">
+          <div class="list" :class="{ 'disabled': isVisitConfirmed }">
             <button
               class="list-item danger"
               @click="openCancelModal"
@@ -379,6 +379,9 @@ onMounted(() => {
 //     sending.value = false
 //   }
 // }
+
+// Подтверждение, что придет
+const isVisitConfirmed = computed(() => visit.value ? visit.value.will_come === true)
 </script>
 
 
@@ -506,6 +509,9 @@ onMounted(() => {
   padding:10px 12px;border-radius:10px 10px 0 0;
   letter-spacing:.02em;text-transform:uppercase;
 }
+
+
+
 .toggle-row{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   background:#fff;border:1px solid var(--divider);border-top:none;
