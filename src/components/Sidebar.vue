@@ -14,10 +14,10 @@
               disabled: !item.accessible 
             }"
         >
-          <RouterLink 
-            :to="item.accessible ? item.path : ''" 
-            class="menu-link" 
-            @click="item.accessible && closeSidebar"
+          <RouterLink
+              :to="item.accessible ? item.path : ''"
+              class="menu-link"
+              @click="item.accessible && closeSidebar"
           >
             <span class="icon" v-if="item.icon">
               <img :src="item.icon" :alt="item.label" />
@@ -82,31 +82,26 @@ const getVisitData = () => {
 
 const processedItems = computed(() => {
   const visitData = getVisitData()
-  
+
   return props.items.map(item => {
-    
     if (!['/services', '/choicestaff', '/datetime'].includes(item.path)) {
       return { ...item, accessible: true }
     }
     
- 
     if (item.path === '/services') {
       return { ...item, accessible: true }
     }
     
-  
     if (item.path === '/choicestaff') {
       const accessible = Array.isArray(visitData.services_id) && visitData.services_id.length > 0
       return { ...item, accessible }
     }
     
-    
     if (item.path === '/datetime') {
-      const accessible = Array.isArray(visitData.staff_id) && visitData.staff_id.length > 0 && 
-                        !!visitData.staff_id
+      const accessible = visitData.staff_id && visitData.staff_id !== ""
       return { ...item, accessible }
     }
-    
+
     return { ...item, accessible: true }
   })
 })
@@ -247,8 +242,8 @@ function goBack() {
 .back-button {
   position: sticky;
   bottom: 0;
-  height: 56px; 
-  padding: 14px 20px 14px 28px; 
+  height: 56px;
+  padding: 14px 20px 14px 28px;
   font-size: 20px;
   color: #8097B1;
   font-family: var(--font-primary);
@@ -265,11 +260,11 @@ function goBack() {
 
 .arrow-back {
   width: 36px;
-  height: 36px; 
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 1.5rem; 
+  margin-right: 1.5rem;
   font-size: 1.5rem;
   color: #B0BECF;
   flex-shrink: 0;
