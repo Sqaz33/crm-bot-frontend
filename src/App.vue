@@ -10,6 +10,8 @@
 </template>
 
 <script setup>
+import { attachDebugInitSender } from './debug/telegramDebug'
+
 import { reactive, ref, onMounted } from 'vue'
 import { ensureSession } from './auth/ensureSession'
 import { getClientByTelegramId } from './api/clients'
@@ -122,7 +124,11 @@ async function initAuthAndProfile() {
   }
 }
 
-onMounted(initAuthAndProfile)
+onMounted(() => {
+  attachDebugInitSender()
+  initAuthAndProfile()
+})
+
 </script>
 
 <style scoped>
