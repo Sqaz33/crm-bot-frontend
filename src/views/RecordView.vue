@@ -50,9 +50,9 @@
         </div>
 
         <!-- Плашка: Изменения -->
-        <div v-if="!isOld" class="section">
+        <div v-if="!isOld" class="section transition-all duration-300" :class="{ 'opacity-40 pointer-events-none': isVisitConfirmed }">
           <div class="section-bar">Изменения</div>
-          <div class="list" :class="{ 'disabled': isVisitConfirmed }">
+          <div class="list">
             <button
               class="list-item danger"
               @click="openCancelModal"
