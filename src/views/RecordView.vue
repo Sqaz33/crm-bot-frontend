@@ -50,7 +50,7 @@
         </div>
 
         <!-- Плашка: Изменения -->
-        <div v-if="!isOld" class="section transition-all duration-300" :class="{ 'opacity-40 pointer-events-none': isVisitConfirmed }">
+        <div v-if="!isOld" class="section" :class="{ 'section-disabled': isVisitConfirmed }">
           <div class="section-bar">Изменения</div>
           <div class="list">
             <button
@@ -504,6 +504,11 @@ const isVisitConfirmed = computed(() => (visit.value ? visit.value.will_come : u
 
 /* 6) Секции */
 .section{margin-bottom:12px;max-width:100%;}
+.section-disabled{
+  opacity: 0.4;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
 .section-bar{
   background:var(--primary);color:#8097B1;font-weight:400;
   padding:10px 12px;border-radius:10px 10px 0 0;
