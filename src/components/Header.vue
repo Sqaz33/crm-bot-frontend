@@ -75,7 +75,7 @@ onMounted(async () => {
     const { data } = await api.get('/salon/info/')
     salon.value = {
       name: data.name,
-      description: data.description || 'тип заведения',
+      description: data.description || '',
       address_url: data.address_url || ''
     }
   } catch {
