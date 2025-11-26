@@ -3,7 +3,7 @@
       class="sidebar"
       :class="{ 'collapsed': !isOpen, 'empty': items.length === 0 }"
   >
-    <div v-if="items.length > 0">
+    <div v-if="items.length > 0" class="sidebar-content">
       <ul class="menu-list">
         <li
             v-for="item in processedItems"
@@ -137,22 +137,33 @@ function goBack() {
 }
 
 .sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 320px;
-  height: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   background: white;
   box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
   z-index: 1000;
   transition: width 0.3s ease;
-  position: absolute;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .menu-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .menu-item {
@@ -177,14 +188,19 @@ function goBack() {
   font-size: 20px;
   font-weight: 400;
   line-height: 24px;
-  max-height: 56px;
+  min-height: 56px;
   box-sizing: border-box;
   transition: all 0.3s ease;
 }
 
 .menu-item.active .menu-link {
   background-color: #E6E6E6;
-  font-weight: bold;
+  font-weight: 600;
+  color: #2C2C3E;
+}
+
+.menu-item:not(.disabled):not(.active) .menu-link:hover {
+  background-color: #F0F0F0;
 }
 
 .menu-item.disabled .menu-link {
@@ -249,13 +265,18 @@ function goBack() {
   font-family: var(--font-primary);
   font-weight: 400;
   line-height: 24px;
-  background-color: rgba(246, 245, 246, 0.40);
-  border-top: none;
+  background-color: rgba(246, 245, 246, 0.90);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
   cursor: pointer;
   transition: all 0.3s ease;
   box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.back-button:hover {
+  background-color: rgba(240, 240, 240, 0.95);
 }
 
 .arrow-back {
@@ -350,6 +371,65 @@ function goBack() {
   justify-content: flex-start;
   padding: 14px 20px 14px 28px;
   transition: all 0.3s ease 0.2s;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 280px;
+  }
+  
+  .sidebar:not(.collapsed) {
+    width: 280px;
+  }
+  
+  .menu-link {
+    padding: 12px 16px 12px 20px;
+    font-size: 18px;
+  }
+  
+  .icon,
+  .icon-placeholder {
+    width: 32px;
+    height: 32px;
+    margin-right: 1.5rem;
+  }
+  
+  .back-button {
+    padding: 12px 16px 12px 20px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 260px;
+  }
+  
+  .sidebar:not(.collapsed) {
+    width: 260px;
+  }
+  
+  .menu-link {
+    padding: 10px 12px 10px 16px;
+    font-size: 16px;
+  }
+  
+  .icon,
+  .icon-placeholder {
+    width: 28px;
+    height: 28px;
+    margin-right: 1rem;
+  }
+  
+  .label {
+    font-size: 16px;
+  }
+  
+  .back-button {
+    padding: 10px 12px 10px 16px;
+    font-size: 16px;
+  }
 }
 
 /* отключено развёртывание при наведении */
