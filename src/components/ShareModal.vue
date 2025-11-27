@@ -204,17 +204,6 @@
     justify-content: center;
     color: white;
   }
-
-  .icon-copy {
-  height: 34px;
-  width: 34px;
-  margin-top: 3px;
-  margin-left: 2px;
-  display: flex;
-  justify-content: center;
-  color: white;
-  }
-
   @media (max-width: 430px){
   .records-page{
     width: 70%;
