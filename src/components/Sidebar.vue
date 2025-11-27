@@ -1,23 +1,23 @@
 <template>
   <aside
-      class="sidebar"
-      :class="{ 'collapsed': !isOpen, 'empty': items.length === 0 }"
+    class="sidebar"
+    :class="{ collapsed: !isOpen, empty: items.length === 0 }"
   >
     <div v-if="items.length > 0">
       <ul class="menu-list">
         <li
-            v-for="item in processedItems"
-            :key="item.path"
-            class="menu-item"
-            :class="{ 
-              active: route.path === item.path,
-              disabled: !item.accessible 
-            }"
+          v-for="item in processedItems"
+          :key="item.path"
+          class="menu-item"
+          :class="{
+            active: route.path === item.path,
+            disabled: !item.accessible,
+          }"
         >
           <RouterLink
-              :to="item.accessible ? item.path : ''"
-              class="menu-link"
-              @click="item.accessible && closeSidebar"
+            :to="item.accessible ? item.path : ''"
+            class="menu-link"
+            @click="item.accessible && closeSidebar"
           >
             <span class="icon" v-if="item.icon">
               <img :src="item.icon" :alt="item.label" />
@@ -34,85 +34,85 @@
       </div>
     </div>
 
-    <div v-else class="empty-state">
-      Меню недоступно для этой страницы
-    </div>
+    <div v-else class="empty-state">Меню недоступно для этой страницы</div>
   </aside>
 </template>
 
 <script setup>
-import { useRoute, useRouter } from 'vue-router'
-import { computed } from 'vue'
+import { useRoute, useRouter } from "vue-router";
+import { computed } from "vue";
 
 const props = defineProps({
   items: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   isOpen: {
     type: Boolean,
-    default: true
-  }
-})
+    default: true,
+  },
+});
 
-const route = useRoute()
-const router = useRouter()
-const emit = defineEmits(['close'])
-
+const route = useRoute();
+const router = useRouter();
+const emit = defineEmits(["close"]);
 
 const getVisitData = () => {
   try {
-    return JSON.parse(localStorage.getItem('visit_data')) || {
-      staff_id: "",
-      services_id: [],
-      visit_time: { start_time: "" },
-      comment: ""
-    }
+    return (
+      JSON.parse(localStorage.getItem("visit_data")) || {
+        staff_id: "",
+        services_id: [],
+        visit_time: { start_time: "" },
+        comment: "",
+      }
+    );
   } catch (error) {
-    console.error('Ошибка чтения visit_data:', error)
+    console.error("Ошибка чтения visit_data:", error);
     return {
       staff_id: "",
       services_id: [],
       visit_time: { start_time: "" },
-      comment: ""
-    }
+      comment: "",
+    };
   }
-}
-
+};
 
 const processedItems = computed(() => {
-  const visitData = getVisitData()
+  const visitData = getVisitData();
 
-  return props.items.map(item => {
-    if (!['/services', '/choicestaff', '/datetime'].includes(item.path)) {
-      return { ...item, accessible: true }
-    }
-    
-    if (item.path === '/services') {
-      return { ...item, accessible: true }
-    }
-    
-    if (item.path === '/choicestaff') {
-      const accessible = Array.isArray(visitData.services_id) && visitData.services_id.length > 0
-      return { ...item, accessible }
-    }
-    
-    if (item.path === '/datetime') {
-      const accessible = visitData.staff_id && visitData.staff_id !== ""
-      return { ...item, accessible }
+  return props.items.map((item) => {
+    if (!["/services", "/choicestaff", "/datetime"].includes(item.path)) {
+      return { ...item, accessible: true };
     }
 
-    return { ...item, accessible: true }
-  })
-})
+    if (item.path === "/services") {
+      return { ...item, accessible: true };
+    }
+
+    if (item.path === "/choicestaff") {
+      const accessible =
+        Array.isArray(visitData.services_id) &&
+        visitData.services_id.length > 0;
+      return { ...item, accessible };
+    }
+
+    if (item.path === "/datetime") {
+      const accessible = visitData.staff_id && visitData.staff_id !== "";
+      return { ...item, accessible };
+    }
+
+    return { ...item, accessible: true };
+  });
+});
 
 function closeSidebar() {
-  emit('close')
+  emit("close");
 }
 
 function goBack() {
-  router.back()
-  closeSidebar()
+  router.back();
+  closeSidebar();
 }
 </script>
 
@@ -137,18 +137,17 @@ function goBack() {
 }
 
 .sidebar {
+  position: fixed;
+  top: 3;
+  left: 0;
   width: 320px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  height: 100vh;
   background: white;
   box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
   z-index: 1000;
   transition: width 0.3s ease;
-  position: absolute;
+  overflow: hidden;
 }
-
 .menu-list {
   list-style: none;
   padding: 0;
@@ -170,7 +169,7 @@ function goBack() {
   align-items: center;
   justify-content: space-between;
   padding: 14px 20px 14px 28px;
-  background: rgba(246, 245, 246, 0.40);
+  background: rgba(246, 245, 246, 0.4);
   text-decoration: none;
   color: #454558;
   font-family: var(--font-primary);
@@ -183,7 +182,7 @@ function goBack() {
 }
 
 .menu-item.active .menu-link {
-  background-color: #E6E6E6;
+  background-color: #e6e6e6;
   font-weight: bold;
 }
 
@@ -232,7 +231,7 @@ function goBack() {
 }
 
 .arrow {
-  color: #8097B1;
+  color: #8097b1;
   font-size: 1.5rem;
   transition: all 0.3s ease;
   opacity: 1;
@@ -245,11 +244,11 @@ function goBack() {
   height: 56px;
   padding: 14px 20px 14px 28px;
   font-size: 20px;
-  color: #8097B1;
+  color: #8097b1;
   font-family: var(--font-primary);
   font-weight: 400;
   line-height: 24px;
-  background-color: rgba(246, 245, 246, 0.40);
+  background-color: rgba(246, 245, 246, 0.4);
   border-top: none;
   display: flex;
   align-items: center;
@@ -266,7 +265,7 @@ function goBack() {
   justify-content: center;
   margin-right: 1.5rem;
   font-size: 1.5rem;
-  color: #B0BECF;
+  color: #b0becf;
   flex-shrink: 0;
 }
 
@@ -280,9 +279,8 @@ function goBack() {
   font-size: 20px;
   font-weight: 400;
   line-height: 24px;
-  color: #8097B1;
+  color: #8097b1;
 }
-
 
 .sidebar.collapsed {
   width: 60px;
