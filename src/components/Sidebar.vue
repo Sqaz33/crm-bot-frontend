@@ -265,7 +265,9 @@ function goBack() {
   justify-content: center;
   margin-right: 1.5rem;
   font-size: 1.5rem;
-  color: #b0becf;
+  color: #ffffff;
+  background-color: #666fe8;
+  border-radius: 50%;
   flex-shrink: 0;
 }
 
