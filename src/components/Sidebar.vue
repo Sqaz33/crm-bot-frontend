@@ -27,11 +27,11 @@
             <span class="arrow">›</span>
           </RouterLink>
         </li>
+        <div class="back-button" @click="goBack">
+          <span class="arrow-back">‹</span>
+          <span class="back-label"> Назад</span>
+        </div>
       </ul>
-      <div class="back-button" @click="goBack">
-        <span class="arrow-back">‹</span>
-        <span class="back-label"> Назад</span>
-      </div>
     </div>
 
     <div v-else class="empty-state">Меню недоступно для этой страницы</div>
@@ -265,7 +265,9 @@ function goBack() {
   justify-content: center;
   margin-right: 1.5rem;
   font-size: 1.5rem;
+  transition: all 0.3s ease 0.2s;
   color: #ffffff;
+  margin-left: 4px;
   background-color: #666fe8;
   border-radius: 50%;
   flex-shrink: 0;
