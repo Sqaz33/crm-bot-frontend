@@ -1,13 +1,15 @@
 <template>
   <div class="services-view">
+    <h1 class="page-title">Выберите услуги</h1>
+
     <div v-if="loading" class="loading">Загрузка…</div>
 
     <div v-else class="types-wrap">
       <section
-        v-for="type in serviceTypes"
-        :key="type.id"
-        class="type-block"
-        :class="{ open: openType === type.id }"
+          v-for="type in serviceTypes"
+          :key="type.id"
+          class="type-block"
+          :class="{ open: openType === type.id }"
       >
         <button class="type-header" @click="toggle(type.id)">
           <span class="type-title">{{ type.name }}</span>
@@ -19,10 +21,10 @@
 
         <ul v-show="openType === type.id" class="service-list">
           <li
-            v-for="svc in servicesByType[type.id]"
-            :key="svc.id"
-            class="service-item"
-            :class="{ selected: isSelected(svc.id) }"
+              v-for="svc in servicesByType[type.id]"
+              :key="svc.id"
+              class="service-item"
+              :class="{ selected: isSelected(svc.id) }"
           >
             <div class="svc-left">
               <div class="svc-name">{{ svc.name }}</div>
@@ -32,10 +34,10 @@
               <div class="svc-price">{{ svc.price.toLocaleString('ru-RU') }} ₽</div>
 
               <button
-                class="icon-btn"
-                :class="isSelected(svc.id) ? 'danger' : 'primary'"
-                @click="toggleService(svc)"
-                type="button"
+                  class="icon-btn"
+                  :class="isSelected(svc.id) ? 'danger' : 'primary'"
+                  @click="toggleService(svc)"
+                  type="button"
               >
                 <span v-if="isSelected(svc.id)">×</span>
                 <span v-else>＋</span>
@@ -46,9 +48,9 @@
       </section>
 
       <button
-        class="btn-next"
-        :disabled="!selectedServiceIds.length"
-        @click="confirm"
+          class="btn-next"
+          :disabled="!selectedServiceIds.length"
+          @click="confirm"
       >
         Продолжить запись<span v-if="selectedServiceIds.length"> — {{ totalPrice.toLocaleString('ru-RU') }} ₽</span>
       </button>
@@ -83,7 +85,6 @@ function loadVisit() {
 function saveVisit(v) {
   const str = JSON.stringify(v)
   localStorage.setItem(VISIT_KEY, str)
-  window.dispatchEvent(new CustomEvent('local-storage-changed'))
   document.cookie = `${VISIT_KEY}=${encodeURIComponent(str)}; path=/; SameSite=Lax;`
 }
 
@@ -91,29 +92,18 @@ const visit = ref(loadVisit())
 
 onMounted(async () => {
   try {
-    // Убедитесь что используем правильные endpoints
-    const { data: types } = await api.get('/services/types/') // Убрал trailing slash
+    const { data: types } = await api.get('/services/types/')
     serviceTypes.value = types || []
 
     const params = {}
     if (visit.value.staff_id) params.staff_id = visit.value.staff_id
-    
-    const { data: all } = await api.get('/services/', { params }) // Убрал trailing slash
+
+    const { data: all } = await api.get('/services/', { params })
     services.value = all || []
 
     if (Array.isArray(visit.value.services_id)) {
       selectedServiceIds.value = [...visit.value.services_id]
     }
-
-    // Автоматически открыть первый тип, если есть услуги
-    // if (serviceTypes.value.length > 0) {
-    //   const firstTypeWithServices = serviceTypes.value.find(type => 
-    //     servicesByType.value[type.id]?.length > 0
-    //   )
-    //   if (firstTypeWithServices) {
-    //     openType.value = firstTypeWithServices.id
-    //   }
-    // }
   } catch (error) {
     console.error('Error loading services:', error)
   } finally {
@@ -133,11 +123,11 @@ const servicesByType = computed(() => {
 })
 
 const selectedServices = computed(() =>
-  services.value.filter(s => selectedServiceIds.value.includes(s.id))
+    services.value.filter(s => selectedServiceIds.value.includes(s.id))
 )
 
 const totalPrice = computed(() =>
-  selectedServices.value.reduce((sum, s) => sum + (Number(s.price) || 0), 0)
+    selectedServices.value.reduce((sum, s) => sum + (Number(s.price) || 0), 0)
 )
 
 function toggle(typeId) {
@@ -152,11 +142,9 @@ function toggleService(svc) {
   const idx = selectedServiceIds.value.indexOf(svc.id)
 
   if (idx >= 0) {
-    // Если услуга уже выбрана - снимаем выбор
     selectedServiceIds.value.splice(idx, 1)
   } else {
-    // Если услуга не выбрана - очищаем массив и добавляем только эту услугу
-    selectedServiceIds.value = [svc.id]
+    selectedServiceIds.value.push(svc.id)
   }
 
   visit.value.services_id = [...selectedServiceIds.value]
@@ -167,10 +155,9 @@ function confirm() {
   if (!selectedServiceIds.value.length) return
   visit.value.services_id = [...selectedServiceIds.value]
   saveVisit(visit.value)
-  router.push({ name: 'choicestaff' }) 
+  router.push({ name: 'choicestaff' })
 }
 </script>
-
 
 <style scoped>
 .services-view {
@@ -313,38 +300,8 @@ function confirm() {
 
 @media (max-width: 768px) {
   .services-view {
-    --sidebar-mobile: 64px;
-    --gutter-mobile: 16px;
-    --top-gap-mobile: 12px;
-    --brand: #5c6cf0;
-    --brand-100: #eef0ff;
-    --text: #2b3240;
-    --muted: #8d99ad;
-    --card: #ffffff;
-    --card-muted: #f3f5f8;
-    --stroke: #e6eaf2;
-
-    margin: 0;
-    padding-top: var(--top-gap-mobile);
     padding-left: calc(var(--sidebar-mobile) + var(--gutter-mobile));
     padding-right: var(--gutter-mobile);
-    /* width: 100vw; */
-    max-width: 100vw;
-    box-sizing: border-box;
-    color: var(--text);
-  }
-
-  .page-title {
-    font-size: 18px;
-    font-weight: 700;
-    text-align: center;
-    margin: 0 0 8px 0;
-  }
-
-  .types-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
   }
 
   .type-block { border-radius: 14px; }
@@ -474,5 +431,4 @@ function confirm() {
   .svc-price { font-size: 14px; }
   .icon-btn { width: 32px; height: 32px; font-size: 16px; }
 }
-
 </style>
