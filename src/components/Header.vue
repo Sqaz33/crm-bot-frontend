@@ -142,14 +142,21 @@ function goBack() {
   position: sticky;
   top: 0;
   z-index: 10;
+  box-sizing: border-box;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
 }
 
 .header-content {
   display: flex;
   align-items: center;
-  padding: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
   gap: 1rem;
   position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Menu Button */
@@ -222,6 +229,8 @@ function goBack() {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+    flex: 1 1 auto;
+  min-width: 0;
 }
 
 /* Header Actions */
