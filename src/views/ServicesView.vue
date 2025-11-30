@@ -83,6 +83,7 @@ function loadVisit() {
 function saveVisit(v) {
   const str = JSON.stringify(v)
   localStorage.setItem(VISIT_KEY, str)
+  window.dispatchEvent(new CustomEvent('local-storage-changed'))
   document.cookie = `${VISIT_KEY}=${encodeURIComponent(str)}; path=/; SameSite=Lax;`
 }
 

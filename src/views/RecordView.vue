@@ -296,6 +296,7 @@ function goToDatetime() {
       params.staff_id = staff_id
       params.services_id = service_id
       localStorage.setItem(VISIT_KEY, JSON.stringify(params))
+      window.dispatchEvent(new CustomEvent('local-storage-changed'))
     }
     router.push({
       path: '/datetime',

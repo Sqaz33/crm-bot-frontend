@@ -119,6 +119,7 @@ function readVisit () {
 function writeVisit (v) {
   try {
     localStorage.setItem(VISIT_KEY, JSON.stringify(v))
+    window.dispatchEvent(new CustomEvent('local-storage-changed'))
   } catch (e) {
     console.warn('writeVisit failed:', e)
   }
