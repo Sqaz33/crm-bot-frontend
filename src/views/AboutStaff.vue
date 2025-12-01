@@ -92,6 +92,7 @@ function readVisit() {
 
 function writeVisit(obj) {
   localStorage.setItem(VISIT_KEY, JSON.stringify(obj))
+  window.dispatchEvent(new CustomEvent('local-storage-changed'))
   const cookieValue = encodeURIComponent(JSON.stringify(obj))
   document.cookie = `${VISIT_KEY}=${cookieValue}; path=/; max-age=${365*24*60*60}; Secure; SameSite=None`
 }

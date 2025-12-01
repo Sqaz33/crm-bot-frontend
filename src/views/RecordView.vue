@@ -40,9 +40,9 @@
             <label class="toggle">
               <input
                 type="checkbox"
-                :checked="visit.will_come"
+                :checked="will_come"
                 @change="onWillComeChange"
-                :disabled="visit.will_come || processing"
+                :disabled="will_come || processing"
               />
               <span class="slider"></span>
             </label>
@@ -56,7 +56,7 @@
             <button
               class="list-item danger"
               @click="openCancelModal"
-              :disabled="visit.will_come || deleting || processing"
+              :disabled="will_come || deleting || processing"
             >
               <span class="icon-circle danger-icon">✖</span>
               <span class="text">Отменить запись</span>
@@ -66,7 +66,7 @@
             <button
               class="list-item"
               @click="goToDatetime"
-              :disabled="visit.will_come || processing"
+              :disabled="will_come || processing"
             >
               <span class="icon-circle neutral-icon">⤴</span>
               <span class="text">Перенести запись</span>
@@ -177,6 +177,8 @@ const confirmAction = ref(null)
 const showCancelModal = ref(false)
 const cancelAction = ref(null)
 
+const will_come = ref(false)
+
 // -- MODULE VARS -- //
 let service_id = null
 let staff_id = null
@@ -197,6 +199,7 @@ async function loadVisit() {
     service.value = await getService(data.service_id)
     staff_id = data.staff_id
     service_id = data.service_id
+    will_come.value = data.status === 'confirmed'
   } catch (err) {
     console.error(err)
     error.value = 'Ошибка при загрузке данных о визите'
@@ -220,13 +223,15 @@ async function toggleWillCome() {
   processing.value = true
   visitError.value = ''
   try {
-    let iso = visit.value.visit_date_time
-    let d = new Date(iso.endsWith('Z') ? iso : iso + 'Z')
-    const visitDateISO = d.toISOString()
-    await api.patch(`/visits/${visitId}`, {
-      visit_date_time: visitDateISO,
-      will_come: visit.value.will_come
-    })
+    // let iso = visit.value.visit_date_time
+    // let d = new Date(iso.endsWith('Z') ? iso : iso + 'Z')
+    // const visitDateISO = d.toISOString()
+    // await api.patch(`/visits/${visitId}`, {
+    //   visit_date_time: visitDateISO,
+    //   will_come: visit.value.will_come
+    // })
+    await api.patch(`/visits/${visitId}/confirm`, true)
+    
   } catch (err) {
     console.error('Ошибка toggleWillCome:', err)
     visitError.value = typeof err.response?.data === 'string'
@@ -296,6 +301,7 @@ function goToDatetime() {
       params.staff_id = staff_id
       params.services_id = service_id
       localStorage.setItem(VISIT_KEY, JSON.stringify(params))
+      window.dispatchEvent(new CustomEvent('local-storage-changed'))
     }
     router.push({
       path: '/datetime',

@@ -40,7 +40,7 @@
 
 <script setup>
 import { useRoute, useRouter } from "vue-router";
-import { computed } from "vue";
+import { computed, ref, watch, onMounted, onUnmounted } from "vue";
 
 const props = defineProps({
   items: {
@@ -57,15 +57,18 @@ const route = useRoute();
 const router = useRouter();
 const emit = defineEmits(["close"]);
 
+// Добавляем реактивную переменную для отслеживания изменений localStorage
+const visitDataVersion = ref(0);
+
 const getVisitData = () => {
   try {
     return (
-      JSON.parse(localStorage.getItem("visit_data")) || {
-        staff_id: "",
-        services_id: [],
-        visit_time: { start_time: "" },
-        comment: "",
-      }
+        JSON.parse(localStorage.getItem("visit_data")) || {
+          staff_id: "",
+          services_id: [],
+          visit_time: { start_time: "" },
+          comment: "",
+        }
     );
   } catch (error) {
     console.error("Ошибка чтения visit_data:", error);
@@ -78,7 +81,38 @@ const getVisitData = () => {
   }
 };
 
+// Слушаем изменения в localStorage
+const handleStorageChange = (e) => {
+  if (e.key === "visit_data" || e.key === null) {
+    visitDataVersion.value++;
+  }
+};
+
+// Слушаем custom events (для изменений в том же окне)
+const handleCustomStorageChange = () => {
+  visitDataVersion.value++;
+};
+
+onMounted(() => {
+  window.addEventListener("storage", handleStorageChange);
+  window.addEventListener("local-storage-changed", handleCustomStorageChange);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("storage", handleStorageChange);
+  window.removeEventListener("local-storage-changed", handleCustomStorageChange);
+});
+
+// Отслеживаем изменения роута
+watch(() => route.path, () => {
+  visitDataVersion.value++;
+});
+
+// processedItems теперь зависит от visitDataVersion
 const processedItems = computed(() => {
+  // Принудительно читаем данные при каждом изменении visitDataVersion
+  visitDataVersion.value;
+
   const visitData = getVisitData();
 
   return props.items.map((item) => {
@@ -92,8 +126,8 @@ const processedItems = computed(() => {
 
     if (item.path === "/choicestaff") {
       const accessible =
-        Array.isArray(visitData.services_id) &&
-        visitData.services_id.length > 0;
+          Array.isArray(visitData.services_id) &&
+          visitData.services_id.length > 0;
       return { ...item, accessible };
     }
 

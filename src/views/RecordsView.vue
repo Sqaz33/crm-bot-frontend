@@ -147,6 +147,7 @@ const activeTab = ref('current')
 // --- КЭШ ---
 const staffCache = {}
 const servicesCache = {}
+const tabKey = 'ACTIVE_TAB'
 
 async function getStaff(staff_id) {
   if (staffCache[staff_id]) return staffCache[staff_id]
@@ -215,9 +216,11 @@ async function fetchVisits(tab) {
   }
 }
 
+  
 function switchTab(tab) {
-  activeTab.value = tab
-  fetchVisits(tab)
+  activeTab.value = tab;
+  localStorage.setItem(tabKey, tab);
+  fetchVisits(tab);
 }
 
 function formatDate(iso) {
@@ -232,7 +235,15 @@ function formatDate(iso) {
   })
 }
 
-onMounted(() => fetchVisits(activeTab.value))
+function loadCurTab() {
+  activeTab.value = localStorage.getItem(tabKey) || 'current';
+}
+
+onMounted(() => {
+  loadCurTab()
+  fetchVisits(activeTab.value)
+}
+)
 </script>
 
 <style scoped>

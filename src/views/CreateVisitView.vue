@@ -192,6 +192,7 @@ function humanize(iso) {
 
 function clearVisitData() {
   localStorage.removeItem(VISIT_KEY)
+  window.dispatchEvent(new CustomEvent('local-storage-changed'))
   document.cookie = `${VISIT_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`
 }
 

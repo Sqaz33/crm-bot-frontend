@@ -301,6 +301,7 @@ export default {
       visit.services_id ??= []
 
       localStorage.setItem(VISIT_KEY, JSON.stringify(visit))
+      window.dispatchEvent(new CustomEvent('local-storage-changed'))
       document.cookie = `visit_data=${encodeURIComponent(JSON.stringify(visit))}; path=/; SameSite=Lax;`
 
       const redirect = this.$route.query.redirect
