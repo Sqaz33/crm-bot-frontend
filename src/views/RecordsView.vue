@@ -70,13 +70,13 @@
                   v-if="activeTab === 'past'"
                   src="../assets/checkmarkIcon.svg"
                   alt="Оплачено"
-                  class="status-icon"
+                  class="status-icon status-icon-paid"
                 />
                 <img
                   v-else
                   src="../assets/crossIcon.svg"
                   alt="Не оплачено"
-                  class="status-icon"
+                  class="status-icon status-icon-unpaid"
                 />
                 <div class="status-badge-reason">
                   <span class="status-badge">
@@ -453,6 +453,18 @@ onMounted(() => {
   height: 40px;
   border-radius: 50%;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.status-icon-paid {
+  background-color: #00BB83;
+}
+
+.status-icon-unpaid {
+  background-color: #DE5D93;
 }
 
 .status-badge-reason {
@@ -462,16 +474,19 @@ onMounted(() => {
 }
 
 .status-badge {
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: #1a2233;
+  font-family: Geometria, var(--font-primary), sans-serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  color: rgba(69, 69, 88, 1);
 }
 
 .status-reason {
-  color: #8b9aaa;
-  font-size: 0.8125rem;
-  line-height: 1.3;
-  font-style: italic;
+  font-family: Geometria, var(--font-primary), sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: rgba(69, 69, 88, 1);
 }
 
 .total-price {
