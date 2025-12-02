@@ -195,6 +195,13 @@ export default {
       })
     }
   },
+  mounted() {
+    // Автоматически выбираем текущую дату при открытии страницы
+    const today = new Date()
+    this.selectedDate = this.formatDate(today)
+    // Загружаем доступные временные слоты для текущей даты
+    this.loadFreeSlots()
+  },
   methods: {
     cap(s) {
       return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''
