@@ -191,10 +191,22 @@ function navigate(item) {
 }
 
 .menu-item img {
-  width: 24px;
-  height: 24px;
+  width: 35px;
+  height: 35px;
   margin-bottom: 0.3rem;
   flex-shrink: 0;
+  filter: brightness(0) saturate(100%) invert(37%) sepia(89%) saturate(2098%)
+    hue-rotate(226deg) brightness(98%) contrast(92%);
+}
+
+.menu-item.active img {
+  filter: brightness(0) saturate(100%) invert(37%) sepia(89%) saturate(2098%)
+    hue-rotate(226deg) brightness(98%) contrast(92%);
+}
+
+.menu-item:hover img {
+  filter: brightness(0) saturate(100%) invert(37%) sepia(89%) saturate(2098%)
+    hue-rotate(226deg) brightness(98%) contrast(92%);
 }
 
 .menu-item span {
@@ -211,8 +223,8 @@ function navigate(item) {
 }
 
 .icon1 {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
 }
 
 /* Адаптация для широких экранов */
@@ -249,20 +261,19 @@ function navigate(item) {
   }
 
   .menu-item img {
-    width: 22px;
-    height: 22px;
+    width: 26px;
+    height: 26px;
   }
 }
-
 
 @media (max-width: 360px) {
   .menu-item {
     font-size: 0.65rem;
   }
-  
+
   .menu-item img {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     margin-bottom: 0.2rem;
   }
 }
