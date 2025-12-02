@@ -388,7 +388,7 @@ onMounted(() => {
 // }
 
 // Подтверждение, что придет
-const isVisitConfirmed = computed(() => (visit.value ? willCome.value : undefined) === true)
+const isVisitConfirmed = computed(() => (visit.value ? visit.value.will_come : undefined) === true)
 </script>
 
 
