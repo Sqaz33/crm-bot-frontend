@@ -239,11 +239,12 @@ export default {
             staff_id = parsed.staff_id
           }
           
-          if (Array.isArray(parsed.services_id) && parsed.services_id.length > 0) {
-            service_id = parsed.services_id[0]
-          } else if (parsed.services_id) {
-            service_id = parsed.services_id
-          }
+          // if (Array.isArray(parsed.services_id) && parsed.services_id.length > 0) {
+          //   service_id = parsed.services_id[0]
+          // } else if (parsed.services_id) {
+          //   service_id = parsed.services_id
+          // }
+          service_id = parsed.services_id
         } catch (e) {
           console.error('Ошибка парсинга visit_data:', e)
         }

@@ -205,6 +205,7 @@ onMounted(async () => {
 
     comment.value = v.comment || ''
     staffId.value = v.staff_id ?? null
+    // serviceId.value = Array.isArray(v.services_id) ? v.services_id : (v.services_id ?? null)
     serviceId.value = v.services_id ?? null
 
     visitDate.value = v.visit_time?.start_time ?? null
