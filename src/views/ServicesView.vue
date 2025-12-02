@@ -239,20 +239,28 @@ function confirm() {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 .service-item.selected {
   border-color: #ffa940;
   box-shadow: inset 3px 0 0 0 #ffa940;
 }
 
-.svc-left { min-width: 0; }
+.svc-left { 
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
 .svc-name {
   font-weight: 600;
   line-height: 1.25;
   color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
 }
 
 .svc-right {
@@ -262,7 +270,7 @@ function confirm() {
   margin-left: 12px;
   flex-shrink: 0;
 }
-.svc-price { font-weight: 700; }
+.svc-price { font-weight: 700; white-space: nowrap; }
 
 .icon-btn {
   width: 36px;
@@ -276,6 +284,7 @@ function confirm() {
   border: 2px solid var(--brand);
   color: var(--brand);
   background: #fff;
+  flex-shrink: 0;
 }
 .icon-btn.primary:hover { filter: brightness(0.96); }
 .icon-btn.danger {
@@ -360,31 +369,39 @@ function confirm() {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 10px;
   }
   .service-item.selected {
     border-color: #ffa940;
     box-shadow: inset 3px 0 0 0 #ffa940;
   }
 
-  .svc-left { min-width: 0; }
+  .svc-left { 
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+  }
   .svc-name {
     font-weight: 600;
     line-height: 1.25;
     color: var(--text);
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
     font-size: 14px;
   }
 
   .svc-right {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    margin-left: 12px;
+    gap: 10px;
+    margin-left: 8px;
     flex-shrink: 0;
   }
-  .svc-price { font-weight: 700; font-size: 15px; }
+  .svc-price { font-weight: 700; font-size: 15px; white-space: nowrap; }
 
   .icon-btn {
     width: 34px;
@@ -398,6 +415,7 @@ function confirm() {
     border: 2px solid var(--brand);
     color: var(--brand);
     background: #fff;
+    flex-shrink: 0;
   }
   .icon-btn.danger {
     background: var(--brand);
@@ -427,8 +445,9 @@ function confirm() {
     padding-right: var(--gutter-mobile);
   }
   .type-header { padding: 10px 12px; font-size: 14px; }
-  .service-item { padding: 10px 10px 10px 12px; }
+  .service-item { padding: 10px 10px 10px 12px; gap: 8px; }
   .svc-price { font-size: 14px; }
   .icon-btn { width: 32px; height: 32px; font-size: 16px; }
+  .svc-right { gap: 8px; margin-left: 6px; }
 }
 </style>
