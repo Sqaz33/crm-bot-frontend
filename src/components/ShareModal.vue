@@ -2,33 +2,77 @@
     <div class="share-container">
       <p class="share-title" style="color: black;">Выберите, где вы хотите поделиться</p>
       <div class="share-icons">
-        <a
-          v-for="item in shareItems"
-          :key="item.name"
-          :href="item.url"
-          class="share-btn"
-          :style="{backgroundColor: item.color}"
-          target="_blank"
-          rel="noopener"
-        >
-          <svg 
-          :viewBox="item.viewBox || '0 0 50 50'"
-          :class="`icon-${item.name.toLowerCase()}`"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path :d="item.svgPath" fill="currentColor"/>
-        </svg>
-
-        </a>
+        <template v-for="item in shareItems" :key="item.name">
+          <a
+            v-if="item.name !== 'Copy'"
+            :href="item.url"
+            class="share-btn"
+            :style="{backgroundColor: item.color}"
+            target="_blank"
+            rel="noopener"
+          >
+            <svg
+              :viewBox="item.viewBox || '0 0 50 50'"
+              :class="`icon-${item.name.toLowerCase()}`"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path v-if="!item.svgContent" :d="item.svgPath" fill="currentColor"/>
+              <g v-else v-html="item.svgContent"></g>
+            </svg>
+          </a>
+          <button
+            v-else
+            @click="copyToClipboard"
+            class="share-btn"
+            :style="{backgroundColor: item.color}"
+          >
+            <svg
+              :viewBox="item.viewBox || '0 0 50 50'"
+              :class="`icon-${item.name.toLowerCase()}`"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path v-if="!item.svgContent" :d="item.svgPath" fill="currentColor"/>
+              <g v-else v-html="item.svgContent"></g>
+            </svg>
+          </button>
+        </template>
       </div>
     </div>
+
+    <!-- Toast notification -->
+    <Transition name="toast">
+      <div v-if="showToast" class="toast-notification">
+        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 12L11 15L16 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Ссылка скопирована</span>
+      </div>
+    </Transition>
   </template>
   
   <script setup>
+  import { ref } from 'vue'
+
   const botUsername = '@CheckAuthorization_bot'
   const botLink = `https://t.me/CheckAuthorization_bot`
   const shareText = encodeURIComponent(`Попробуй Telegram-бота ${botUsername}`)
   const urlEncoded = encodeURIComponent(botLink)
+
+  const showToast = ref(false)
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(botLink)
+      showToast.value = true
+      setTimeout(() => {
+        showToast.value = false
+      }, 3000)
+    } catch (err) {
+      console.error('Failed to copy:', err)
+    }
+  }
+
   const shareItems = [
     {
       name: 'Telegram',
@@ -77,8 +121,8 @@
     {
       name: 'Copy',
       url: '#',
-      svgPath: "M7.9359 11.1958H33.6538C35.5865 11.1958 37.1538 12.7631 37.1538 14.6958V53C37.1538 54.9327 35.5865 56.5 33.6538 56.5H7.9359C6.00319 56.5 4.4359 54.9327 4.4359 53V14.6958C4.4359 12.7631 6.00319 11.1958 7.9359 11.1958ZM7.9359 15.1958C8.21204 15.1958 8.4359 15.4197 8.4359 15.6958V52C8.4359 52.2761 8.21204 52.5 7.9359 52.5H33.6538C33.9299 52.5 34.1538 52.2761 34.1538 52V15.6958C34.1538 15.4197 33.9299 15.1958 33.6538 15.1958H7.9359ZM44.1467 0C47.4603 0.0002 50.1467 2.6864 50.1467 6V40.8047L50.1389 41.1133C49.9832 44.1811 47.5232 46.6414 44.4553 46.7969L44.1467 46.8047H43.8879C42.7834 46.8047 41.8879 45.9093 41.8879 44.8047C41.8879 43.7001 42.7834 42.8047 43.8879 42.8047H44.1467C45.251 42.8045 46.1465 41.9089 46.1467 40.8047V6C46.1467 4.8954 45.2512 4.0002 44.1467 4H22.429C21.3244 4 20.429 4.8954 20.429 6C20.429 6.5215 20.0062 6.9443 19.4846 6.9443H18.0588C17.1781 6.9443 16.4641 6.2304 16.4641 5.3496C16.7775 2.4425 19.1671 0.1574 22.1204 0.0078L22.429 0H44.1467Z",
-      viewBox: "0 0 60 60",
+      viewBox: '0 0 35 35',
+      svgContent: '<path d="M21.3261 18.2479L22.3923 17.1817C24.5247 15.0493 25.0056 12.028 23.4474 10.4697C21.8944 8.91668 18.8749 9.38538 16.7355 11.5249L15.6693 12.5911" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M12.8407 15.4187L11.78 16.4793C9.63748 18.6219 9.16115 21.6386 10.7194 23.1968C12.2724 24.7499 15.2943 24.2787 17.4369 22.1362L18.4975 21.0755" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M14.2552 19.6614L19.912 14.0045" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
       color: '#b0becf'
     }
   ]
@@ -121,6 +165,17 @@
     text-decoration: none;
     color: currentColor;
     padding: 0;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .share-btn:hover {
+    opacity: 0.8;
+  }
+
+  .share-btn:active {
+    opacity: 0.6;
   }
 
   .icon-telegram {
@@ -189,6 +244,72 @@
     justify-content: center;
     color: white;
   }
+
+  .icon-copy {
+    height: 50px;
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: scale(1.3);
+  }
+
+  /* Toast notification styles */
+  .toast-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4caf50;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    font-family: var(--font-primary);
+    font-weight: 500;
+  }
+
+  .toast-icon {
+    width: 24px;
+    height: 24px;
+    color: white;
+  }
+
+  /* Toast animation */
+  .toast-enter-active {
+    animation: toast-slide-in 0.3s ease-out;
+  }
+
+  .toast-leave-active {
+    animation: toast-slide-out 0.3s ease-in;
+  }
+
+  @keyframes toast-slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  @keyframes toast-slide-out {
+    from {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-20px);
+    }
+  }
+
   @media (max-width: 430px){
   .records-page{
     width: 70%;
