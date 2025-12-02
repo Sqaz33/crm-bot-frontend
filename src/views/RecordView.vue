@@ -50,7 +50,7 @@
         </div>
 
         <!-- Плашка: Изменения -->
-        <div v-if="!isOld" class="section" :class="{ 'section-disabled': isVisitConfirmed }">
+        <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome }">
           <div class="section-bar">Изменения</div>
           <div class="list">
             <button
@@ -388,7 +388,7 @@ onMounted(() => {
 // }
 
 // Подтверждение, что придет
-const isVisitConfirmed = computed(() => (visit.value ? visit.value.will_come : undefined) === true)
+// const isVisitConfirmed = computed(() => (visit.value ? visit.value.will_come : undefined) === true)
 </script>
 
 
