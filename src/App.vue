@@ -92,6 +92,13 @@ async function initAuthAndProfile() {
   try {
     saveVisit(true)
 
+    // Логирование initData из Telegram WebApp
+    if (window.Telegram?.WebApp?.initData) {
+      console.log('[App] Telegram WebApp initData:', window.Telegram.WebApp.initData)
+    }
+    if (window.Telegram?.WebApp?.initDataUnsafe) {
+      console.log('[App] Telegram WebApp initDataUnsafe:', JSON.stringify(window.Telegram.WebApp.initDataUnsafe, null, 2))
+    }
 
     const me = await ensureSession() 
     mergeSaveProfile({ tg_id: me.telegram_id, phone: me.telephone }, true)
@@ -125,6 +132,20 @@ async function initAuthAndProfile() {
 }
 
 onMounted(() => {
+  
+  console.log('[App] Checking for initData sources on mount:')
+  console.log('[App] window.Telegram:', window.Telegram)
+  console.log('[App] window.Telegram?.WebApp:', window.Telegram?.WebApp)
+  console.log('[App] window.Telegram?.WebApp?.initData:', window.Telegram?.WebApp?.initData)
+  console.log('[App] window.Telegram?.WebApp?.initDataUnsafe:', window.Telegram?.WebApp?.initDataUnsafe)
+  
+  
+  const urlParams = new URLSearchParams(window.location.search)
+  const initDataFromUrl = urlParams.get('initData')
+  if (initDataFromUrl) {
+    console.log('[App] initData from URL parameter:', initDataFromUrl)
+  }
+
   attachDebugInitSender()
   initAuthAndProfile()
 })
