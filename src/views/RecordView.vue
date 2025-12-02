@@ -40,9 +40,9 @@
             <label class="toggle">
               <input
                 type="checkbox"
-                :checked="will_come"
+                :checked="willCome"
                 @change="onWillComeChange"
-                :disabled="will_come || processing"
+                :disabled="willCome || processing"
               />
               <span class="slider"></span>
             </label>
@@ -56,7 +56,7 @@
             <button
               class="list-item danger"
               @click="openCancelModal"
-              :disabled="will_come || deleting || processing"
+              :disabled="willCome || deleting || processing"
             >
               <span class="icon-circle danger-icon">✖</span>
               <span class="text">Отменить запись</span>
@@ -66,7 +66,7 @@
             <button
               class="list-item"
               @click="goToDatetime"
-              :disabled="will_come || processing"
+              :disabled="willCome || processing"
             >
               <span class="icon-circle neutral-icon">⤴</span>
               <span class="text">Перенести запись</span>
@@ -177,7 +177,7 @@ const confirmAction = ref(null)
 const showCancelModal = ref(false)
 const cancelAction = ref(null)
 
-const will_come = ref(false)
+const willCome = ref(false)
 
 // -- MODULE VARS -- //
 let service_id = null
@@ -199,7 +199,7 @@ async function loadVisit() {
     service.value = await getService(data.service_id)
     staff_id = data.staff_id
     service_id = data.service_id
-    will_come.value = data.status === 'confirmed'
+    willCome.value = data.status === 'confirmed'
   } catch (err) {
     console.error(err)
     error.value = 'Ошибка при загрузке данных о визите'
@@ -230,7 +230,8 @@ async function toggleWillCome() {
     //   visit_date_time: visitDateISO,
     //   will_come: visit.value.will_come
     // })
-    await api.patch(`/visits/${visitId}/confirm`, true)
+    await api.patch(`/visits/${visitId}/confirm`)
+    willCome.value = true;
     
   } catch (err) {
     console.error('Ошибка toggleWillCome:', err)
