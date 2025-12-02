@@ -30,70 +30,73 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import api from '../api'
+import { ref, onMounted, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import api from "../api";
 
-import Modal from './Modal.vue'
-import ShareModal from './ShareModal.vue'
+import Modal from "./Modal.vue";
+import ShareModal from "./ShareModal.vue";
 
-import AddressIcon from '../assets/map.svg'
-import RecordsIcon from '../assets/appointment.svg'
-import ShareIcon from '../assets/share.svg'
-import ProfileIcon from '../assets/prof.svg'
+import AddressIcon from "../assets/map.svg";
+import RecordsIcon from "../assets/appointment.svg";
+import ShareIcon from "../assets/share.svg";
+import ProfileIcon from "../assets/prof.svg";
 
-const router = useRouter()
-const route = useRoute()
-const activeItem = ref(route.path)
-const showShareModal = ref(false)
+const router = useRouter();
+const route = useRoute();
+const activeItem = ref(route.path);
+const showShareModal = ref(false);
 
 const salon = ref({
-  name: '',
-  description: '',
-  address_url: ''
-})
+  name: "",
+  description: "",
+  address_url: "",
+});
 
 onMounted(async () => {
   try {
-    const { data } = await api.get('/salon/info/')
+    const { data } = await api.get("/salon/info/");
     salon.value = {
       name: data.name,
-      description: data.description || '',
-      address_url: data.address_url || ''
-    }
+      description: data.description || "",
+      address_url: data.address_url || "",
+    };
   } catch {
     salon.value = {
-      name: 'Ошибка загрузки',
-      description: '',
-      address_url: ''
-    }
+      name: "Ошибка загрузки",
+      description: "",
+      address_url: "",
+    };
   }
-})
+});
 
-watch(() => route.path, (p) => {
-  activeItem.value = p
-})
+watch(
+  () => route.path,
+  (p) => {
+    activeItem.value = p;
+  }
+);
 
 const items = [
-  { label: 'Адрес', path: '/address', icon: AddressIcon, iconSize: 'icon1' },
-  { label: 'Записи', path: '/records', icon: RecordsIcon, iconSize: 'icon1' },
-  { label: 'Поделиться', path: '/share', icon: ShareIcon, iconSize: 'icon1' },
-  { label: 'Профиль', path: '/profile', icon: ProfileIcon, iconSize: 'icon1' }
-]
+  { label: "Адрес", path: "/address", icon: AddressIcon, iconSize: "icon1" },
+  { label: "Записи", path: "/records", icon: RecordsIcon, iconSize: "icon1" },
+  { label: "Поделиться", path: "/share", icon: ShareIcon, iconSize: "icon1" },
+  { label: "Профиль", path: "/profile", icon: ProfileIcon, iconSize: "icon1" },
+];
 
 function navigate(item) {
-  if (item.label === 'Адрес') {
+  if (item.label === "Адрес") {
     if (salon.value.address_url) {
-      const win = window.open(salon.value.address_url, '_blank')
-      if (win) win.opener = null
+      const win = window.open(salon.value.address_url, "_blank");
+      if (win) win.opener = null;
     } else {
-      console.log('Ссылка на адрес недоступна')
+      console.log("Ссылка на адрес недоступна");
     }
-  } else if (item.label === 'Поделиться') {
-    showShareModal.value = true
+  } else if (item.label === "Поделиться") {
+    showShareModal.value = true;
   } else {
-    activeItem.value = item.path
-    router.push(item.path)
+    activeItem.value = item.path;
+    router.push(item.path);
   }
 }
 </script>
@@ -104,7 +107,7 @@ function navigate(item) {
   flex-direction: column;
   width: 100%;
   background-color: #ffffff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   padding: 0.8rem 1rem;
   box-sizing: border-box;
   gap: 0.8rem;
@@ -170,7 +173,7 @@ function navigate(item) {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #666;
   transition: color 0.2s;
   padding: 0.25rem;
@@ -195,11 +198,16 @@ function navigate(item) {
 }
 
 .menu-item span {
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
   overflow: hidden;
-  text-overflow: ellipsis;
   max-width: 100%;
   text-align: center;
+  line-height: 1.2;
+  max-height: 2.4em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .icon1 {
@@ -224,13 +232,13 @@ function navigate(item) {
 
   .menu-item {
     flex: initial;
+    font-size: 0.75rem;
   }
 
-  /* .salon-logo img {
-    width: 32px;
-    height: 32px;
-    padding: 4px;
-  } */
+  .menu-item span {
+    white-space: nowrap;
+    -webkit-line-clamp: 1;
+  }
 
   .salon-name {
     font-size: 0.95rem;
@@ -243,6 +251,19 @@ function navigate(item) {
   .menu-item img {
     width: 22px;
     height: 22px;
+  }
+}
+
+
+@media (max-width: 360px) {
+  .menu-item {
+    font-size: 0.65rem;
+  }
+  
+  .menu-item img {
+    width: 20px;
+    height: 20px;
+    margin-bottom: 0.2rem;
   }
 }
 </style>
