@@ -67,26 +67,20 @@
             <div class="card-status">
               <div class="status-info">
                 <img
-                  v-if="activeTab === 'past'"
-                  src="../assets/checkmarkIcon.svg"
-                  alt="Оплачено"
-                  class="status-icon status-icon-paid"
+                  :src="statusMessage[visit.status].icon"
+                  :alt="statusMessage[visit.status].title"
+                  :class="[`status-icon`, statusMessage[visit.status].bgClass]"
                 />
-                <img
-                  v-else
-                  src="../assets/crossIcon.svg"
-                  alt="Не оплачено"
-                  class="status-icon status-icon-unpaid"
-                />
+
                 <div class="status-badge-reason">
                   <span class="status-badge">
-                    {{ activeTab === "past" ? "Оплачено" : "Не оплачено" }}
+
+                    {{ statusMessage[visit.status].title}}
                   </span>
                   <div class="status-reason">
                     {{
-                      activeTab === "past"
-                        ? "Визит прошел успешно"
-                        : "Визит отменен / клиент не пришел"
+                      statusMessage[visit.status].subtitle
+
                     }}
                   </div>
                 </div>
@@ -126,11 +120,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import api from "../api";
-import { useRouter } from "vue-router";
+
+import { ref, onMounted } from 'vue'
+import api from '../api'
+import { useRouter } from 'vue-router'
+import crossIcon from '../assets/crossIcon.svg'
+import checkmarkIcon from '../assets/checkmarkIcon.svg'
 
 const router = useRouter();
+
+/* Преобразование статуса в сообщение пользователю */
+const statusMessage = {
+    "waiting": {icon: crossIcon, bgClass: 'status-icon-unpaid', title: "Ожидание", subtitle: "Мы вас ждём, вы придёте?"},
+    "confirmed": {icon: crossIcon, bgClass: 'status-icon-unpaid', title:"Подтверждено", subtitle: "Вы подтвердили, что придёте. Мы вас ждём!"},
+    "missing": {icon: crossIcon, bgClass: 'status-icon-unpaid', title:"Не оплачено", subtitle: "Вы ещё не оплатили свой заказ"},
+    "success": {icon: checkmarkIcon, bgClass: 'status-icon-paid', title: "Оплачено", subtitle: "Услуга оказана"},
+}
 
 function goToVisit(id, isOld) {
   router.push({
@@ -191,9 +196,13 @@ async function fetchVisits(tab) {
     let processedCount = 0;
     const mapped = await Promise.all(
       rawVisits.map(async (v, i) => {
-        const staff = await getStaff(v.staff_id);
-        const service = await getService(v.service_id);
-        const enriched = { ...v, staff, service };
+
+        const staff = await getStaff(v.staff_id)
+        const service = await getService(v.service_id)
+        const enriched = { ...v, staff, service }
+        const recordStatus = v.status;
+        console.log(`Сатус секущего заказа: ${recordStatus}`)
+
 
         processedCount++;
         if (i === 0) console.log("Первый элемент после обработки:", enriched);
