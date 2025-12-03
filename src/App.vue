@@ -11,12 +11,11 @@
 
 <script setup>
 import { attachDebugInitSender } from './debug/telegramDebug'
-
 import { reactive, ref, onMounted } from 'vue'
 import { ensureSession } from './auth/ensureSession'
 import { getClientByTelegramId } from './api/clients'
 import { useAuthStore } from './stores/auth'
-import { splitFullNameIfNeeded } from './utils/telegram'
+import { splitFullNameIfNeeded, getInitDataInfo, isUserAuthorized } from './utils/telegram'
 
 const VISIT_KEY   = 'visit_data'
 const PROFILE_KEY = 'profile_data'
@@ -25,7 +24,6 @@ const loading   = ref(true)
 const authError = ref(false)
 const errorText = ref('Ошибка авторизации. Пожалуйста, попробуйте ещё раз.')
 const store     = useAuthStore()
-
 
 let mountedOnce = false
 
@@ -92,6 +90,23 @@ async function initAuthAndProfile() {
   try {
     saveVisit(true)
 
+    // Ключевое логирование - только информация о initData
+    const initDataInfo = getInitDataInfo()
+    
+    console.group('[App] InitData Information')
+    console.log('Available:', !!initDataInfo.raw)
+    console.log('Raw length:', initDataInfo.raw?.length || 0)
+    console.log('Is user authorized:', initDataInfo.isAuthorized)
+    console.log('User data:', initDataInfo.user)
+    console.log('Auth date:', initDataInfo.auth_date_formatted)
+    console.log('Has hash:', !!initDataInfo.hash)
+    console.groupEnd()
+
+    if (!initDataInfo.raw) {
+      const error = new Error('NO_INIT_DATA')
+      error.code = 'NO_INIT_DATA'
+      throw error
+    }
 
     const me = await ensureSession() 
     mergeSaveProfile({ tg_id: me.telegram_id, phone: me.telephone }, true)
@@ -125,6 +140,9 @@ async function initAuthAndProfile() {
 }
 
 onMounted(() => {
+  // Убираем все подробные логи об initData, оставляем только один вызов
+  console.log('[App] Starting application with Telegram WebApp integration')
+  
   attachDebugInitSender()
   initAuthAndProfile()
 })

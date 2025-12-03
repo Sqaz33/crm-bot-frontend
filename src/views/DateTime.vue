@@ -244,6 +244,7 @@ export default {
           } else if (parsed.services_id) {
             service_id = parsed.services_id
           }
+          // service_id = parsed.services_id
         } catch (e) {
           console.error('Ошибка парсинга visit_data:', e)
         }
@@ -257,7 +258,7 @@ export default {
 
       const params = { date: this.selectedDate }
       if (staff_id) params.staff_id = parseInt(staff_id)
-      if (service_id) params.service_id = parseInt(service_id)
+      if (service_id) params.service_id = service_id
 
       try {
         const { data } = await api.get('/staff/free_time/', { params })

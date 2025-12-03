@@ -248,6 +248,11 @@ function goBack() {
   height: 100%;
   object-fit: contain;
 }
+.icon img[data-v-6dec5f19] {
+    width: 70%;
+    height: 100%;
+    object-fit: contain;
+}
 
 .label {
   flex: 1;

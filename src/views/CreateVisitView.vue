@@ -143,7 +143,7 @@ const showTerms = ref(false)
 
 const staffId = ref(null)
 const serviceId = ref(null)
-const visitDateISO = ref(null)
+const visitDate = ref(null)
 
 // Заменяем computed на вызов API
 const clientNameFromAPI = computed(() => {
@@ -162,23 +162,6 @@ async function loadClientData() {
     console.error('Ошибка загрузки данных клиента:', error)
     clientData.value = null
   }
-}
-
-function toISO(value) {
-  if (!value) return null
-  if (/^\d{4}-\d{2}-\d{2}T/.test(value)) {
-    const d = new Date(value); return isNaN(d) ? null : d.toISOString()
-  }
-  if (typeof value === 'number') {
-    const d = new Date(value); return isNaN(d) ? null : d.toISOString()
-  }
-  const ddmmyy = /^(\d{2})\.(\d{2})\.(\d{4})(?:[ T](\d{2}):(\d{2}))?$/
-  if (ddmmyy.test(value)) {
-    const [, dd, mm, yyyy, hh='00', mi='00'] = value.match(ddmmyy)
-    const d = new Date(`${yyyy}-${mm}-${dd}T${hh}:${mi}:00`)
-    return isNaN(d) ? null : d.toISOString()
-  }
-  const d = new Date(value); return isNaN(d) ? null : d.toISOString()
 }
 
 function humanize(iso) {
@@ -222,13 +205,10 @@ onMounted(async () => {
 
     comment.value = v.comment || ''
     staffId.value = v.staff_id ?? null
-    serviceId.value = Array.isArray(v.services_id) ? v.services_id[0] : (v.services_id ?? null)
+    // serviceId.value = Array.isArray(v.services_id) ? v.services_id : (v.services_id ?? null)
+    serviceId.value = v.services_id ?? null
 
-    visitDateISO.value =
-      toISO(v.visit_time?.start_time) ??
-      toISO(router.currentRoute.value.query.date) ??
-      toISO(router.currentRoute.value.query.datetime) ??
-      null
+    visitDate.value = v.visit_time?.start_time ?? null
 
     if (staffId.value) {
       try { 
@@ -253,7 +233,7 @@ onMounted(async () => {
       }
     }
 
-    const h = humanize(visitDateISO.value)
+    const h = humanize(visitDate.value)
     summary.date = h.d; summary.time = h.t
   } catch (e) {
     console.error('[Init] Ошибка:', e)
@@ -262,7 +242,7 @@ onMounted(async () => {
 })
 
 async function submitVisit() {
-  if (!staffId.value || !serviceId.value || !visitDateISO.value) {
+  if (!staffId.value || !serviceId.value || !visitDate.value) {
     errorMsg.value = 'Заполните сотрудника, услугу и дату.'
     return
   }
@@ -278,7 +258,7 @@ async function submitVisit() {
     const payload = {
       staff_id:        staffId.value,
       service_id:      serviceId.value,
-      visit_date_time: visitDateISO.value,
+      visit_date_time: visitDate.value,
       comment:         comment.value || '',
       remind_lead_hours: Number(remindLeadHours.value) || 0, 
     }
@@ -387,7 +367,7 @@ textarea{width:95%;min-height:96px;border:1px solid #D3D3D3;border-radius:10px;p
 select{width:100%;border:1px solid #D3D3D3;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff}
 
 .legal-row{display:flex;align-items:center;gap:8px;margin:10px 0}
-.legal-row input{width:16px;height:16px}
+.legal-row input{width:36px;height:36px}
 .legal-row a{color:#3471D6;text-decoration:underline}
 
 .btn-submit{width:100%;height:52px;border:none;border-radius:12px;background:var(--brand);color:#fff;font-weight:700;font-size:16px;cursor:pointer}

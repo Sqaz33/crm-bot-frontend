@@ -105,13 +105,13 @@
               class="empty-icon"
             />
           </div>
-          <p class="empty-title">
+          <!-- <p class="empty-title">
             {{
               activeTab === "past"
                 ? "Нет прошедших записей"
                 : "Увы, ничего не запланировано"
             }}
-          </p>
+          </p> -->
           <p class="empty-description">
             {{
               activeTab === "past"
