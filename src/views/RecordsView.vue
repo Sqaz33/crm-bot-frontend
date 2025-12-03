@@ -46,10 +46,10 @@
               </div>
               <div class="date-time">
                 <div class="date">
-                  {{ formatDate(visit.visit_date_time).split(" ")[0] }}
+                  {{ formatDateShort(visit.visit_date_time) }}
                 </div>
                 <div class="time">
-                  {{ formatDate(visit.visit_date_time).split(" ")[1] }}
+                  {{ formatTimeOnly(visit.visit_date_time) }}
                 </div>
               </div>
             </div>
@@ -99,13 +99,6 @@
               class="empty-icon"
             />
           </div>
-          <!-- <p class="empty-title">
-            {{
-              activeTab === "past"
-                ? "Нет прошедших записей"
-                : "Увы, ничего не запланировано"
-            }}
-          </p> -->
           <p class="empty-description">
             {{
               activeTab === "past"
@@ -234,16 +227,19 @@ function switchTab(tab) {
   fetchVisits(tab);
 }
 
-function formatDate(iso) {
+function formatDateShort(iso) {
   const d = new Date(iso.endsWith("Z") ? iso : iso + "Z");
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = String(d.getFullYear()).slice(-2);
+  return `${day}/${month}/${year}`;
+}
 
-  return d.toLocaleString(undefined, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+function formatTimeOnly(iso) {
+  const d = new Date(iso.endsWith("Z") ? iso : iso + "Z");
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
 }
 
 function loadCurTab() {
