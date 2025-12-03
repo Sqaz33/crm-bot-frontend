@@ -367,7 +367,7 @@ textarea{width:95%;min-height:96px;border:1px solid #D3D3D3;border-radius:10px;p
 select{width:100%;border:1px solid #D3D3D3;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff}
 
 .legal-row{display:flex;align-items:center;gap:8px;margin:10px 0}
-.legal-row input{width:16px;height:16px}
+.legal-row input{width:36px;height:36px}
 .legal-row a{color:#3471D6;text-decoration:underline}
 
 .btn-submit{width:100%;height:52px;border:none;border-radius:12px;background:var(--brand);color:#fff;font-weight:700;font-size:16px;cursor:pointer}
