@@ -82,6 +82,17 @@
         </div>
       </div>
     </main>
+
+    <!-- Toast notification -->
+    <Transition name="toast">
+      <div v-if="showToast" class="toast-notification">
+        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 12L11 15L16 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Данные сохранены</span>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -91,6 +102,7 @@ import api from '../api'
 
 const loading = ref(false)
 const saving  = ref(false)
+const showToast = ref(false)
 
 const profileData = ref({
   firstName: '',
@@ -162,6 +174,12 @@ async function handleSave() {
     await updateMeName(payload)
     await loadMe()
     console.error('ФИО обновлено')
+
+    // Показываем toast уведомление
+    showToast.value = true
+    setTimeout(() => {
+      showToast.value = false
+    }, 3000)
   } catch (e) {
     console.error('[SAVE /auth/me] error:', e?.response ?? e)
     const code = e?.response?.status
@@ -404,6 +422,62 @@ onMounted(loadMe)
   .save-button {
     font-size: 18px;
     line-height: 22px;
+  }
+}
+
+/* Toast notification styles */
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  font-family: 'Geometria', sans-serif;
+  font-weight: 500;
+}
+
+.toast-icon {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+/* Toast animation */
+.toast-enter-active {
+  animation: toast-slide-in 0.3s ease-out;
+}
+
+.toast-leave-active {
+  animation: toast-slide-out 0.3s ease-in;
+}
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes toast-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
   }
 }
 
