@@ -121,8 +121,8 @@
     {
       name: 'Copy',
       url: '#',
-      viewBox: '0 0 35 35',
-      svgContent: '<path d="M21.3261 18.2479L22.3923 17.1817C24.5247 15.0493 25.0056 12.028 23.4474 10.4697C21.8944 8.91668 18.8749 9.38538 16.7355 11.5249L15.6693 12.5911" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M12.8407 15.4187L11.78 16.4793C9.63748 18.6219 9.16115 21.6386 10.7194 23.1968C12.2724 24.7499 15.2943 24.2787 17.4369 22.1362L18.4975 21.0755" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M14.2552 19.6614L19.912 14.0045" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+      viewBox: '0 0 75 75',
+      svgContent: '<rect x="17.9359" y="21.1958" width="29.7179" height="42.8042" rx="4" stroke="white" stroke-width="4" stroke-linejoin="round" fill="none"/><path d="M54.1467 10C57.4603 10.0002 60.1467 12.6864 60.1467 16V50.8047L60.1389 51.1133C59.9832 54.1811 57.5232 56.6414 54.4553 56.7969L54.1467 56.8047H53.8879C52.7834 56.8047 51.8879 55.9093 51.8879 54.8047C51.8879 53.7001 52.7834 52.8047 53.8879 52.8047H54.1467C55.251 52.8045 56.1465 51.9089 56.1467 50.8047V16C56.1467 14.8955 55.2512 14.0002 54.1467 14H32.429C31.3244 14 30.429 14.8954 30.429 16C30.429 16.5215 30.0062 16.9443 29.4846 16.9443H28.0588C27.1781 16.9443 26.4641 16.2304 26.4641 15.3496C26.7775 12.4425 29.1671 10.1574 32.1204 10.0078L32.429 10H54.1467Z" fill="white"/></g>',
       color: '#b0becf'
     }
   ]
@@ -251,7 +251,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    transform: scale(1.3);
+    transform: scale(1.2);
   }
 
   /* Toast notification styles */
