@@ -41,15 +41,15 @@
               <div class="employee-info">
                 <div class="employee-name">{{ visit.staff.name }}</div>
                 <div class="employee-specialty">
-                  {{ visit.staff.specializations.join(', ') }}
+                  {{ visit.staff.specializations.join(", ") }}
                 </div>
               </div>
               <div class="date-time">
                 <div class="date">
-                  {{ formatDate(visit.visit_date_time).split(' ')[0] }}
+                  {{ formatDate(visit.visit_date_time).split(" ")[0] }}
                 </div>
                 <div class="time">
-                  {{ formatDate(visit.visit_date_time).split(' ')[1] }}
+                  {{ formatDate(visit.visit_date_time).split(" ")[1] }}
                 </div>
               </div>
             </div>
@@ -80,13 +80,13 @@
                 />
                 <div class="status-badge-reason">
                   <span class="status-badge">
-                    {{ activeTab === 'past' ? 'Оплачено' : 'Не оплачено' }}
+                    {{ activeTab === "past" ? "Оплачено" : "Не оплачено" }}
                   </span>
                   <div class="status-reason">
                     {{
-                      activeTab === 'past'
-                        ? 'Визит прошел успешно'
-                        : 'Визит отменен / клиент не пришел'
+                      activeTab === "past"
+                        ? "Визит прошел успешно"
+                        : "Визит отменен / клиент не пришел"
                     }}
                   </div>
                 </div>
@@ -107,16 +107,16 @@
           </div>
           <p class="empty-title">
             {{
-              activeTab === 'past'
-                ? 'Нет прошедших записей'
-                : 'Увы, ничего не запланировано'
+              activeTab === "past"
+                ? "Нет прошедших записей"
+                : "Увы, ничего не запланировано"
             }}
           </p>
           <p class="empty-description">
             {{
-              activeTab === 'past'
-                ? 'У Вас еще не было завершенных записей'
-                : 'У Вас ни одной активной записи'
+              activeTab === "past"
+                ? "У Вас еще не было завершенных записей"
+                : "У Вас ни одной активной записи"
             }}
           </p>
         </div>
@@ -126,97 +126,99 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import api from '../api'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from "vue";
+import api from "../api";
+import { useRouter } from "vue-router";
 
-const router = useRouter()
+const router = useRouter();
 
 function goToVisit(id, isOld) {
   router.push({
-    name: 'record',
+    name: "record",
     params: { id },
-    query: { isOld: isOld.toString() } 
-  })
+    query: { isOld: isOld.toString() },
+  });
 }
 
-const visits = ref([])
-const loading = ref(true)
-const activeTab = ref('current')
+const visits = ref([]);
+const loading = ref(true);
+const activeTab = ref("current");
 
 // --- КЭШ ---
-const staffCache = {}
-const servicesCache = {}
-const tabKey = 'ACTIVE_TAB'
+const staffCache = {};
+const servicesCache = {};
+const tabKey = "ACTIVE_TAB";
 
 async function getStaff(staff_id) {
-  if (staffCache[staff_id]) return staffCache[staff_id]
-  const { data } = await api.get(`/staff/${staff_id}`)
-  staffCache[staff_id] = data
-  return data
+  if (staffCache[staff_id]) return staffCache[staff_id];
+  const { data } = await api.get(`/staff/${staff_id}`);
+  staffCache[staff_id] = data;
+  return data;
 }
 
 async function getService(service_id) {
-  if (servicesCache[service_id]) return servicesCache[service_id]
+  if (servicesCache[service_id]) return servicesCache[service_id];
   if (Object.keys(servicesCache).length === 0) {
-    const { data: arr } = await api.get(`/services/`)
-    arr.forEach(s => { servicesCache[s.id] = s })
+    const { data: arr } = await api.get(`/services/`);
+    arr.forEach((s) => {
+      servicesCache[s.id] = s;
+    });
   }
-  return servicesCache[service_id]
+  return servicesCache[service_id];
 }
 
 // --- API загрузка ---
 async function fetchVisits(tab) {
-  loading.value = true
-  visits.value = []
+  loading.value = true;
+  visits.value = [];
 
-  const url = tab === 'current' ? '/visits/current/' : '/visits/old/'
-  console.log(`Загружаем данные с: ${url}`)
+  const url = tab === "current" ? "/visits/current/" : "/visits/old/";
+  console.log(`Загружаем данные с: ${url}`);
 
   try {
-    const { data: rawVisits } = await api.get(url)
+    const { data: rawVisits } = await api.get(url);
 
     if (!Array.isArray(rawVisits)) {
-      console.error('Сервер вернул не массив:', rawVisits)
-      visits.value = []
-      return
+      console.error("Сервер вернул не массив:", rawVisits);
+      visits.value = [];
+      return;
     }
 
-    console.log(`Получено ${rawVisits.length} записей`)
-    if (rawVisits.length > 0) console.log('Первый элемент (сырой):', rawVisits[0])
+    console.log(`Получено ${rawVisits.length} записей`);
+    if (rawVisits.length > 0)
+      console.log("Первый элемент (сырой):", rawVisits[0]);
 
-    let processedCount = 0
+    let processedCount = 0;
     const mapped = await Promise.all(
       rawVisits.map(async (v, i) => {
-        const staff = await getStaff(v.staff_id)
-        const service = await getService(v.service_id)
-        const enriched = { ...v, staff, service }
+        const staff = await getStaff(v.staff_id);
+        const service = await getService(v.service_id);
+        const enriched = { ...v, staff, service };
 
-        processedCount++
-        if (i === 0) console.log('Первый элемент после обработки:', enriched)
+        processedCount++;
+        if (i === 0) console.log("Первый элемент после обработки:", enriched);
         if (processedCount % 10 === 0 || processedCount === rawVisits.length)
-          console.log(`Обработано ${processedCount} из ${rawVisits.length}`)
-        return enriched
+          console.log(`Обработано ${processedCount} из ${rawVisits.length}`);
+        return enriched;
       })
-    )
+    );
 
     // СОРТИРОВКА: последние записи первыми
     const sortedVisits = mapped.sort((a, b) => {
-      return new Date(b.visit_date_time) - new Date(a.visit_date_time)
-    })
+      return new Date(b.visit_date_time) - new Date(a.visit_date_time);
+    });
 
-    visits.value = sortedVisits
-    console.log(`Всего обработано ${mapped.length} записей, отсортировано`)
+    visits.value = sortedVisits;
+    console.log(`Всего обработано ${mapped.length} записей, отсортировано`);
   } catch (err) {
-    console.error('Ошибка при загрузке или обработке:', err)
-    visits.value = []
+    console.error("Ошибка при загрузке или обработке:", err);
+    visits.value = [];
   } finally {
-    loading.value = false
-    console.log('Завершено обновление данных\n')
+    loading.value = false;
+    console.log("Завершено обновление данных\n");
   }
 }
 
-  
 function switchTab(tab) {
   activeTab.value = tab;
   localStorage.setItem(tabKey, tab);
@@ -224,26 +226,25 @@ function switchTab(tab) {
 }
 
 function formatDate(iso) {
-  const d = new Date(iso.endsWith('Z') ? iso : iso + 'Z');
-  
+  const d = new Date(iso.endsWith("Z") ? iso : iso + "Z");
+
   return d.toLocaleString(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function loadCurTab() {
-  activeTab.value = localStorage.getItem(tabKey) || 'current';
+  activeTab.value = localStorage.getItem(tabKey) || "current";
 }
 
 onMounted(() => {
-  loadCurTab()
-  fetchVisits(activeTab.value)
-}
-)
+  loadCurTab();
+  fetchVisits(activeTab.value);
+});
 </script>
 
 <style scoped>
@@ -414,13 +415,13 @@ onMounted(() => {
   letter-spacing: 0.02em;
 }
 
-.service-name-small:nth-child(3), 
+.service-name-small:nth-child(3),
 .price {
   text-align: right;
 }
 
-.service-name, 
-.quantity, 
+.service-name,
+.quantity,
 .price {
   color: #1a2233;
   font-size: 0.9375rem;
@@ -489,6 +490,7 @@ onMounted(() => {
   justify-content: center;
   padding: 4rem 2rem;
   text-align: center;
+  min-height: 50vh;
 }
 
 .empty-icon-wrapper {
@@ -499,13 +501,18 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin: 0 auto 1.5rem auto;
+  position: relative;
 }
 
 .empty-icon {
   width: 64px;
   height: 64px;
   opacity: 0.7;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .empty-title {
@@ -521,84 +528,171 @@ onMounted(() => {
   max-width: 320px;
 }
 
-.records-page{--sidebar-mobile:64px;--gutter-mobile:16px}
-@media (max-width: 768px){
-  .records-page{
+.records-page {
+  --sidebar-mobile: 64px;
+  --gutter-mobile: 16px;
+}
+@media (max-width: 768px) {
+  .records-page {
     --sidebar-mobile: 54px;
     --gutter-mobile: 16px;
-    padding:0;
-    padding-top:12px;
-    padding-left:calc(var(--sidebar-mobile) + var(--gutter-mobile));
-    padding-right:var(--gutter-mobile);
-    min-height:100vh;
+    padding: 0;
+    padding-top: 12px;
+    padding-left: calc(var(--sidebar-mobile) + var(--gutter-mobile));
+    padding-right: var(--gutter-mobile);
+    min-height: 100vh;
   }
 
-  .records-container{
-    max-width:none;
-    margin:0;
-    padding:0;
+  .records-container {
+    max-width: none;
+    margin: 0;
+    padding: 0;
   }
 
-  .tabs-container{
-    padding:12px 0;
-    gap:0;
+  .tabs-container {
+    padding: 12px 0;
+    gap: 0;
   }
-  .tab-btn{
-    padding:12px 14px;
-    font-size:.9rem;
-    border-radius:10px 0 0 10px;
+  .tab-btn {
+    padding: 12px 14px;
+    font-size: 0.9rem;
+    border-radius: 10px 0 0 10px;
   }
-  
+
   .tab-btn:last-child {
-    border-radius:0 10px 10px 0;
+    border-radius: 0 10px 10px 0;
   }
 
-  .filled-content{padding:12px 0}
-  .appointment-card{
-    padding:14px;
-    border-radius:12px;
+  .filled-content {
+    padding: 12px 0;
+  }
+  .appointment-card {
+    padding: 14px;
+    border-radius: 12px;
   }
 
-  .card-header{align-items:center}
-  .avatar{width:38px;height:38px}
-  .employee-name{font-size:.95rem}
-  .employee-specialty{font-size:.8rem}
-  .date-time{min-width:74px}
-  .date{font-size:.9rem}
-  .time{font-size:.8rem}
-
-  .service-info{
-    grid-template-columns:1fr auto auto;
-    gap:8px;
-    padding:10px 0;
-    margin-bottom:12px;
+  .card-header {
+    align-items: center;
   }
-  .service-name-small{font-size:.72rem;margin-bottom:6px}
-  .service-name,.quantity,.price{font-size:.9rem}
-  .price{text-align:right}
+  .avatar {
+    width: 38px;
+    height: 38px;
+  }
+  .employee-name {
+    font-size: 0.95rem;
+  }
+  .employee-specialty {
+    font-size: 0.8rem;
+  }
+  .date-time {
+    min-width: 74px;
+  }
+  .date {
+    font-size: 0.9rem;
+  }
+  .time {
+    font-size: 0.8rem;
+  }
 
-  .status-icon{width:36px;height:36px}
-  .status-badge{font-size:.95rem}
-  .status-reason{font-size:.8rem}
-  .total-price{font-size:1.1rem}
+  .service-info {
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    padding: 10px 0;
+    margin-bottom: 12px;
+  }
+  .service-name-small {
+    font-size: 0.72rem;
+    margin-bottom: 6px;
+  }
+  .service-name,
+  .quantity,
+  .price {
+    font-size: 0.9rem;
+  }
+  .price {
+    text-align: right;
+  }
+
+  .status-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .status-badge {
+    font-size: 0.95rem;
+  }
+  .status-reason {
+    font-size: 0.8rem;
+  }
+  .total-price {
+    font-size: 1.1rem;
+  }
+
+  .empty-content {
+    padding: 3rem 1.5rem;
+  }
+
+  .empty-icon-wrapper {
+    width: 100px;
+    height: 100px;
+    position: relative;
+  }
+
+  .empty-icon {
+    width: 56px;
+    height: 56px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
-@media (max-width: 360px){
-  .records-page{--gutter-mobile:12px}
-  .tab-btn{
-    padding:10px 12px;
-    font-size:.85rem;
-    border-radius:8px 0 0 8px;
+@media (max-width: 360px) {
+  .records-page {
+    --gutter-mobile: 12px;
   }
-  
+  .tab-btn {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    border-radius: 8px 0 0 8px;
+  }
+
   .tab-btn:last-child {
-    border-radius:0 8px 8px 0;
+    border-radius: 0 8px 8px 0;
   }
-  
-  .appointment-card{padding:12px}
-  .employee-name{font-size:.9rem}
-  .service-name,.quantity,.price{font-size:.875rem}
-  .status-icon{width:32px;height:32px}
-  .total-price{font-size:1rem}
+
+  .appointment-card {
+    padding: 12px;
+  }
+  .employee-name {
+    font-size: 0.9rem;
+  }
+  .service-name,
+  .quantity,
+  .price {
+    font-size: 0.875rem;
+  }
+  .status-icon {
+    width: 32px;
+    height: 32px;
+  }
+  .total-price {
+    font-size: 1rem;
+  }
+
+  .empty-icon-wrapper {
+    width: 90px;
+    height: 90px;
+    position: relative;
+  }
+
+  .empty-icon {
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 </style>
