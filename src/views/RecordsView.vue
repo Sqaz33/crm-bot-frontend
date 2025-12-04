@@ -205,9 +205,9 @@ async function fetchVisits(tab) {
       })
     );
 
-    // СОРТИРОВКА: последние записи первыми
+    // СОРТИРОВКА: первые записи первыми
     const sortedVisits = mapped.sort((a, b) => {
-      return new Date(b.visit_date_time) - new Date(a.visit_date_time);
+      return new Date(a.visit_date_time) - new Date(b.visit_date_time);
     });
 
     visits.value = sortedVisits;
