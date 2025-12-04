@@ -137,24 +137,45 @@ function toggle(typeId) {
 function isSelected(id) {
   return selectedServiceIds.value.includes(id)
 }
+// TODO: массив услуг (раскоментить)
+// function toggleService(svc) {
+//   const idx = selectedServiceIds.value.indexOf(svc.id)
 
+//   if (idx >= 0) {
+//     selectedServiceIds.value.splice(idx, 1)
+//   } else {
+//     selectedServiceIds.value.push(svc.id)
+//   }
+
+//   visit.value.services_id = [...selectedServiceIds.value]
+//   saveVisit(visit.value)
+// }
+
+// TODO: одна услуга (удалить)
 function toggleService(svc) {
   const idx = selectedServiceIds.value.indexOf(svc.id)
 
   if (idx >= 0) {
-    selectedServiceIds.value.splice(idx, 1)
+    selectedServiceIds.value = []
   } else {
-    selectedServiceIds.value.push(svc.id)
+    selectedServiceIds.value = [svc.id]
   }
 
-  visit.value.services_id = [...selectedServiceIds.value]
+  visit.value.services_id = selectedServiceIds.value.length
+      ? [selectedServiceIds.value[0]]
+      : []
   saveVisit(visit.value)
 }
 
 function confirm() {
   if (!selectedServiceIds.value.length) return
-  visit.value.services_id = [...selectedServiceIds.value]
+  // TODO: расскоментить 
+  // visit.value.services_id = [...selectedServiceIds.value]
   saveVisit(visit.value)
+  // TODO: удалить
+  visit.value.services_id = selectedServiceIds.value.length
+    ? [selectedServiceIds.value[0]]
+    : []
   router.push({ name: 'choicestaff' })
 }
 </script>
