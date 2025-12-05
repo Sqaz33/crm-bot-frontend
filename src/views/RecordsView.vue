@@ -126,7 +126,7 @@ const router = useRouter();
 const statusMessage = {
     "waiting": {icon: crossIcon, bgClass: 'status-icon-unpaid', title: "Ожидание", subtitle: "Мы вас ждём, вы придёте?"},
     "confirmed": {icon: crossIcon, bgClass: 'status-icon-unpaid', title:"Подтверждено", subtitle: "Вы подтвердили, что придёте. Мы вас ждём!"},
-    "missing": {icon: crossIcon, bgClass: 'status-icon-unpaid', title:"Не оплачено", subtitle: "Вы ещё не оплатили свой заказ"},
+    "missing": {icon: crossIcon, bgClass: 'status-icon-unpaid', title:"Не оплачено", subtitle: "Визит отменен / клиент не пришел "},
     "success": {icon: checkmarkIcon, bgClass: 'status-icon-paid', title: "Оплачено", subtitle: "Услуга оказана"},
 }
 
