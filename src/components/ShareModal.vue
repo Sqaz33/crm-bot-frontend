@@ -54,8 +54,9 @@
   <script setup>
   import { ref } from 'vue'
 
-  const botUsername = '@CheckAuthorization_bot'
-  const botLink = `https://t.me/CheckAuthorization_bot`
+ const botLink = import.meta.env.VITE_BOT_LINK || 'https://t.me/CheckAuthorization_bot'
+ const botUsername = import.meta.env.VITE_BOT_NAME || '@CheckAuthorization_bot'
+
   const shareText = encodeURIComponent(`Попробуй Telegram-бота ${botUsername}`)
   const urlEncoded = encodeURIComponent(botLink)
 
