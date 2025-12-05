@@ -269,7 +269,7 @@ async function waitForVisitTime(timeoutMs = 300000, intervalMs = 100) {
       try {
         const data = JSON.parse(raw)
         if (data.visit_time) {
-          return new Date(data.visit_time.start_time)
+          return data.visit_time.start_time
         }
       } catch (e) {
         console.error('Ошибка парсинга localStorage:', e)
@@ -322,10 +322,8 @@ async function handleMoveVisitReturn() {
   try {
     if (!visit.value) await loadVisit()
     const visitTime = await waitForVisitTime()
-    const visitDateISO = visitTime.toISOString()
     await api.patch(`/visits/${visitId}`, {
-      visit_date_time: visitDateISO,
-      will_come: visit.value?.will_come || false
+      visit_date_time: visitTime.value
     })
     localStorage.removeItem(VISIT_KEY)
     await loadVisit()
@@ -338,7 +336,7 @@ async function handleMoveVisitReturn() {
 }
 
 function formatDate(iso) {
-  const d = new Date(iso.endsWith('Z') ? iso : iso + 'Z')
+  const d = new Date(iso)
   return d.toLocaleString('ru-RU', {
     year: 'numeric',
     month: 'numeric',
