@@ -24,7 +24,7 @@
               'selected': day.date === selectedDate,
               'day-past': day.isPast && day.isCurrentMonth
             }"
-            @click="!day.isPast && day.isCurrentMonth && selectDate(day)"
+            @click="!day.isPast && day.isCurrentMonth && !this.loadingDay && selectDate(day)"
           >
             {{ day.dayNumber }}
           </div>
@@ -100,6 +100,7 @@ export default {
       currentDate: new Date(),
       selectedDate: null,
       selectedTime: null,
+      loadingDay: false,
       weekdayNames: ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'],
       freeSlots: []
     }
@@ -229,10 +230,12 @@ export default {
         1
       )
     },
-    selectDate(day) {
+    async selectDate(day) {
       this.selectedDate = day.date
       this.selectedTime = null
-      this.loadFreeSlots()
+      this.loadingDay = true
+      await this.loadFreeSlots()
+      this.loadingDay = false
     },
     async loadFreeSlots() {
       let staff_id = null
