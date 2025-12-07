@@ -33,7 +33,7 @@
         </div>
 
         <!-- Плашка: Я точно приду -->
-        <div v-if="!isOld" class="section">
+        <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome || delete_ }">
           <div class="section-bar">Я точно приду</div>
           <div class="toggle-row">
             <div class="hint">Нажимая, вы подтверждаете свой визит</div>
@@ -42,7 +42,7 @@
                 type="checkbox"
                 :checked="willCome"
                 @change="onWillComeChange"
-                :disabled="willCome || processing"
+                :disabled="willCome || processing || delete_"
               />
               <span class="slider"></span>
             </label>
@@ -50,13 +50,13 @@
         </div>
 
         <!-- Плашка: Изменения -->
-        <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome }">
+        <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome || delete_ }">
           <div class="section-bar">Изменения</div>
           <div class="list">
             <button
               class="list-item danger"
               @click="openCancelModal"
-              :disabled="willCome || deleting || processing"
+              :disabled="willCome || deleting || processing || delete_"
             >
               <span class="icon-circle danger-icon">✖</span>
               <span class="text">Отменить запись</span>
@@ -66,7 +66,7 @@
             <button
               class="list-item"
               @click="goToDatetime"
-              :disabled="willCome || processing"
+              :disabled="willCome || processing || delete_"
             >
               <span class="icon-circle neutral-icon">⤴</span>
               <span class="text">Перенести запись</span>
@@ -76,7 +76,7 @@
         </div>
 
         <!-- Плашка: Оплата -->
-        <div v-if="!isOld" class="section">
+        <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome || delete_ }">
           <div class="section-bar">Оплата</div>
           <div class="list">
             <div class="list-item disabled" tabindex="-1" aria-disabled="true">
@@ -168,6 +168,7 @@ const isOld = route.query.isOld === 'true'
 const loading = ref(true)
 const deleting = ref(false)
 const processing = ref(false)
+const delete_ = ref(true)
 const error = ref('')
 const visit = ref(null)
 const staff = ref({})
@@ -200,6 +201,7 @@ async function loadVisit() {
     staff_id = data.staff_id
     service_id = data.service_id
     willCome.value = data.status === 'confirmed'
+    delete_.value = data.status === 'missing'
   } catch (err) {
     console.error(err)
     error.value = 'Ошибка при загрузке данных о визите'
