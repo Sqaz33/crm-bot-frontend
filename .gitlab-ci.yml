@@ -1,62 +1,21 @@
 stages:
   - build
-  - deploy
 
-docker-build:
-  image: docker:cli
+variables:
+  IMAGE_NAME: "$CI_REGISTRY_IMAGE"
+
+build_and_push:
   stage: build
-  variables:
-    IMAGE: "$REGISTRY_URL/$PROJECT_NAME/frontend:$CI_COMMIT_REF_SLUG"
-  before_script:
-    - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" $REGISTRY_URL
+  image: docker:cli
   script:
-    - docker build --pull -t "$IMAGE" .
-    - docker push "$IMAGE"
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
     - |
-      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
-        docker tag "$IMAGE" "$REGISTRY_URL/$PROJECT_NAME/frontend:latest"
-        docker push "$REGISTRY_URL/$PROJECT_NAME/frontend:latest"
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        docker build -t "$IMAGE_NAME:$CI_COMMIT_TAG" -t "$IMAGE_NAME:latest" --push .
+      else
+        SAFE_BRANCH=$(echo "$CI_COMMIT_REF_NAME" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+        docker build -t "$IMAGE_NAME:$SAFE_BRANCH" --push .
       fi
-  rules:
-    - exists:
-        - Dockerfile
-      when: always
-
-deploy-dev:
-  stage: deploy
-  tags: [deploy]
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "dev"'
-  before_script:
-    - cp "$DEV_ENV_FILE" .env
-    - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" $REGISTRY_URL
-  script:
-    - docker pull "$REGISTRY_URL/$PROJECT_NAME/frontend:$CI_COMMIT_REF_SLUG"
-    - docker rm -f "$PROJECT_NAME-frontend-dev" || true
-    - |
-      docker run -d \
-        --name "$PROJECT_NAME-frontend-dev" \
-        --restart always \
-        --env-file .env \
-        -p 127.0.0.1:5173:5173 \
-        "$REGISTRY_URL/$PROJECT_NAME/frontend:$CI_COMMIT_REF_SLUG"
-
-
-deploy-prod:
-  stage: deploy
-  tags: [deploy]
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-  before_script:
-    - cp "$PROD_ENV_FILE" .env
-    - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" $REGISTRY_URL
-  script:
-    - docker pull "$REGISTRY_URL/$PROJECT_NAME/frontend:$CI_COMMIT_REF_SLUG"
-    - docker rm -f "$PROJECT_NAME-frontend" || true
-    - |
-      docker run -d \
-        --name "$PROJECT_NAME-frontend" \
-        --restart always \
-        --env-file .env \
-        -p 127.0.0.1:5173:5173 \
-        "$REGISTRY_URL/$PROJECT_NAME/frontend:$CI_COMMIT_REF_SLUG"
+  only:
+    - branches
+    - tags
