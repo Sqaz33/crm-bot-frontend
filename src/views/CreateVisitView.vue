@@ -120,6 +120,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
 import TermsModal from '../components/TermsModal.vue'
+import { getEnv } from '../config'
 
 const VISIT_KEY = 'visit_data'
 const PROFILE_KEY = 'profile_data'
@@ -128,7 +129,7 @@ const router = useRouter()
 const summary = reactive({ date: '', time: '', staff: null, service: null })
 const salonInfo = reactive({ name: 'Загрузка...', description: '' })
 
-const adminContactUrl = import.meta.env.VITE_ADMIN_CONTACT_URL || '#'; 
+const adminContactUrl = getEnv('ADMIN_CONTACT_URL', '#'); 
 
 // Добавляем реактивное состояние для данных клиента
 const clientData = ref(null)

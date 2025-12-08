@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getEnv } from '../config'
 
 /**
  * - всегда шлём куки (withCredentials: true)
@@ -6,7 +7,7 @@ import axios from 'axios'
  */
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: getEnv('API_BASE', '/api'),
   timeout: 15000,
   headers: {
     Accept: 'application/json',
