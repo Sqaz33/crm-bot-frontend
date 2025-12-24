@@ -113,6 +113,18 @@ async function initAuthAndProfile() {
 
     await fetchAndApplyClientByTelegramId(me.telegram_id)
 
+    // сохранить salon_id
+    try {
+      const usp = new URLSearchParams(raw)
+      const params = Object.fromEntries(usp.entries())
+      const id = params?.start_param  
+      if (!id) {
+        throw new Error('нет start_param в telegram init_data')
+      }
+      sessionStorage.setItem('SALON_ID', id) 
+    } catch (e) {
+      console.log(e.message)
+    }
   } catch (e) {
     console.error('[App] Ошибка авторизации:', e)
     const status = e?.response?.status

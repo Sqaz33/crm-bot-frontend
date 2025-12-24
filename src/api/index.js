@@ -30,4 +30,14 @@ api.interceptors.response.use(
   }
 )
 
+api.interceptors.request.use(cfg => {
+  const salonId = sessionStorage.getItem('SALON_ID')
+
+  if (salonId) {
+    cfg.url = `/${salonId}${cfg.url}`
+  }
+
+  return cfg
+})
+
 export default api
