@@ -30,9 +30,9 @@ export function getInitData() {
     return null;
   }
 
-  // обрезаем хвост с версией
-  const idx = raw.indexOf('&tgWebAppVersion=');
-  if (idx > -1) raw = raw.substring(0, idx);
+  // обрезаем служебные параметры Telegram WebApp после init_data
+  const metaIdx = raw.indexOf('&tgWebApp');
+  if (metaIdx > -1) raw = raw.substring(0, metaIdx);
 
   console.group('[InitData] CLEAN');
   console.log('-----BEGIN INIT_DATA-----');
