@@ -12,10 +12,12 @@ build_and_push:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
     - |
       if [ -n "$CI_COMMIT_TAG" ]; then
-        docker build -t "$IMAGE_NAME:$CI_COMMIT_TAG" -t "$IMAGE_NAME:latest" --push .
+        DOCKERFILE="Dockerfile"
+        docker build -f "$DOCKERFILE" -t "$IMAGE_NAME:$CI_COMMIT_TAG" -t "$IMAGE_NAME:latest" --push .
       else
+        DOCKERFILE="Dockerfile.dev"
         SAFE_BRANCH=$(echo "$CI_COMMIT_REF_NAME" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
-        docker build -t "$IMAGE_NAME:$SAFE_BRANCH" --push .
+        docker build -f "$DOCKERFILE" -t "$IMAGE_NAME:$SAFE_BRANCH" --push .
       fi
   only:
     - branches

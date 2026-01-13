@@ -1,0 +1,17 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+RUN apk add --no-cache gettext
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+
+COPY docker/entrypoint.dev.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 80
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "80"]
