@@ -59,9 +59,17 @@
               <div class="service-name-small">Количество</div>
               <div class="service-name-small">Стоимость</div>
 
-              <div class="service-name">{{ visit.service.name }}</div>
+              <div class="service-name">
+                {{ visit.service?.name || "Неизвестная услуга" }}
+              </div>
               <div class="quantity">1</div>
-              <div class="price">{{ visit.service.price }} ₽</div>
+              <div class="price">
+                {{
+                  visit.service?.price != null
+                    ? `${visit.service.price} ₽`
+                    : "Неизвестно"
+                }}
+              </div>
             </div>
 
             <div class="card-status">
@@ -85,7 +93,13 @@
                   </div>
                 </div>
               </div>
-              <div class="total-price">{{ visit.service.price }} ₽</div>
+              <div class="total-price">
+                {{
+                  visit.service?.price != null
+                    ? `${visit.service.price} ₽`
+                    : "Неизвестно"
+                }}
+              </div>
             </div>
           </div>
         </div>
