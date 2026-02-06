@@ -325,7 +325,7 @@ async function handleMoveVisitReturn() {
     if (!visit.value) await loadVisit()
     const visitTime = await waitForVisitTime()
     await api.patch(`/visits/${visitId}`, {
-      visit_date_time: visitTime.value
+      visit_date_time: visitTime
     })
     localStorage.removeItem(VISIT_KEY)
     await loadVisit()
