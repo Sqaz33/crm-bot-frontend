@@ -134,15 +134,16 @@ import { getStaff, getService } from '../utils/staffServiceCache'
 import { formatDateShort, formatTimeOnly } from '../utils/dateFormatters'
 import crossIcon from '../assets/crossIcon.svg'
 import checkmarkIcon from '../assets/checkmarkIcon.svg'
+import clockIcon from '../assets/clockIcon.svg'
 
 const router = useRouter()
 
 /* Преобразование статуса в сообщение пользователю */
 const statusMessage = {
-    "waiting": {icon: crossIcon, bgClass: 'status-icon-unpaid', title: "Ожидание", subtitle: "Мы вас ждём, вы придёте?"},
-    "confirmed": {icon: crossIcon, bgClass: 'status-icon-unpaid', title:"Подтверждено", subtitle: "Вы подтвердили, что придёте. Мы вас ждём!"},
+    "waiting": {icon: clockIcon, bgClass: 'status-icon-waiting', title: "Ожидание", subtitle: "Ждем вас в салоне"},
+    "confirmed": {icon: checkmarkIcon, bgClass: '.status-icon-confirmed', title:"Подтверждено", subtitle: "Ждем вас в салон"},
     "missing": {icon: crossIcon, bgClass: 'status-icon-unpaid', title:"Не оплачено", subtitle: "Визит отменен / клиент не пришел "},
-    "success": {icon: checkmarkIcon, bgClass: 'status-icon-paid', title: "Оплачено", subtitle: "Услуга оказана"},
+    "success": {icon: checkmarkIcon, bgClass: 'status-icon-paid', title: "Оплачено", subtitle: "Визит прошел успешно"},
 }
 
 function goToVisit(id, isOld) {
@@ -448,6 +449,14 @@ onMounted(() => {
 
 .status-icon-unpaid {
   background-color: #DE5D93;
+}
+
+.status-icon-confirmed {
+  background-color: #6dadff;
+}
+
+.status-icon-waiting {
+  background-color: #f3a950;
 }
 
 .status-badge-reason {
