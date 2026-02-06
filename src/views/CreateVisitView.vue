@@ -34,6 +34,7 @@
         <span class="client-name">{{ clientNameFromAPI }}</span>
       </div>
 
+      <!-- Блок настройки напоминаний о визите скрыт по требованиям клиента
       <div class="form-label">НАПОМИНАНИЕ О ВИЗИТЕ</div>
       <div class="form-section">
         <select v-model.number="remindLeadHours">
@@ -44,6 +45,7 @@
           <option :value="24">24 часа</option>
         </select>
       </div>
+      -->
 
       <div class="form-label">ВАШИ ПОЖЕЛАНИЯ</div>
       <div class="form-section">
@@ -135,7 +137,8 @@ const adminContactUrl = getEnv('ADMIN_CONTACT_URL', '#');
 const clientData = ref(null)
 
 const comment = ref('')
-const remindLeadHours = ref(0) 
+// Параметр lead-часов для напоминаний отключён; напоминания больше не используются
+// const remindLeadHours = ref(0) 
 const submitting = ref(false)
 const errorMsg = ref('')
 const showSuccessModal = ref(false)
@@ -261,7 +264,8 @@ async function submitVisit() {
       service_id:      serviceId.value,
       visit_date_time: visitDate.value,
       comment:         comment.value || '',
-      remind_lead_hours: Number(remindLeadHours.value) || 0, 
+      // Поле remind_lead_hours убрано: напоминания о визите отключены
+      // remind_lead_hours: Number(remindLeadHours.value) || 0, 
     }
 
     console.log('[VisitCreate] POST /visits/ payload →', payload)
