@@ -149,20 +149,44 @@ const tabKey = "ACTIVE_TAB";
 
 async function getStaff(staff_id) {
   if (staffCache[staff_id]) return staffCache[staff_id];
-  const { data } = await api.get(`/staff/${staff_id}`);
-  staffCache[staff_id] = data;
-  return data;
+  try {
+    const { data } = await api.get(`/staff/${staff_id}`);
+    staffCache[staff_id] = data;
+    return data;
+  } catch (error) {
+    const status = error?.response?.status;
+    const responseData = error?.response?.data;
+    console.error("[getStaff] Ошибка при запросе сотрудника", {
+      staff_id,
+      status,
+      responseData,
+      message: error?.message,
+    });
+    throw error;
+  }
 }
 
 async function getService(service_id) {
   if (servicesCache[service_id]) return servicesCache[service_id];
-  if (Object.keys(servicesCache).length === 0) {
-    const { data: arr } = await api.get(`/services/`);
-    arr.forEach((s) => {
-      servicesCache[s.id] = s;
+  try {
+    if (Object.keys(servicesCache).length === 0) {
+      const { data: arr } = await api.get(`/services/`);
+      arr.forEach((s) => {
+        servicesCache[s.id] = s;
+      });
+    }
+    return servicesCache[service_id];
+  } catch (error) {
+    const status = error?.response?.status;
+    const responseData = error?.response?.data;
+    console.error("[getService] Ошибка при запросе услуги", {
+      service_id,
+      status,
+      responseData,
+      message: error?.message,
     });
+    throw error;
   }
-  return servicesCache[service_id];
 }
 
 // --- API загрузка ---
