@@ -141,7 +141,7 @@ const router = useRouter()
 /* Преобразование статуса в сообщение пользователю */
 const statusMessage = {
     "waiting": {icon: clockIcon, bgClass: 'status-icon-waiting', title: "Ожидание", subtitle: "Ждем вас в салоне"},
-    "confirmed": {icon: checkmarkIcon, bgClass: '.status-icon-confirmed', title:"Подтверждено", subtitle: "Ждем вас в салон"},
+    "confirmed": {icon: checkmarkIcon, bgClass: 'status-icon-confirmed', title:"Подтверждено", subtitle: "Ждем вас в салон"},
     "missing": {icon: crossIcon, bgClass: 'status-icon-unpaid', title:"Не оплачено", subtitle: "Визит отменен / клиент не пришел "},
     "success": {icon: checkmarkIcon, bgClass: 'status-icon-paid', title: "Оплачено", subtitle: "Визит прошел успешно"},
 }
