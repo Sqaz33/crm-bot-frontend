@@ -64,43 +64,25 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '../api'
+import { readVisit, writeVisit } from '../utils/visitStorage'
+import { getFirstLetter } from '../utils/stringUtils'
 
-const VISIT_KEY = 'visit_data'
-
-const route   = useRoute()
-const router  = useRouter()
+const route = useRoute()
+const router = useRouter()
 const staffId = route.params.id
-
-const staff   = ref({ name:'', specialization:'', photo:'', about:'', rating:0 })
+const staff = ref({ name: '', specialization: '', photo: '', about: '', rating: 0 })
 const reviews = ref([])
 
-// function formatDate(iso) {
-//   return new Date(iso).toLocaleDateString()
-// }
-
-function getFirstLetter(name) {
-  return name ? name.charAt(0).toUpperCase() : ''
-}
-
-function readVisit() {
-  const raw = localStorage.getItem(VISIT_KEY)
-  if (raw) {
-    try { return JSON.parse(raw) } catch {}
-  }
-  return { staff_id:'', client_id:'', visit_time:{ start:'', end:'' }, comment:''  }
-}
-
-function writeVisit(obj) {
-  localStorage.setItem(VISIT_KEY, JSON.stringify(obj))
-  window.dispatchEvent(new CustomEvent('local-storage-changed'))
+function writeVisitWithCookie(obj) {
+  writeVisit(obj)
   const cookieValue = encodeURIComponent(JSON.stringify(obj))
-  document.cookie = `${VISIT_KEY}=${cookieValue}; path=/; max-age=${365*24*60*60}; Secure; SameSite=None`
+  document.cookie = `visit_data=${cookieValue}; path=/; max-age=${365*24*60*60}; Secure; SameSite=None`
 }
 
 function chooseStaff() {
   const visit = readVisit()
   visit.staff_id = staffId
-  writeVisit(visit)
+  writeVisitWithCookie(visit)
   router.push({ name: 'appointmant' })
 }
 

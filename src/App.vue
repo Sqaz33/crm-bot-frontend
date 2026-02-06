@@ -16,8 +16,8 @@ import { ensureSession } from './auth/ensureSession'
 import { getClientByTelegramId } from './api/clients'
 import { useAuthStore } from './stores/auth'
 import { splitFullNameIfNeeded, getInitDataInfo, isUserAuthorized } from './utils/telegram'
+import { writeVisit, DEFAULT_VISIT } from './utils/visitStorage'
 
-const VISIT_KEY   = 'visit_data'
 const PROFILE_KEY = 'profile_data'
 
 const loading   = ref(true)
@@ -36,9 +36,8 @@ const form = reactive({
 })
 
 function saveVisit(silent = false) {
-  const visitData = { staff_id: '', services_id: '', visit_time: { start_time: '' }, comment: '' }
-  localStorage.setItem(VISIT_KEY, JSON.stringify(visitData))
-  if (!silent) console.log('[App] Visit draft saved:', visitData)
+  writeVisit(DEFAULT_VISIT)
+  if (!silent) console.log('[App] Visit draft saved:', DEFAULT_VISIT)
 }
 
 function mergeSaveProfile(partial = {}, silent = false) {

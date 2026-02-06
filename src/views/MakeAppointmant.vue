@@ -103,9 +103,9 @@
 import { ref, onMounted, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api'
+import { getRawVisit } from '../utils/visitStorage'
 
 const router = useRouter()
-const VISIT_KEY = 'visit_data'
 
 const summary = ref({
   staffName: null,
@@ -170,10 +170,8 @@ const form = reactive({
 const showProfileModal = ref(false)
 
 async function loadSummary() {
-  const raw = localStorage.getItem(VISIT_KEY)
-  if (!raw) return
-
-  const data = JSON.parse(raw)
+  const data = getRawVisit()
+  if (!data) return
   const { staff_id, services_id = [], visit_time = {} } = data
 
   const visitTime = visit_time.start_time

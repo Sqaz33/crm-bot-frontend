@@ -127,14 +127,15 @@
 </template>
 
 <script setup>
-
 import { ref, onMounted } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
+import { getStaff, getService } from '../utils/staffServiceCache'
+import { formatDateShort, formatTimeOnly } from '../utils/dateFormatters'
 import crossIcon from '../assets/crossIcon.svg'
 import checkmarkIcon from '../assets/checkmarkIcon.svg'
 
-const router = useRouter();
+const router = useRouter()
 
 /* Преобразование статуса в сообщение пользователю */
 const statusMessage = {
@@ -152,56 +153,10 @@ function goToVisit(id, isOld) {
   });
 }
 
-const visits = ref([]);
-const loading = ref(true);
-const activeTab = ref("current");
-
-// --- КЭШ ---
-const staffCache = {};
-const servicesCache = {};
-const tabKey = "ACTIVE_TAB";
-
-async function getStaff(staff_id) {
-  if (staffCache[staff_id]) return staffCache[staff_id];
-  try {
-    const { data } = await api.get(`/staff/${staff_id}`);
-    staffCache[staff_id] = data;
-    return data;
-  } catch (error) {
-    const status = error?.response?.status;
-    const responseData = error?.response?.data;
-    console.error("[getStaff] Ошибка при запросе сотрудника", {
-      staff_id,
-      status,
-      responseData,
-      message: error?.message,
-    });
-    throw error;
-  }
-}
-
-async function getService(service_id) {
-  if (servicesCache[service_id]) return servicesCache[service_id];
-  try {
-    if (Object.keys(servicesCache).length === 0) {
-      const { data: arr } = await api.get(`/services/`);
-      arr.forEach((s) => {
-        servicesCache[s.id] = s;
-      });
-    }
-    return servicesCache[service_id];
-  } catch (error) {
-    const status = error?.response?.status;
-    const responseData = error?.response?.data;
-    console.error("[getService] Ошибка при запросе услуги", {
-      service_id,
-      status,
-      responseData,
-      message: error?.message,
-    });
-    throw error;
-  }
-}
+const visits = ref([])
+const loading = ref(true)
+const activeTab = ref('current')
+const tabKey = 'ACTIVE_TAB'
 
 // --- API загрузка ---
 async function fetchVisits(tab) {
@@ -263,23 +218,6 @@ function switchTab(tab) {
   activeTab.value = tab;
   localStorage.setItem(tabKey, tab);
   fetchVisits(tab);
-}
-
-function formatDateShort(iso) {
-  // const d = new Date(iso.endsWith("Z") ? iso : iso + "Z");
-  const d = new Date(iso)
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const year = String(d.getFullYear()).slice(-2);
-  return `${day}/${month}/${year}`;
-}
-
-function formatTimeOnly(iso) {
-  // const d = new Date(iso.endsWith("Z") ? iso : iso + "Z");
-  const d = new Date(iso)
-  const hours = String(d.getHours()).padStart(2, "0");
-  const minutes = String(d.getMinutes()).padStart(2, "0");
-  return `${hours}:${minutes}`;
 }
 
 function loadCurTab() {

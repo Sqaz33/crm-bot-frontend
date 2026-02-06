@@ -139,24 +139,10 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '../api'
-
-// --- КЭШ --- //
-const staffCache = {}
-const servicesCache = {}
-async function getStaff(staff_id) {
-  if (staffCache[staff_id]) return staffCache[staff_id]
-  const { data } = await api.get(`/staff/${staff_id}`)
-  staffCache[staff_id] = data
-  return data
-}
-async function getService(service_id) {
-  if (servicesCache[service_id]) return servicesCache[service_id]
-  if (Object.keys(servicesCache).length === 0) {
-    const { data: arr } = await api.get(`/services/`)
-    arr.forEach(s => { servicesCache[s.id] = s })
-  }
-  return servicesCache[service_id]
-}
+import { getStaff, getService } from '../utils/staffServiceCache'
+import { readVisit, writeVisit, clearVisit, waitForVisitTime } from '../utils/visitStorage'
+import { formatDate } from '../utils/dateFormatters'
+import { getErrorMessage } from '../utils/apiError'
 
 // --- ROUTER --- //
 const route = useRoute()
@@ -237,9 +223,7 @@ async function toggleWillCome() {
     
   } catch (err) {
     console.error('Ошибка toggleWillCome:', err)
-    visitError.value = typeof err.response?.data === 'string'
-      ? err.response.data
-      : err.response?.data?.detail || err.message || 'Ошибка при обновлении статуса визита.'
+    visitError.value = getErrorMessage(err, 'Ошибка при обновлении статуса визита.')
   } finally {
     processing.value = false
   }
@@ -254,32 +238,10 @@ async function cancelVisit() {
     router.push('/records')
   } catch (err) {
     console.error('Ошибка cancelVisit:', err)
-    visitError.value = typeof err.response?.data === 'string'
-      ? err.response.data
-      : err.response?.data?.detail || err.message || 'Не удалось отменить запись.'
+    visitError.value = getErrorMessage(err, 'Не удалось отменить запись.')
   } finally {
     deleting.value = false
   }
-}
-
-async function waitForVisitTime(timeoutMs = 300000, intervalMs = 100) {
-  const VISIT_KEY = 'visit_data'
-  const start = Date.now()
-  while (Date.now() - start < timeoutMs) {
-    const raw = localStorage.getItem(VISIT_KEY)
-    if (raw) {
-      try {
-        const data = JSON.parse(raw)
-        if (data.visit_time) {
-          return data.visit_time.start_time
-        }
-      } catch (e) {
-        console.error('Ошибка парсинга localStorage:', e)
-      }
-    }
-    await new Promise(resolve => setTimeout(resolve, intervalMs))
-  }
-  throw new Error('Дата визита не появилась в localStorage за отведенное время.')
 }
 
 function onWillComeChange(event) {
@@ -296,16 +258,11 @@ function onWillComeChange(event) {
 
 // --- Перенос визита --- //
 function goToDatetime() {
-  const VISIT_KEY = 'visit_data'
   try {
-    localStorage.removeItem(VISIT_KEY)
-    if (staff_id && service_id) {
-      let params = { staff_id: '', services_id: [], visit_time: { start_time: '', end: '' }, comment: '' }
-      params.staff_id = staff_id
-      params.services_id = service_id
-      localStorage.setItem(VISIT_KEY, JSON.stringify(params))
-      window.dispatchEvent(new CustomEvent('local-storage-changed'))
-    }
+    const params = readVisit()
+    params.staff_id = staff_id
+    params.services_id = service_id
+    writeVisit(params)
     router.push({
       path: '/datetime',
       query: { redirect: router.currentRoute.value.fullPath, moveVisit: visitId }
@@ -318,7 +275,6 @@ function goToDatetime() {
 
 // Обработка возврата со страницы выбора даты/времени
 async function handleMoveVisitReturn() {
-  const VISIT_KEY = 'visit_data'
   processing.value = true
   visitError.value = ''
   try {
@@ -327,7 +283,7 @@ async function handleMoveVisitReturn() {
     await api.patch(`/visits/${visitId}`, {
       visit_date_time: visitTime
     })
-    localStorage.removeItem(VISIT_KEY)
+    clearVisit()
     await loadVisit()
   } catch (err) {
     console.error(err)
@@ -335,17 +291,6 @@ async function handleMoveVisitReturn() {
   } finally {
     processing.value = false
   }
-}
-
-function formatDate(iso) {
-  const d = new Date(iso)
-  return d.toLocaleString('ru-RU', {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
 }
 
 onMounted(() => {

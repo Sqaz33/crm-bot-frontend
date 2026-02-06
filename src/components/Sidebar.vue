@@ -57,33 +57,16 @@ const route = useRoute();
 const router = useRouter();
 const emit = defineEmits(["close"]);
 
+import { readVisit, VISIT_KEY } from "../utils/visitStorage";
+
 // Добавляем реактивную переменную для отслеживания изменений localStorage
 const visitDataVersion = ref(0);
 
-const getVisitData = () => {
-  try {
-    return (
-        JSON.parse(localStorage.getItem("visit_data")) || {
-          staff_id: "",
-          services_id: [],
-          visit_time: { start_time: "" },
-          comment: "",
-        }
-    );
-  } catch (error) {
-    console.error("Ошибка чтения visit_data:", error);
-    return {
-      staff_id: "",
-      services_id: [],
-      visit_time: { start_time: "" },
-      comment: "",
-    };
-  }
-};
+const getVisitData = () => readVisit();
 
 // Слушаем изменения в localStorage
 const handleStorageChange = (e) => {
-  if (e.key === "visit_data" || e.key === null) {
+  if (e.key === VISIT_KEY || e.key === null) {
     visitDataVersion.value++;
   }
 };

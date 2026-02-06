@@ -91,8 +91,9 @@
 
 <script>
 import api from '../api'
-
-const VISIT_KEY = 'visit_data'
+import { getRawVisit, readVisit, writeVisit } from '../utils/visitStorage'
+import { formatDateForCalendar, formatTime } from '../utils/dateFormatters'
+import { cap } from '../utils/stringUtils'
 
 export default {
   data() {
@@ -204,18 +205,9 @@ export default {
     this.loadFreeSlots()
   },
   methods: {
-    cap(s) {
-      return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''
-    },
-    formatDate(d) {
-      const y = d.getFullYear()
-      const m = String(d.getMonth() + 1).padStart(2, '0')
-      const dd = String(d.getDate()).padStart(2, '0')
-      return `${y}-${m}-${dd}`
-    },
-    formatTime(iso) {
-      return iso.slice(11, 16)
-    },
+    cap,
+    formatDate: formatDateForCalendar,
+    formatTime,
     prevMonth() {
       this.currentDate = new Date(
         this.currentDate.getFullYear(),
@@ -240,10 +232,8 @@ export default {
     async loadFreeSlots() {
       let staff_id = null
       let service_id = null
-      const raw = localStorage.getItem(VISIT_KEY)
-      if (raw) {
-        try {
-          const parsed = JSON.parse(raw)
+      const parsed = getRawVisit()
+      if (parsed) {
           
           if (parsed.staff_id && parsed.staff_id !== '') {
             staff_id = parsed.staff_id
@@ -254,10 +244,6 @@ export default {
           } else if (parsed.services_id) {
             service_id = parsed.services_id
           }
-          // service_id = parsed.services_id
-        } catch (e) {
-          console.error('Ошибка парсинга visit_data:', e)
-        }
       }
       
       if (!service_id) {
@@ -296,19 +282,14 @@ export default {
     },
     bookTime() {
       if (!this.selectedTime) return
-      const raw = localStorage.getItem(VISIT_KEY)
-      const visit = raw
-        ? JSON.parse(raw)
-        : { staff_id: '', services_id: [], visit_time: { start_time: '', end: '' }, comment: '' }
+      const visit = readVisit()
 
       visit.visit_time.start_time = this.selectedTime
       visit.staff_id ??= ''
       visit.comment ??= ''
       visit.services_id ??= []
 
-      localStorage.setItem(VISIT_KEY, JSON.stringify(visit))
-      window.dispatchEvent(new CustomEvent('local-storage-changed'))
-      document.cookie = `visit_data=${encodeURIComponent(JSON.stringify(visit))}; path=/; SameSite=Lax;`
+      writeVisit(visit, { syncCookie: true })
 
       const redirect = this.$route.query.redirect
       if (redirect) {

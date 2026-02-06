@@ -123,8 +123,8 @@ import api from '../api'
 import { useRouter } from 'vue-router'
 import TermsModal from '../components/TermsModal.vue'
 import { getEnv } from '../config'
-
-const VISIT_KEY = 'visit_data'
+import { getRawVisit, readVisit, clearVisit } from '../utils/visitStorage'
+import { humanizeDateTime } from '../utils/dateFormatters'
 const PROFILE_KEY = 'profile_data'
 const router = useRouter()
 
@@ -168,19 +168,8 @@ async function loadClientData() {
   }
 }
 
-function humanize(iso) {
-  if (!iso) return { d:'', t:'' }
-  const d = new Date(iso); if (isNaN(d)) return { d:'', t:'' }
-  return {
-    d: d.toLocaleDateString('ru-RU', { day:'2-digit', month:'long', weekday:'long' }),
-    t: d.toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' })
-  }
-}
-
 function clearVisitData() {
-  localStorage.removeItem(VISIT_KEY)
-  window.dispatchEvent(new CustomEvent('local-storage-changed'))
-  document.cookie = `${VISIT_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`
+  clearVisit()
 }
 
 async function loadSalonInfo() {
@@ -203,9 +192,12 @@ onMounted(async () => {
   await loadSalonInfo()
   
   try {
-    const raw = localStorage.getItem(VISIT_KEY)
-    if (!raw) { errorMsg.value = 'Не выбраны данные для записи.'; return }
-    const v = JSON.parse(raw)
+    const raw = getRawVisit()
+    if (!raw) {
+      errorMsg.value = 'Не выбраны данные для записи.'
+      return
+    }
+    const v = readVisit()
 
     comment.value = v.comment || ''
     staffId.value = v.staff_id ?? null
@@ -237,7 +229,7 @@ onMounted(async () => {
       }
     }
 
-    const h = humanize(visitDate.value)
+    const h = humanizeDateTime(visitDate.value)
     summary.date = h.d; summary.time = h.t
   } catch (e) {
     console.error('[Init] Ошибка:', e)

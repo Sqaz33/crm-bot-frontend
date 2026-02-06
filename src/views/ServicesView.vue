@@ -62,33 +62,21 @@
 import { ref, computed, onMounted } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
+import { readVisit, writeVisit } from '../utils/visitStorage'
 
-const VISIT_KEY = 'visit_data'
 const router = useRouter()
-
 const loading = ref(true)
 const serviceTypes = ref([])
 const services = ref([])
 const openType = ref(null)
 const selectedServiceIds = ref([])
 
-function loadVisit() {
-  try {
-    const raw = localStorage.getItem(VISIT_KEY)
-    if (!raw) return { staff_id: null, services_id: [], visit_time: {}, comment: '' }
-    return JSON.parse(raw)
-  } catch {
-    return { staff_id: null, services_id: [], visit_time: {}, comment: '' }
-  }
+function loadVisitData() {
+  const v = readVisit()
+  return { ...v, staff_id: v.staff_id ?? null, services_id: v.services_id ?? [], visit_time: v.visit_time ?? {} }
 }
 
-function saveVisit(v) {
-  const str = JSON.stringify(v)
-  localStorage.setItem(VISIT_KEY, str)
-  document.cookie = `${VISIT_KEY}=${encodeURIComponent(str)}; path=/; SameSite=Lax;`
-}
-
-const visit = ref(loadVisit())
+const visit = ref(loadVisitData())
 
 onMounted(async () => {
   try {
@@ -164,18 +152,15 @@ function toggleService(svc) {
   visit.value.services_id = selectedServiceIds.value.length
       ? [selectedServiceIds.value[0]]
       : []
-  saveVisit(visit.value)
+  writeVisit(visit.value, { syncCookie: true })
 }
 
 function confirm() {
   if (!selectedServiceIds.value.length) return
-  // TODO: расскоментить 
-  // visit.value.services_id = [...selectedServiceIds.value]
-  saveVisit(visit.value)
-  // TODO: удалить
   visit.value.services_id = selectedServiceIds.value.length
     ? [selectedServiceIds.value[0]]
     : []
+  writeVisit(visit.value, { syncCookie: true })
   router.push({ name: 'choicestaff' })
 }
 </script>

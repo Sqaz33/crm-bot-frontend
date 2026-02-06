@@ -52,13 +52,12 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import api from '../api'
-const emit = defineEmits(['select', 'review', 'visit'])
+import { readVisit } from '../utils/visitStorage'
 
+const emit = defineEmits(['select', 'review', 'visit'])
 const tabs = ref([{ label: 'Все', value: 'all' }])
 const activeTab = ref('all')
 const staffList = ref([])
-
-const VISIT_KEY   = 'visit_data'
 
 async function loadSpecializations() {
   const { data } = await api.get('/staff/specializations/')
@@ -68,10 +67,7 @@ async function loadSpecializations() {
 }
 
 async function loadStaff(specId) {
-  const raw = localStorage.getItem(VISIT_KEY)
-  const visit = raw
-    ? JSON.parse(raw)
-    : { staff_id:'', services_id:[], visit_time:{start_time:'',end:''}, comment:'' }
+  const visit = readVisit()
   
   const params = {}
 

@@ -72,55 +72,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick } from "vue";
-import api from "../api";
-import { useRouter } from "vue-router";
+import { ref, onMounted, watch, nextTick } from 'vue'
+import api from '../api'
+import { useRouter } from 'vue-router'
+import { readVisit, writeVisit } from '../utils/visitStorage'
+import { getFirstLetter, getStaffId } from '../utils/stringUtils'
 
-const router = useRouter();
-const emit = defineEmits(["select", "review", "visit"]);
+const router = useRouter()
+const emit = defineEmits(['select', 'review', 'visit'])
 
-const tabs = ref([{ label: "Все", value: "all" }]);
-const activeTab = ref("all");
-
-const staffList = ref([]);
-const selectedId = ref(null);
-
-const VISIT_KEY = "visit_data";
-
-const defaultVisit = {
-  staff_id: "",
-  services_id: [],
-  visit_time: { start_time: "", end: "" },
-  comment: "",
-};
-
-function readVisit() {
-  try {
-    const raw = localStorage.getItem(VISIT_KEY);
-    if (!raw) return { ...defaultVisit };
-    const parsed = JSON.parse(raw);
-    return { ...defaultVisit, ...parsed };
-  } catch {
-    return { ...defaultVisit };
-  }
-}
-
-function writeVisit(v) {
-  try {
-    localStorage.setItem(VISIT_KEY, JSON.stringify(v));
-    window.dispatchEvent(new CustomEvent("local-storage-changed"));
-  } catch (e) {
-    console.warn("writeVisit failed:", e);
-  }
-}
-
-function getStaffId(s) {
-  return s?.id ?? s?.staff_id ?? s?._id ?? s?.user_id ?? null;
-}
-
-function getFirstLetter(name) {
-  return name && name.length > 0 ? name.charAt(0).toUpperCase() : "";
-}
+const tabs = ref([{ label: 'Все', value: 'all' }])
+const activeTab = ref('all')
+const staffList = ref([])
+const selectedId = ref(null)
 
 async function loadSpecializations() {
   try {
