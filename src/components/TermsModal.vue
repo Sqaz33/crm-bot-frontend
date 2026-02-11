@@ -15,13 +15,13 @@
               <li>
                 Политика конфиденциальности:
                 <a href="https://zabot.org/politics" target="_blank" rel="noopener noreferrer">
-                  https://zabot.org/politics
+                  https://zabot.org/policy
                 </a>
               </li>
               <li>
                 Пользовательское соглашение:
                 <a href="https://zabot.org/oferta" target="_blank" rel="noopener noreferrer">
-                  https://zabot.org/oferta
+                  https://zabot.org/offer
                 </a>
               </li>
             </ul>
