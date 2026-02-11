@@ -1,13 +1,31 @@
 <template>
   <div>
-    <transition name="fade">
-      <div v-if="authError" class="auth-error-banner">{{ errorText }}</div>
+    <transition
+      enter-active-class="transition-opacity duration-500"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-500"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="authError"
+        class="fixed inset-x-0 top-0 z-[1000] bg-red-700 px-4 py-4 text-center text-white"
+      >
+        {{ errorText }}
+      </div>
     </transition>
 
-    <div v-if="loading" class="loading-container">Загрузка...</div>
-    <div v-else><router-view/></div>
+    <div v-if="loading" class="my-8 text-center text-[1.1rem] text-neutral-800">
+      Загрузка...
+    </div>
+
+    <div v-else>
+      <router-view />
+    </div>
   </div>
 </template>
+
 
 <script setup>
 import { attachDebugInitSender } from './debug/telegramDebug'
@@ -162,13 +180,3 @@ onMounted(() => {
 
 </script>
 
-<style scoped>
-.loading-container{ text-align:center; margin:2rem 0; font-size:1.1rem; }
-.auth-error-banner{
-  position:fixed; top:0; left:0; right:0;
-  background:#e53935; color:#fff; padding:1rem; text-align:center; z-index:1000;
-}
-.fade-enter-active,.fade-leave-active{ transition:opacity .5s; }
-.fade-enter-from,.fade-leave-to{ opacity:0; }
-
-</style>

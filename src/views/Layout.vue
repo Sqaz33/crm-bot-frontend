@@ -1,21 +1,20 @@
 <template>
-  <div class="app">
+  <div class="min-h-dvh bg-neutral-100 text-neutral-800">
     <Header @sidebarButtonClick="handleSidebarButtonClick" />
-    
-    <div class="container">
-		  <SidebarMenu 
-      :is-open="isSidebarOpen" 
-      :items="currentMenuItems"
-      :sidebar-button-clicked="sidebarButtonClicked"
-      v-if="showSidebar"
-			
+    <div class="mx-auto flex w-full max-w-phone flex-1 overflow-hidden px-3 sm:px-4 lg:px-6">
+      <SidebarMenu
+        v-if="showSidebar"
+        :is-open="isSidebarOpen"
+        :items="currentMenuItems"
+        :sidebar-button-clicked="sidebarButtonClicked"
       />
-      <main class="main-content">
+      <main class="min-w-0 flex-1">
         <router-view />
       </main>
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, computed, watch } from 'vue'
@@ -84,23 +83,4 @@ function handleSidebarButtonClick() {
 
 </script>
 
-<style scoped>
-.app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-	position: relative;
-}
 
-.container {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-	
-}
-
-.main-content {
-  flex: 1;
-  padding: 0;
-}
-</style>
