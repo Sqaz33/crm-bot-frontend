@@ -52,8 +52,9 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue'
-  import { getEnv } from '../config'
+import { ref } from 'vue'
+import { getEnv } from '../config'
+import { logger } from '../utils/logger'
 
   const botLink = getEnv('BOT_LINK', 'https://t.me/CheckAuthorization_bot')
   const botUsername = getEnv('BOT_NAME', '@CheckAuthorization_bot')
@@ -71,7 +72,7 @@
         showToast.value = false
       }, 3000)
     } catch (err) {
-      console.error('Failed to copy:', err)
+      logger.error('ShareModal: ошибка копирования в буфер обмена', { error: err?.message || String(err) });
     }
   }
 

@@ -94,6 +94,7 @@ import api from '../api'
 import { getRawVisit, readVisit, writeVisit } from '../utils/visitStorage'
 import { formatDateForCalendar, formatTime } from '../utils/dateFormatters'
 import { cap } from '../utils/stringUtils'
+import { logger } from '../utils/logger'
 
 export default {
   data() {
@@ -247,7 +248,7 @@ export default {
       }
       
       if (!service_id) {
-        console.warn('service_id обязателен для загрузки свободных слотов')
+        logger.warn('DateTime: service_id обязателен для загрузки свободных слотов')
         this.freeSlots = []
         return
       }

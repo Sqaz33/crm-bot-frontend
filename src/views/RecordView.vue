@@ -143,6 +143,7 @@ import { getStaff, getService } from '../utils/staffServiceCache'
 import { readVisit, writeVisit, clearVisit, waitForVisitTime } from '../utils/visitStorage'
 import { formatDate } from '../utils/dateFormatters'
 import { getErrorMessage } from '../utils/apiError'
+import { logger } from '../utils/logger'
 
 // --- ROUTER --- //
 const route = useRoute()
@@ -189,7 +190,7 @@ async function loadVisit() {
     willCome.value = data.status === 'confirmed'
     delete_.value = data.status === 'missing'
   } catch (err) {
-    console.error(err)
+    logger.error('loadVisit', { error: err?.message || String(err) })
     error.value = 'Ошибка при загрузке данных о визите'
   } finally {
     loading.value = false
@@ -222,7 +223,7 @@ async function toggleWillCome() {
     willCome.value = true;
     
   } catch (err) {
-    console.error('Ошибка toggleWillCome:', err)
+    logger.error('toggleWillCome', { error: err?.message || String(err) })
     visitError.value = getErrorMessage(err, 'Ошибка при обновлении статуса визита.')
   } finally {
     processing.value = false
@@ -237,7 +238,7 @@ async function cancelVisit() {
     await api.delete(`/visits/${visitId}`)
     router.push('/records')
   } catch (err) {
-    console.error('Ошибка cancelVisit:', err)
+    logger.error('cancelVisit', { error: err?.message || String(err) })
     visitError.value = getErrorMessage(err, 'Не удалось отменить запись.')
   } finally {
     deleting.value = false
@@ -268,7 +269,7 @@ function goToDatetime() {
       query: { redirect: router.currentRoute.value.fullPath, moveVisit: visitId }
     })
   } catch (err) {
-    console.error(err)
+    logger.error('goToDatetime', { error: err?.message || String(err) })
     visitError.value = 'Ошибка при переходе к выбору даты.'
   }
 }
@@ -286,7 +287,7 @@ async function handleMoveVisitReturn() {
     clearVisit()
     await loadVisit()
   } catch (err) {
-    console.error(err)
+    logger.error('handleMoveVisitReturn', { error: err?.message || String(err) })
     visitError.value = 'Не удалось обновить дату и время визита.'
   } finally {
     processing.value = false

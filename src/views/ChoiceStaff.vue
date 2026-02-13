@@ -22,12 +22,7 @@
         v-for="staff in staffList"
         :key="staff.id"
         class="staff-card"
-        @click="
-          () => {
-            console.log('click', staff.id);
-            onSelect(staff.id);
-          }
-        "
+        @click="onSelect(staff.id)"
       >
         <!-- Аватар -->
         <div class="avatar-container">
@@ -77,6 +72,7 @@ import api from '../api'
 import { useRouter } from 'vue-router'
 import { readVisit, writeVisit } from '../utils/visitStorage'
 import { getFirstLetter, getStaffId } from '../utils/stringUtils'
+import { logger } from '../utils/logger'
 
 const router = useRouter()
 const emit = defineEmits(['select', 'review', 'visit'])
@@ -105,7 +101,7 @@ async function loadSpecializations() {
       })),
     ];
   } catch (error) {
-    console.error("Error loading specializations:", error);
+    logger.error('ChoiceStaff: ошибка загрузки специализаций', { error: error?.message || String(error) });
   }
 }
 
@@ -133,7 +129,7 @@ async function loadStaff(specId) {
       writeVisit(v);
     }
   } catch (error) {
-    console.error("Error loading staff:", error);
+    logger.error('ChoiceStaff: ошибка загрузки сотрудников', { error: error?.message || String(error) });
   }
 }
 
@@ -154,7 +150,7 @@ function scrollToActiveTab() {
       container.scrollTo({ left: Math.max(0, scrollTo), behavior: "smooth" });
     });
   } catch (e) {
-    console.warn("scrollToActiveTab failed:", e);
+    logger.warn('ChoiceStaff: scrollToActiveTab failed', { error: e?.message || String(e) });
   }
 }
 
@@ -173,7 +169,7 @@ function goStaff(idOrStaff) {
 
 function onSelect(idOrStaff) {
   const id = typeof idOrStaff === "object" ? getStaffId(idOrStaff) : idOrStaff;
-  console.log("onSelect, id:", id);
+  logger.debug('ChoiceStaff: выбран сотрудник', { staffId: id });
   if (!id) return;
 
   selectedId.value = id;

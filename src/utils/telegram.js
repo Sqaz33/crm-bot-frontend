@@ -135,7 +135,7 @@ export function extractUserFromInitData(id) {
       photo_url: userObj.photo_url || ''
     };
   } catch (error) {
-    console.error('[extractUserFromInitData] Error:', error);
+    logger.error('[extractUserFromInitData] Error', { error: error?.message || String(error) });
     return null;
   }
 }
@@ -158,38 +158,32 @@ export function debugInitDataPretty(initData) {
     length: v.length
   }));
   
-  console.group('[DEBUG INIT_DATA]');
-  console.table(params);
+  logger.debug('debugInitDataPretty: params', { params });
 
   // Выводим user отдельно, если есть
   const u = usp.get('user');
   if (u) {
-    console.group('User data:');
     try {
       let decoded = u;
       try { decoded = decodeURIComponent(u); } catch {}
       
       try {
         const userObj = JSON.parse(decoded);
-        console.log('Parsed successfully:', userObj);
+        logger.debug('debugInitDataPretty: user', { user: userObj });
       } catch {
-        console.log('Failed to parse, raw decoded:', decoded);
-        console.log('Raw:', u);
+        logger.debug('debugInitDataPretty: failed to parse user', { decoded });
       }
     } catch (e) {
       logger.error('debugInitDataPretty: error parsing user', { error: e?.message });
     }
-    console.groupEnd();
   }
 
   // Выводим auth_date в читаемом формате
   const authDate = usp.get('auth_date');
   if (authDate) {
     const date = new Date(parseInt(authDate) * 1000);
-    console.log('Auth date:', date.toISOString(), `(${authDate})`);
+    logger.debug('debugInitDataPretty: auth_date', { authDateISO: date.toISOString(), authDate });
   }
-
-  console.groupEnd();
 }
 
 /**
@@ -260,52 +254,44 @@ export function splitFullNameIfNeeded(fullName, fallback = {}) {
 export function debugInitData() {
   const val = localStorage.getItem('DEBUG_INIT_DATA');
   if (!val) {
-    console.warn('DEBUG_INIT_DATA not found');
+    logger.warn('DEBUG_INIT_DATA not found');
     return;
   }
   
-  console.group('[DEBUG INIT_DATA]');
-  
   const usp = new URLSearchParams(val);
   
-  // Выводим все параметры
-  console.table(
-    Array.from(usp.entries()).map(([k, v]) => ({
+  logger.debug('debugInitData: params', {
+    params: Array.from(usp.entries()).map(([k, v]) => ({
       key: k,
       value: v.length > 120 ? v.slice(0, 120) + '...' : v,
       length: v.length
     }))
-  );
+  });
 
   // Выводим user отдельно, если есть
   const u = usp.get('user');
   if (u) {
-    console.group('User data:');
     try {
       let decoded = u;
       try { decoded = decodeURIComponent(u); } catch {}
       
       try {
         const userObj = JSON.parse(decoded);
-        console.log('Parsed successfully:', userObj);
+        logger.debug('debugInitData: user', { user: userObj });
       } catch {
-        console.log('Failed to parse, raw decoded:', decoded);
-        console.log('Raw:', u);
+        logger.debug('debugInitData: failed to parse user', { decoded });
       }
     } catch (e) {
-      console.error('Error parsing user:', e);
+      logger.error('debugInitData: error parsing user', { error: e?.message || String(e) });
     }
-    console.groupEnd();
   }
 
   // Выводим auth_date в читаемом формате
   const authDate = usp.get('auth_date');
   if (authDate) {
     const date = new Date(parseInt(authDate) * 1000);
-    console.log('Auth date:', date.toISOString(), `(${authDate})`);
+    logger.debug('debugInitData: auth_date', { authDateISO: date.toISOString(), authDate });
   }
-
-  console.groupEnd();
 }
 
 /**

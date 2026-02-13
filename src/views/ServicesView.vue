@@ -63,6 +63,7 @@ import { ref, computed, onMounted } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
 import { readVisit, writeVisit } from '../utils/visitStorage'
+import { logger } from '../utils/logger'
 
 const router = useRouter()
 const loading = ref(true)
@@ -93,7 +94,7 @@ onMounted(async () => {
       selectedServiceIds.value = [...visit.value.services_id]
     }
   } catch (error) {
-    console.error('Error loading services:', error)
+    logger.error('ServicesView: error loading services', { error: error?.message || String(error) })
   } finally {
     loading.value = false
   }

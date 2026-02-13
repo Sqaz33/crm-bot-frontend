@@ -8,7 +8,7 @@ import { logger } from '../utils/logger'
 
 const staffCache = {}
 const servicesCache = {}
-const staffPromises = {}
+let staffPromises = null
 let servicesPromise = null
 
 /**

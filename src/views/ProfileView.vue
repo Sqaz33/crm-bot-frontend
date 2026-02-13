@@ -98,7 +98,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import api from '../api' 
+import api from '../api'
+import { logger } from '../utils/logger'
 
 const loading = ref(false)
 const saving  = ref(false)
@@ -139,9 +140,9 @@ async function loadMe() {
       phone: data?.phone ?? '',
       email: data?.email ?? ''
     }
-    console.debug('[GET /auth/me] data:', data)
+    logger.debug('ProfileView: [GET /auth/me] data', { data })
   } catch (e) {
-    console.error('[GET /auth/me] error:', e?.response ?? e)
+    logger.error('ProfileView: [GET /auth/me] error', { error: e?.response ?? e })
     
   } finally {
     loading.value = false
@@ -170,10 +171,10 @@ async function handleSave() {
   saving.value = true
   try {
     const payload = { name: joinFullName(profileData.value) }
-    console.debug('[SAVE /auth/me] payload:', payload)
+    logger.debug('ProfileView: [SAVE /auth/me] payload', { payload })
     await updateMeName(payload)
     await loadMe()
-    console.error('ФИО обновлено')
+    logger.info('ProfileView: ФИО обновлено')
 
     // Показываем toast уведомление
     showToast.value = true
@@ -181,14 +182,14 @@ async function handleSave() {
       showToast.value = false
     }, 3000)
   } catch (e) {
-    console.error('[SAVE /auth/me] error:', e?.response ?? e)
+    logger.error('ProfileView: [SAVE /auth/me] error', { error: e?.response ?? e })
     const code = e?.response?.status
     if (code === 401) {
-      console.error('Сессия истекла. Войдите заново.')
+      logger.warn('ProfileView: Сессия истекла. Войдите заново.')
     } else if (code === 415) {
-      console.error('Сервер не принял формат данных (415). Проверьте Content-Type.')
+      logger.warn('ProfileView: Сервер не принял формат данных (415). Проверьте Content-Type.')
     } else {
-      console.error('Не удалось сохранить. Подробности в консоли.')
+      logger.error('ProfileView: Не удалось сохранить. Подробности в консоли.')
     }
   } finally {
     saving.value = false

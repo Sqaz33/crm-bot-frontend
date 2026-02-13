@@ -125,6 +125,8 @@ import TermsModal from '../components/TermsModal.vue'
 import { getEnv } from '../config'
 import { getRawVisit, readVisit, clearVisit } from '../utils/visitStorage'
 import { humanizeDateTime } from '../utils/dateFormatters'
+import { logger } from '../utils/logger'
+
 const PROFILE_KEY = 'profile_data'
 const router = useRouter()
 
@@ -163,7 +165,7 @@ async function loadClientData() {
     })
     clientData.value = data
   } catch (error) {
-    console.error('Ошибка загрузки данных клиента:', error)
+    logger.error('CreateVisitView: ошибка загрузки данных клиента', { error: error?.message || String(error) })
     clientData.value = null
   }
 }
@@ -178,7 +180,7 @@ async function loadSalonInfo() {
     salonInfo.name = data.name || 'Название салона'
     salonInfo.description = data.description || 'тип заведения'
   } catch (e) {
-    console.error('[LoadSalon] Ошибка:', e)
+    logger.error('CreateVisitView: ошибка загрузки информации о салоне', { error: e?.message || String(e) })
     salonInfo.name = 'Название салона'
     salonInfo.description = 'тип заведения'
   }
@@ -232,7 +234,7 @@ onMounted(async () => {
     const h = humanizeDateTime(visitDate.value)
     summary.date = h.d; summary.time = h.t
   } catch (e) {
-    console.error('[Init] Ошибка:', e)
+    logger.error('CreateVisitView: ошибка инициализации формы', { error: e?.message || String(e) })
     errorMsg.value = 'Ошибка инициализации формы.'
   }
 })
@@ -260,15 +262,15 @@ async function submitVisit() {
       // remind_lead_hours: Number(remindLeadHours.value) || 0, 
     }
 
-    console.log('[VisitCreate] POST /visits/ payload →', payload)
+    logger.info('CreateVisitView: создание записи', { payload })
     const res = await api.post('/visits/', payload)
-    console.log('[VisitCreate] OK', res.status, res.data)
+    logger.info('CreateVisitView: запись успешно создана', { status: res.status, data: res.data })
 
     // Показываем модальное окно вместо редиректа
     showSuccessModal.value = true
     clearVisitData()
   } catch (e) {
-    console.error('[VisitCreate] Ошибка:', e)
+    logger.error('CreateVisitView: ошибка создания записи', { error: e?.message || String(e) })
     const s = e?.response?.status
     const detail = e?.response?.data?.detail
     errorMsg.value =
