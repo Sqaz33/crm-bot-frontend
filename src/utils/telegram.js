@@ -1,5 +1,7 @@
 // src/utils/telegram.js
 
+import { logger } from '../utils/logger'
+
 /**
  * Получаем init_data из Telegram WebApp (или из hash/query при локальном запуске).
  * Логируем источник, длину строки и сохраняем копию в localStorage.DEBUG_INIT_DATA.
@@ -9,24 +11,24 @@ export function getInitData() {
 
   if (window.Telegram?.WebApp?.initData) {
     raw = window.Telegram.WebApp.initData;
-    console.log('[InitData] source=window.Telegram.WebApp.initData len=', raw?.length);
+    logger.debug('getInitData: source=window.Telegram.WebApp.initData', { length: raw?.length });
   }
 
   if (!raw && window.location.hash?.startsWith('#tgWebAppData=')) {
     raw = decodeURIComponent(window.location.hash.replace('#tgWebAppData=', ''));
-    console.log('[InitData] source=location.hash len=', raw?.length);
+    logger.debug('getInitData: source=location.hash', { length: raw?.length });
   }
 
   if (!raw) {
     const params = new URLSearchParams(window.location.search);
     if (params.has('init_data')) {
       raw = decodeURIComponent(params.get('init_data'));
-      console.log('[InitData] source=query.init_data len=', raw?.length);
+      logger.debug('getInitData: source=query.init_data', { length: raw?.length });
     }
   }
 
   if (!raw) {
-    console.warn('[InitData] not found');
+    logger.warn('getInitData: init_data not found');
     return null;
   }
 
@@ -34,51 +36,37 @@ export function getInitData() {
   const idx = raw.indexOf('&tgWebAppVersion=');
   if (idx > -1) raw = raw.substring(0, idx);
 
-  console.group('[InitData] CLEAN');
-  console.log('-----BEGIN INIT_DATA-----');
-  console.log(raw);
-  console.log('-----END INIT_DATA-----');
-  console.log('length =', raw.length);
-
   const usp = new URLSearchParams(raw);
   const keys = Array.from(usp.keys());
-  console.log('keys found:', keys);
+  logger.debug('getInitData: keys found', { keys, length: raw.length });
 
   // Проверяем, что есть либо user, либо данные авторизации
   const hasUser = usp.has('user');
   const hasAuthDate = usp.has('auth_date');
   const hasHash = usp.has('hash');
   
-  console.log('has user:', hasUser);
-  console.log('has auth_date:', hasAuthDate);
-  console.log('has hash:', hasHash);
-
   if (!hasHash) {
-    console.warn('WARNING: hash is missing - initData may be invalid');
+    logger.warn('getInitData: hash is missing - initData may be invalid');
   }
   
   if (!hasAuthDate) {
-    console.warn('WARNING: auth_date is missing');
+    logger.warn('getInitData: auth_date is missing');
   }
 
-  // Если нет user, это может быть предварительная авторизация
   if (!hasUser) {
-    console.warn('WARNING: user is missing - this may be initial auth state');
-    console.log('Available params:');
-    keys.forEach(key => {
-      console.log(`  ${key}: ${usp.get(key).slice(0, 50)}...`);
+    logger.warn('getInitData: user is missing - this may be initial auth state');
+    logger.debug('getInitData: available params', { 
+      params: keys.map(k => `${k}: ${usp.get(k).slice(0, 50)}...`) 
     });
   } else {
-    console.log('User data present ✓');
+    logger.debug('getInitData: user data present');
   }
-  
-  console.groupEnd();
 
   try {
     localStorage.setItem('DEBUG_INIT_DATA', raw);
-    console.log('[InitData] saved to localStorage.DEBUG_INIT_DATA');
+    logger.debug('getInitData: saved to localStorage.DEBUG_INIT_DATA');
   } catch (e) {
-    console.error('Failed to save to localStorage:', e);
+    logger.warn('getInitData: failed to save to localStorage', { error: e?.message });
   }
 
   return raw;
@@ -97,7 +85,7 @@ export function extractUserFromInitData(id) {
     
     // Если пользователь не авторизован, возвращаем null
     if (!rawUser) {
-      console.log('[extractUserFromInitData] No user data - not authorized yet');
+      logger.debug('extractUserFromInitData: no user data - not authorized yet');
       return null;
     }
 
@@ -106,7 +94,7 @@ export function extractUserFromInitData(id) {
     try {
       decoded = decodeURIComponent(rawUser);
     } catch (e) {
-      console.warn('Failed to decodeURIComponent user:', e);
+      logger.warn('extractUserFromInitData: failed to decodeURIComponent user', { error: e?.message });
     }
 
     // Пытаемся распарсить JSON
@@ -114,23 +102,23 @@ export function extractUserFromInitData(id) {
     try {
       userObj = JSON.parse(decoded);
     } catch (e) {
-      console.warn('Failed to parse user JSON:', e);
+      logger.warn('extractUserFromInitData: failed to parse user JSON', { error: e?.message });
       // Иногда может быть двойное кодирование
       try {
         const doubleDecoded = decodeURIComponent(decoded);
         userObj = JSON.parse(doubleDecoded);
       } catch (e2) {
-        console.error('Failed to double decode user:', e2);
+        logger.error('extractUserFromInitData: failed to double decode user', { error: e2?.message });
         return null;
       }
     }
 
     if (!userObj || !userObj.id) {
-      console.warn('Invalid user object or missing id:', userObj);
+      logger.warn('extractUserFromInitData: invalid user object or missing id', { userObj });
       return null;
     }
 
-    console.log('[extractUserFromInitData] Successfully extracted user:', {
+    logger.debug('extractUserFromInitData: successfully extracted user', {
       id: userObj.id,
       firstName: userObj.first_name,
       username: userObj.username
@@ -150,6 +138,58 @@ export function extractUserFromInitData(id) {
     console.error('[extractUserFromInitData] Error:', error);
     return null;
   }
+}
+
+/**
+ * Форматирует initData для отладки (console.table для разработчиков)
+ */
+export function debugInitDataPretty(initData) {
+  if (!initData) {
+    logger.warn('debugInitDataPretty: initData is null');
+    return;
+  }
+  
+  const usp = new URLSearchParams(initData);
+  
+  // Выводим все параметры в читаемом виде
+  const params = Array.from(usp.entries()).map(([k, v]) => ({
+    key: k,
+    value: v.length > 120 ? v.slice(0, 120) + '...' : v,
+    length: v.length
+  }));
+  
+  console.group('[DEBUG INIT_DATA]');
+  console.table(params);
+
+  // Выводим user отдельно, если есть
+  const u = usp.get('user');
+  if (u) {
+    console.group('User data:');
+    try {
+      let decoded = u;
+      try { decoded = decodeURIComponent(u); } catch {}
+      
+      try {
+        const userObj = JSON.parse(decoded);
+        console.log('Parsed successfully:', userObj);
+      } catch {
+        console.log('Failed to parse, raw decoded:', decoded);
+        console.log('Raw:', u);
+      }
+    } catch (e) {
+      logger.error('debugInitDataPretty: error parsing user', { error: e?.message });
+    }
+    console.groupEnd();
+  }
+
+  // Выводим auth_date в читаемом формате
+  const authDate = usp.get('auth_date');
+  if (authDate) {
+    const date = new Date(parseInt(authDate) * 1000);
+    console.log('Auth date:', date.toISOString(), `(${authDate})`);
+  }
+
+  console.groupEnd();
 }
 
 /**
@@ -273,7 +313,7 @@ export function debugInitData() {
  */
 export function initTelegramWebApp() {
   if (window.Telegram?.WebApp) {
-    console.log('[Telegram WebApp] Initializing...');
+    logger.info('initTelegramWebApp: initializing');
     
     // Развертываем приложение на весь экран
     window.Telegram.WebApp.expand();
@@ -286,14 +326,15 @@ export function initTelegramWebApp() {
       window.history.back();
     });
     
-    // Логируем версию и платформу
-    console.log('[Telegram WebApp] Platform:', window.Telegram.WebApp.platform);
-    console.log('[Telegram WebApp] Version:', window.Telegram.WebApp.version);
-    console.log('[Telegram WebApp] InitDataUnsafe:', window.Telegram.WebApp.initDataUnsafe);
+    logger.debug('initTelegramWebApp: initialized', {
+      platform: window.Telegram.WebApp.platform,
+      version: window.Telegram.WebApp.version,
+      initDataUnsafe: window.Telegram.WebApp.initDataUnsafe
+    });
     
     return window.Telegram.WebApp;
   }
   
-  console.warn('[Telegram WebApp] Not available');
+  logger.warn('initTelegramWebApp: Telegram WebApp not available');
   return null;
 }

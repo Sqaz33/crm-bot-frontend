@@ -4,6 +4,7 @@
  */
 
 import api from '../api'
+import { logger } from '../utils/logger'
 
 const staffCache = {}
 const servicesCache = {}
@@ -20,7 +21,7 @@ export async function getStaff(staff_id) {
     staffCache[staff_id] = data
     return data
   } catch (error) {
-    console.error('[getStaff] Ошибка при запросе сотрудника', {
+    logger.error('getStaff: ошибка при запросе сотрудника', {
       staff_id,
       status: error?.response?.status,
       responseData: error?.response?.data,
@@ -46,7 +47,7 @@ export async function getService(service_id) {
     }
     return servicesCache[service_id]
   } catch (error) {
-    console.error('[getService] Ошибка при запросе услуги', {
+    logger.error('getService: ошибка при запросе услуги', {
       service_id,
       status: error?.response?.status,
       responseData: error?.response?.data,

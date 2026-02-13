@@ -3,6 +3,8 @@
  * Используется при записи на приём (услуги, сотрудник, дата/время).
  */
 
+import { logger } from '../utils/logger'
+
 export const VISIT_KEY = 'visit_data'
 
 export const DEFAULT_VISIT = {
@@ -44,7 +46,7 @@ export function writeVisit(visit, options = {}) {
       document.cookie = `${VISIT_KEY}=${cookieValue}; path=/; SameSite=Lax;`
     }
   } catch (e) {
-    console.warn('writeVisit failed:', e)
+    logger.warn('writeVisit: ошибка записи', { error: e?.message })
   }
 }
 
@@ -57,7 +59,7 @@ export function clearVisit() {
     window.dispatchEvent(new CustomEvent('local-storage-changed'))
     document.cookie = `${VISIT_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`
   } catch (e) {
-    console.warn('clearVisit failed:', e)
+    logger.warn('clearVisit: ошибка очистки', { error: e?.message })
   }
 }
 
@@ -91,7 +93,7 @@ export async function waitForVisitTime(timeoutMs = 300000, intervalMs = 100) {
           return data.visit_time.start_time
         }
       } catch (e) {
-        console.error('Ошибка парсинга localStorage:', e)
+    logger.warn('waitForVisitTime: ошибка парсинга localStorage', { error: e?.message })
       }
     }
     await new Promise((resolve) => setTimeout(resolve, intervalMs))

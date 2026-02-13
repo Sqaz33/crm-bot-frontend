@@ -132,6 +132,7 @@ import api from '../api'
 import { useRouter } from 'vue-router'
 import { getStaff, getService } from '../utils/staffServiceCache'
 import { formatDateShort, formatTimeOnly } from '../utils/dateFormatters'
+import { logger } from '../utils/logger'
 import crossIcon from '../assets/crossIcon.svg'
 import checkmarkIcon from '../assets/checkmarkIcon.svg'
 import clockIcon from '../assets/clockIcon.svg'
@@ -165,36 +166,30 @@ async function fetchVisits(tab) {
   visits.value = [];
 
   const url = tab === "current" ? "/visits/current/" : "/visits/old/";
-  console.log(`Загружаем данные с: ${url}`);
+    logger.info('fetchVisits: загрузка записей', { tab, url });
 
   try {
     const { data: rawVisits } = await api.get(url);
 
     if (!Array.isArray(rawVisits)) {
-      console.error("Сервер вернул не массив:", rawVisits);
+      logger.error('fetchVisits: сервер вернул не массив', { rawVisits });
       visits.value = [];
       return;
     }
 
-    console.log(`Получено ${rawVisits.length} записей`);
-    if (rawVisits.length > 0)
-      console.log("Первый элемент (сырой):", rawVisits[0]);
+    logger.info('fetchVisits: получено записей', { count: rawVisits.length });
 
     let processedCount = 0;
     const mapped = await Promise.all(
       rawVisits.map(async (v, i) => {
-
         const staff = await getStaff(v.staff_id)
         const service = await getService(v.service_id)
         const enriched = { ...v, staff, service }
-        const recordStatus = v.status;
-        console.log(`Сатус секущего заказа: ${recordStatus}`)
-
 
         processedCount++;
-        if (i === 0) console.log("Первый элемент после обработки:", enriched);
-        if (processedCount % 10 === 0 || processedCount === rawVisits.length)
-          console.log(`Обработано ${processedCount} из ${rawVisits.length}`);
+        if (processedCount % 10 === 0 || processedCount === rawVisits.length) {
+        logger.debug?.('fetchVisits: обработано записей', { processed: processedCount, total: rawVisits.length });
+        }
         return enriched;
       })
     );
@@ -205,13 +200,12 @@ async function fetchVisits(tab) {
     });
 
     visits.value = sortedVisits;
-    console.log(`Всего обработано ${mapped.length} записей, отсортировано`);
+    logger.info('fetchVisits: завершено', { total: mapped.length });
   } catch (err) {
-    console.error("Ошибка при загрузке или обработке:", err);
+    logger.error('fetchVisits: ошибка загрузки', { error: err.message, url });
     visits.value = [];
   } finally {
     loading.value = false;
-    console.log("Завершено обновление данных\n");
   }
 }
 
