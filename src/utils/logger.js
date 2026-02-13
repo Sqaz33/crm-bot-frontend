@@ -13,7 +13,7 @@
  * logger.info('Событие', { userId: 123 });
  * 
  * @features
- * - 3 уровня логирования: ERROR, WARN, INFO
+ * - 4 уровня логирования: DEBUG, INFO, WARN, ERROR
  * - Цветной вывод в консоль (только development)
  * - Автоматический перехват ошибок Vue компонентов
  * - Автоматический перехват глобальных JS ошибок
@@ -24,20 +24,22 @@
  */
 
 const CONFIG = {
-  level: import.meta.env?.DEV ? 'info' : 'error',
+  level: import.meta.env?.DEV ? 'debug' : 'error',
   colors: {
     error: '#ff4444',
     warn: '#ffbb33',
     info: '#0099cc',
+    debug: '#00ff00',
   },
   sensitiveFields: ['password', 'token', 'secret', 'accessToken', 'refreshToken', 'apiKey'],
   maxDepth: 3,
 };
 
 const LEVELS = {
-  ERROR: 0,
-  WARN: 1,
-  INFO: 2,
+  DEBUG: 0,
+  ERROR: 1,
+  WARN: 2,
+  INFO: 3,
 };
 
 /**
@@ -121,13 +123,14 @@ async function sendToServer(logData) {
   }
   
   try {
-    await fetch('/api/logs', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(logData),
-    });
+    // TODO: когда добавят
+    // await fetch('/api/logs', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(logData),
+    // });
   } catch {
     // Игнорируем ошибки сети - нет retry, очередей или батчинга
   }
@@ -148,6 +151,8 @@ function consoleOutput(level, message, data) {
     console.error(`%c${prefix}`, style, message, data);
   } else if (level === 'WARN') {
     console.warn(`%c${prefix}`, style, message, data);
+  } else if (level === 'DEBUG') {
+    console.debug(`%c${prefix}`, style, message, data);
   } else {
     console.log(`%c${prefix}`, style, message, data);
   }
@@ -183,12 +188,20 @@ function log(level, message, data = {}) {
 /** @type {Logger} */
 export const logger = {
   /**
+   * DEBUG уровень - отладочные сообщения (только development)
+   * @param {string} message - Сообщение
+   * @param {object} [data] - Дополнительные данные
+   * @example this.$logger.debug('Промежуточное значение', { value: 123 })
+   */
+  debug: (message, data) => log('DEBUG', message, data),
+  
+  /**
    * INFO уровень - информационные сообщения
    * @param {string} message - Сообщение
    * @param {object} [data] - Дополнительные данные
    * @example this.$logger.info('Пользователь авторизовался', { userId: 123 })
    */
-  error: (message, data) => log('ERROR', message, data),
+  info: (message, data) => log('INFO', message, data),
   
   /**
    * WARN уровень - предупреждения
@@ -204,7 +217,7 @@ export const logger = {
    * @param {object} [data] - Дополнительные данные
    * @example this.$logger.error('Ошибка API', { url: '/api', status: 500 })
    */
-  info: (message, data) => log('INFO', message, data),
+  error: (message, data) => log('ERROR', message, data),
 };
 
 /**
