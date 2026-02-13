@@ -5,51 +5,51 @@
         <div class="profile-form">
           <!-- Имя -->
           <div class="form-field">
-  <div class="field-header">
-    <label class="field-label">Имя</label>
-  </div>
-  <div class="input-wrapper">
-    <input 
-      v-model="profileData.firstName" 
-      @input="profileData.firstName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')" 
-      type="text" 
-      class="form-input" 
-      placeholder="Имя" 
-    />
-  </div>
-</div>
+            <div class="field-header">
+              <label class="field-label">Имя</label>
+            </div>
+            <div class="input-wrapper">
+              <input
+                v-model="profileData.firstName"
+                @input="profileData.firstName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')"
+                type="text"
+                class="form-input"
+                placeholder="Имя"
+              />
+            </div>
+          </div>
 
-<!-- Фамилия -->
-<div class="form-field">
-  <div class="field-header">
-    <label class="field-label">Фамилия</label>
-  </div>
-  <div class="input-wrapper">
-    <input 
-      v-model="profileData.lastName" 
-      @input="profileData.lastName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')" 
-      type="text" 
-      class="form-input" 
-      placeholder="Фамилия" 
-    />
-  </div>
-</div>
+          <!-- Фамилия -->
+          <div class="form-field">
+            <div class="field-header">
+              <label class="field-label">Фамилия</label>
+            </div>
+            <div class="input-wrapper">
+              <input
+                v-model="profileData.lastName"
+                @input="profileData.lastName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')"
+                type="text"
+                class="form-input"
+                placeholder="Фамилия"
+              />
+            </div>
+          </div>
 
-<!-- Отчество -->
-<div class="form-field">
-  <div class="field-header">
-    <label class="field-label">Отчество</label>
-  </div>
-  <div class="input-wrapper">
-    <input 
-      v-model="profileData.middleName" 
-      @input="profileData.middleName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')" 
-      type="text" 
-      class="form-input" 
-      placeholder="Отчество" 
-    />
-  </div>
-</div>
+          <!-- Отчество -->
+          <div class="form-field">
+            <div class="field-header">
+              <label class="field-label">Отчество</label>
+            </div>
+            <div class="input-wrapper">
+              <input
+                v-model="profileData.middleName"
+                @input="profileData.middleName = $event.target.value.replace(/[^а-яА-ЯёЁ]/g, '')"
+                type="text"
+                class="form-input"
+                placeholder="Отчество"
+              />
+            </div>
+          </div>
 
           <!-- Телефон (readOnly) -->
           <div class="form-field">
@@ -57,7 +57,13 @@
               <label class="field-label">Телефон</label>
             </div>
             <div class="input-wrapper">
-              <input v-model="profileData.phone" type="tel" class="form-input" placeholder="Телефон" readonly />
+              <input
+                v-model="profileData.phone"
+                type="tel"
+                class="form-input"
+                placeholder="Телефон"
+                readonly
+              />
             </div>
           </div>
 
@@ -67,61 +73,66 @@
               <label class="field-label">E-mail</label>
             </div>
             <div class="input-wrapper">
-              <input v-model="profileData.email" type="email" class="form-input" placeholder="example@mail.com" readonly />
+              <input
+                v-model="profileData.email"
+                type="email"
+                class="form-input"
+                placeholder="example@mail.com"
+                readonly
+              />
             </div>
           </div>
         </div>
 
         <!-- Кнопка сохранения -->
         <div class="save-section">
-          <button class="save-button"
-                  @click="handleSave"
-                  :disabled="!isFormValid || saving || loading">
+          <button
+            class="save-button"
+            @click="handleSave"
+            :disabled="!isFormValid || saving || loading"
+          >
             {{ saving ? 'Сохранение…' : 'Сохранить' }}
           </button>
         </div>
       </div>
     </main>
 
-    <!-- Toast notification -->
-    <Transition name="toast">
-      <div v-if="showToast" class="toast-notification">
-        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-          <path d="M8 12L11 15L16 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span>Данные сохранены</span>
-      </div>
-    </Transition>
+    <!-- ✅ Toast (переиспользуемый компонент) -->
+    <ToastNotification
+      v-model:open="showToast"
+      text="Данные сохранены"
+      type="success"
+      :duration="3500"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import api from '../api' 
+import { ref, computed, onMounted } from "vue"
+import api from "../api"
+import ToastNotification from "../components/ToastNotification.vue"
 
 const loading = ref(false)
-const saving  = ref(false)
+const saving = ref(false)
 const showToast = ref(false)
 
 const profileData = ref({
-  firstName: '',
-  lastName: '',
-  middleName: '',
-  phone: '',
-  email: ''
+  firstName: "",
+  lastName: "",
+  middleName: "",
+  phone: "",
+  email: "",
 })
 
-
 function splitFullName(full) {
-  const parts = String(full || '').trim().split(/\s+/).filter(Boolean)
-  if (parts.length === 0) return { firstName: '', lastName: '', middleName: '' }
-  if (parts.length === 1) return { firstName: parts[0], lastName: '', middleName: '' }
-  if (parts.length === 2) return { firstName: parts[0], lastName: parts[1], middleName: '' }
-  return { firstName: parts[0], lastName: parts[1], middleName: parts.slice(2).join(' ') }
+  const parts = String(full || "").trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return { firstName: "", lastName: "", middleName: "" }
+  if (parts.length === 1) return { firstName: parts[0], lastName: "", middleName: "" }
+  if (parts.length === 2) return { firstName: parts[0], lastName: parts[1], middleName: "" }
+  return { firstName: parts[0], lastName: parts[1], middleName: parts.slice(2).join(" ") }
 }
 function joinFullName({ firstName, lastName, middleName }) {
-  return [firstName, lastName, middleName].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim()
+  return [firstName, lastName, middleName].filter(Boolean).join(" ").replace(/\s+/g, " ").trim()
 }
 
 const isFormValid = computed(() => profileData.value.firstName.trim().length > 0)
@@ -129,40 +140,45 @@ const isFormValid = computed(() => profileData.value.firstName.trim().length > 0
 async function loadMe() {
   loading.value = true
   try {
-    const { data } = await api.get('/auth/me/', {
-      headers: { Accept: 'application/json' },
-      withCredentials: true
+    const { data } = await api.get("/auth/me/", {
+      headers: { Accept: "application/json" },
+      withCredentials: true,
     })
     const fio = splitFullName(data?.name)
     profileData.value = {
       ...fio,
-      phone: data?.phone ?? '',
-      email: data?.email ?? ''
+      phone: data?.phone ?? "",
+      email: data?.email ?? "",
     }
-    console.debug('[GET /auth/me] data:', data)
+    console.debug("[GET /auth/me] data:", data)
   } catch (e) {
-    console.error('[GET /auth/me] error:', e?.response ?? e)
-    
+    console.error("[GET /auth/me] error:", e?.response ?? e)
   } finally {
     loading.value = false
   }
 }
 
 async function updateMeName(payload) {
-  const cfg = { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
-  try {              
-    return await api.patch('/auth/me/', payload, cfg)
+  const cfg = { headers: { "Content-Type": "application/json" }, withCredentials: true }
+  try {
+    return await api.patch("/auth/me/", payload, cfg)
   } catch (e1) {
     const s = e1?.response?.status
     if (s !== 404 && s !== 405 && s !== 400) throw e1
-    try {              
-      return await api.put('/auth/me/', payload, cfg)
+    try {
+      return await api.put("/auth/me/", payload, cfg)
     } catch (e2) {
       const s2 = e2?.response?.status
       if (s2 !== 404 && s2 !== 405) throw e2
-      return await api.post('/auth/me/', payload, cfg)
+      return await api.post("/auth/me/", payload, cfg)
     }
   }
+}
+
+// чтобы тост всегда срабатывал даже если уже открыт
+function triggerToast() {
+  showToast.value = false
+  setTimeout(() => (showToast.value = true), 0)
 }
 
 async function handleSave() {
@@ -170,26 +186,18 @@ async function handleSave() {
   saving.value = true
   try {
     const payload = { name: joinFullName(profileData.value) }
-    console.debug('[SAVE /auth/me] payload:', payload)
+    console.debug("[SAVE /auth/me] payload:", payload)
     await updateMeName(payload)
     await loadMe()
-    console.error('ФИО обновлено')
+    console.log("ФИО обновлено")
 
-    // Показываем toast уведомление
-    showToast.value = true
-    setTimeout(() => {
-      showToast.value = false
-    }, 3000)
+    triggerToast()
   } catch (e) {
-    console.error('[SAVE /auth/me] error:', e?.response ?? e)
+    console.error("[SAVE /auth/me] error:", e?.response ?? e)
     const code = e?.response?.status
-    if (code === 401) {
-      console.error('Сессия истекла. Войдите заново.')
-    } else if (code === 415) {
-      console.error('Сервер не принял формат данных (415). Проверьте Content-Type.')
-    } else {
-      console.error('Не удалось сохранить. Подробности в консоли.')
-    }
+    if (code === 401) console.error("Сессия истекла. Войдите заново.")
+    else if (code === 415) console.error("Сервер не принял формат данных (415). Проверьте Content-Type.")
+    else console.error("Не удалось сохранить. Подробности в консоли.")
   } finally {
     saving.value = false
   }
@@ -198,9 +206,7 @@ async function handleSave() {
 onMounted(loadMe)
 </script>
 
-
 <style scoped>
-
 .profile-layout {
   --sidebar-mobile: 64px;
   --gutter-mobile: 20px;
@@ -210,7 +216,7 @@ onMounted(loadMe)
   display: flex;
   min-height: 100vh;
   background-color: var(--Color-Grey-Grey-100, #f6f5f6);
-  font-family: 'Geometria', sans-serif;
+  font-family: "Geometria", sans-serif;
 
   padding-left: var(--sidebar-desktop);
 }
@@ -283,7 +289,7 @@ onMounted(loadMe)
   padding: 28px 36px;
   background: white;
   border-radius: 12px;
-  border: 1px solid var(--Color-Grey-Grey-200, #E5E7EB);
+  border: 1px solid var(--Color-Grey-Grey-200, #e5e7eb);
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -298,19 +304,19 @@ onMounted(loadMe)
   background: transparent;
   color: var(--Color-Basic-Black, #454558);
   font-size: 24px;
-  font-family: 'Geometria', sans-serif;
+  font-family: "Geometria", sans-serif;
   font-weight: 400;
   line-height: 28px;
 }
 
 .form-input::placeholder {
-  color: #9CA3AF;
+  color: #9ca3af;
 }
 
 .save-section {
   width: 384px;
   height: 56px;
-  background: var(--Color-Brand-Brand-500, #666FE8);
+  background: var(--Color-Brand-Brand-500, #666fe8);
   border-radius: 10px;
   display: flex;
   justify-content: center;
@@ -324,21 +330,26 @@ onMounted(loadMe)
   background: transparent;
   color: white;
   font-size: 20px;
-  font-family: 'Geometria', sans-serif;
+  font-family: "Geometria", sans-serif;
   font-weight: 500;
   line-height: 24px;
   cursor: pointer;
   transition: opacity 0.2s ease;
 }
 
-.save-button:hover:not(:disabled) { opacity: 0.9; }
-.save-button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-
-@media (max-width: 1200px) {
-  .profile-container { width: 95%; }
+.save-button:hover:not(:disabled) {
+  opacity: 0.9;
+}
+.save-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
+@media (max-width: 1200px) {
+  .profile-container {
+    width: 95%;
+  }
+}
 
 @media (min-width: 431px) and (max-width: 768px) {
   .profile-layout {
@@ -357,9 +368,18 @@ onMounted(loadMe)
     padding: 10px 0;
   }
 
-  .field-label { font-size: 18px; line-height: 22px; }
-  .input-wrapper { height: 56px; padding: 16px 20px; }
-  .form-input { font-size: 18px; line-height: 22px; }
+  .field-label {
+    font-size: 18px;
+    line-height: 22px;
+  }
+  .input-wrapper {
+    height: 56px;
+    padding: 16px 20px;
+  }
+  .form-input {
+    font-size: 18px;
+    line-height: 22px;
+  }
 
   .save-section {
     width: 100%;
@@ -367,22 +387,25 @@ onMounted(loadMe)
     height: 52px;
   }
 
-  .save-button { font-size: 18px; line-height: 22px; }
+  .save-button {
+    font-size: 18px;
+    line-height: 22px;
+  }
 }
 
-
 @media (max-width: 430px) {
-  
   .profile-layout {
     padding-left: calc(var(--sidebar-mobile) + var(--gutter-mobile));
     padding-right: var(--gutter-mobile);
   }
- .main-content { padding: 8px 0 72px; }
+  .main-content {
+    padding: 8px 0 72px;
+  }
 
   .profile-container {
     width: 100%;
     max-width: 100%;
-    padding: 0; 
+    padding: 0;
   }
 
   .profile-form {
@@ -424,61 +447,4 @@ onMounted(loadMe)
     line-height: 22px;
   }
 }
-
-/* Toast notification styles */
-.toast-notification {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #4caf50;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 10000;
-  font-family: 'Geometria', sans-serif;
-  font-weight: 500;
-}
-
-.toast-icon {
-  width: 24px;
-  height: 24px;
-  color: white;
-}
-
-/* Toast animation */
-.toast-enter-active {
-  animation: toast-slide-in 0.3s ease-out;
-}
-
-.toast-leave-active {
-  animation: toast-slide-out 0.3s ease-in;
-}
-
-@keyframes toast-slide-in {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-@keyframes toast-slide-out {
-  from {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
-  }
-}
-
 </style>
