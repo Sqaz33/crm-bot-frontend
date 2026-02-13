@@ -139,6 +139,11 @@ import clockIcon from '../assets/clockIcon.svg'
 
 const router = useRouter()
 
+// AbortController для отмены предыдущего запроса при переключении вкладок
+let currentAbortController = null
+// Отслеживаем, какая вкладка была запрошена (для защиты от устаревших ответов)
+let requestedTab = null
+
 /* Преобразование статуса в сообщение пользователю */
 const statusMessage = {
     "waiting": {icon: clockIcon, bgClass: 'status-icon-waiting', title: "Ожидание", subtitle: "Ждем вас в салоне"},
@@ -162,6 +167,14 @@ const tabKey = 'ACTIVE_TAB'
 
 // --- API загрузка ---
 async function fetchVisits(tab) {
+  // Отменяем предыдущий запрос, если он ещё выполняется
+  if (currentAbortController) {
+    currentAbortController.abort();
+  }
+  
+  currentAbortController = new AbortController();
+  requestedTab = tab;
+  
   loading.value = true;
   visits.value = [];
 
@@ -169,7 +182,15 @@ async function fetchVisits(tab) {
     logger.info('fetchVisits: загрузка записей', { tab, url });
 
   try {
-    const { data: rawVisits } = await api.get(url);
+    const { data: rawVisits } = await api.get(url, {
+      signal: currentAbortController.signal
+    });
+
+    // Проверяем, что вкладка не изменилась с момента начала запроса
+    if (requestedTab !== tab) {
+      logger.debug('fetchVisits: вкладка изменилась, игнорируем ответ', { requestedTab, currentTab: tab });
+      return;
+    }
 
     if (!Array.isArray(rawVisits)) {
       logger.error('fetchVisits: сервер вернул не массив', { rawVisits });
@@ -202,10 +223,19 @@ async function fetchVisits(tab) {
     visits.value = sortedVisits;
     logger.info('fetchVisits: завершено', { total: mapped.length });
   } catch (err) {
+    // Игнорируем ошибку отмены запроса
+    if (err.name === 'AbortError') {
+      logger.debug('fetchVisits: запрос отменён', { tab });
+      return;
+    }
     logger.error('fetchVisits: ошибка загрузки', { error: err.message, url });
     visits.value = [];
   } finally {
     loading.value = false;
+    // Очищаем ссылку на AbortController после завершения
+    if (currentAbortController?.signal.aborted === false) {
+      currentAbortController = null;
+    }
   }
 }
 
