@@ -8,6 +8,8 @@ import { logger } from '../utils/logger'
 
 const staffCache = {}
 const servicesCache = {}
+const staffPromises = {}
+let servicesPromise = null
 
 /**
  * Получить сотрудника по id (с кэшированием).
@@ -16,8 +18,16 @@ const servicesCache = {}
  */
 export async function getStaff(staff_id) {
   if (staffCache[staff_id]) return staffCache[staff_id]
+  
+  // Если промис уже существует, ждём его результат
+  if (staffPromises[staff_id]) {
+    await staffPromises[staff_id]
+    return staffCache[staff_id]
+  }
+  
   try {
-    const { data } = await api.get(`/staff/${staff_id}`)
+    staffPromises[staff_id] = api.get(`/staff/${staff_id}`)
+    const { data } = await staffPromises[staff_id]
     staffCache[staff_id] = data
     return data
   } catch (error) {
@@ -28,6 +38,8 @@ export async function getStaff(staff_id) {
       message: error?.message
     })
     throw error
+  } finally {
+    delete staffPromises[staff_id]
   }
 }
 
@@ -38,13 +50,19 @@ export async function getStaff(staff_id) {
  */
 export async function getService(service_id) {
   if (servicesCache[service_id]) return servicesCache[service_id]
+  
+  // Если промис уже существует, ждём его результат
+  if (servicesPromise) {
+    await servicesPromise
+    return servicesCache[service_id]
+  }
+  
   try {
-    if (Object.keys(servicesCache).length === 0) {
-      const { data: arr } = await api.get('/services/')
-      arr.forEach((s) => {
-        servicesCache[s.id] = s
-      })
-    }
+    servicesPromise = api.get('/services/')
+    const { data: arr } = await servicesPromise
+    arr.forEach((s) => {
+      servicesCache[s.id] = s
+    })
     return servicesCache[service_id]
   } catch (error) {
     logger.error('getService: ошибка при запросе услуги', {
@@ -54,5 +72,7 @@ export async function getService(service_id) {
       message: error?.message
     })
     throw error
+  } finally {
+    servicesPromise = null
   }
 }
