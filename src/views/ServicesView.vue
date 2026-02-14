@@ -69,6 +69,7 @@ import { useRouter } from 'vue-router'
 import { readVisit, writeVisit } from '../utils/visitStorage'
 import SpinnerSvg from '@/components/SpinnerLoad.vue'
 
+import { logger } from '../utils/logger'
 
 const router = useRouter()
 const loading = ref(true)
@@ -99,7 +100,7 @@ onMounted(async () => {
       selectedServiceIds.value = [...visit.value.services_id]
     }
   } catch (error) {
-    console.error('Error loading services:', error)
+    logger.error('ServicesView: error loading services', { error: error?.message || String(error) })
   } finally {
     loading.value = false
   }

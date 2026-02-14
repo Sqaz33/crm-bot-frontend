@@ -132,11 +132,17 @@ import api from '../api'
 import { useRouter } from 'vue-router'
 import { getStaff, getService } from '../utils/staffServiceCache'
 import { formatDateShort, formatTimeOnly } from '../utils/dateFormatters'
+import { logger } from '../utils/logger'
 import crossIcon from '../assets/crossIcon.svg'
 import checkmarkIcon from '../assets/checkmarkIcon.svg'
 import clockIcon from '../assets/clockIcon.svg'
 
 const router = useRouter()
+
+// AbortController для отмены предыдущего запроса при переключении вкладок
+let currentAbortController = null
+// Отслеживаем, какая вкладка была запрошена (для защиты от устаревших ответов)
+let requestedTab = null
 
 /* Преобразование статуса в сообщение пользователю */
 const statusMessage = {
@@ -161,40 +167,50 @@ const tabKey = 'ACTIVE_TAB'
 
 // --- API загрузка ---
 async function fetchVisits(tab) {
+  // Отменяем предыдущий запрос, если он ещё выполняется
+  if (currentAbortController) {
+    currentAbortController.abort();
+  }
+  
+  currentAbortController = new AbortController();
+  requestedTab = tab;
+  
   loading.value = true;
   visits.value = [];
 
   const url = tab === "current" ? "/visits/current/" : "/visits/old/";
-  console.log(`Загружаем данные с: ${url}`);
+    logger.info('fetchVisits: загрузка записей', { tab, url });
 
   try {
-    const { data: rawVisits } = await api.get(url);
+    const { data: rawVisits } = await api.get(url, {
+      signal: currentAbortController.signal
+    });
+
+    // Проверяем, что вкладка не изменилась с момента начала запроса
+    if (requestedTab !== tab) {
+      logger.debug('fetchVisits: вкладка изменилась, игнорируем ответ', { requestedTab, currentTab: tab });
+      return;
+    }
 
     if (!Array.isArray(rawVisits)) {
-      console.error("Сервер вернул не массив:", rawVisits);
+      logger.error('fetchVisits: сервер вернул не массив', { rawVisits });
       visits.value = [];
       return;
     }
 
-    console.log(`Получено ${rawVisits.length} записей`);
-    if (rawVisits.length > 0)
-      console.log("Первый элемент (сырой):", rawVisits[0]);
+    logger.info('fetchVisits: получено записей', { count: rawVisits.length });
 
     let processedCount = 0;
     const mapped = await Promise.all(
       rawVisits.map(async (v, i) => {
-
         const staff = await getStaff(v.staff_id)
         const service = await getService(v.service_id)
         const enriched = { ...v, staff, service }
-        const recordStatus = v.status;
-        console.log(`Сатус секущего заказа: ${recordStatus}`)
-
 
         processedCount++;
-        if (i === 0) console.log("Первый элемент после обработки:", enriched);
-        if (processedCount % 10 === 0 || processedCount === rawVisits.length)
-          console.log(`Обработано ${processedCount} из ${rawVisits.length}`);
+        if (processedCount % 10 === 0 || processedCount === rawVisits.length) {
+        logger.debug?.('fetchVisits: обработано записей', { processed: processedCount, total: rawVisits.length });
+        }
         return enriched;
       })
     );
@@ -205,13 +221,21 @@ async function fetchVisits(tab) {
     });
 
     visits.value = sortedVisits;
-    console.log(`Всего обработано ${mapped.length} записей, отсортировано`);
+    logger.info('fetchVisits: завершено', { total: mapped.length });
   } catch (err) {
-    console.error("Ошибка при загрузке или обработке:", err);
+    // Игнорируем ошибку отмены запроса
+    if (err.name === 'AbortError') {
+      logger.debug('fetchVisits: запрос отменён', { tab });
+      return;
+    }
+    logger.error('fetchVisits: ошибка загрузки', { error: err.message, url });
     visits.value = [];
   } finally {
     loading.value = false;
-    console.log("Завершено обновление данных\n");
+    // Очищаем ссылку на AbortController после завершения
+    if (currentAbortController?.signal.aborted === false) {
+      currentAbortController = null;
+    }
   }
 }
 

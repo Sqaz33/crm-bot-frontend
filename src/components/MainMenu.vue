@@ -33,6 +33,7 @@
 import { ref, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import api from "../api";
+import { logger } from "../utils/logger";
 
 import Modal from "./Modal.vue";
 import ShareModal from "./ShareModal.vue";
@@ -90,7 +91,7 @@ function navigate(item) {
       const win = window.open(salon.value.address_url, "_blank");
       if (win) win.opener = null;
     } else {
-      console.log("Ссылка на адрес недоступна");
+      logger.warn('MainMenu: ссылка на адрес недоступна');
     }
   } else if (item.label === "Поделиться") {
     showShareModal.value = true;

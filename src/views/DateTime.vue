@@ -32,9 +32,13 @@
       </div>
 
       <div class="time-section" v-if="selectedDate">
-        <h3 class="time-title">Выберите время начала</h3>
+        <h3 v-if="freeSlots.length" class="time-title">Выберите время начала</h3>
 
-        <div class="time-category">
+        <div v-if="!freeSlots.length" class="no-slots-message">
+          Нет доступного времени
+        </div>
+
+        <div class="time-category" v-if="morningSlots.length">
           <div class="category-label">Утро</div>
           <div class="time-buttons">
             <button
@@ -94,6 +98,7 @@ import api from '../api'
 import { getRawVisit, readVisit, writeVisit } from '../utils/visitStorage'
 import { formatDateForCalendar, formatTime } from '../utils/dateFormatters'
 import { cap } from '../utils/stringUtils'
+import { logger } from '../utils/logger'
 
 export default {
   data() {
@@ -247,7 +252,7 @@ export default {
       }
       
       if (!service_id) {
-        console.warn('service_id обязателен для загрузки свободных слотов')
+        logger.warn('DateTime: service_id обязателен для загрузки свободных слотов')
         this.freeSlots = []
         return
       }
@@ -257,9 +262,22 @@ export default {
       if (service_id) params.service_id = service_id
 
       try {
-        const { data } = await api.get('/staff/free_time/', { params })
+        const response = await api.get('/staff/free_time/', { params })
 
-        const slots = data[0].free_slots || []
+        // Проверяем статус ответа вручную
+        if (response.status !== 200) {
+          logger.error('DateTime: неожиданный статус ответа', {
+            date: this.selectedDate,
+            staff_id,
+            service_id,
+            status: response.status
+          })
+          this.freeSlots = []
+          return
+        }
+
+        const data = response.data
+        const slots = data[0]?.free_slots || []
 
         this.freeSlots = slots.map(slot => {
           const s = slot.start_time
@@ -274,6 +292,12 @@ export default {
           return `${this.selectedDate}T${s}`
         })
       } catch (err) {
+        logger.error('DateTime: ошибка загрузки слотов', {
+          date: this.selectedDate,
+          staff_id,
+          service_id,
+          error: err?.message || String(err)
+        })
         this.freeSlots = []
       }
     },
@@ -440,6 +464,16 @@ export default {
   font-weight: 600;
   color: #1a2233;
   margin-bottom: 1.5rem;
+}
+
+.no-slots-message {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #c4cdd5;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem 0;
+  text-align: center;
 }
 
 .time-category {

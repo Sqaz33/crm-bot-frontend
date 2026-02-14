@@ -1,6 +1,7 @@
 // src/debug/telegramDebug.js
 
 import { ensureSession } from '../auth/ensureSession'
+import { logger } from '../utils/logger'
 
 /**
  * Подключает глобальную функцию:
@@ -16,7 +17,7 @@ export function attachDebugInitSender() {
   if (typeof window === 'undefined') return
 
   window.__debugInitData = async function (rawInitData) {
-    console.log('[debug:init] setting Telegram.WebApp.initData…', rawInitData)
+    logger.debug('debug:init: устанавливаем Telegram.WebApp.initData', { rawInitDataLen: rawInitData?.length })
 
     const w = window
     w.Telegram = w.Telegram || {}
@@ -25,16 +26,13 @@ export function attachDebugInitSender() {
 
     try {
       const me = await ensureSession()
-      console.log('[debug:init] ensureSession OK:', me)
+      logger.debug('debug:init: ensureSession OK', { me })
       return { ok: true, me }
     } catch (err) {
-      console.error('[debug:init] ensureSession ERROR:', err)
+      logger.error('debug:init: ensureSession ERROR', { error: err?.message })
       return { ok: false, error: err }
     }
   }
 
-  console.log(
-    '%c[debug] Готово: ты авторизовался")',
-    'color:#4caf50'
-  )
+  logger.debug('debug: функция __debugInitData доступна')
 }

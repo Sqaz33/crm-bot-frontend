@@ -11,8 +11,7 @@
             <div class="avatar">{{ firstLetter }}</div>
             <div class="info">
               <div class="name">
-                {{ staff.name }}
-                <!-- <span class="rating">★ 4.7</span> -->
+              {{ staff.name }}
               </div>
               <div class="spec">{{ staff.specializations?.join(', ') }}</div>
             </div>
@@ -29,6 +28,25 @@
           <div class="row">
             <div class="service-name">{{ service.name }}</div>
             <div class="price">{{ service.price }} ₽</div>
+          </div>
+        </div>
+
+        <!-- Статус записи -->
+        <div class="card-status">
+          <div class="status-info">
+            <img
+              :src="statusMessage[visit.status]?.icon || clockIcon"
+              :alt="statusMessage[visit.status]?.title || 'Статус'"
+              :class="['status-icon', statusMessage[visit.status]?.bgClass || 'status-icon-waiting']"
+            />
+            <div class="status-badge-reason">
+              <span class="status-badge">
+                {{ statusMessage[visit.status]?.title || 'Ожидание' }}
+              </span>
+              <div class="status-reason">
+                {{ statusMessage[visit.status]?.subtitle || 'Ждем вас в салоне' }}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -49,20 +67,21 @@
           </div>
         </div>
 
-        <!-- Плашка: Изменения -->
+        <!-- Плашка: Оплата -->
         <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome || delete_ }">
-          <div class="section-bar">Изменения</div>
+          <div class="section-bar">Оплата</div>
           <div class="list">
-            <button
-              class="list-item danger"
-              @click="openCancelModal"
-              :disabled="willCome || deleting || processing || delete_"
-            >
-              <span class="icon-circle danger-icon">✖</span>
-              <span class="text">Отменить запись</span>
+            <div class="list-item disabled" tabindex="-1" aria-disabled="true">
+              <span class="icon-circle lock-icon" aria-hidden="true"><img src="../assets/castle.svg" alt="" class="icon-14" /></span>
+              <span class="text">Оплата недоступна</span>
               <span class="chevron">›</span>
-            </button>
-<div class="list-item-separator"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Плашка: Перенос записи -->
+        <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome || processing || delete_ }">
+          <div class="list">
             <button
               class="list-item"
               @click="goToDatetime"
@@ -75,41 +94,34 @@
           </div>
         </div>
 
-        <!-- Плашка: Оплата -->
-        <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome || delete_ }">
-          <div class="section-bar">Оплата</div>
+        <!-- Плашка: Отмена записи -->
+        <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome || deleting || processing || delete_ }">
           <div class="list">
-            <div class="list-item disabled" tabindex="-1" aria-disabled="true">
-              <span class="icon-circle lock-icon"aria-hidden="true"><img src="../assets/castle.svg" alt="" class="icon-14" /></span>
-              <span class="text">Оплата недоступна</span>
+            <button
+              class="list-item danger"
+              @click="openCancelModal"
+              :disabled="willCome || deleting || processing || delete_"
+            >
+              <span class="icon-circle danger-icon">✖</span>
+              <span class="text">Отменить запись</span>
               <span class="chevron">›</span>
-            </div>
+            </button>
           </div>
+        </div>
+
+        <!-- Кнопки для прошедших записей -->
+        <div v-if="isOld" class="action-buttons">
+          <button class="btn-secondary" @click="goToDatetime">
+            <span class="btn-icon">⤴</span>
+            Записаться повторно
+          </button>
         </div>
 
         <div v-if="visitError" class="visit-error">{{ visitError }}</div>
 
-        <!-- Кнопка отзыва для прошедшей записи -->
-        <!-- <button v-else class="review-btn" @click="showReviewModal = true">Оставить отзыв</button> -->
       </div>
 
       <!-- Модалки -->
-      <!-- <div v-if="showReviewModal" class="modal-overlay">
-        <div class="modal">
-          <h3>Отзыв для {{ staff.name }}</h3>
-          <div class="stars">
-            <span v-for="n in 5" :key="n" class="star" :class="{ filled: n <= review.rating }"
-              @click="review.rating = n">★</span>
-          </div>
-          <textarea v-model="review.comment" placeholder="Напишите ваш комментарий..."></textarea>
-          <div class="modal-buttons">
-            <button @click="submitReview" :disabled="sending">{{ sending ? 'Отправка...' : 'Отправить' }}</button>
-            <button @click="showReviewModal = false" :disabled="sending">Отмена</button>
-          </div>
-          <div v-if="reviewError" class="modal-error">{{ reviewError }}</div>
-        </div>
-      </div> -->
-
       <div v-if="showConfirmModal" class="modal-overlay">
         <div class="modal">
           <h3>Подтверждение визита</h3>
@@ -131,6 +143,33 @@
           </div>
         </div>
       </div>
+
+      <!-- Модалка отзыва (временно скрыта) -->
+      <!-- <div v-if="showReviewModal" class="modal-overlay">
+        <div class="modal">
+          <h3>Отзыв для {{ staff.name }}</h3>
+          <div class="stars">
+            <span 
+              v-for="n in 5" 
+              :key="n" 
+              class="star" 
+              :class="{ filled: n <= review.rating }"
+              @click="review.rating = n"
+            >★</span>
+          </div>
+          <textarea 
+            v-model="review.comment" 
+            placeholder="Напишите ваш комментарий..."
+          ></textarea>
+          <div class="modal-buttons">
+            <button @click="submitReview" :disabled="sending">
+              {{ sending ? 'Отправка...' : 'Отправить' }}
+            </button>
+            <button @click="showReviewModal = false" :disabled="sending">Отмена</button>
+          </div>
+          <div v-if="reviewError" class="modal-error">{{ reviewError }}</div>
+        </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -143,6 +182,10 @@ import { getStaff, getService } from '../utils/staffServiceCache'
 import { readVisit, writeVisit, clearVisit, waitForVisitTime } from '../utils/visitStorage'
 import { formatDate } from '../utils/dateFormatters'
 import { getErrorMessage } from '../utils/apiError'
+import { logger } from '../utils/logger'
+import crossIcon from '../assets/crossIcon.svg'
+import checkmarkIcon from '../assets/checkmarkIcon.svg'
+import clockIcon from '../assets/clockIcon.svg'
 
 // --- ROUTER --- //
 const route = useRoute()
@@ -169,6 +212,16 @@ const willCome = ref(false)
 // -- MODULE VARS -- //
 let service_id = null
 let staff_id = null
+// AbortController для отмены запросов
+let currentAbortController = null
+
+/* Преобразование статуса в сообщение пользователю */
+const statusMessage = {
+  "waiting": { icon: clockIcon, bgClass: 'status-icon-waiting', title: "Ожидание", subtitle: "Ждем вас в салоне" },
+  "confirmed": { icon: checkmarkIcon, bgClass: 'status-icon-confirmed', title: "Подтверждено", subtitle: "Ждем вас в салон" },
+  "missing": { icon: crossIcon, bgClass: 'status-icon-unpaid', title: "Не оплачено", subtitle: "Визит отменен / клиент не пришел" },
+  "success": { icon: checkmarkIcon, bgClass: 'status-icon-paid', title: "Оплачено", subtitle: "Визит прошел успешно" },
+}
 
 function openCancelModal() {
   cancelAction.value = cancelVisit
@@ -177,8 +230,11 @@ function openCancelModal() {
 
 // --- API: Загрузка данных --- //
 async function loadVisit() {
+  // Отменяем предыдущий запрос, если он ещё выполняется
   loading.value = true
   error.value = ''
+  logger.info('loadVisit: загрузка данных о визите', { visitId })
+
   try {
     const { data } = await api.get(`/visits/${visitId}`)
     visit.value = data
@@ -188,8 +244,18 @@ async function loadVisit() {
     service_id = data.service_id
     willCome.value = data.status === 'confirmed'
     delete_.value = data.status === 'missing'
+    logger.info('loadVisit: данные загружены', { 
+      visitId, 
+      status: data.status,
+      staffName: staff.value?.name,
+      serviceName: service.value?.name 
+    })
   } catch (err) {
-    console.error(err)
+    if (err.name === 'AbortError') {
+      logger.debug('loadVisit: запрос отменён')
+      return
+    }
+    logger.error('loadVisit: ошибка загрузки', { error: err?.message || String(err), visitId })
     error.value = 'Ошибка при загрузке данных о визите'
   } finally {
     loading.value = false
@@ -210,19 +276,14 @@ const visitError = ref('')
 async function toggleWillCome() {
   processing.value = true
   visitError.value = ''
+  logger.info('toggleWillCome: подтверждение визита', { visitId })
+  
   try {
-    // let iso = visit.value.visit_date_time
-    // let d = new Date(iso.endsWith('Z') ? iso : iso + 'Z')
-    // const visitDateISO = d.toISOString()
-    // await api.patch(`/visits/${visitId}`, {
-    //   visit_date_time: visitDateISO,
-    //   will_come: visit.value.will_come
-    // })
     await api.patch(`/visits/${visitId}/confirm`)
-    willCome.value = true;
-    
+    willCome.value = true
+    logger.info('toggleWillCome: визит подтверждён', { visitId })
   } catch (err) {
-    console.error('Ошибка toggleWillCome:', err)
+    logger.error('toggleWillCome: ошибка', { error: err?.message || String(err), visitId })
     visitError.value = getErrorMessage(err, 'Ошибка при обновлении статуса визита.')
   } finally {
     processing.value = false
@@ -233,11 +294,14 @@ async function toggleWillCome() {
 async function cancelVisit() {
   deleting.value = true
   visitError.value = ''
+  logger.info('cancelVisit: отмена визита', { visitId })
+  
   try {
     await api.delete(`/visits/${visitId}`)
+    logger.info('cancelVisit: визит отменён', { visitId })
     router.push('/records')
   } catch (err) {
-    console.error('Ошибка cancelVisit:', err)
+    logger.error('cancelVisit: ошибка', { error: err?.message || String(err), visitId })
     visitError.value = getErrorMessage(err, 'Не удалось отменить запись.')
   } finally {
     deleting.value = false
@@ -263,30 +327,36 @@ function goToDatetime() {
     params.staff_id = staff_id
     params.services_id = service_id
     writeVisit(params)
+    logger.info('goToDatetime: переход к выбору даты', { visitId })
     router.push({
       path: '/datetime',
       query: { redirect: router.currentRoute.value.fullPath, moveVisit: visitId }
     })
   } catch (err) {
-    console.error(err)
+    logger.error('goToDatetime', { error: err?.message || String(err) })
     visitError.value = 'Ошибка при переходе к выбору даты.'
   }
 }
+
 
 // Обработка возврата со страницы выбора даты/времени
 async function handleMoveVisitReturn() {
   processing.value = true
   visitError.value = ''
+  logger.info('handleMoveVisitReturn: обработка возврата', { visitId })
+  
   try {
     if (!visit.value) await loadVisit()
     const visitTime = await waitForVisitTime()
+    logger.debug('handleMoveVisitReturn: обновление времени визита', { visitId, newTime: visitTime })
     await api.patch(`/visits/${visitId}`, {
       visit_date_time: visitTime
     })
     clearVisit()
     await loadVisit()
+    logger.info('handleMoveVisitReturn: визит обновлён', { visitId })
   } catch (err) {
-    console.error(err)
+    logger.error('handleMoveVisitReturn: ошибка', { error: err?.message || String(err), visitId })
     visitError.value = 'Не удалось обновить дату и время визита.'
   } finally {
     processing.value = false
@@ -300,40 +370,6 @@ onMounted(() => {
     router.replace({ path: route.path, query: { isOld: route.query.isOld } })
   }
 })
-
-// --- Модалка отзыва --- //
-// const showReviewModal = ref(false)
-// const review = ref({ rating: 0, comment: '' })
-// const sending = ref(false)
-// const reviewError = ref('')
-// async function submitReview() {
-//   if (review.value.rating === 0) {
-//     reviewError.value = 'Пожалуйста, выберите количество звезд'
-//     return
-//   }
-//   sending.value = true
-//   reviewError.value = ''
-//   try {
-//     await api.post('/reviews', {
-//       staff_id: staff.value.id,
-//       rating: review.value.rating,
-//       comment: review.value.comment
-//     })
-//     alert('Спасибо за ваш отзыв!')
-//     showReviewModal.value = false
-//     review.value = { rating: 0, comment: '' }
-//   } catch (err) {
-//     console.error('Ошибка submitReview:', err)
-//     reviewError.value = typeof err.response?.data === 'string'
-//       ? err.response.data
-//       : err.response?.data?.detail || err.message || 'Ошибка при отправке отзыва'
-//   } finally {
-//     sending.value = false
-//   }
-// }
-
-// Подтверждение, что придет
-// const isVisitConfirmed = computed(() => (visit.value ? visit.value.will_come : undefined) === true)
 </script>
 
 
@@ -345,7 +381,6 @@ onMounted(() => {
 .record-view{
   --bg:#F6F7FB;
   --card:#FFFFFF;
-  /* --primary:#666FE8;       */
   --text:#1C2534;
   --muted:#8A95A6;
   --divider:#ECEFF5;
@@ -356,11 +391,6 @@ onMounted(() => {
   background:var(--bg);
   display:flex;
   justify-content:center;
-}
-.list-item-separator {
-  height: 1px;
-  background-color: var(--divider);
-  margin: 0 12px;
 }
 .page{
   width:100%;
@@ -381,19 +411,14 @@ onMounted(() => {
   font-weight:700;
   color:#5C6676;
   padding:12px 0;
-  /* border-top:1px solid var(--divider);
-  border-bottom:1px solid var(--divider); */
   margin-bottom:12px;
-  /* background:#fff; */
   border-radius:12px;
 }
 
 /* 3) Карточка записи */
 .record-card{
   border-radius:16px;
-  /* box-shadow:var(--shadow); */
   padding-right:64px; padding-left:64px;
-  /* width:85%; */
   margin:0;
   overflow:hidden; 
   max-width:100%;
@@ -431,7 +456,6 @@ onMounted(() => {
 }
 .datetime{
   font-size:12px;color:#6f7a87;
-  /* white-space:nowrap; */
   overflow:hidden;text-overflow:ellipsis;max-width:40%;
 }
 
@@ -439,6 +463,113 @@ onMounted(() => {
 .details{
   background:#F3F5F8;border-radius:12px;padding:10px 12px;margin-bottom:12px;
   overflow:hidden;max-width:100%;
+}
+
+/* 5a) Статус записи */
+.card-status{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #fff;
+  border: 1px solid var(--divider);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  max-width: 100%;
+}
+
+.status-info{
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.status-icon{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.status-icon-paid {
+  background-color: #00BB83;
+}
+
+.status-icon-unpaid {
+  background-color: #DE5D93;
+}
+
+.status-icon-confirmed {
+  background-color: #6dadff;
+}
+
+.status-icon-waiting {
+  background-color: #f3a950;
+}
+
+.status-badge-reason{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.status-badge{
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  color: rgba(69, 69, 88, 1);
+}
+
+.status-reason{
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: rgba(69, 69, 88, 1);
+}
+
+/* Кнопки внизу страницы */
+.action-buttons{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.btn-primary,
+.btn-secondary{
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary{
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary{
+  background: #fff;
+  color: #5073f0;
+  border: 2px solid #5073f0;
+}
+
+.btn-secondary:hover{
+  background: #f0f4ff;
 }
 .row{
   display:flex;justify-content:space-between;gap:8px;min-width:0;max-width:100%;
@@ -503,7 +634,6 @@ onMounted(() => {
   border-top:1px solid var(--divider);background:#fff;text-align:left;
 }
 .list-item{border:none}
-/* .list-item .icon{font-size:16px;opacity:.9} */
 .list-item .text{
   flex:1 1 auto;color:var(--text);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
@@ -537,13 +667,7 @@ onMounted(() => {
   color: #020202;
 }
 
-/* 10) Кнопка «Оставить отзыв» */
-.review-btn{
-  width:100%;padding:12px;border:none;border-radius:12px;margin-top:8px;
-  background:#1e88e5;color:#fff;font-weight:800;
-}
-
-/* 11) Модалки */
+/* 10) Модалки */
 .modal-overlay{
   position:fixed;inset:0;background:rgba(0,0,0,.4);
   display:flex;justify-content:center;align-items:center;z-index: 999999;
@@ -553,20 +677,11 @@ onMounted(() => {
   width:auto;max-width:min(90vw, 360px);
   box-shadow:0 10px 30px rgba(0,0,0,.2);
 }
-.stars{font-size:22px;margin-bottom:8px}
-.star{cursor:pointer;color:#d9d9d9}
-.star.filled{color:#f6c21c}
-textarea{
-  width:100%;min-height:90px;margin-bottom:12px;padding:8px;border-radius:10px;
-  border:1px solid #e2e6ec;resize:none;
-}
 .modal-buttons{display:flex;justify-content:flex-end;gap:8px}
 .modal-buttons button{padding:8px 12px;border:none;border-radius:10px;cursor:pointer}
 .modal-buttons button:first-child{background:#666FE8;color:#fff}
 .modal-buttons button:last-child{background:#e7e9ee}
-.modal-error{color:#d9534f;margin-top:6px;font-size:13px}
-
-/* 12) Служебные состояния */
+/* 11) Служебные состояния */
 .loading{font-size:16px;color:#555}
 .error{color:#d9534f}
 .visit-error{color:#d9534f;font-size:13px;margin-top:6px}
@@ -586,7 +701,6 @@ textarea{
     overflow:hidden; 
     max-width:100%;
   }
-  /* .icon-14 {max-width: 60%;} */
 }
 
 img, svg, video{ max-width:100%; height:auto; }

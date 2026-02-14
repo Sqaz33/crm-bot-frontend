@@ -1,18 +1,19 @@
 import { getMe, loginViaTelegram } from '../api/auth'
 import { useAuthStore } from '../stores/auth'
 import { getInitData, extractUserFromInitData } from '../utils/telegram'
+import { logger } from '../utils/logger'
 
 export async function ensureSession() {
   const store = useAuthStore()
 
   try {
-    console.log('[ensureSession] try /auth/me')
+    logger.debug('ensureSession: пробуем /auth/me')
     const { data } = await getMe()
-    console.log('[ensureSession] /auth/me OK →', data)
+    logger.debug('ensureSession: /auth/me OK', { data })
     store.setMe?.(data)
     return data
   } catch (e) {
-    console.warn('[ensureSession] /auth/me failed:', e?.response?.status)
+    logger.warn('ensureSession: /auth/me failed', { status: e?.response?.status })
     if (e?.response?.status !== 401) throw e
   }
 
@@ -23,16 +24,16 @@ export async function ensureSession() {
     throw err
   }
 
-  console.log('[ensureSession] login via /auth/telegram/login, initData len=', initData.length)
+  logger.debug('ensureSession: логинимся через /auth/telegram/login', { initDataLen: initData.length })
   await loginViaTelegram(initData)
-  console.log('[ensureSession] login done (проверь Set-Cookie в Network → Response Headers у POST /auth/telegram/login)')
+  logger.debug('ensureSession: логин завершён')
 
   const u = extractUserFromInitData(initData)
-  if (u) console.log('[ensureSession] parsed user:', u)
+  if (u) logger.debug('ensureSession: распарсен user', { userId: u.id })
 
-  console.log('[ensureSession] retry /auth/me')
+  logger.debug('ensureSession: повторный запрос /auth/me')
   const { data } = await getMe()
-  console.log('[ensureSession] /auth/me after login →', data)
+  logger.info('ensureSession: авторизация успешна после логина', { userId: data.id })
   store.setMe?.(data)
   return data
 }
