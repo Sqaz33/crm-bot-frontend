@@ -258,9 +258,22 @@ export default {
       if (service_id) params.service_id = service_id
 
       try {
-        const { data } = await api.get('/staff/free_time/', { params })
+        const response = await api.get('/staff/free_time/', { params })
 
-        const slots = data[0].free_slots || []
+        // Проверяем статус ответа вручную
+        if (response.status !== 200) {
+          logger.error('DateTime: неожиданный статус ответа', {
+            date: this.selectedDate,
+            staff_id,
+            service_id,
+            status: response.status
+          })
+          this.freeSlots = []
+          return
+        }
+
+        const data = response.data
+        const slots = data[0]?.free_slots || []
 
         this.freeSlots = slots.map(slot => {
           const s = slot.start_time
@@ -275,6 +288,12 @@ export default {
           return `${this.selectedDate}T${s}`
         })
       } catch (err) {
+        logger.error('DateTime: ошибка загрузки слотов', {
+          date: this.selectedDate,
+          staff_id,
+          service_id,
+          error: err?.message || String(err)
+        })
         this.freeSlots = []
       }
     },

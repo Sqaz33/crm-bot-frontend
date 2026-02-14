@@ -14,7 +14,9 @@ const api = axios.create({
     Accept: 'application/json',
     'Content-Type': 'application/json',
   },
-  withCredentials: true, 
+  withCredentials: true,
+  // Не считать HTTP ошибки (4xx, 5xx) как exception, чтобы axios не выводил в console
+  validateStatus: () => true,
 })
 
 
