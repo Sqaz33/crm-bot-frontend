@@ -32,7 +32,7 @@
       </div>
 
       <div class="time-section" v-if="selectedDate">
-        <h3 class="time-title">Выберите время начала</h3>
+        <h3 v-if="freeSlots.length" class="time-title">Выберите время начала</h3>
 
         <div v-if="!freeSlots.length" class="no-slots-message">
           Нет доступного времени
