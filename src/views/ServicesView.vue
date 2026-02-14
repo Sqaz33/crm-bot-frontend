@@ -1,10 +1,14 @@
 <template>
   <div class="services-view">
-    <h1 class="page-title">Выберите услуги</h1>
+    
 
-    <div v-if="loading" class="loading">Загрузка…</div>
+    <div v-if="loading" class="loading">
+  <SpinnerSvg style="color: var(--brand)" />
+</div>
+
 
     <div v-else class="types-wrap">
+      <h1 class="page-title">Выберите услуги</h1>
       <section
           v-for="type in serviceTypes"
           :key="type.id"
@@ -63,6 +67,8 @@ import { ref, computed, onMounted } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
 import { readVisit, writeVisit } from '../utils/visitStorage'
+import SpinnerSvg from '@/components/SpinnerLoad.vue'
+
 
 const router = useRouter()
 const loading = ref(true)
@@ -191,7 +197,8 @@ function confirm() {
   margin: 0 0 12px 0;
 }
 
-.loading { text-align: center; padding: 24px; }
+.loading { display: flex;
+  justify-content: center; padding: 24px; }
 
 .types-wrap { display: flex; flex-direction: column; gap: 12px; }
 
