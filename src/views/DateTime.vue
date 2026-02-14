@@ -34,7 +34,11 @@
       <div class="time-section" v-if="selectedDate">
         <h3 class="time-title">Выберите время начала</h3>
 
-        <div class="time-category">
+        <div v-if="!freeSlots.length" class="no-slots-message">
+          Нет доступного времени
+        </div>
+
+        <div class="time-category" v-if="morningSlots.length">
           <div class="category-label">Утро</div>
           <div class="time-buttons">
             <button
@@ -460,6 +464,16 @@ export default {
   font-weight: 600;
   color: #1a2233;
   margin-bottom: 1.5rem;
+}
+
+.no-slots-message {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #c4cdd5;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem 0;
+  text-align: center;
 }
 
 .time-category {
