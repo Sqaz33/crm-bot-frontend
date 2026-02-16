@@ -104,6 +104,7 @@ import { ref, onMounted, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api'
 import { getRawVisit } from '../utils/visitStorage'
+import { logger } from '../utils/logger'
 
 const router = useRouter()
 
@@ -155,7 +156,7 @@ async function writeProfile(obj) {
   try {
     await api.patch("/auth/me/", obj);
   } catch (error) {
-    console.error("Ошибка при сохранении профиля:", error);
+    logger.error('MakeAppointmant: ошибка при сохранении профиля', { error: error?.message || String(error) })
   }
 }
 

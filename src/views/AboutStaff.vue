@@ -66,6 +66,7 @@ import { useRoute, useRouter } from 'vue-router'
 import api from '../api'
 import { readVisit, writeVisit } from '../utils/visitStorage'
 import { getFirstLetter } from '../utils/stringUtils'
+import { logger } from '../utils/logger'
 
 const route = useRoute()
 const router = useRouter()
@@ -93,9 +94,10 @@ onMounted(async () => {
     staff.value   = s
     // reviews.value = rev
   } catch (e) {
-    console.error('Ошибка загрузки данных:', e)
+    logger.error('AboutStaff: ошибка загрузки данных', { error: e?.message || String(e), staffId });
   }
 })
+
 </script>
 
 <style scoped>

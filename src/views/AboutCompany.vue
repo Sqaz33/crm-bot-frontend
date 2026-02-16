@@ -47,6 +47,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import api from '../api'
+import { logger } from '../utils/logger'
 
 
 const company = ref({
@@ -83,7 +84,7 @@ onMounted(async () => {
     //   text: r.comment
     // }))
   } catch (e) {
-    console.error('Ошибка загрузки данных компании/отзывов:', e)
+    logger.error('AboutCompany: ошибка загрузки данных', { error: e?.message || String(e) });
   }
 })
 </script>

@@ -24,8 +24,9 @@ import { reactive, ref, onMounted } from "vue"
 import { ensureSession } from "./auth/ensureSession"
 import { getClientByTelegramId } from "./api/clients"
 import { useAuthStore } from "./stores/auth"
-import { splitFullNameIfNeeded, getInitDataInfo } from "./utils/telegram"
 import { writeVisit, DEFAULT_VISIT } from "./utils/visitStorage"
+import { splitFullNameIfNeeded, getInitDataInfo, isUserAuthorized } from './utils/telegram'
+import { logger } from './utils/logger'
 
 const PROFILE_KEY = "profile_data"
 
@@ -48,7 +49,7 @@ const form = reactive({
 
 function saveVisit(silent = false) {
   writeVisit(DEFAULT_VISIT)
-  if (!silent) console.log("[App] Visit draft saved:", DEFAULT_VISIT)
+  if (!silent) logger.debug('Visit draft saved', DEFAULT_VISIT)
 }
 
 function mergeSaveProfile(partial = {}, silent = false) {
@@ -68,7 +69,7 @@ function mergeSaveProfile(partial = {}, silent = false) {
   }
 
   localStorage.setItem(PROFILE_KEY, JSON.stringify(next))
-  if (!silent) console.log("[App] Profile merged & saved:", next)
+  if (!silent) logger.debug('Profile merged & saved', next)
 
   form.firstName = next.firstName
   form.lastName = next.lastName
@@ -93,10 +94,10 @@ async function fetchAndApplyClientByTelegramId(tg_id) {
       lastName: form.lastName,
     })
     mergeSaveProfile({ ...namePatch, phone: telephone || form.phone, tg_id }, true)
-    console.log("[App] CRM client applied →", { name, telephone, tg_id })
+    logger.info('CRM client applied', { name, telephone, tg_id })
   } catch (e) {
     const s = e?.response?.status
-    if (s !== 404) console.warn("[App] getClientByTelegramId failed:", e)
+    if (s !== 404) logger.warn('getClientByTelegramId failed', { status: s })
   }
 }
 
@@ -113,26 +114,25 @@ async function initAuthAndProfile() {
     saveVisit(true)
 
     const initDataInfo = getInitDataInfo()
+    logger.info('App init: initData', {
+      hasRaw: !!initDataInfo.raw,
+      isAuthorized: initDataInfo.isAuthorized,
+      hasUser: !!initDataInfo.user,
+    })
 
   
     try {
       const usp = new URLSearchParams(initDataInfo.raw)
       const params = Object.fromEntries(usp.entries())
-      const id = params?.start_param
-      if (!id) throw new Error("нет start_param в telegram init_data")
-      sessionStorage.setItem("SALON_ID", id)
+      const id = params?.start_param  
+      if (!id) {  
+        throw new Error('нет start_param в telegram init_data')
+      }
+      sessionStorage.setItem('SALON_ID', id) 
+      logger.info('App init: salon_id сохранён', { salonId: id })
     } catch (e) {
-      console.log("[App] SALON_ID parse:", e?.message || e)
+      logger.warn('App init: не удалось сохранить salon_id', { error: e.message })
     }
-
-    console.group("[App] InitData Information")
-    console.log("Available:", !!initDataInfo.raw)
-    console.log("Raw length:", initDataInfo.raw?.length || 0)
-    console.log("Is user authorized:", initDataInfo.isAuthorized)
-    console.log("User data:", initDataInfo.user)
-    console.log("Auth date:", initDataInfo.auth_date_formatted)
-    console.log("Has hash:", !!initDataInfo.hash)
-    console.groupEnd()
 
     if (!initDataInfo.raw) {
       showNoInitDataToast()
@@ -142,17 +142,41 @@ async function initAuthAndProfile() {
 
     const me = await ensureSession()
     mergeSaveProfile({ tg_id: me.telegram_id, phone: me.telephone }, true)
+    logger.info('App init: авторизация успешна', { userId: me.id })
 
     await fetchAndApplyClientByTelegramId(me.telegram_id)
   } catch (e) {
-    console.error("[App] Ошибка авторизации (только в консоль):", e)
+    logger.error('App init: ошибка авторизации', { 
+      error: e.message, 
+      code: e?.code,
+      status: e?.response?.status,
+    })
+    const status = e?.response?.status
+    const detail = e?.response?.data?.detail
+    if (e?.code === 'NO_INIT_DATA') {
+      errorText.value = 'Приложение открыто не из Telegram WebApp: нет init_data.'
+    } else if (status === 401 && /client not found/i.test(String(detail))) {
+      errorText.value = 'Клиент не найден в CRM. Нужна привязка/создание клиента.'
+    } else if (status === 400) {
+      errorText.value = 'Некорректная подпись или бизнес-правило не выполнено.'
+    } else if (status === 422) {
+      errorText.value = 'Validation Error: проверьте корректность init_data.'
+    } else if (status === 500) {
+      errorText.value = 'Серверная ошибка при разборе init_data.'
+    } else if (status === 401) {
+      errorText.value = 'Сессия отсутствует: проверьте Set-Cookie (SameSite=None; Secure; Domain).'
+    } else {
+      errorText.value = e?.message || 'Ошибка авторизации.'
+    }
+    authError.value = true
   } finally {
     loading.value = false
   }
 }
 
 onMounted(() => {
-  console.log("[App] Starting application with Telegram WebApp integration")
+  logger.info('App mounted')
+  
   attachDebugInitSender()
   initAuthAndProfile()
 })
