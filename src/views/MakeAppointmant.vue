@@ -55,58 +55,39 @@
       <div class="bg-white p-6 rounded-xl w-[80%] max-h-[90vh] max-w-[500px] shadow-sheet overflow-hidden">
         <h3 class="text-neutral-800 text-2xl font-medium text-center mb-6">Проверьте данные</h3>
 
-        <div class="w-full py-3.5 flex flex-col gap-1.5">
-          <label class="text-neutral-800 text-base font-medium" for="firstName">Имя</label>
-          <input 
-            id="firstName" 
-            v-model="form.firstName" 
-            class="w-full h-12 px-4 bg-white rounded-lg border border-gray-200 text-neutral-800 text-base outline-none"
-          />
-        </div>
+        <Input
+          id="firstName"
+          v-model="form.firstName"
+          label="Имя"
+        />
 
-        <div class="w-full py-3.5 flex flex-col gap-1.5">
-          <label class="text-neutral-800 text-base font-medium" for="lastName">Фамилия</label>
-          <input 
-            id="lastName" 
-            v-model="form.lastName" 
-            class="w-full h-12 px-4 bg-white rounded-lg border border-gray-200 text-neutral-800 text-base outline-none"
-          />
-        </div>
+        <Input
+          id="lastName"
+          v-model="form.lastName"
+          label="Фамилия"
+        />
 
-        <div class="w-full py-3.5 flex flex-col gap-1.5">
-          <label class="text-neutral-800 text-base font-medium" for="middleName">Отчество</label>
-          <input 
-            id="middleName" 
-            v-model="form.middleName" 
-            class="w-full h-12 px-4 bg-white rounded-lg border border-gray-200 text-neutral-800 text-base outline-none"
-          />
-        </div>
+        <Input
+          id="middleName"
+          v-model="form.middleName"
+          label="Отчество"
+        />
 
-        <div class="w-full py-3.5 flex flex-col gap-1.5">
-          <label class="text-neutral-800 text-base font-medium" for="phone">Телефон</label>
-          <div class="relative">
-            <input 
-              id="phone" 
-              v-model="form.phone" 
-              readonly 
-              class="w-full h-12 px-4 bg-gray-50 rounded-lg border border-gray-200 text-neutral-800 text-base outline-none pr-10"
-            />
-            <img src="../assets/lock.svg" alt="" class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 opacity-40 pointer-events-none" />
-          </div>
-        </div>
+        <Input
+          id="phone"
+          v-model="form.phone"
+          label="Телефон"
+          readonly
+          :lock-icon="true"
+        />
 
-        <div class="w-full py-3.5 flex flex-col gap-1.5">
-          <label class="text-neutral-800 text-base font-medium" for="email">E-mail</label>
-          <div class="relative">
-            <input 
-              id="email" 
-              v-model="form.email" 
-              readonly 
-              class="w-full h-12 px-4 bg-gray-50 rounded-lg border border-gray-200 text-neutral-800 text-base outline-none pr-10"
-            />
-            <img src="../assets/lock.svg" alt="" class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 opacity-40 pointer-events-none" />
-          </div>
-        </div>
+        <Input
+          id="email"
+          v-model="form.email"
+          label="E-mail"
+          readonly
+          :lock-icon="true"
+        />
 
         <div class="flex gap-4 justify-center mt-3">
           <button 
@@ -133,6 +114,7 @@ import { useRouter } from 'vue-router'
 import api from '../api'
 import { getRawVisit } from '../utils/visitStorage'
 import { logger } from '../utils/logger'
+import Input from '../components/forms/Input.vue'
 
 const router = useRouter()
 
