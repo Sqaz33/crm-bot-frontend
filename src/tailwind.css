@@ -1,0 +1,83 @@
+@import "tailwindcss";
+@config "./tailwind.config.js";
+
+
+/* кнопки */
+
+@layer components {
+  .b_button {
+    @apply inline-flex items-center justify-center select-none
+      rounded-lg text-base font-semibold
+      px-6 py-3
+      w-[90%] max-w-[400px]
+      transition-colors duration-200
+      bg-brand-500 text-white
+      hover:bg-[#4f54d8]
+      disabled:bg-brand-300 disabled:cursor-not-allowed
+      focus:outline-none focus:ring-2 focus:ring-brand-300 focus:ring-offset-2;
+  }
+}
+
+
+/* <div class="flex justify-center mt-6">
+  <button class="r_button" :disabled="!selectedTime" @click="bookTime">
+    Занять
+  </button>
+</div> */
+@layer components {
+  .r_button {
+    @apply w-full max-w-[400px] px-6 py-3.5
+      rounded-lg text-base font-semibold text-white
+      transition-colors duration-200
+      bg-brand-500 hover:bg-[#4f54d8]
+      disabled:bg-brand-300 disabled:cursor-not-allowed disabled:hover:bg-brand-300;
+  }
+}
+
+
+
+@layer components {
+  /* базовая форма */
+  .tc_button {
+    @apply w-full max-w-[400px]
+      px-6 py-3
+      rounded-lg text-base font-semibold
+      transition-colors duration-200
+      disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  /* "да" / перенос: только рамка */
+  .tc_button--ok {
+    @apply bg-transparent border border-brand-500 text-brand-500
+      hover:bg-brand-100
+      disabled:hover:bg-transparent;
+  }
+
+  /* отмена*/
+  .tc_button--cancel {
+    @apply bg-red-100 text-red-300 border border-transparent
+      hover:bg-red-50
+      disabled:hover:bg-red-100;
+  }
+}
+
+
+@layer components {
+  .s_button {
+    @apply inline-flex items-center justify-center select-none
+      w-[164px] h-[48px]
+      rounded-xl text-sm font-semibold
+      transition-colors duration-200
+      disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .s_button--yes {
+    @apply bg-brand-500 text-white hover:bg-[#4f54d8];
+  }
+
+  .s_button--no {
+    @apply bg-neutral-200 text-neutral-800 hover:bg-neutral-300;
+  }
+}
+
+
