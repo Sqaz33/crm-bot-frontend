@@ -52,57 +52,21 @@
     </button>
 
     <div v-if="showProfileModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]">
-      <div class="bg-white p-6 rounded-xl w-[80%] max-h-[90vh] max-w-[500px] shadow-sheet overflow-hidden">
-        <h3 class="text-neutral-800 text-2xl font-medium text-center mb-6">Проверьте данные</h3>
+      <div class="bg-white p-6 rounded-xl w-[80%] max-w-[500px] shadow-sheet">
+        <h3 class="text-neutral-800 text-2xl font-medium text-center mb-4">Проверьте данные</h3>
 
-        <Input
-          id="firstName"
-          v-model="form.firstName"
-          label="Имя"
+        <ProfileForm
+          v-model="form"
+          :saving="false"
+          @save="confirmProfile"
         />
 
-        <Input
-          id="lastName"
-          v-model="form.lastName"
-          label="Фамилия"
-        />
-
-        <Input
-          id="middleName"
-          v-model="form.middleName"
-          label="Отчество"
-        />
-
-        <Input
-          id="phone"
-          v-model="form.phone"
-          label="Телефон"
-          readonly
-          :lock-icon="true"
-        />
-
-        <Input
-          id="email"
-          v-model="form.email"
-          label="E-mail"
-          readonly
-          :lock-icon="true"
-        />
-
-        <div class="flex gap-4 justify-center mt-3">
-          <button 
-            @click="confirmProfile"
-            class="px-6 py-3 bg-brand-500 text-white rounded-lg text-base font-medium cursor-pointer transition-all hover:bg-brand-400 w-[45%]"
-          >
-            Продолжить
-          </button>
-          <button 
-            @click="showProfileModal = false"
-            class="px-6 py-3 bg-gray-100 text-neutral-800 rounded-lg text-base font-medium cursor-pointer transition-all hover:bg-gray-200 w-[45%] border border-gray-200"
-          >
-            Отмена
-          </button>
-        </div>
+        <button 
+          @click="showProfileModal = false"
+          class="w-full mt-3 px-6 py-3 bg-gray-100 text-neutral-800 rounded-lg text-base font-medium cursor-pointer transition-all hover:bg-gray-200"
+        >
+          Отмена
+        </button>
       </div>
     </div>
   </div>
@@ -114,7 +78,7 @@ import { useRouter } from 'vue-router'
 import api from '../api'
 import { getRawVisit } from '../utils/visitStorage'
 import { logger } from '../utils/logger'
-import Input from '../components/forms/Input.vue'
+import ProfileForm from '../components/forms/ProfileForm.vue'
 
 const router = useRouter()
 

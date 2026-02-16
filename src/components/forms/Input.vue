@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full py-3.5 flex flex-col gap-1.5" :class="{ 'relative': lockIcon }">
+  <div class="w-full py-2 flex flex-col gap-1" :class="{ 'relative': lockIcon }">
     <label 
       v-if="label" 
       class="text-neutral-800 text-base font-medium" 
