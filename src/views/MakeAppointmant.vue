@@ -51,48 +51,76 @@
       Оформить запись
     </button>
 
-    <div v-if="showProfileModal" class="modal-overlay">
-      <div class="modal">
-        <h3>Проверьте данные</h3>
+    <div v-if="showProfileModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]">
+      <div class="bg-white p-6 rounded-xl w-[80%] max-h-[90vh] max-w-[500px] shadow-sheet overflow-hidden">
+        <h3 class="text-neutral-800 text-2xl font-medium text-center mb-6">Проверьте данные</h3>
 
-        <div class="field">
-          <div class="header-field">
-            <label class="label" for="firstName">Имя</label>
-          </div>
-          <input id="firstName" v-model="form.firstName" />
+        <div class="w-full py-3.5 flex flex-col gap-1.5">
+          <label class="text-neutral-800 text-base font-medium" for="firstName">Имя</label>
+          <input 
+            id="firstName" 
+            v-model="form.firstName" 
+            class="w-full h-12 px-4 bg-white rounded-lg border border-gray-200 text-neutral-800 text-base outline-none"
+          />
         </div>
 
-        <div class="field">
-          <div class="header-field">
-            <label class="label" for="lastName">Фамилия</label>
-          </div>
-          <input id="lastName" v-model="form.lastName" />
+        <div class="w-full py-3.5 flex flex-col gap-1.5">
+          <label class="text-neutral-800 text-base font-medium" for="lastName">Фамилия</label>
+          <input 
+            id="lastName" 
+            v-model="form.lastName" 
+            class="w-full h-12 px-4 bg-white rounded-lg border border-gray-200 text-neutral-800 text-base outline-none"
+          />
         </div>
 
-        <div class="field">
-          <div class="header-field">
-            <label class="label" for="middleName">Отчество</label>
-          </div>
-          <input id="middleName" v-model="form.middleName" />
+        <div class="w-full py-3.5 flex flex-col gap-1.5">
+          <label class="text-neutral-800 text-base font-medium" for="middleName">Отчество</label>
+          <input 
+            id="middleName" 
+            v-model="form.middleName" 
+            class="w-full h-12 px-4 bg-white rounded-lg border border-gray-200 text-neutral-800 text-base outline-none"
+          />
         </div>
 
-        <div class="field">
-          <div class="header-field">
-            <label class="label" for="phone">Телефон</label>
+        <div class="w-full py-3.5 flex flex-col gap-1.5">
+          <label class="text-neutral-800 text-base font-medium" for="phone">Телефон</label>
+          <div class="relative">
+            <input 
+              id="phone" 
+              v-model="form.phone" 
+              readonly 
+              class="w-full h-12 px-4 bg-gray-50 rounded-lg border border-gray-200 text-neutral-800 text-base outline-none pr-10"
+            />
+            <img src="../assets/lock.svg" alt="" class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 opacity-40 pointer-events-none" />
           </div>
-          <input id="phone" v-model="form.phone" readonly />
         </div>
 
-        <div class="field">
-          <div class="header-field">
-            <label class="label" for="email">E-mail</label>
+        <div class="w-full py-3.5 flex flex-col gap-1.5">
+          <label class="text-neutral-800 text-base font-medium" for="email">E-mail</label>
+          <div class="relative">
+            <input 
+              id="email" 
+              v-model="form.email" 
+              readonly 
+              class="w-full h-12 px-4 bg-gray-50 rounded-lg border border-gray-200 text-neutral-800 text-base outline-none pr-10"
+            />
+            <img src="../assets/lock.svg" alt="" class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 opacity-40 pointer-events-none" />
           </div>
-          <input id="email" v-model="form.email" readonly />
         </div>
 
-        <div class="modal-buttons">
-          <button @click="confirmProfile">Продолжить</button>
-          <button @click="showProfileModal = false">Отмена</button>
+        <div class="flex gap-4 justify-center mt-3">
+          <button 
+            @click="confirmProfile"
+            class="px-6 py-3 bg-brand-500 text-white rounded-lg text-base font-medium cursor-pointer transition-all hover:bg-brand-400 w-[45%]"
+          >
+            Продолжить
+          </button>
+          <button 
+            @click="showProfileModal = false"
+            class="px-6 py-3 bg-gray-100 text-neutral-800 rounded-lg text-base font-medium cursor-pointer transition-all hover:bg-gray-200 w-[45%] border border-gray-200"
+          >
+            Отмена
+          </button>
         </div>
       </div>
     </div>
@@ -316,14 +344,6 @@ function confirmProfile() {
   color: #999;
 }
 
-.checkbox {
-  width: clamp(20px, 5vw, 35px);
-  height: clamp(20px, 5vw, 35px);
-  background: #dadada;
-  border-radius: 4px;
-  flex-shrink: 0;
-}
-
 .label {
   margin: 0 clamp(0.2rem, 2vw, 0.5rem);
   flex: 1;
@@ -365,8 +385,6 @@ function confirmProfile() {
   margin-left: 0;
 }
 
-
-
 .btn-submit {
   display: block;
   width:  clamp(150px, 80%, 380px);
@@ -388,148 +406,5 @@ function confirmProfile() {
 .btn-submit:disabled {
   background: #ccc;
   cursor: not-allowed;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  width: 80%;
-	max-height: 90vh;
-  max-width: 500px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-	overflow: hidden;
-}
-
-.modal h3 {
-  color: var(--Color-Basic-Black, #454558);
-  font-size: 24px;
-  font-weight: 500;
-  line-height: 26px;
-  text-align: center;
-	margin: 0;
-}
-
-.field {
-  width: 100%;
-  height: auto;
-  padding: 14px 0;
-  background: transparent;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 5px;
-  overflow: hidden;
-  margin-bottom: 0px;
-}
-
-.field .label {
-  width: 176px;
-  color: var(--Color-Basic-Black, #454558);
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 20px;
-  text-align: left;
-  margin: 0;
-}
-
-.field input {
-  width: 100%;
-  height: 48px;
-  padding: 12px 16px;
-  background: white;
-  border-radius: 8px;
-  border: 1px solid var(--Color-Grey-Grey-200, #E5E7EB);
-  box-sizing: border-box;
-  color: var(--Color-Basic-Black, #454558);
-  font-size: 16px;
-  font-family: 'Geometria', sans-serif;
-  font-weight: 400;
-  line-height: 20px;
-  outline: none;
-}
-
-.modal-buttons {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  margin-top: 12px;
-}
-
-.modal-buttons button {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 45%;
-}
-
-.modal-buttons button:first-child {
-  background: var(--Color-Brand-Brand-500, #666FE8);
-  color: white;
-}
-
-.modal-buttons button:first-child:hover {
-  background: #5a63d4;
-}
-
-.modal-buttons button:last-child {
-  background: #f5f5f5;
-  color: #454558;
-  border: 1px solid #E5E7EB;
-}
-
-.modal-buttons button:last-child:hover {
-  background: #e8e8e8;
-}
-
-@media (max-width: 480px) {
-  .modal {
-    padding: 20px;
-    width: 350px;
-  }
-  
-  .modal h3 {
-    font-size: 18px;
-    margin-bottom: 16px;
-  }
-  
-  .field {
-    padding: 6px 0;
-    margin-bottom: 10px;
-  }
-  
-  .field input {
-    height: 36px;
-    padding: 6px 10px;
-    font-size: 13px;
-  }
-  
-  .modal-buttons {
-    gap: 8px;
-  }
-  
-  .modal-buttons button {
-    width: 100%;
-    min-width: auto;
-  }
 }
 </style>
