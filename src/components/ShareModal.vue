@@ -1,83 +1,109 @@
 <template>
-    <div class="share-container">
-      <p class="share-title" style="color: black;">Выберите, где вы хотите поделиться</p>
-      <div class="share-icons">
-        <template v-for="item in shareItems" :key="item.name">
+  <div class="text-center">
+    <p class="mb-4 font-bold text-black font-[var(--font-primary)]">
+      Выберите, где вы хотите поделиться
+    </p>
+
+    <div class="grid justify-center gap-4 [grid-template-columns:repeat(6,48px)]">
+      <template v-for="(item, idx) in shareItems" :key="item.name">
+        <!-- 7-й и 8-й элемент (idx 6 и 7) — в центр -->
+        <div :class="idx === 6 ? 'col-start-3' : idx === 7 ? 'col-start-4' : ''">
           <a
             v-if="item.name !== 'Copy'"
             :href="item.url"
-            class="share-btn"
-            :style="{backgroundColor: item.color}"
             target="_blank"
             rel="noopener"
+            class="w-12 h-12 rounded-lg flex items-center justify-center
+                   p-0 border-0 cursor-pointer no-underline
+                   text-white transition-opacity duration-200
+                   hover:opacity-80 active:opacity-60"
+            :style="{ backgroundColor: item.color }"
           >
             <svg
               :viewBox="item.viewBox || '0 0 50 50'"
-              :class="`icon-${item.name.toLowerCase()}`"
+              :class="iconClass(item.name)"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path v-if="!item.svgContent" :d="item.svgPath" fill="currentColor"/>
+              <path v-if="!item.svgContent" :d="item.svgPath" fill="currentColor" />
               <g v-else v-html="item.svgContent"></g>
             </svg>
           </a>
+
           <button
             v-else
+            type="button"
             @click="copyToClipboard"
-            class="share-btn"
-            :style="{backgroundColor: item.color}"
+            class="w-12 h-12 rounded-lg flex items-center justify-center
+                   p-0 border-0 cursor-pointer
+                   text-white transition-opacity duration-200
+                   hover:opacity-80 active:opacity-60"
+            :style="{ backgroundColor: item.color }"
           >
             <svg
               :viewBox="item.viewBox || '0 0 50 50'"
-              :class="`icon-${item.name.toLowerCase()}`"
+              :class="iconClass(item.name)"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path v-if="!item.svgContent" :d="item.svgPath" fill="currentColor"/>
+              <path v-if="!item.svgContent" :d="item.svgPath" fill="currentColor" />
               <g v-else v-html="item.svgContent"></g>
             </svg>
           </button>
-        </template>
-      </div>
+        </div>
+      </template>
     </div>
 
-    <!-- Toast notification -->
-    <Transition name="toast">
-      <div v-if="showToast" class="toast-notification">
-        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-          <path d="M8 12L11 15L16 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span>Ссылка скопирована</span>
-      </div>
-    </Transition>
-  </template>
-  
-  <script setup>
+    <!-- TOAST (используем твой компонент) -->
+    <ToastNotification
+      v-model:open="showToast"
+      text="Ссылка скопирована"
+      type="success"
+      :duration="3000"
+      :closable="true"
+    />
+  </div>
+</template>
+
+<script setup>
 import { ref } from 'vue'
+import ToastNotification from '@/components/ToastNotification.vue'
 import { getEnv } from '../config'
 import { logger } from '../utils/logger'
 
-  const botLink = getEnv('BOT_LINK', 'https://t.me/CheckAuthorization_bot')
-  const botUsername = getEnv('BOT_NAME', '@CheckAuthorization_bot')
+const botLink = getEnv('BOT_LINK', 'https://t.me/CheckAuthorization_bot')
+const botUsername = getEnv('BOT_NAME', '@CheckAuthorization_bot')
 
-  const shareText = encodeURIComponent(`Попробуй Telegram-бота ${botUsername}`)
-  const urlEncoded = encodeURIComponent(botLink)
+const shareText = encodeURIComponent(`Попробуй Telegram-бота ${botUsername}`)
+const urlEncoded = encodeURIComponent(botLink)
 
-  const showToast = ref(false)
+const showToast = ref(false)
 
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(botLink)
-      showToast.value = true
-      setTimeout(() => {
-        showToast.value = false
-      }, 3000)
-    } catch (err) {
-      logger.error('ShareModal: ошибка копирования в буфер обмена', { error: err?.message || String(err) });
-    }
+const copyToClipboard = async () => {
+  try {
+    await navigator.clipboard.writeText(botLink)
+    showToast.value = true
+  } catch (err) {
+    logger.error('ShareModal: ошибка копирования в буфер обмена', { error: err?.message || String(err) })
   }
+}
 
-  const shareItems = [
-    {
+// Твои прежние размеры/отступы SVG — перенёс 1 в 1
+function iconClass(name) {
+  const base = 'block text-white'
+  switch (name) {
+    case 'Telegram': return `${base} h-8 w-[55px] mt-[7px]`
+    case 'WhatsApp': return `${base} h-8 w-[55px] ml-[2px]`
+    case 'Viber':    return `${base} h-8 w-[45px]`
+    case 'VK':       return `${base} h-[27px] w-[50px] mt-[10px] mr-[5px]`
+    case 'OK':       return `${base} h-[34px] w-[34px] ml-[15px] mt-[2px] mb-[2px]`
+    case 'Max':      return `${base} h-12 w-12`
+    case 'YM':       return `${base} h-[34px] w-[34px] mt-[5px] ml-[2px]`
+    case 'Copy':     return `${base} h-[50px] w-[50px] scale-[1.2]`
+    default:         return `${base} h-8 w-8`
+  }
+}
+
+const shareItems = [
+  {
       name: 'Telegram',
       url: `https://t.me/share/url?url=${urlEncoded}&text=${shareText}`,
       svgPath: "M44.042 0.366148C45.9481 -0.478561 47.7756 0.83786 47.0488 3.76556L47.0684 3.78607L39.9736 37.2929C39.4823 39.6709 38.0475 40.2411 36.043 39.1406L25.2344 31.1415L20.0068 36.1923L19.9756 36.2236C19.3996 36.7999 18.9066 37.2929 17.8447 37.2929C16.7307 37.2929 16.6403 36.964 16.4219 36.1718C16.3629 35.9579 16.2946 35.7098 16.1943 35.4257L12.46 23.2617L1.74903 19.9199C-0.569499 19.2319 -0.588671 17.6408 2.26075 16.4814L44.042 0.366148ZM17.999 23.2812L19.2803 29.6874L20.5615 24.5624L33.374 11.7499L17.999 23.2812Z",
@@ -128,193 +154,5 @@ import { logger } from '../utils/logger'
       svgContent: '<rect x="17.9359" y="21.1958" width="29.7179" height="42.8042" rx="4" stroke="white" stroke-width="4" stroke-linejoin="round" fill="none"/><path d="M54.1467 10C57.4603 10.0002 60.1467 12.6864 60.1467 16V50.8047L60.1389 51.1133C59.9832 54.1811 57.5232 56.6414 54.4553 56.7969L54.1467 56.8047H53.8879C52.7834 56.8047 51.8879 55.9093 51.8879 54.8047C51.8879 53.7001 52.7834 52.8047 53.8879 52.8047H54.1467C55.251 52.8045 56.1465 51.9089 56.1467 50.8047V16C56.1467 14.8955 55.2512 14.0002 54.1467 14H32.429C31.3244 14 30.429 14.8954 30.429 16C30.429 16.5215 30.0062 16.9443 29.4846 16.9443H28.0588C27.1781 16.9443 26.4641 16.2304 26.4641 15.3496C26.7775 12.4425 29.1671 10.1574 32.1204 10.0078L32.429 10H54.1467Z" fill="white"/></g>',
       color: '#b0becf'
     }
-  ]
-  </script>
-  
-  <style scoped>
-  .share-container {
-    text-align: center;
-  }
-  
-  .share-title {
-    margin-bottom: 1rem;
-    font-weight: bold;
-    font-family:var(--font-primary) ;
-  }
-  
-  .share-icons {
-    display: grid;
-    grid-template-columns: repeat(6, 48px);
-    gap: 1rem;
-    justify-content: center;
-  }
-
-  .share-btn:nth-child(7) {
-    grid-column: 3; 
-  }
-
-  .share-btn:nth-child(8) {
-    grid-column: 4;
-  }
-  .share-btn {
-    width: 48px;
-    height: 48px;
-    background-color: #b4b4b4;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    text-decoration: none;
-    color: currentColor;
-    padding: 0;
-    border: none;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-
-  .share-btn:hover {
-    opacity: 0.8;
-  }
-
-  .share-btn:active {
-    opacity: 0.6;
-  }
-
-  .icon-telegram {
-    height: 32px;
-    width: 55px;
-    display: flex;
-    justify-content: center;
-    margin-top: 7px;
-    color: white;
-  }
-  
-  .icon-whatsapp {
-    height: 32px;
-    width: 55px;
-    display: flex;
-    justify-content: center;
-    margin-left: 2px;    
-    color: white;
-  }
-  
-  .icon-viber {
-    height: 32px;
-    width: 45px;
-    display: flex;
-    justify-content: center;
-    color: white;
-  }
-  
-  .icon-vk {
-    height: 27px;
-    width: 50px;
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-    margin-right: 5px;
-    color: white;
-  }
-
-  .icon-ok {
-    height: 34px;
-    width: 34px;
-    display: flex;
-    justify-content: center;
-    margin-left: 15px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    color: white;
-  }
-
-  .icon-max {
-    height: 48px;
-    width: 48px;
-    display: flex;
-    justify-content: center;
-    margin-top: 0px;
-    margin-left: 0px;
-    color: white;
-  }
-
-  .icon-ym {
-    height: 34px;
-    width: 34px;
-    margin-top: 5px;
-    margin-left: 2px;
-    display: flex;
-    justify-content: center;
-    color: white;
-  }
-
-  .icon-copy {
-    height: 50px;
-    width: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transform: scale(1.2);
-  }
-
-  /* Toast notification styles */
-  .toast-notification {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #4caf50;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 10000;
-    font-family: var(--font-primary);
-    font-weight: 500;
-  }
-
-  .toast-icon {
-    width: 24px;
-    height: 24px;
-    color: white;
-  }
-
-  /* Toast animation */
-  .toast-enter-active {
-    animation: toast-slide-in 0.3s ease-out;
-  }
-
-  .toast-leave-active {
-    animation: toast-slide-out 0.3s ease-in;
-  }
-
-  @keyframes toast-slide-in {
-    from {
-      opacity: 0;
-      transform: translateX(-50%) translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-  }
-
-  @keyframes toast-slide-out {
-    from {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateX(-50%) translateY(-20px);
-    }
-  }
-
-  @media (max-width: 430px){
-  .records-page{
-    width: 70%;
-  }}
-  </style>
+]
+</script>
