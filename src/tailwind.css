@@ -4,6 +4,22 @@
 
 /* кнопки */
 
+@layer base {
+  html {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    width: 100vw;
+    max-width: 100vw;
+  }
+}
+
 @layer components {
   .b_button {
     @apply inline-flex items-center justify-center select-none

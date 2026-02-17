@@ -1,16 +1,20 @@
 <template>
   <div class="min-h-dvh bg-neutral-100 text-neutral-800">
     <Header @sidebarButtonClick="handleSidebarButtonClick" />
-    <div class="mx-auto flex w-full max-w-phone flex-1 overflow-hidden px-3 sm:px-4 lg:px-6">
+    <div class="flex w-full">
+      <!-- Сайдбар прибит к левому краю без отступов -->
       <SidebarMenu
         v-if="showSidebar"
         :is-open="isSidebarOpen"
         :items="currentMenuItems"
         :sidebar-button-clicked="sidebarButtonClicked"
       />
-      <main class="min-w-0 flex-1">
-        <router-view />
-      </main>
+      <!-- Основной контент -->
+      <div class="mx-auto flex w-full max-w-phone flex-1 overflow-hidden px-3 sm:px-4 lg:px-6">
+        <main class="min-w-0 flex-1">
+          <router-view />
+        </main>
+      </div>
     </div>
   </div>
 </template>
@@ -83,4 +87,13 @@ function handleSidebarButtonClick() {
 
 </script>
 
-
+<style scoped>
+.sidebar-layout {
+  margin: 0;
+  padding: 0;
+  max-width: 100vw;
+  overflow-x: hidden;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+</style>

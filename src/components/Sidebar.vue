@@ -154,16 +154,18 @@ function goBack() {
 }
 
 .sidebar {
-  position: fixed;
-  top: 3;
+  position: sticky;
+  top: 0;
   left: 0;
   width: 320px;
-  height: 100vh;
+  height: 100dvh;
   background: white;
   box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   transition: width 0.3s ease;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-shrink: 0;
 }
 .menu-list {
   list-style: none;
