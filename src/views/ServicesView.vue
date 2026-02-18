@@ -1,7 +1,7 @@
 <template>
   <div class="services-view">
     <div v-if="loading" class="flex justify-center py-6">
-      <SpinnerSvg class="text-brand" />
+      <SpinnerSvg class="text-brand-500" />
     </div>
 
     <div v-else class="max-w-[720px] mx-auto px-3 pb-4">
@@ -12,16 +12,16 @@
           v-for="type in serviceTypes"
           :key="type.id"
           class="rounded-[14px] overflow-hidden"
-          :class="{ 'bg-gray-100': openType === type.id }"
+          :class="[openType === type.id ? 'bg-neutral-100' : '']"
         >
           <button
-            class="w-full px-4 py-3.5 bg-gray-100 rounded-[14px] flex items-center justify-between cursor-pointer font-bold text-base"
-            :class="{ 'bg-brand-100': openType === type.id }"
+            class="w-full px-4 py-3.5 rounded-[14px] flex items-center justify-between cursor-pointer font-bold text-base transition-colors"
+            :class="[openType === type.id ? 'bg-brand-100' : 'bg-neutral-100']"
             @click="toggle(type.id)"
           >
             <span class="truncate overflow-hidden text-ellipsis">{{ type.name }}</span>
             <div class="inline-flex items-center gap-2.5">
-              <span class="min-w-[34px] h-[34px] px-2.5 bg-white border border-gray-200 rounded-full inline-flex items-center justify-center font-bold text-sm">
+              <span class="min-w-[34px] h-[34px] px-2.5 bg-white border border-neutral-200 rounded-full inline-flex items-center justify-center font-bold text-sm">
                 {{ (servicesByType[type.id] || []).length }}
               </span>
               <span 
@@ -61,13 +61,15 @@
         </section>
       </div>
 
-      <button
-        class="b_button mt-2"
-        :disabled="!selectedServiceIds.length"
-        @click="confirm"
-      >
-        Продолжить запись<span v-if="selectedServiceIds.length"> — {{ totalPrice.toLocaleString('ru-RU') }} ₽</span>
-      </button>
+      <div class="flex justify-center">
+        <button
+          class="b_button mt-2"
+          :disabled="!selectedServiceIds.length"
+          @click="confirm"
+        >
+          Продолжить запись<span v-if="selectedServiceIds.length"> — {{ totalPrice.toLocaleString('ru-RU') }} ₽</span>
+        </button>
+      </div>
     </div>
 
     <!-- Service Details Modal -->
@@ -107,12 +109,12 @@ const selectedServiceIds = ref([])
 const serviceModalVisible = ref(false)
 const selectedService = ref(null)
 
-function loadVisitData() {
-  const v = readVisit()
-  return { ...v, staff_id: v.staff_id ?? null, services_id: v.services_id ?? [], visit_time: v.visit_time ?? {} }
-}
-
-const visit = ref(loadVisitData())
+const visit = ref({
+  ...readVisit(),
+  staff_id: null,
+  services_id: [],
+  visit_time: {}
+})
 
 onMounted(async () => {
   try {
@@ -137,16 +139,12 @@ onMounted(async () => {
 
 const servicesByType = computed(() => {
   const map = {}
-  if (Array.isArray(serviceTypes.value)) {
-    serviceTypes.value.forEach(t => (map[t.id] = []))
-  }
-  if (Array.isArray(services.value)) {
-    services.value.forEach(s => {
-      if (s.service_type_id && map[s.service_type_id]) {
-        map[s.service_type_id].push(s)
-      }
-    })
-  }
+  serviceTypes.value.forEach(t => { map[t.id] = [] })
+  services.value.forEach(s => {
+    if (s.service_type_id && map[s.service_type_id]) {
+      map[s.service_type_id].push(s)
+    }
+  })
   return map
 })
 
@@ -207,4 +205,3 @@ function confirm() {
   router.push({ name: 'choicestaff' })
 }
 </script>
-
