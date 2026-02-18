@@ -8,13 +8,20 @@ export async function ensureSession() {
 
   try {
     logger.debug('ensureSession: пробуем /auth/me')
-    const { data } = await getMe()
-    logger.debug('ensureSession: /auth/me OK', { data })
-    store.setMe?.(data)
-    return data
+    const response = await getMe()
+    const status = response?.status || response?.data?.status || (response?.data ? 200 : 0)
+    
+    if (status === 200) {
+      logger.debug('ensureSession: /auth/me OK', { data: response.data })
+      store.setMe?.(response.data)
+      return response.data
+    }
+  
+    logger.warn('ensureSession: /auth/me returned 401, need re-auth')
   } catch (e) {
-    logger.warn('ensureSession: /auth/me failed', { status: e?.response?.status })
-    if (e?.response?.status !== 401) throw e
+    const status = e?.response?.status
+    logger.warn('ensureSession: /auth/me failed', { status })
+    throw e
   }
 
   const initData = getInitData()
@@ -32,8 +39,14 @@ export async function ensureSession() {
   if (u) logger.debug('ensureSession: распарсен user', { userId: u.id })
 
   logger.debug('ensureSession: повторный запрос /auth/me')
-  const { data } = await getMe()
-  logger.info('ensureSession: авторизация успешна после логина', { userId: data.id })
-  store.setMe?.(data)
-  return data
+ 
+  const response = await getMe()
+  const status = response?.status || response?.data?.status || (response?.data ? 200 : 0)
+  if (status === 200) {
+    logger.info('ensureSession: авторизация успешна после логина', { userId: response.data.id })
+    store.setMe?.(response.data)
+    return response.data
+  }
+
+  return null
 }
