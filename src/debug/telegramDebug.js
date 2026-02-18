@@ -26,7 +26,12 @@ export function attachDebugInitSender() {
 
     try {
       const me = await ensureSession()
-      logger.debug('debug:init: ensureSession OK', { me })
+      if (me) {
+        logger.debug('ensureSession OK', { me })
+      } else {
+        logger.error('ensureSesson err')
+      }
+
       return { ok: true, me }
     } catch (err) {
       logger.error('debug:init: ensureSession ERROR', { error: err?.message })
