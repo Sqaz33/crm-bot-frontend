@@ -137,12 +137,16 @@ onMounted(async () => {
 
 const servicesByType = computed(() => {
   const map = {}
-  serviceTypes.value.forEach(t => (map[t.id] = []))
-  services.value.forEach(s => {
-    if (s.service_type_id && map[s.service_type_id]) {
-      map[s.service_type_id].push(s)
-    }
-  })
+  if (Array.isArray(serviceTypes.value)) {
+    serviceTypes.value.forEach(t => (map[t.id] = []))
+  }
+  if (Array.isArray(services.value)) {
+    services.value.forEach(s => {
+      if (s.service_type_id && map[s.service_type_id]) {
+        map[s.service_type_id].push(s)
+      }
+    })
+  }
   return map
 })
 
