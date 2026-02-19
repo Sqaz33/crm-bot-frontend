@@ -2,7 +2,7 @@
   <header class="main-header">
     <div class="salon-info">
       <div class="salon-logo">
-        <img src="../assets/logo.svg" alt="Логотип" />
+        <img src="@/assets/logo.svg" alt="Логотип" />
       </div>
       <div class="salon-text">
         <div class="salon-name">{{ salon.name }}</div>
@@ -32,16 +32,16 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import api from "../api";
-import { logger } from "../utils/logger";
+import api from "../../api";
+import { logger } from "../../utils/logger";
 
-import Modal from "./Modal.vue";
-import ShareModal from "./ShareModal.vue";
+import Modal from "../ui/Modal.vue";
+import ShareModal from "../modal/ShareModal.vue";
 
-import AddressIcon from "../assets/map.svg";
-import RecordsIcon from "../assets/appointment.svg";
-import ShareIcon from "../assets/share.svg";
-import ProfileIcon from "../assets/prof.svg";
+import AddressIcon from "@/assets/map.svg";
+import RecordsIcon from "@/assets/appointment.svg";
+import ShareIcon from "@/assets/share.svg";
+import ProfileIcon from "@/assets/prof.svg";
 
 const router = useRouter();
 const route = useRoute();

@@ -1,5 +1,5 @@
 <template>
-  <div class="base">
+  <!-- <div class="base"> -->
         
     
         
@@ -9,7 +9,7 @@
       <p2>У Вас пока нет ни одной карты лояльности</p2>        
     </main>
          
-  </div>
+  <!-- </div> -->
 </template>
 
 

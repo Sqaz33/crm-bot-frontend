@@ -1,5 +1,5 @@
 <template>
-  <div class="base">
+  <!-- <div class="base"> -->
       
     <main class="form-container">
       <img src="../assets/PercentShop.svg" alt="Пустой магазин" class="nothing-icon" />
@@ -7,7 +7,7 @@
       <p2>Скоро Вы сможете что-то купить...</p2>        
     </main>
 
-  </div>
+  <!-- </div> -->
 </template>
 
 <script>

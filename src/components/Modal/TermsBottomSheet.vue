@@ -47,7 +47,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import TermsBottomSheet from '@/components/lowerModal.vue' // твой bottom-sheet
+import TermsBottomSheet from '../ui/lowerModal.vue'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false }

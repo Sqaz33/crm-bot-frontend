@@ -1,86 +1,67 @@
 <template>
-  <div class="booking-view">
-    <ul class="steps-list">
-      <li 
-        class="step-item" 
-        @click="goTo('services')"
+  <div class="min-h-screen bg-[#F6F7FB] px-4 pt-6">
+    <div class="mx-auto w-full max-w-[420px]">
+      <MenuList
+        v-model="activeStep"
+        :items="stepItems"
+        @select="onSelectStep"
+      />
+
+      <button
+        type="button"
+        class="b_button mt-10"
+        :disabled="!canSubmit"
+        @click="openProfileModal"
       >
-        <img src="../assets/servicesIcon.svg" alt="" class="step-icon" />
-        <div class="label">
-          Услуги:
-          {{ summary.totalPrice !== null
-            ? (summary.totalPrice > 0 ? summary.totalPrice + ' ₽' : '0 ₽')
-            : '—'
-          }}
+        Оформить запись
+      </button>
+
+      <div
+        v-if="showProfileModal"
+        class="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000] px-4"
+      >
+        <div class="bg-white p-6 rounded-2xl w-full max-w-[500px] shadow-[0_10px_40px_rgba(0,0,0,0.18)]">
+          <h3 class="text-neutral-800 text-2xl font-medium text-center mb-4">
+            Проверьте данные
+          </h3>
+
+          <ProfileForm
+            v-model="form"
+            :saving="false"
+            @save="confirmProfile"
+          />
+
+          <button
+            type="button"
+            @click="showProfileModal = false"
+            class="w-full mt-3 h-12 rounded-xl bg-gray-100 text-neutral-800 text-base font-medium
+                   transition hover:bg-gray-200 active:scale-[0.99]"
+          >
+            Отмена
+          </button>
         </div>
-        <div class="arrow">›</div>
-      </li>
-
-      <li 
-        class="step-item" 
-        :class="{ 'step-disabled': !hasServices }"
-        @click="hasServices && goTo('choicestaff')"
-      >
-        <img src="../assets/staffIcon.svg" alt="" class="step-icon" />
-        <div class="label">Сотрудник: {{ summary.staffName || '—' }}</div>
-        <div class="arrow">›</div>
-      </li>
-
-      <li 
-        class="step-item" 
-        :class="{ 'step-disabled': !hasServices || !hasStaff }"
-        @click="(hasServices && hasStaff) && goTo('datetime')"
-      >
-        <img src="../assets/calendarIcon.svg" alt="" class="step-icon" />
-        <div class="label">Дата и время: {{ summary.visitTime || '—' }}</div>
-        <div class="arrow">›</div>
-      </li>
-      
-      <li 
-        class="step-item back-item"
-        @click="goHome"
-      >
-        <div class="arrow-back">‹</div>
-        <div class="label">На главную</div>
-      </li>
-    </ul>
-
-    <button class="btn-submit"
-      :disabled="!canSubmit"
-      @click="openProfileModal">
-      Оформить запись
-    </button>
-
-    <div v-if="showProfileModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]">
-      <div class="bg-white p-6 rounded-xl w-[80%] max-w-[500px] shadow-sheet">
-        <h3 class="text-neutral-800 text-2xl font-medium text-center mb-4">Проверьте данные</h3>
-
-        <ProfileForm
-          v-model="form"
-          :saving="false"
-          @save="confirmProfile"
-        />
-
-        <button 
-          @click="showProfileModal = false"
-          class="w-full mt-3 px-6 py-3 bg-gray-100 text-neutral-800 rounded-lg text-base font-medium cursor-pointer transition-all hover:bg-gray-200"
-        >
-          Отмена
-        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, computed, reactive, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import api from '../api'
 import { getRawVisit } from '../utils/visitStorage'
 import { logger } from '../utils/logger'
+
+import MenuList from '../components/ui/MenuList.vue' 
 import ProfileForm from '../components/forms/ProfileForm.vue'
 
+
+import servicesIcon from '../assets/servicesIcon.svg'
+import staffIcon from '../assets/staffIcon.svg'
+import calendarIcon from '../assets/calendarIcon.svg'
+
 const router = useRouter()
+const route = useRoute()
 
 const summary = ref({
   staffName: null,
@@ -91,49 +72,57 @@ const summary = ref({
   services_id: []
 })
 
-const hasServices = computed(() => 
+const hasServices = computed(() =>
   Array.isArray(summary.value.services_id) && summary.value.services_id.length > 0
 )
+const hasStaff = computed(() => !!summary.value.staff_id)
+const hasDateTime = computed(() => !!summary.value.visitTime)
 
-const hasStaff = computed(() => 
-  !!summary.value.staff_id
+const canSubmit = computed(() => hasServices.value && hasStaff.value && hasDateTime.value)
+
+// активный пункт 
+const activeStep = ref(route.name ?? null)
+watch(
+  () => route.name,
+  (name) => { if (name) activeStep.value = name }
 )
 
-const hasDateTime = computed(() => 
-  !!summary.value.visitTime
-)
+const servicesText = computed(() => {
+  const p = summary.value.totalPrice
+  if (p === null || p === undefined) return '—'
+  return p > 0 ? `${p} ₽` : '0 ₽'
+})
 
-async function readProfile() {
-  try {
-    const response = await api.get("/auth/me/");
-    const profile = response.data;
-    
-    return {
-      firstName: profile.name?.split(' ')[0] || '', 
-      lastName: profile.name?.split(' ')[1] || '', 
-      middleName: profile.name?.split(' ')[2] || '', 
-      phone: profile.phone || '',
-      email: profile.email || ''
-    };
-  } catch {
-    return {
-      firstName: '',
-      lastName: '',
-      middleName: '',
-      phone: '',
-      email: ''
-    };
+// Пункты меню: один блок 
+const stepItems = computed(() => ([
+  {
+    key: 'services',
+    label: `Услуги: ${servicesText.value}`,
+    icon: servicesIcon,
+    disabled: false,
+    class: 'border-b border-[#EEF0F5]'
+  },
+  {
+    key: 'choicestaff',
+    label: `Сотрудник: ${summary.value.staffName || '—'}`,
+    icon: staffIcon,
+    disabled: !hasServices.value,
+    class: 'border-b border-[#EEF0F5]'
+  },
+  {
+    key: 'datetime',
+    label: `Дата и время: ${summary.value.visitTime || '—'}`,
+    icon: calendarIcon,
+    disabled: !hasServices.value || !hasStaff.value
   }
+]))
+
+function onSelectStep(item) {
+  if (item.disabled) return
+  router.push({ name: item.key })
 }
 
-async function writeProfile(obj) {
-  try {
-    await api.patch("/auth/me/", obj);
-  } catch (error) {
-    logger.error('MakeAppointmant: ошибка при сохранении профиля', { error: error?.message || String(error) })
-  }
-}
-
+/* ===== Профиль ===== */
 const form = reactive({
   firstName: '',
   lastName: '',
@@ -144,9 +133,52 @@ const form = reactive({
 
 const showProfileModal = ref(false)
 
+async function readProfile() {
+  try {
+    const response = await api.get('/auth/me/')
+    const profile = response.data
+    return {
+      firstName: profile.name?.split(' ')[0] || '',
+      lastName: profile.name?.split(' ')[1] || '',
+      middleName: profile.name?.split(' ')[2] || '',
+      phone: profile.phone || '',
+      email: profile.email || ''
+    }
+  } catch {
+    return { firstName: '', lastName: '', middleName: '', phone: '', email: '' }
+  }
+}
+
+async function writeProfile(obj) {
+  try {
+    await api.patch('/auth/me/', obj)
+  } catch (error) {
+    logger.error('BookingView: ошибка при сохранении профиля', { error: error?.message || String(error) })
+  }
+}
+
+function openProfileModal() {
+  if (!canSubmit.value) return
+  showProfileModal.value = true
+}
+
+function saveProfile() {
+  const n = `${form.lastName} ${form.firstName} ${form.middleName}`.trim()
+  const payload = { name: n, email: form.email }
+  writeProfile(payload)
+}
+
+function confirmProfile() {
+  saveProfile()
+  showProfileModal.value = false
+  router.push({ name: 'createvisit' })
+}
+
+/* ===== Summary ===== */
 async function loadSummary() {
   const data = getRawVisit()
   if (!data) return
+
   const { staff_id, services_id = [], visit_time = {} } = data
 
   const visitTime = visit_time.start_time
@@ -169,12 +201,11 @@ async function loadSummary() {
     }
   }
 
-  // Сумма услуг
   let totalPrice = null
   if (services_id.length) {
     try {
       const prices = await Promise.all(
-        services_id.map(async id => {
+        services_id.map(async (id) => {
           const { data } = await api.get('/services/', { params: { service_id: id } })
           return data[0]?.price || 0
         })
@@ -183,7 +214,7 @@ async function loadSummary() {
     } catch {
       totalPrice = 0
     }
-  } else if (services_id.length === 0) {
+  } else {
     totalPrice = 0
   }
 
@@ -197,24 +228,9 @@ async function loadSummary() {
   }
 }
 
-const canSubmit = computed(() =>
-  hasServices.value && hasStaff.value && hasDateTime.value
-)
-
-function goTo(stepName) {
-  router.push({ name: stepName })
-}
-
-function submitBooking() {
-  if (!canSubmit.value) return
-  router.push({ name: 'createvisit' })
-}
-function goHome() {
-  router.push({ name: 'home' })
-}
-
 onMounted(async () => {
   await loadSummary()
+
   const saved = await readProfile()
   form.firstName = saved.firstName ?? ''
   form.lastName = saved.lastName ?? ''
@@ -222,135 +238,4 @@ onMounted(async () => {
   form.phone = saved.phone ?? ''
   form.email = saved.email ?? ''
 })
-
-function saveProfile() {
-  const n = `${form.lastName} ${form.firstName} ${form.middleName}`
-  const payload = { name: n, email: form.email }
-  writeProfile(payload)
-}
-
-function openProfileModal() {
-  showProfileModal.value = true
-}
-
-function confirmProfile() {
-  saveProfile()
-  showProfileModal.value = false
-  submitBooking() 
-}
 </script>
-
-<style scoped>
-.step-icon {
-  width: 30px;
-  height: 30px;
-  margin-right: 0.75rem;
-  flex-shrink: 0;
-}
-
-.booking-view {
-  max-width:  clamp(300px, 90%, 1140px);
-  margin: clamp(0.5rem, 2vw, 2rem) auto;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.steps-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.step-item {
-  display: flex;
-  align-items: center;
-  padding: clamp(0.3rem, 2vw, 1rem);
-  border-bottom: 1px solid #ececec;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.step-item:last-of-type {
-  border-bottom: none;
-}
-
-.step-item:hover:not(.step-disabled) {
-  background: #f8f9fa;
-}
-
-.step-disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background: #f5f5f5;
-}
-
-.step-disabled .label {
-  color: #999;
-}
-
-.label {
-  margin: 0 clamp(0.2rem, 2vw, 0.5rem);
-  flex: 1;
-  font-size: clamp(0.7rem, 3vw, 0.8rem);
-  width: 176px;
-  color: var(--Color-Basic-Black, #454558);
-  font-weight: 500;
-  text-align: left;
-}
-
-.arrow, .arrow-back {
-  display: flex;
-  color: #999;
-  font-size: clamp(0.7rem, 5vw, 1.4rem);
-  font-family: var(--font-primary);
-  width: clamp(30px, 10vw, 40px);
-  height: clamp(30px, 10vw, 40px);
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.step-disabled .arrow {
-  color: #ccc;
-}
-
-
-.back-item {
-  display: flex;
-  align-items: center;
-}
-
-.back-item .arrow-back {
-  margin-right: 0.75rem;
-  font-size: clamp(1rem, 5vw, 1.8rem);
-}
-
-.back-item .label {
-  margin-left: 0;
-}
-
-.btn-submit {
-  display: block;
-  width:  clamp(150px, 80%, 380px);
-  margin: clamp(1rem, 3vw, 1.5rem) auto;
-  padding: clamp(0.5rem, 2vw, 0.75rem);
-  background: #2F80EC;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: clamp(1rem, 3vw, 1.1rem);
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.btn-submit:hover:not(:disabled) {
-  background: #666FE8;
-}
-
-.btn-submit:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-</style>

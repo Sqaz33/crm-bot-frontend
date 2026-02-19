@@ -57,7 +57,7 @@ const route = useRoute();
 const router = useRouter();
 const emit = defineEmits(["close"]);
 
-import { readVisit, VISIT_KEY } from "../utils/visitStorage";
+import { readVisit, VISIT_KEY } from "../../utils/visitStorage";
 
 // Добавляем реактивную переменную для отслеживания изменений localStorage
 const visitDataVersion = ref(0);

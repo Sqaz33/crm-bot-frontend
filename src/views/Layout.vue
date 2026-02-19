@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-dvh bg-neutral-100 text-neutral-800">
+  <div class="min-h-dvh bg-#F6F5F6 text-neutral-800">
     <Header @sidebarButtonClick="handleSidebarButtonClick" />
     <div class="flex w-full">
       <!-- Сайдбар прибит к левому краю без отступов -->
@@ -10,7 +10,7 @@
         :sidebar-button-clicked="sidebarButtonClicked"
       />
       <!-- Основной контент -->
-      <div class="mx-auto flex w-full max-w-phone flex-1 overflow-hidden px-3 sm:px-4 lg:px-6">
+      <div class="mx-auto flex w-full max-w-phone flex-1 overflow-hidden px-3 sm:px-4 lg:px-6 ">
         <main class="min-w-0 flex-1">
           <router-view />
         </main>
@@ -23,8 +23,8 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import Header from '../components/Header.vue'
-import SidebarMenu from '../components/Sidebar.vue'
+import Header from '../components/layout/Header.vue'
+import SidebarMenu from '../components/layout/Sidebar.vue'
 
 import walletIcon from '../assets/walletIcon.svg'
 import shopIcon from '../assets/shopIcon.svg'

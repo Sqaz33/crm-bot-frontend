@@ -7,8 +7,8 @@
       :duration="3500"
     />
 
-    <div v-if="loading" class="my-8 text-center text-[1.1rem] text-neutral-800">
-      Загрузка...
+    <div v-if="loading" class="loading">
+  <SpinnerSvg style="color: var(--brand)" />
     </div>
 
     <div v-else>
@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import ToastNotification from "./components/ToastNotification.vue"
+import ToastNotification from "./components/ui/ToastNotification.vue"
 import { attachDebugInitSender } from "./debug/telegramDebug"
 import { reactive, ref, onMounted } from "vue"
 import { ensureSession } from "./auth/ensureSession"
@@ -27,6 +27,8 @@ import { useAuthStore } from "./stores/auth"
 import { writeVisit, DEFAULT_VISIT } from "./utils/visitStorage"
 import { splitFullNameIfNeeded, getInitDataInfo, isUserAuthorized } from './utils/telegram'
 import { logger } from './utils/logger'
+import SpinnerSvg from './components/ui/SpinnerLoad.vue'
+
 
 const PROFILE_KEY = "profile_data"
 

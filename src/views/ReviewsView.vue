@@ -11,7 +11,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 
-import StaffFilter from '../components/StaffFilter.vue'
+import StaffFilter from '../components/staff/StaffFilter.vue'
 
 const router = useRouter()
 

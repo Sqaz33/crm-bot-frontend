@@ -1,5 +1,5 @@
 <template>
-  <div class="layout">
+  <!-- <div class="layout"> -->
 
     <main class="main-content">
 		<div class="container">
@@ -41,7 +41,7 @@
 			</div>
     </main>
 		
-  </div>
+  <!-- </div> -->
 </template>
 
 <script setup>

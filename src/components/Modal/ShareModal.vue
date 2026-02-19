@@ -65,9 +65,9 @@
 
 <script setup>
 import { ref } from 'vue'
-import ToastNotification from '@/components/ToastNotification.vue'
-import { getEnv } from '../config'
-import { logger } from '../utils/logger'
+import ToastNotification from '@/components/ui/ToastNotification.vue'
+import { getEnv } from '../../config'
+import { logger } from '../../utils/logger'
 
 const botLink = getEnv('BOT_LINK', 'https://t.me/CheckAuthorization_bot')
 const botUsername = getEnv('BOT_NAME', '@CheckAuthorization_bot')

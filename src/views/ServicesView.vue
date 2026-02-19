@@ -95,9 +95,9 @@ import { ref, computed, onMounted } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
 import { readVisit, writeVisit } from '../utils/visitStorage'
-import SpinnerSvg from '../components/SpinnerLoad.vue'
-import ServiceCard from '../components/ServiceCard.vue'
-import ServiceModal from '../components/ServiceModal.vue'
+import SpinnerSvg from '../components/ui/SpinnerLoad.vue'
+import ServiceCard from '../components/services/ServiceCard.vue'
+import ServiceModal from '../components/services/ServiceCard.vue'
 import { logger } from '../utils/logger'
 
 const router = useRouter()

@@ -1,5 +1,5 @@
 <template>
-  <div class="records-page">
+  <!-- <div class="records-page"> -->
     <div class="records-container">
       <!-- Tabs -->
       <div class="tabs-container">
@@ -123,7 +123,7 @@
         </div>
       </div>
     </div>
-  </div>
+  <!-- </div> -->
 </template>
 
 <script setup>

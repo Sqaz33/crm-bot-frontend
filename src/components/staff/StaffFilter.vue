@@ -51,8 +51,8 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import api from '../api'
-import { readVisit } from '../utils/visitStorage'
+import api from '../../api'
+import { readVisit } from '../../utils/visitStorage'
 
 const emit = defineEmits(['select', 'review', 'visit'])
 const tabs = ref([{ label: 'Все', value: 'all' }])

@@ -53,8 +53,8 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import Input from './Input.vue'
-import ToastNotification from '../ToastNotification.vue'
+import Input from '../ui/Input.vue'
+import ToastNotification from '../ui/ToastNotification.vue'
 
 const props = defineProps({
   modelValue: {

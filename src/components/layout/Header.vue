@@ -5,7 +5,7 @@
     <!-- Top Bar (название бота) -->
     <div class="topbar">
       <div class="salon-logo">
-        <img src="../assets/logo.svg" alt="Логотип" @click=" goHome()" />
+          <img :src="logo" alt="logo" class="cursor-pointer" @click="$router.push('/')" />
       </div>
       <div class="salon-text">
         <div class="salon-name">{{ salon.name }}</div>
@@ -21,7 +21,7 @@
             class="menu-button"
             @click="clickSidebarButton"
         >
-          <img src="../assets/sidebarIcon.svg" alt="Меню" />
+          <img src="@/assets/sidebarIcon.svg" alt="Меню" />
         </button>
 
         <!-- Кнопка назад (для остальных страниц) -->
@@ -48,7 +48,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import HomeMenu from './MainMenu.vue'
-import api from '../api'
+import api from '../../api'
+import logo from '../../assets/logo.svg'
 
 const route = useRoute()
 const router = useRouter()
