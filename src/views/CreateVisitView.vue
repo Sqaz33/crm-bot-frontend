@@ -64,7 +64,8 @@
       <div v-if="errorMsg" class="error-msg">{{ errorMsg }}</div>
     </form>
 
-    <TermsModal :visible="showTerms" @close="showTerms = false" />
+    <LicenseAgreementSheet v-model="showTerms" />
+
     
     <!-- Модальное окно успешной записи -->
     <div v-if="showSuccessModal" class="modal-overlay" @click.self="closeSuccessModal">
@@ -121,7 +122,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
-import TermsModal from '../components/TermsModal.vue'
+import LicenseAgreementSheet  from '../components/Modal/TermsBottomSheet.vue'
 import { getEnv } from '../config'
 import { getRawVisit, readVisit, clearVisit } from '../utils/visitStorage'
 import { humanizeDateTime } from '../utils/dateFormatters'

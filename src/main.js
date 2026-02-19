@@ -3,7 +3,8 @@ import App from './App.vue'
 import router from './router'
 import { createPinia } from 'pinia'
 import { LoggerPlugin } from './utils/logger'
-import './style.css';
+
+import "./tailwind.css"
 
 
 const app = createApp(App)

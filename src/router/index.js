@@ -15,6 +15,7 @@ import DateTime from '../views/DateTime.vue'
 import ServicesView from '../views/ServicesView.vue'
 import CreateVisitView from '../views/CreateVisitView.vue'
 import RecordView from '../views/RecordView.vue'
+import TestView from '../views/TestView.vue'
 
 const routes = [
   {
@@ -109,7 +110,13 @@ const routes = [
         path: 'record/:id',
         name: 'record',
         component: RecordView,
-        meta: { title: "Запись" }
+        meta: { title: "Просмотр записи" }
+      },
+      {
+        path: 'test',
+        name: 'test',
+        component: TestView,
+        meta: { title:"Test"}
       }
     ]
   },

@@ -1,83 +1,109 @@
 <template>
-    <div class="share-container">
-      <p class="share-title" style="color: black;">Выберите, где вы хотите поделиться</p>
-      <div class="share-icons">
-        <template v-for="item in shareItems" :key="item.name">
+  <div class="text-center">
+    <p class="mb-4 font-bold text-black font-[var(--font-primary)]">
+      Выберите, где вы хотите поделиться
+    </p>
+
+    <div class="grid justify-center gap-4 [grid-template-columns:repeat(6,48px)]">
+      <template v-for="(item, idx) in shareItems" :key="item.name">
+        <!-- 7-й и 8-й элемент (idx 6 и 7) — в центр -->
+        <div :class="idx === 6 ? 'col-start-3' : idx === 7 ? 'col-start-4' : ''">
           <a
             v-if="item.name !== 'Copy'"
             :href="item.url"
-            class="share-btn"
-            :style="{backgroundColor: item.color}"
             target="_blank"
             rel="noopener"
+            class="w-12 h-12 rounded-lg flex items-center justify-center
+                   p-0 border-0 cursor-pointer no-underline
+                   text-white transition-opacity duration-200
+                   hover:opacity-80 active:opacity-60"
+            :style="{ backgroundColor: item.color }"
           >
             <svg
               :viewBox="item.viewBox || '0 0 50 50'"
-              :class="`icon-${item.name.toLowerCase()}`"
+              :class="iconClass(item.name)"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path v-if="!item.svgContent" :d="item.svgPath" fill="currentColor"/>
+              <path v-if="!item.svgContent" :d="item.svgPath" fill="currentColor" />
               <g v-else v-html="item.svgContent"></g>
             </svg>
           </a>
+
           <button
             v-else
+            type="button"
             @click="copyToClipboard"
-            class="share-btn"
-            :style="{backgroundColor: item.color}"
+            class="w-12 h-12 rounded-lg flex items-center justify-center
+                   p-0 border-0 cursor-pointer
+                   text-white transition-opacity duration-200
+                   hover:opacity-80 active:opacity-60"
+            :style="{ backgroundColor: item.color }"
           >
             <svg
               :viewBox="item.viewBox || '0 0 50 50'"
-              :class="`icon-${item.name.toLowerCase()}`"
+              :class="iconClass(item.name)"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path v-if="!item.svgContent" :d="item.svgPath" fill="currentColor"/>
+              <path v-if="!item.svgContent" :d="item.svgPath" fill="currentColor" />
               <g v-else v-html="item.svgContent"></g>
             </svg>
           </button>
-        </template>
-      </div>
+        </div>
+      </template>
     </div>
 
-    <!-- Toast notification -->
-    <Transition name="toast">
-      <div v-if="showToast" class="toast-notification">
-        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-          <path d="M8 12L11 15L16 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span>Ссылка скопирована</span>
-      </div>
-    </Transition>
-  </template>
-  
-  <script setup>
+    <!-- TOAST (используем твой компонент) -->
+    <ToastNotification
+      v-model:open="showToast"
+      text="Ссылка скопирована"
+      type="success"
+      :duration="3000"
+      :closable="true"
+    />
+  </div>
+</template>
+
+<script setup>
 import { ref } from 'vue'
+import ToastNotification from '@/components/ToastNotification.vue'
 import { getEnv } from '../config'
 import { logger } from '../utils/logger'
 
-  const botLink = getEnv('BOT_LINK', 'https://t.me/CheckAuthorization_bot')
-  const botUsername = getEnv('BOT_NAME', '@CheckAuthorization_bot')
+const botLink = getEnv('BOT_LINK', 'https://t.me/CheckAuthorization_bot')
+const botUsername = getEnv('BOT_NAME', '@CheckAuthorization_bot')
 
-  const shareText = encodeURIComponent(`Попробуй Telegram-бота ${botUsername}`)
-  const urlEncoded = encodeURIComponent(botLink)
+const shareText = encodeURIComponent(`Попробуй Telegram-бота ${botUsername}`)
+const urlEncoded = encodeURIComponent(botLink)
 
-  const showToast = ref(false)
+const showToast = ref(false)
 
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(botLink)
-      showToast.value = true
-      setTimeout(() => {
-        showToast.value = false
-      }, 3000)
-    } catch (err) {
-      logger.error('ShareModal: ошибка копирования в буфер обмена', { error: err?.message || String(err) });
-    }
+const copyToClipboard = async () => {
+  try {
+    await navigator.clipboard.writeText(botLink)
+    showToast.value = true
+  } catch (err) {
+    logger.error('ShareModal: ошибка копирования в буфер обмена', { error: err?.message || String(err) })
   }
+}
 
-  const shareItems = [
-    {
+// Твои прежние размеры/отступы SVG — перенёс 1 в 1
+function iconClass(name) {
+  const base = 'block text-white'
+  switch (name) {
+    case 'Telegram': return `${base} h-8 w-[55px] mt-[7px]`
+    case 'WhatsApp': return `${base} h-8 w-[55px] ml-[2px]`
+    case 'Viber':    return `${base} h-8 w-[45px]`
+    case 'VK':       return `${base} h-[27px] w-[50px] mt-[10px] mr-[5px]`
+    case 'OK':       return `${base} h-[34px] w-[34px] ml-[15px] mt-[2px] mb-[2px]`
+    case 'Max':      return `${base} h-12 w-12`
+    case 'YM':       return `${base} h-[34px] w-[34px] mt-[5px] ml-[2px]`
+    case 'Copy':     return `${base} h-[50px] w-[50px] scale-[1.2]`
+    default:         return `${base} h-8 w-8`
+  }
+}
+
+const shareItems = [
+  {
       name: 'Telegram',
       url: `https://t.me/share/url?url=${urlEncoded}&text=${shareText}`,
       svgPath: "M44.042 0.366148C45.9481 -0.478561 47.7756 0.83786 47.0488 3.76556L47.0684 3.78607L39.9736 37.2929C39.4823 39.6709 38.0475 40.2411 36.043 39.1406L25.2344 31.1415L20.0068 36.1923L19.9756 36.2236C19.3996 36.7999 18.9066 37.2929 17.8447 37.2929C16.7307 37.2929 16.6403 36.964 16.4219 36.1718C16.3629 35.9579 16.2946 35.7098 16.1943 35.4257L12.46 23.2617L1.74903 19.9199C-0.569499 19.2319 -0.588671 17.6408 2.26075 16.4814L44.042 0.366148ZM17.999 23.2812L19.2803 29.6874L20.5615 24.5624L33.374 11.7499L17.999 23.2812Z",
@@ -87,13 +113,6 @@ import { logger } from '../utils/logger'
       name: 'WhatsApp',
       url: `https://wa.me/?text=${shareText}%20${urlEncoded}`,
       svgPath: "M34.6235 28.7634C34.0373 28.4693 31.1535 27.0521 30.6166 26.8547C30.0777 26.6593 29.6869 26.5625 29.2941 27.1507C28.9053 27.737 27.7802 29.0575 27.4387 29.4483C27.0972 29.8411 26.7538 29.8885 26.1676 29.5963C25.5813 29.3003 23.6904 28.6825 21.4501 26.6849C19.7072 25.1295 18.5288 23.209 18.1873 22.6208C17.8458 22.0345 18.1518 21.7168 18.4439 21.4246C18.7084 21.1621 19.0321 20.7397 19.3242 20.3982C19.6183 20.0548 19.7151 19.81 19.9124 19.4172C20.1079 19.0264 20.0111 18.6849 19.8631 18.3908C19.7151 18.0967 18.5426 15.209 18.0551 14.0346C17.5774 12.8917 17.0938 13.0476 16.7346 13.0279C16.3597 13.013 15.9846 13.0064 15.6095 13.0082C15.2187 13.0082 14.5831 13.1542 14.0462 13.7424C13.5093 14.3287 11.9934 15.7479 11.9934 18.6356C11.9934 21.5213 14.0955 24.3104 14.3877 24.7032C14.6818 25.094 18.5248 31.0195 24.4089 33.5598C25.8083 34.1638 26.8999 34.525 27.7526 34.7935C29.1579 35.2415 30.437 35.1784 31.4456 35.0264C32.5727 34.8586 34.9156 33.6072 35.4051 32.2373C35.8947 30.8675 35.8947 29.6931 35.7466 29.4483C35.6006 29.2035 35.2117 29.0575 34.6235 28.7634ZM23.9213 43.3757H23.9134C20.4193 43.376 16.9893 42.4366 13.983 40.6558L13.2705 40.2334L5.88632 42.1717L7.85622 34.9711L7.39236 34.2329C5.43913 31.1226 4.40582 27.5232 4.41186 23.8505C4.41383 13.093 13.1678 4.34102 23.9292 4.34102C29.1402 4.34102 34.0392 6.37408 37.7224 10.0612C39.5397 11.8705 40.9801 14.0222 41.9603 16.3918C42.9405 18.7614 43.4409 21.3019 43.4328 23.8663C43.4268 34.6237 34.6748 43.3757 23.9213 43.3757ZM40.5273 7.26033C38.3525 5.07119 35.7648 3.33542 32.9143 2.15361C30.0638 0.971796 27.0071 0.367442 23.9213 0.375569C10.9828 0.375569 0.452329 10.906 0.446408 23.8485C0.446408 27.9857 1.5261 32.0242 3.58087 35.583L0.249023 47.7478L12.6941 44.4831C16.1357 46.3581 19.9923 47.3407 23.9115 47.3412H23.9213C36.8579 47.3412 47.3903 36.8107 47.3962 23.8663C47.4058 20.7817 46.8036 17.7258 45.6246 14.8755C44.4455 12.0251 42.713 9.43683 40.5273 7.26033Z",
-      color: '#b0becf'
-    },
-    {
-      name: 'Viber',
-      url: `viber://forward?text=${shareText}%20${urlEncoded}`,
-      svgPath: "M22.921 6.38572e-06C22.7756 -0.000496121 22.6314 0.0286636 22.4969 0.0858133C22.3624 0.142963 22.2401 0.226981 22.137 0.333045C22.034 0.43911 21.9523 0.565136 21.8965 0.703901C21.8407 0.842665 21.812 0.991438 21.812 1.14169C21.812 1.44549 21.9288 1.73685 22.1368 1.95168C22.3448 2.1665 22.6269 2.28718 22.921 2.28718C25.6694 2.23303 28.4009 2.74165 30.958 3.78367C33.515 4.8257 35.8469 6.38049 37.8191 8.35833C41.8486 12.4058 43.8116 17.8278 43.8855 24.9299C43.8855 25.0803 43.9142 25.2293 43.9699 25.3682C44.0257 25.5072 44.1074 25.6335 44.2103 25.7399C44.3133 25.8462 44.4356 25.9306 44.5701 25.9882C44.7047 26.0457 44.8489 26.0754 44.9945 26.0754V26.041C45.2887 26.041 45.5708 25.9203 45.7788 25.7055C45.9867 25.4907 46.1036 25.1993 46.1036 24.8955C46.2407 21.5556 45.7182 18.2217 44.5679 15.0971C43.4175 11.9724 41.6634 9.12226 39.4124 6.72026C35.0132 2.291 29.4643 6.38572e-06 22.921 6.38572e-06ZM8.30393 2.63465C7.51777 2.51894 6.71679 2.68037 6.03041 3.09285H5.98604C4.47036 4.00925 3.07298 5.15475 1.74213 6.68208C0.744001 7.90394 0.185788 9.12199 0.0379164 10.3057C-0.0490708 10.9999 0.0140557 11.7054 0.222754 12.3714L0.29669 12.4096C1.43614 15.8695 2.92295 19.1969 4.73283 22.3372C7.07886 26.7353 9.96121 30.8044 13.3094 34.4451L13.4203 34.5979L13.5682 34.7124L13.6791 34.827L13.79 34.9415C17.3286 38.4085 21.2787 41.398 25.5457 43.8382C30.4255 46.5874 33.3903 47.8857 35.1648 48.4202V48.4584C35.6823 48.6111 36.1555 48.6875 36.6361 48.6875C38.1508 48.5733 39.5849 47.9389 40.71 46.8853C42.1517 45.5488 43.2977 44.0673 44.148 42.5018V42.4636C44.9982 40.8218 44.7025 39.2524 43.4826 38.1833C41.024 35.9618 38.3621 33.9924 35.5345 32.3031C33.6491 31.2339 31.7268 31.883 30.9505 32.9522L29.2869 35.1248C28.4366 36.1939 26.884 36.0412 26.884 36.0412L26.8396 36.0794C15.3056 33.0247 12.2373 20.9626 12.2373 20.9626C12.2373 20.9626 12.0894 19.3207 13.1615 18.4807L15.2317 16.7625C16.2298 15.9224 16.9322 13.9369 15.8602 11.9896C14.2267 9.06753 12.3199 6.31791 10.1671 3.78015C9.69882 3.18027 9.03772 2.77382 8.30393 2.63465ZM24.8397 6.03296C24.5455 6.03398 24.2638 6.15564 24.0565 6.37117C23.8492 6.58671 23.7333 6.87848 23.7343 7.18228C23.7353 7.48609 23.8531 7.77705 24.0618 7.99115C24.2704 8.20526 24.5529 8.32498 24.8471 8.32396C28.5466 8.39029 32.0697 9.96943 34.6435 12.715C35.8048 14.0381 36.6975 15.5882 37.2689 17.2737C37.8404 18.9591 38.079 20.7458 37.9706 22.5281C37.9716 22.8313 38.0889 23.1217 38.2968 23.3357C38.5047 23.5497 38.7862 23.6698 39.0797 23.6698L39.1167 23.7156C39.2626 23.7156 39.4071 23.6859 39.5419 23.6281C39.6767 23.5703 39.7991 23.4856 39.9022 23.3788C40.0052 23.272 40.0868 23.1453 40.1423 23.0059C40.1979 22.8664 40.2262 22.7171 40.2257 22.5663C40.3366 18.0225 38.9688 14.2042 36.2701 11.1495C33.5715 8.09486 29.8007 6.37661 24.9949 6.03296C24.9432 6.02922 24.8914 6.02922 24.8397 6.03296ZM26.6511 12.2148C26.5028 12.2103 26.3551 12.236 26.2164 12.2905C26.0777 12.3449 25.9507 12.4271 25.8428 12.5322C25.7348 12.6373 25.6479 12.7634 25.5871 12.9032C25.5264 13.043 25.4928 13.1938 25.4884 13.347C25.4841 13.5002 25.509 13.6527 25.5617 13.796C25.6144 13.9392 25.6939 14.0704 25.7957 14.1819C25.8975 14.2934 26.0195 14.3831 26.1549 14.4459C26.2902 14.5087 26.4362 14.5433 26.5845 14.5478C30.2444 14.7388 32.0188 16.6479 32.2406 20.5808C32.2502 20.8779 32.3713 21.1596 32.5782 21.3662C32.7852 21.5728 33.0618 21.6883 33.3497 21.6881H33.3866C33.5356 21.6833 33.6821 21.6476 33.8173 21.583C33.9526 21.5185 34.0739 21.4264 34.1739 21.3124C34.274 21.1983 34.3508 21.0646 34.3997 20.9193C34.4487 20.7739 34.4687 20.6198 34.4587 20.4662C34.1999 15.3497 31.5013 12.4821 26.6954 12.2148C26.6807 12.2145 26.6659 12.2145 26.6511 12.2148Z",
-      viewBox: "0 0 47 49",
       color: '#b0becf'
     },
     {
@@ -128,193 +147,5 @@ import { logger } from '../utils/logger'
       svgContent: '<rect x="17.9359" y="21.1958" width="29.7179" height="42.8042" rx="4" stroke="white" stroke-width="4" stroke-linejoin="round" fill="none"/><path d="M54.1467 10C57.4603 10.0002 60.1467 12.6864 60.1467 16V50.8047L60.1389 51.1133C59.9832 54.1811 57.5232 56.6414 54.4553 56.7969L54.1467 56.8047H53.8879C52.7834 56.8047 51.8879 55.9093 51.8879 54.8047C51.8879 53.7001 52.7834 52.8047 53.8879 52.8047H54.1467C55.251 52.8045 56.1465 51.9089 56.1467 50.8047V16C56.1467 14.8955 55.2512 14.0002 54.1467 14H32.429C31.3244 14 30.429 14.8954 30.429 16C30.429 16.5215 30.0062 16.9443 29.4846 16.9443H28.0588C27.1781 16.9443 26.4641 16.2304 26.4641 15.3496C26.7775 12.4425 29.1671 10.1574 32.1204 10.0078L32.429 10H54.1467Z" fill="white"/></g>',
       color: '#b0becf'
     }
-  ]
-  </script>
-  
-  <style scoped>
-  .share-container {
-    text-align: center;
-  }
-  
-  .share-title {
-    margin-bottom: 1rem;
-    font-weight: bold;
-    font-family:var(--font-primary) ;
-  }
-  
-  .share-icons {
-    display: grid;
-    grid-template-columns: repeat(6, 48px);
-    gap: 1rem;
-    justify-content: center;
-  }
-
-  .share-btn:nth-child(7) {
-    grid-column: 3; 
-  }
-
-  .share-btn:nth-child(8) {
-    grid-column: 4;
-  }
-  .share-btn {
-    width: 48px;
-    height: 48px;
-    background-color: #b4b4b4;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    text-decoration: none;
-    color: currentColor;
-    padding: 0;
-    border: none;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-
-  .share-btn:hover {
-    opacity: 0.8;
-  }
-
-  .share-btn:active {
-    opacity: 0.6;
-  }
-
-  .icon-telegram {
-    height: 32px;
-    width: 55px;
-    display: flex;
-    justify-content: center;
-    margin-top: 7px;
-    color: white;
-  }
-  
-  .icon-whatsapp {
-    height: 32px;
-    width: 55px;
-    display: flex;
-    justify-content: center;
-    margin-left: 2px;    
-    color: white;
-  }
-  
-  .icon-viber {
-    height: 32px;
-    width: 45px;
-    display: flex;
-    justify-content: center;
-    color: white;
-  }
-  
-  .icon-vk {
-    height: 27px;
-    width: 50px;
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-    margin-right: 5px;
-    color: white;
-  }
-
-  .icon-ok {
-    height: 34px;
-    width: 34px;
-    display: flex;
-    justify-content: center;
-    margin-left: 15px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    color: white;
-  }
-
-  .icon-max {
-    height: 48px;
-    width: 48px;
-    display: flex;
-    justify-content: center;
-    margin-top: 0px;
-    margin-left: 0px;
-    color: white;
-  }
-
-  .icon-ym {
-    height: 34px;
-    width: 34px;
-    margin-top: 5px;
-    margin-left: 2px;
-    display: flex;
-    justify-content: center;
-    color: white;
-  }
-
-  .icon-copy {
-    height: 50px;
-    width: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transform: scale(1.2);
-  }
-
-  /* Toast notification styles */
-  .toast-notification {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #4caf50;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 10000;
-    font-family: var(--font-primary);
-    font-weight: 500;
-  }
-
-  .toast-icon {
-    width: 24px;
-    height: 24px;
-    color: white;
-  }
-
-  /* Toast animation */
-  .toast-enter-active {
-    animation: toast-slide-in 0.3s ease-out;
-  }
-
-  .toast-leave-active {
-    animation: toast-slide-out 0.3s ease-in;
-  }
-
-  @keyframes toast-slide-in {
-    from {
-      opacity: 0;
-      transform: translateX(-50%) translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-  }
-
-  @keyframes toast-slide-out {
-    from {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateX(-50%) translateY(-20px);
-    }
-  }
-
-  @media (max-width: 430px){
-  .records-page{
-    width: 70%;
-  }}
-  </style>
+]
+</script>

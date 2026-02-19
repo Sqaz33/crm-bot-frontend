@@ -1,27 +1,42 @@
 <template>
   <Teleport to="body">
-    <div
-      v-if="visible"
-      class="modal-overlay"
-      v-bind="$attrs"
-      role="dialog"
-      aria-modal="true"
-      @click.self="emit('close')"
-    >
       <div
-        class="modal-content"
+        v-if="visible"
+        v-bind="$attrs"
+        role="dialog"
+        aria-modal="true"
+        class="fixed inset-0 z-[9999]
+              flex items-start justify-center
+              w-[100dvw] h-[100dvh]
+              bg-black/50 overscroll-contain
+              px-4 pt-[43dvh] pb-4
+              md:items-center md:pt-4"
+              @click.self="emit('close')"
+              >
+
+      <div
         ref="content"
         tabindex="-1"
         @keydown.esc.stop.prevent="emit('close')"
+        class="relative outline-none box-border
+               bg-white rounded-2xl shadow-sheet
+               w-full max-w-[520px]
+               max-h-[calc(100dvh-32px)]
+               overflow-auto [-webkit-overflow-scrolling:touch]
+               p-4 sm:p-6"
       >
         <button
-          class="modal-close"
           type="button"
           aria-label="Закрыть"
           @click="emit('close')"
+          class="absolute right-1 top-1 h-11 w-11 grid place-items-center
+                 bg-transparent border-0 text-2xl leading-none
+                 cursor-pointer select-none
+                 [-webkit-tap-highlight-color:transparent]"
         >
           ×
         </button>
+
         <slot />
       </div>
     </div>
@@ -31,10 +46,11 @@
 <script setup>
 import { ref, watch, nextTick, onBeforeUnmount } from 'vue'
 
-defineOptions({ inheritAttrs: false })      
-const emit = defineEmits(['close'])         
+defineOptions({ inheritAttrs: false })
 
+const emit = defineEmits(['close'])
 const props = defineProps({ visible: Boolean })
+
 const content = ref(null)
 
 function setScrollLock(lock) {
@@ -45,11 +61,11 @@ function setScrollLock(lock) {
 
 watch(
   () => props.visible,
-  async v => {
+  async (v) => {
     setScrollLock(v)
     if (v) {
       await nextTick()
-      content.value?.focus()                
+      content.value?.focus()
     }
   },
   { immediate: true }
@@ -57,83 +73,6 @@ watch(
 
 onBeforeUnmount(() => setScrollLock(false))
 </script>
-
-<style scoped>
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-
-  width: 100dvw;
-  height: 100dvh;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-
-  /* --hpad: max(16px, max(env(safe-area-inset-left), env(safe-area-inset-right))); */
-  /* --vpad: max(16px, max(env(safe-area-inset-top),  env(safe-area-inset-bottom))); */
-  padding-inline: var(--hpad);
-  padding-block: var(--vpad);
-
-  background-color: rgba(0, 0, 0, 0.5);
-  overscroll-behavior: contain;
-}
-
-@supports not (height: 100dvh) {
-  .modal-overlay {
-    width: 100vw;
-    height: 100vh;
-  }
-}
-
-.modal-content {
-  position: relative;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 5px 15px rgba(0,0,0,.2);
-  outline: none;
-  box-sizing: border-box;
-
-  inline-size: min(520px, calc(100dvw - 2 * var(--hpad)));
-  margin-inline: auto;
-
-  max-height: calc(100dvh - 2 * var(--vpad));
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-
-  padding: clamp(16px, 4vw, 24px);
-}
-
-@supports not (max-height: 100dvh) {
-  .modal-content {
-    inline-size: min(520px, calc(100vw - 2 * var(--hpad)));
-    max-height: calc(100vh - 2 * var(--vpad));
-  }
-}
-
-.modal-close {
-  position: absolute;
-  inset-inline-end: 4px;
-  inset-block-start: 4px;
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-
-  border: none;
-  background: transparent;
-  font-size: 24px;
-  line-height: 1;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-@media (pointer: coarse) {
-  .modal-content { border-radius: 20px; }
-}
-</style>
 
 <style>
 html.modal-open { overflow: hidden; }

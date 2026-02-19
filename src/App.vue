@@ -1,39 +1,50 @@
 <template>
   <div>
-    <transition name="fade">
-      <div v-if="authError" class="auth-error-banner">{{ errorText }}</div>
-    </transition>
+    <ToastNotification
+      v-model:open="showToast"
+      :text="errorText"
+      type="error"
+      :duration="3500"
+    />
 
-    <div v-if="loading" class="loading-container">Загрузка...</div>
-    <div v-else><router-view/></div>
+    <div v-if="loading" class="my-8 text-center text-[1.1rem] text-neutral-800">
+      Загрузка...
+    </div>
+
+    <div v-else>
+      <router-view />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { attachDebugInitSender } from './debug/telegramDebug'
-import { reactive, ref, onMounted } from 'vue'
-import { ensureSession } from './auth/ensureSession'
-import { getClientByTelegramId } from './api/clients'
-import { useAuthStore } from './stores/auth'
+import ToastNotification from "./components/ToastNotification.vue"
+import { attachDebugInitSender } from "./debug/telegramDebug"
+import { reactive, ref, onMounted } from "vue"
+import { ensureSession } from "./auth/ensureSession"
+import { getClientByTelegramId } from "./api/clients"
+import { useAuthStore } from "./stores/auth"
+import { writeVisit, DEFAULT_VISIT } from "./utils/visitStorage"
 import { splitFullNameIfNeeded, getInitDataInfo, isUserAuthorized } from './utils/telegram'
-import { writeVisit, DEFAULT_VISIT } from './utils/visitStorage'
 import { logger } from './utils/logger'
 
-const PROFILE_KEY = 'profile_data'
+const PROFILE_KEY = "profile_data"
 
-const loading   = ref(true)
-const authError = ref(false)
-const errorText = ref('Ошибка авторизации. Пожалуйста, попробуйте ещё раз.')
-const store     = useAuthStore()
+const loading = ref(true)
+
+const showToast = ref(false)
+const errorText = ref("")
+
+const store = useAuthStore()
 
 let mountedOnce = false
 
 const form = reactive({
-  firstName: '',
-  lastName: '',
-  middleName: '',
-  phone: '',
-  email: ''
+  firstName: "",
+  lastName: "",
+  middleName: "",
+  phone: "",
+  email: "",
 })
 
 function saveVisit(silent = false) {
@@ -43,29 +54,33 @@ function saveVisit(silent = false) {
 
 function mergeSaveProfile(partial = {}, silent = false) {
   let saved = {}
-  try { saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}') } catch {}
+  try {
+    saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}")
+  } catch {}
 
-  const val = (v) => (typeof v === 'string' ? v.trim() : v)
+  const val = (v) => (typeof v === "string" ? v.trim() : v)
   const next = {
-    tg_id:      partial.tg_id ?? saved.tg_id ?? null,
-    firstName:  val(partial.firstName)  ?? saved.firstName  ?? form.firstName  ?? '',
-    lastName:   val(partial.lastName)   ?? saved.lastName   ?? form.lastName   ?? '',
-    middleName: val(partial.middleName) ?? saved.middleName ?? form.middleName ?? '',
-    phone:      val(partial.phone)      ?? saved.phone      ?? form.phone      ?? '',
-    email:      val(partial.email)      ?? saved.email      ?? form.email      ?? '',
+    tg_id: partial.tg_id ?? saved.tg_id ?? null,
+    firstName: val(partial.firstName) ?? saved.firstName ?? form.firstName ?? "",
+    lastName: val(partial.lastName) ?? saved.lastName ?? form.lastName ?? "",
+    middleName: val(partial.middleName) ?? saved.middleName ?? form.middleName ?? "",
+    phone: val(partial.phone) ?? saved.phone ?? form.phone ?? "",
+    email: val(partial.email) ?? saved.email ?? form.email ?? "",
   }
 
   localStorage.setItem(PROFILE_KEY, JSON.stringify(next))
   if (!silent) logger.debug('Profile merged & saved', next)
 
-  form.firstName  = next.firstName
-  form.lastName   = next.lastName
+  form.firstName = next.firstName
+  form.lastName = next.lastName
   form.middleName = next.middleName
-  form.phone      = next.phone
-  form.email      = next.email
+  form.phone = next.phone
+  form.email = next.email
 
   if (next.tg_id && store.setTelegramId) {
-    try { store.setTelegramId(next.tg_id) } catch {}
+    try {
+      store.setTelegramId(next.tg_id)
+    } catch {}
   }
 }
 
@@ -74,13 +89,21 @@ async function fetchAndApplyClientByTelegramId(tg_id) {
   try {
     const { data } = await getClientByTelegramId(tg_id)
     const { name, telephone } = data || {}
-    const namePatch = splitFullNameIfNeeded(name, { firstName: form.firstName, lastName: form.lastName })
+    const namePatch = splitFullNameIfNeeded(name, {
+      firstName: form.firstName,
+      lastName: form.lastName,
+    })
     mergeSaveProfile({ ...namePatch, phone: telephone || form.phone, tg_id }, true)
     logger.info('CRM client applied', { name, telephone, tg_id })
   } catch (e) {
     const s = e?.response?.status
     if (s !== 404) logger.warn('getClientByTelegramId failed', { status: s })
   }
+}
+
+function showNoInitDataToast() {
+  errorText.value = "Перезайдите через телеграмм!"
+  showToast.value = true
 }
 
 async function initAuthAndProfile() {
@@ -90,7 +113,6 @@ async function initAuthAndProfile() {
   try {
     saveVisit(true)
 
-    // Ключевое логирование - только информация о initData
     const initDataInfo = getInitDataInfo()
     logger.info('App init: initData', {
       hasRaw: !!initDataInfo.raw,
@@ -98,7 +120,7 @@ async function initAuthAndProfile() {
       hasUser: !!initDataInfo.user,
     })
 
-    // сохранить salon_id
+  
     try {
       const usp = new URLSearchParams(initDataInfo.raw)
       const params = Object.fromEntries(usp.entries())
@@ -113,18 +135,16 @@ async function initAuthAndProfile() {
     }
 
     if (!initDataInfo.raw) {
-      const error = new Error('NO_INIT_DATA')
-      error.code = 'NO_INIT_DATA'
-      throw error
+      showNoInitDataToast()
+      console.error("[App] NO_INIT_DATA: приложение открыто не из Telegram WebApp")
+      return
     }
 
-    const me = await ensureSession() 
+    const me = await ensureSession()
     mergeSaveProfile({ tg_id: me.telegram_id, phone: me.telephone }, true)
     logger.info('App init: авторизация успешна', { userId: me.id })
 
     await fetchAndApplyClientByTelegramId(me.telegram_id)
-
-
   } catch (e) {
     logger.error('App init: ошибка авторизации', { 
       error: e.message, 
@@ -151,7 +171,6 @@ async function initAuthAndProfile() {
     authError.value = true
   } finally {
     loading.value = false
-    setTimeout(() => { authError.value = false }, 2500)
   }
 }
 
@@ -161,16 +180,4 @@ onMounted(() => {
   attachDebugInitSender()
   initAuthAndProfile()
 })
-
 </script>
-
-<style scoped>
-.loading-container{ text-align:center; margin:2rem 0; font-size:1.1rem; }
-.auth-error-banner{
-  position:fixed; top:0; left:0; right:0;
-  background:#e53935; color:#fff; padding:1rem; text-align:center; z-index:1000;
-}
-.fade-enter-active,.fade-leave-active{ transition:opacity .5s; }
-.fade-enter-from,.fade-leave-to{ opacity:0; }
-
-</style>
