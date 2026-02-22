@@ -66,3 +66,26 @@ export function formatDateForCalendar(d) {
   const dd = String(d.getDate()).padStart(2, '0')
   return `${y}-${m}-${dd}`
 }
+
+/**
+ * Разбор даты на компоненты для DateTimeCard
+ * Возвращает: day, month, weekday
+ */
+export function parseDateComponents(iso) {
+  if (!iso) return { day: '', month: '', weekday: '' }
+  const d = new Date(iso)
+  if (isNaN(d)) return { day: '', month: '', weekday: '' }
+  
+  const weekdayShort = d.toLocaleDateString('ru-RU', { weekday: 'short' })
+  const weekdayAbbrev = weekdayShort.charAt(0).toUpperCase() + weekdayShort.slice(1)
+  
+  // Capitalize first letter of month
+  const monthRaw = d.toLocaleDateString('ru-RU', { month: 'long' })
+  const monthCapitalized = monthRaw.charAt(0).toUpperCase() + monthRaw.slice(1)
+  
+  return {
+    day: String(d.getDate()),
+    month: monthCapitalized,
+    weekday: weekdayAbbrev
+  }
+}
