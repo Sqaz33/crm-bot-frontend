@@ -39,7 +39,7 @@
 
       <span
         v-if="item.badge"
-        class="inline-flex items-center justify-center min-w-6 h-6 px-2 rounded-full text-xs font-semibold"
+        class="inline-flex items-center justify-center py-[9px] px-[22px] rounded-[32px] text-xs font-semibold"
         :class="badgeClass(item.badge.variant, item.disabled)"
       >
         {{ item.badge.text }}

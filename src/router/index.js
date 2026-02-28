@@ -40,12 +40,12 @@ const routes = [
         component: ProfileView,
         meta: { title: 'Профиль клиента' }
       },
-      // {
-      //   path: 'reviews',
-      //   name: 'reviews',
-      //   component: ReviewsView,
-      //   meta: { title: 'Отзывы' }
-      // },
+      {
+        path: 'reviews',
+        name: 'reviews',
+        component: ReviewsView,
+        meta: { title: 'Отзывы' }
+      },
       {
         path: 'company',
         name: 'company',

@@ -10,7 +10,7 @@
         :sidebar-button-clicked="sidebarButtonClicked"
       />
       <!-- Основной контент -->
-      <div class="mx-auto flex w-full max-w-phone flex-1 overflow-hidden px-3 sm:px-4 lg:px-6 ">
+      <div class="mx-auto flex w-full max-w-phone flex-1 overflow-hidden px-4">
         <main class="min-w-0 flex-1">
           <router-view />
         </main>
@@ -21,14 +21,14 @@
 
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import SidebarMenu from '../components/layout/Sidebar.vue'
 
 import walletIcon from '../assets/walletIcon.svg'
 import shopIcon from '../assets/shopIcon.svg'
-import reviewIcon from '../assets/reviewIcon.svg'
+import reviewsIcon from '../assets/reviewIcon.svg'
 import companyIcon from '../assets/companyIcon.svg'
 
 import staffIcon from '../assets/staffIcon.svg'
@@ -43,7 +43,7 @@ const route = useRoute()
 const mainMenuItems = [
   { label: 'Кошелёк', path: '/wallet', icon: walletIcon },
   { label: 'Магазин', path: '/shop', icon: shopIcon },
-  // { label: 'Отзывы', path: '/reviews', icon: reviewIcon },
+  { label: 'Отзывы', path: '/reviews', icon: reviewsIcon },
   { label: 'О компании', path: '/company', icon: companyIcon }
 ]
 
@@ -54,12 +54,6 @@ const appointmentMenuItems = [
   { label: 'Дата и время', path: '/datetime', icon: calendarIcon },
   
 ]
-
-// Страницы со специальным меню
-const appointmentPages = ['/choicestaff', '/datetime', '/services']
-
-// Страницы без сайдбара
-const pagesWithoutSidebar = ['/home', '/appointmant']
 
 // Текущее меню
 const currentMenuItems = computed(() => {
