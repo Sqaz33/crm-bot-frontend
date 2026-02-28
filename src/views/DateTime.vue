@@ -151,12 +151,10 @@ export default {
     }
   },
   mounted() {
-    const today = new Date()
-    this.selectedDate = this.formatDate(today)
-    this.loadingDay = true
-    this.loadFreeSlots().finally(() => {
-      this.loadingDay = false
-    })
+    this.selectedDate = null
+    this.selectedTime = null
+    this.loadingDay = false
+    this.freeSlots = []
   },
   methods: {
     cap,
