@@ -118,7 +118,6 @@ onMounted(async () => {
   padding: 1.2rem;
   border-radius: 32px 32px 0 0;
 	margin: 0;
-  min-height: 100vh;
 }
 
 .description,

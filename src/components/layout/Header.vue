@@ -3,25 +3,19 @@
 
   <header v-else class="header">
     <div class="header-content">
-      <!-- Лого → переход на главную -->
-      <img
-        :src="logo"
-        alt="На главную"
-        class="logo-btn"
-        @click="$router.push('/')"
-      />
+      <!-- Лого в зоне 51px, центр совпадает с иконками сайдбара -->
+      <div class="logo-area">
+        <img
+          :src="logo"
+          alt="На главную"
+          class="logo-btn"
+          @click="$router.push('/')"
+        />
+      </div>
 
       <h1 class="page-title">{{ title }}</h1>
 
-      <!-- Кнопка сайдбара или пустой spacer для центрирования заголовка -->
-      <button
-        v-if="showSidebarButton"
-        class="menu-button"
-        @click="clickSidebarButton"
-      >
-        <img src="@/assets/sidebarIcon.svg" alt="Меню" />
-      </button>
-      <div v-else class="spacer" />
+      <div class="spacer" />
     </div>
   </header>
 </template>
@@ -36,15 +30,6 @@ const route = useRoute()
 
 const isHome = computed(() => route.name === 'home')
 const title = computed(() => route.meta.title || route.name || 'Страница')
-
-// Сайдбар-кнопка не нужна на страницах без сайдбара (appointmant)
-const showSidebarButton = computed(() => route.name !== 'appointmant')
-
-const emit = defineEmits(['sidebarButtonClick'])
-
-function clickSidebarButton() {
-  emit('sidebarButtonClick')
-}
 </script>
 
 <style scoped>
@@ -59,11 +44,18 @@ function clickSidebarButton() {
 .header-content {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
-  gap: 12px;
+  padding: 12px 0;
 }
 
-/* Фиолетовая кнопка-лого */
+/* Зона лого шириной 51px, чтобы центр совпадал с иконками сайдбара */
+.logo-area {
+  width: 51px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .logo-btn {
   width: 40px;
   height: 40px;
@@ -71,7 +63,6 @@ function clickSidebarButton() {
   background-color: #6267ee;
   padding: 6px;
   cursor: pointer;
-  flex-shrink: 0;
   display: block;
   transition: opacity 0.2s;
 }
@@ -95,33 +86,8 @@ function clickSidebarButton() {
   text-overflow: ellipsis;
 }
 
-.menu-button {
-  width: 40px;
-  height: 40px;
-  background: transparent;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 8px;
-  padding: 0;
-  flex-shrink: 0;
-  transition: background-color 0.2s;
-}
-
-.menu-button:hover {
-  background-color: #f3f6fa;
-}
-
-.menu-button img {
-  width: 24px;
-  height: 24px;
-}
-
-/* Пустой элемент для баланса, когда нет кнопки сайдбара */
 .spacer {
-  width: 40px;
+  width: 51px;
   flex-shrink: 0;
 }
 </style>
