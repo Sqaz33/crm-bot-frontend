@@ -24,6 +24,7 @@
         :afternoon-slots="afternoonSlots"
         :evening-slots="eveningSlots"
         :selected-time="selectedTime"
+        :is-loading="loadingDay"
         :format-time="formatTime"
         @select-time="selectTime"
         @book="bookTime"
@@ -152,7 +153,10 @@ export default {
   mounted() {
     const today = new Date()
     this.selectedDate = this.formatDate(today)
-    this.loadFreeSlots()
+    this.loadingDay = true
+    this.loadFreeSlots().finally(() => {
+      this.loadingDay = false
+    })
   },
   methods: {
     cap,
@@ -176,8 +180,11 @@ export default {
       this.selectedDate = day.date
       this.selectedTime = null
       this.loadingDay = true
-      await this.loadFreeSlots()
-      this.loadingDay = false
+      try {
+        await this.loadFreeSlots()
+      } finally {
+        this.loadingDay = false
+      }
     },
     async loadFreeSlots() {
       let staff_id = null
