@@ -1,9 +1,16 @@
 <template>
-  <div class="staff-card" @click="$emit('select')">
-    <div class="avatar-container" @click.stop="$emit('avatar-click')">
+  <div
+    class="flex items-center w-full bg-white rounded-[12px] cursor-pointer
+           h-[72px] px-3 py-2
+           md:h-24 md:px-6 md:py-4
+           transition-[transform,box-shadow] duration-200
+           hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]"
+    @click="$emit('select')"
+  >
+    <div class="mr-3 md:mr-4" @click.stop="$emit('avatar-click')">
       <div
         v-if="staff.photo"
-        class="avatar"
+        class="size-10 md:size-16 rounded-full bg-cover bg-center shrink-0 cursor-pointer"
         :style="{ backgroundImage: `url(${staff.photo})` }"
         role="button"
         tabindex="0"
@@ -12,25 +19,34 @@
       />
       <div
         v-else
-        class="avatar avatar--empty"
+        class="size-10 md:size-16 rounded-full shrink-0 cursor-pointer
+               bg-gradient-to-br from-[#69ffdb] to-[#69ff03]
+               flex items-center justify-center"
         role="button"
         tabindex="0"
         @keydown.enter.prevent="$emit('avatar-click')"
         @keydown.space.prevent="$emit('avatar-click')"
       >
-        <span class="avatar-letter">{{ firstLetter }}</span>
+        <span class="font-semibold text-white text-base leading-5 md:text-[28px] md:leading-[33px]">
+          {{ firstLetter }}
+        </span>
       </div>
     </div>
 
-    <div class="staff-info">
-      <div class="staff-name">{{ staff.name }}</div>
-      <div class="staff-position">{{ staff.specializations.join(', ') }}</div>
+    <div class="flex flex-col gap-1 flex-1 min-w-0">
+      <div class="font-medium text-neutral-800 truncate text-sm leading-[18px] md:text-xl md:leading-6">
+        {{ staff.name }}
+      </div>
+      <div class="text-neutral-800 truncate text-xs leading-4 md:text-xl md:leading-6">
+        {{ staff.specializations.join(', ') }}
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import { getFirstLetter } from '../../utils/stringUtils'
 
 const props = defineProps({
   staff: {
@@ -41,124 +57,5 @@ const props = defineProps({
 
 defineEmits(['select', 'avatar-click'])
 
-const firstLetter = computed(() => {
-  const name = props.staff.name
-  return name && name.length > 0 ? name.charAt(0).toUpperCase() : ''
-})
+const firstLetter = computed(() => getFirstLetter(props.staff.name))
 </script>
-
-<style scoped>
-.staff-card {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 96px;
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 16px 24px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  box-sizing: border-box;
-}
-
-.staff-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.avatar-container {
-  margin-right: 16px;
-}
-
-.avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  flex-shrink: 0;
-  cursor: pointer;
-}
-
-.avatar--empty {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #69ffdb 0%, #69ff03 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.avatar-letter {
-  font-family: "Geometria", sans-serif;
-  font-weight: 600;
-  font-size: 28px;
-  line-height: 33px;
-  color: #ffffff;
-}
-
-.staff-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-  min-width: 0;
-}
-
-.staff-name {
-  font-family: "Geometria", sans-serif;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 24px;
-  color: #454558;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.staff-position {
-  font-family: "Geometria", sans-serif;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 24px;
-  color: #454558;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-@media (max-width: 768px) {
-  .staff-card {
-    height: 72px;
-    padding: 8px 12px;
-  }
-
-  .avatar-container {
-    margin-right: 12px;
-  }
-
-  .avatar,
-  .avatar--empty {
-    width: 40px;
-    height: 40px;
-  }
-
-  .avatar-letter {
-    font-size: 16px;
-    line-height: 20px;
-  }
-
-  .staff-name {
-    font-size: 14px;
-    line-height: 18px;
-  }
-
-  .staff-position {
-    font-size: 12px;
-    line-height: 16px;
-  }
-}
-</style>

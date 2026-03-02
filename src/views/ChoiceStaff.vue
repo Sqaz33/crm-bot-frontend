@@ -1,23 +1,17 @@
 <template>
-  <div class="staff-view">
-    <!-- Табы -->
-    <div class="tabs-container">
-      <div class="tabs-background">
-        <button
-          v-for="(tab, index) in tabs"
-          :key="tab.value"
-          :class="['tab', { active: activeTab === tab.value }]"
-          @click="selectTab(tab.value)"
-        >
-          {{ tab.label }}
-          <span class="tab-underline"></span>
-        </button>
-      </div>
-    </div>
+  <div class="w-full">
+    <!-- Табы специализаций -->
+    <StaffFilter
+      v-model="activeTab"
+      :tabs="tabs"
+      class="mt-3 md:mt-6"
+    />
 
     <!-- Список сотрудников -->
-    <div class="staff-list">
-      <div v-if="staffList.length === 0" class="no-staff">Нет сотрудников</div>
+    <div class="flex flex-col gap-2 md:gap-3 mt-4 md:mt-7 w-full">
+      <div v-if="staffList.length === 0" class="text-center text-neutral-500 text-lg py-8">
+        Нет сотрудников
+      </div>
       <StaffCard
         v-for="staff in staffList"
         :key="staff.id"
@@ -30,13 +24,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
 import { readVisit, writeVisit } from '../utils/visitStorage'
 import { getStaffId } from '../utils/stringUtils'
 import { logger } from '../utils/logger'
 import StaffCard from '../components/staff/StaffCard.vue'
+import StaffFilter from '../components/staff/StaffFilter.vue'
 
 const router = useRouter()
 const emit = defineEmits(['select'])
@@ -97,34 +92,6 @@ async function loadStaff(specId) {
   }
 }
 
-function scrollToActiveTab() {
-  try {
-    nextTick(() => {
-      const container = document.querySelector(".tabs-background");
-      if (!container) return;
-
-      const activeButton = container.querySelector(".tab.active");
-      if (!activeButton) return;
-
-      const containerWidth = container.clientWidth;
-      const buttonLeft = activeButton.offsetLeft;
-      const buttonWidth = activeButton.offsetWidth;
-      const scrollTo = buttonLeft - containerWidth / 2 + buttonWidth / 2;
-
-      container.scrollTo({ left: Math.max(0, scrollTo), behavior: "smooth" });
-    });
-  } catch (e) {
-    logger.warn('ChoiceStaff: scrollToActiveTab failed', { error: e?.message || String(e) });
-  }
-}
-
-function selectTab(v) {
-  activeTab.value = v;
-  nextTick(() => {
-    scrollToActiveTab();
-  });
-}
-
 function goStaff(idOrStaff) {
   const id = typeof idOrStaff === "object" ? getStaffId(idOrStaff) : idOrStaff;
   if (!id) return;
@@ -156,145 +123,3 @@ onMounted(async () => {
   if (v?.staff_id) selectedId.value = v.staff_id;
 });
 </script>
-
-<style scoped>
-.staff-view {
-  width: 100%;
-  padding: 0;
-  background: #f6f5f6;
-}
-
-.tabs-container {
-  position: relative;
-  width: 100%;
-  height: 96px;
-  margin: 24px auto 0 auto;
-  background: #ffffff;
-  border-radius: 12px;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.tabs-background {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.tabs-background::-webkit-scrollbar {
-  display: none;
-}
-
-.tab {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-family: "Geometria", sans-serif;
-  font-weight: 500;
-  font-size: 24px;
-  line-height: 28px;
-  color: #454558;
-  transition: color 0.3s ease;
-  padding: 0 24px;
-  margin: 0;
-  min-height: 96px;
-  white-space: nowrap;
-  flex-shrink: 0;
-  min-width: fit-content;
-  position: relative;
-}
-
-.tab.active {
-  color: #454558;
-}
-
-.tab-underline {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: transparent;
-  border-radius: 2.5px;
-  transition: background 0.3s ease;
-}
-
-.tab.active .tab-underline {
-  background: #666fe8;
-  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
-}
-
-.staff-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin: 28px auto 0 auto;
-  width: 100%;
-  z-index: 2;
-}
-
-.no-staff {
-  text-align: center;
-  color: #8097b1;
-  font-family: "Geometria", sans-serif;
-  font-size: 18px;
-  padding: 2rem;
-}
-
-@media (max-width: 768px) {
-  .staff-view {
-    max-width: 100%;
-    padding: 0;
-  }
-
-  .tabs-container,
-  .staff-list {
-    width: 100%;
-    max-width: none;
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .tabs-container {
-    height: 56px;
-    margin-top: 12px;
-  }
-
-  .tab {
-    font-size: 14px;
-    line-height: 18px;
-    min-height: 56px;
-    padding: 0 12px;
-    min-width: 0;
-  }
-
-  .staff-list {
-    gap: 8px;
-    margin-top: 16px;
-  }
-}
-
-@media (max-width: 412px) {
-  .tabs-container {
-    height: 48px;
-    margin-top: 12px;
-  }
-
-  .tab {
-    font-size: 13px;
-    line-height: 16px;
-    min-height: 48px;
-    padding: 0 10px;
-    min-width: 0;
-  }
-}
-</style>
