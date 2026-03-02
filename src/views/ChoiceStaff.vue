@@ -202,12 +202,7 @@ onMounted(async () => {
 
 <style scoped>
 .staff-view {
-  --sidebar-mobile: 64px;
-  --gutter-mobile: 20px;
-
   width: 100%;
-  max-width: 1140px;
-  margin: 0 auto;
   padding: 0;
   background: #f6f5f6;
 }
@@ -378,27 +373,15 @@ onMounted(async () => {
   color: #454558;
 }
 
-@media (max-width: 1200px) {
-  .staff-view {
-    max-width: 95%;
-  }
-}
-
 @media (max-width: 768px) {
   .staff-view {
-    --sidebar-mobile: 72px;
-    --gutter-mobile: 12px;
-
-    padding-left: calc(var(--sidebar-mobile) + var(--gutter-mobile));
-    padding-right: var(--gutter-mobile);
-
-    margin: 0;
-    max-width: 100vw;
+    max-width: 100%;
+    padding: 0;
   }
 
   .tabs-container,
   .staff-list {
-    width: 79%;
+    width: 100%;
     max-width: none;
     margin-left: 0;
     margin-right: 0;
@@ -414,7 +397,7 @@ onMounted(async () => {
     line-height: 18px;
     min-height: 56px;
     padding: 0 12px;
-    min-width: 100px;
+    min-width: 0;
   }
 
   .staff-list {
@@ -454,33 +437,25 @@ onMounted(async () => {
 }
 
 @media (max-width: 412px) {
-  .staff-list {
-    width: calc(100vw - (var(--sidebar-mobile) + 2 * var(--gutter-mobile)));
-  }
-
-  .tabs-background::-webkit-scrollbar {
-    display: none;
-  }
-
-  .tabs-container {
-    height: 64px;
-    margin-top: 16px;
-  }
-
-  .tab {
-    font-size: 16px;
-    line-height: 20px;
-    min-height: 64px;
-    padding: 0 16px;
-    min-width: 120px;
-  }
-
   .tabs-container,
   .staff-list {
-    width: 75%;
+    width: 100%;
     max-width: none;
     margin-left: 0;
     margin-right: 0;
+  }
+
+  .tabs-container {
+    height: 48px;
+    margin-top: 12px;
+  }
+
+  .tab {
+    font-size: 13px;
+    line-height: 16px;
+    min-height: 48px;
+    padding: 0 10px;
+    min-width: 0;
   }
 }
 </style>

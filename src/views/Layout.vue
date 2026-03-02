@@ -7,7 +7,7 @@
         :items="currentMenuItems"
       />
       <!-- Основной контент -->
-      <div class="mx-auto flex w-full max-w-phone flex-1 overflow-hidden px-4">
+      <div class="flex w-full flex-1 overflow-hidden px-4">
         <main class="min-w-0 flex-1">
           <router-view />
         </main>
