@@ -18,50 +18,13 @@
     <!-- Список сотрудников -->
     <div class="staff-list">
       <div v-if="staffList.length === 0" class="no-staff">Нет сотрудников</div>
-      <div
+      <StaffCard
         v-for="staff in staffList"
         :key="staff.id"
-        class="staff-card"
-        @click="onSelect(staff.id)"
-      >
-        <!-- Аватар -->
-        <div class="avatar-container">
-          <div
-            v-if="staff.photo"
-            class="avatar"
-            :style="{ backgroundImage: `url(${staff.photo})` }"
-            @click.stop="goStaff(staff)"
-            role="button"
-            tabindex="0"
-            @keydown.enter.prevent="goStaff(staff)"
-            @keydown.space.prevent="goStaff(staff)"
-          ></div>
-          <div
-            v-else
-            class="avatar avatar--empty"
-            @click.stop="goStaff(staff)"
-            role="button"
-            tabindex="0"
-            @keydown.enter.prevent="goStaff(staff)"
-            @keydown.space.prevent="goStaff(staff)"
-          >
-            <span class="avatar-letter">{{ getFirstLetter(staff.name) }}</span>
-          </div>
-        </div>
-
-        <!-- Информация о сотруднике -->
-        <div class="staff-info">
-          <div class="staff-name">{{ staff.name }}</div>
-          <div class="staff-position">
-            <span v-for="(spec, i) in staff.specializations" :key="i"
-              >{{ spec
-              }}<span v-if="i < staff.specializations.length - 1"
-                >,
-              </span></span
-            >
-          </div>
-        </div>
-      </div>
+        :staff="staff"
+        @select="onSelect(staff.id)"
+        @avatar-click="goStaff(staff)"
+      />
     </div>
   </div>
 </template>
@@ -71,11 +34,12 @@ import { ref, onMounted, watch, nextTick } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
 import { readVisit, writeVisit } from '../utils/visitStorage'
-import { getFirstLetter, getStaffId } from '../utils/stringUtils'
+import { getStaffId } from '../utils/stringUtils'
 import { logger } from '../utils/logger'
+import StaffCard from '../components/staff/StaffCard.vue'
 
 const router = useRouter()
-const emit = defineEmits(['select', 'review', 'visit'])
+const emit = defineEmits(['select'])
 
 const tabs = ref([{ label: 'Все', value: 'all' }])
 const activeTab = ref('all')
@@ -182,13 +146,6 @@ function onSelect(idOrStaff) {
   router.push({ path: "/datetime" });
 }
 
-function onReview(id) {
-  emit("review", id);
-}
-function onVisit(id) {
-  emit("visit", id);
-}
-
 watch(activeTab, (v) => loadStaff(v));
 
 onMounted(async () => {
@@ -276,10 +233,6 @@ onMounted(async () => {
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 }
 
-.active-line {
-  display: none;
-}
-
 .staff-list {
   display: flex;
   flex-direction: column;
@@ -295,82 +248,6 @@ onMounted(async () => {
   font-family: "Geometria", sans-serif;
   font-size: 18px;
   padding: 2rem;
-}
-
-.staff-card {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 96px;
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 16px 24px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  box-sizing: border-box;
-  position: relative;
-}
-
-.staff-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.avatar-container {
-  margin-right: 16px;
-}
-
-.avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  flex-shrink: 0;
-  cursor: pointer;
-}
-
-.avatar--empty {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #69ffdb 0%, #69ff03 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.avatar-letter {
-  font-family: "Geometria", sans-serif;
-  font-weight: 600;
-  font-size: 28px;
-  line-height: 33px;
-  color: #ffffff;
-}
-
-.staff-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-}
-
-.staff-name {
-  font-family: "Geometria", sans-serif;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 24px;
-  color: #454558;
-}
-
-.staff-position {
-  font-family: "Geometria", sans-serif;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 24px;
-  color: #454558;
 }
 
 @media (max-width: 768px) {
@@ -404,47 +281,9 @@ onMounted(async () => {
     gap: 8px;
     margin-top: 16px;
   }
-
-  .staff-card {
-    height: 72px;
-    padding: 8px 12px;
-  }
-
-  .avatar-container {
-    margin-right: 12px;
-  }
-
-  .avatar,
-  .avatar--empty {
-    width: 40px;
-    height: 40px;
-  }
-
-  .avatar-letter {
-    font-size: 16px;
-    line-height: 20px;
-  }
-
-  .staff-name {
-    font-size: 14px;
-    line-height: 18px;
-  }
-
-  .staff-position {
-    font-size: 12px;
-    line-height: 16px;
-  }
 }
 
 @media (max-width: 412px) {
-  .tabs-container,
-  .staff-list {
-    width: 100%;
-    max-width: none;
-    margin-left: 0;
-    margin-right: 0;
-  }
-
   .tabs-container {
     height: 48px;
     margin-top: 12px;
