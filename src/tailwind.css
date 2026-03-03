@@ -22,10 +22,11 @@
 
 @layer components {
   .b_button {
-    @apply inline-flex items-center justify-center select-none
+    @apply flex items-center justify-center select-none
       rounded-lg text-base font-semibold
       px-6 py-3
       w-[90%] max-w-[400px]
+      mx-auto
       transition-colors duration-200
       bg-brand-500 text-white
       hover:bg-[#4f54d8]
