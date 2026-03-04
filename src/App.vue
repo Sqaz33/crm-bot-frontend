@@ -104,7 +104,7 @@ async function fetchAndApplyClientByTelegramId(tg_id) {
 }
 
 function showNoInitDataToast() {
-  errorText.value = "Перезайдите через телеграмм!"
+  errorText.value = "Перезайдите через telegram!"
   showToast.value = true
 }
 
