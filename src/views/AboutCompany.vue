@@ -44,7 +44,8 @@
 import { ref, onMounted } from 'vue'
 import api from '@/api'
 import { logger } from '@/utils/logger'
-import SpinnerLoad from '@/components/SpinnerLoad.vue'
+// Исправленный путь: добавили папку ui
+import SpinnerLoad from '@/components/ui/SpinnerLoad.vue' 
 import defaultLogo from '@/assets/logo.svg'
 import reviewIcon from '@/assets/reviewIcon.svg'
 
@@ -56,7 +57,7 @@ onMounted(async () => {
     const { data: info } = await api.get('/salon/info/')
     company.value = {
       name: info.name,
-      rating: info.rating,
+      rating: info.rating || '5', 
       description: info.description || '',
       about_company: info.about_company || '',
       photo: info.photo || ''
