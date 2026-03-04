@@ -1,9 +1,13 @@
 <template>
+  <!-- Полное меню: на главной — всегда, на остальных — только desktop -->
+  <div v-if="!isHome" class="hidden md:block">
+    <HomeMenu />
+  </div>
   <HomeMenu v-if="isHome" />
 
-  <header v-else class="header">
+  <!-- Простой header: на внутренних страницах, только mobile -->
+  <header v-if="!isHome" class="header md:hidden">
     <div class="header-content">
-      <!-- Лого в зоне 51px, центр совпадает с иконками сайдбара -->
       <div class="logo-area">
         <img
           :src="logo"
@@ -60,7 +64,7 @@ const title = computed(() => route.meta.title || route.name || 'Страница
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background-color: #6267ee;
+  background-color: #666FE8;
   padding: 6px;
   cursor: pointer;
   display: block;

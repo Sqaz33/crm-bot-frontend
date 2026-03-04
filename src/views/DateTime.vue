@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#F6F9FC] px-4 py-4 md:px-6">
+  <div class="min-h-screen bg-neutral-100 px-4 py-4 md:px-6">
     <div class="mx-auto w-full max-w-[900px] overflow-hidden rounded-xl bg-white shadow-sm">
       <DaytimeMonthNavigation
         :prev-month-name="prevMonthName"

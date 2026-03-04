@@ -20,6 +20,14 @@
           <img :src="item.icon" :alt="item.label" class="sidebar-icon" />
           <span class="sidebar-label">{{ item.label }}</span>
         </RouterLink>
+        <button v-if="showBackButton" class="back-btn" @click="goBack">
+          <span class="back-btn__circle">
+            <svg width="10" height="16" viewBox="0 0 10 16" fill="none">
+              <path d="M8.5 1L1.5 8L8.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="sidebar-label back-btn__label">Назад</span>
+        </button>
       </div>
 
       <!-- Кнопка раскрытия/скрытия подписей -->
@@ -34,7 +42,7 @@
 </template>
 
 <script setup>
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { computed, ref, watch, onMounted, onUnmounted } from "vue";
 import expandIconSrc from "../../assets/expandIcon.svg";
 
@@ -43,14 +51,27 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  showBackButton: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const route = useRoute();
+const router = useRouter();
 const isExpanded = ref(false);
 const expandIcon = expandIconSrc;
 
 function toggle() {
   isExpanded.value = !isExpanded.value;
+}
+
+function goBack() {
+  if (window.history.length > 1) {
+    router.back();
+  } else {
+    router.push("/");
+  }
 }
 
 import { readVisit, VISIT_KEY } from "../../utils/visitStorage";
@@ -123,7 +144,7 @@ const processedItems = computed(() => {
   min-height: calc(100dvh - 64px);
   align-self: stretch;
   background: #FFFFFF;
-  box-shadow: 3px 3px 6px 0px #F0F1F5;
+  box-shadow: 3px 3px 6px 0px #F6F5F6;
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -162,7 +183,7 @@ const processedItems = computed(() => {
 }
 
 .sidebar-item:hover {
-  background-color: #E8EBF9;
+  background-color: #CDD3F8;
 }
 
 .sidebar-item.active {
@@ -216,5 +237,61 @@ const processedItems = computed(() => {
 
 .sidebar.expanded .toggle-icon {
   transform: rotate(180deg);
+}
+
+/* Кнопка «Назад» */
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 51px;
+  height: 50px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.back-btn__circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #666FE8;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+}
+
+.back-btn:hover .back-btn__circle {
+  background: #4f54d8;
+}
+
+.back-btn__label {
+  color: #666FE8;
+  font-weight: 500;
+}
+
+/* Десктоп (expanded): показываем текст, скрываем круг */
+.sidebar.expanded .back-btn__circle {
+  width: 20px;
+  height: 20px;
+  background: none;
+  color: #666FE8;
+}
+
+.sidebar.expanded .back-btn {
+  width: auto;
+  padding: 0 15px;
+  height: 50px;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.sidebar.expanded .back-btn:hover {
+  background-color: #CDD3F8;
 }
 </style>

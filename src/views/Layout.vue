@@ -1,10 +1,11 @@
 <template>
-  <div class="min-h-dvh bg-#F6F5F6 text-neutral-800">
+  <div class="min-h-dvh bg-neutral-100 text-neutral-800">
     <Header />
     <div class="flex w-full">
       <SidebarMenu
         v-if="showSidebar"
         :items="currentMenuItems"
+        :show-back-button="showBackButton"
       />
       <!-- Основной контент -->
       <div class="flex w-full flex-1 overflow-hidden px-4">
@@ -57,6 +58,12 @@ const currentMenuItems = computed(() => {
     return appointmentMenuItems
   }
   return mainMenuItems
+})
+
+// Кнопка «Назад» — только на страницах оформления записи и детали записи
+const showBackButton = computed(() => {
+  const path = route.path
+  return path === '/createvisit' || path.startsWith('/record')
 })
 
 // Показывать ли сайдбар

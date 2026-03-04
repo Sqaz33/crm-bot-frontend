@@ -259,7 +259,7 @@ onMounted(() => {
 .records-page {
   display: flex;
   min-height: 100vh;
-  background-color: #f6f9fc;
+  background-color: #F6F5F6;
   font-family: var(--font-primary);
 }
 
@@ -275,7 +275,6 @@ onMounted(() => {
   display: flex;
   gap: 0;
   padding: 1rem;
-  background-color: #f6f9fc;
   border-radius: 12px;
   background-color: transparent;
   position: relative;
@@ -289,7 +288,7 @@ onMounted(() => {
   font-family: var(--font-primary);
   font-size: 0.9375rem;
   font-weight: 500;
-  color: #6b7688;
+  color: #475569;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
@@ -308,7 +307,7 @@ onMounted(() => {
 
 /* Активная кнопка - другой стиль */
 .tab-btn.active {
-  background-color: #5073f0;
+  background-color: #666FE8;
   color: white;
   font-weight: 600;
 }
@@ -319,8 +318,8 @@ onMounted(() => {
 }
 
 .tab-btn:hover:not(.active) {
-  background-color: #f8f9fb;
-  color: #5073f0;
+  background-color: #F6F5F6;
+  color: #666FE8;
 }
 
 /* Loading */
@@ -330,7 +329,7 @@ onMounted(() => {
   align-items: center;
   padding: 3rem;
   font-size: 1rem;
-  color: #8b9aaa;
+  color: #8097B1;
 }
 
 /* Filled Content */
@@ -377,13 +376,13 @@ onMounted(() => {
 
 .employee-name {
   font-weight: 600;
-  color: #1a2233;
+  color: #0F172A;
   font-size: 1rem;
   margin-bottom: 0.25rem;
 }
 
 .employee-specialty {
-  color: #6b7688;
+  color: #475569;
   font-size: 0.875rem;
 }
 
@@ -394,13 +393,13 @@ onMounted(() => {
 
 .date {
   font-weight: 500;
-  color: #1a2233;
+  color: #0F172A;
   font-size: 0.9375rem;
   margin-bottom: 0.25rem;
 }
 
 .time {
-  color: #6b7688;
+  color: #475569;
   font-size: 0.875rem;
 }
 
@@ -409,14 +408,14 @@ onMounted(() => {
   grid-template-columns: 1fr auto auto;
   gap: 0.75rem;
   padding: 0.875rem 0;
-  border-bottom: 1px solid #e8eef5;
-  border-top: 1px solid #e8eef5;
+  border-bottom: 1px solid #EBEEF6;
+  border-top: 1px solid #EBEEF6;
   margin-bottom: 1rem;
 }
 
 .service-name-small {
   font-weight: 400;
-  color: #9aa5b5;
+  color: #8097B1;
   font-size: 0.75rem;
   margin-bottom: 0.375rem;
   text-transform: uppercase;
@@ -431,7 +430,7 @@ onMounted(() => {
 .service-name,
 .quantity,
 .price {
-  color: #1a2233;
+  color: #0F172A;
   font-size: 0.9375rem;
 }
 
@@ -508,7 +507,7 @@ onMounted(() => {
 .total-price {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1a2233;
+  color: #0F172A;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -527,7 +526,7 @@ onMounted(() => {
 .empty-icon-wrapper {
   width: 120px;
   height: 120px;
-  background: linear-gradient(135deg, #e8eef5 0%, #f3f6fa 100%);
+  background: linear-gradient(135deg, #EBEEF6 0%, #f3f6fa 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -549,13 +548,13 @@ onMounted(() => {
 .empty-title {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #1a2233;
+  color: #0F172A;
   margin-bottom: 0.5rem;
 }
 
 .empty-description {
   font-size: 0.9375rem;
-  color: #8b9aaa;
+  color: #8097B1;
   max-width: 320px;
 }
 

@@ -150,7 +150,7 @@ onMounted(async () => {
 .avatar {
   width:clamp(5rem, 10vw, 6rem);
   height: clamp(5rem, 10vw, 6rem);
-  background: #ccc;
+  background: #D4DDE9;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -170,7 +170,7 @@ onMounted(async () => {
 }
 .info .rating {
   color: black;
-	background: #ccc;
+	background: #D4DDE9;
 	padding: 0.3rem 1rem 0.4rem 0.9rem;
 	border-radius: 32px;
   display: block;
@@ -192,7 +192,7 @@ onMounted(async () => {
 .count {
   font-size: clamp(0.5rem, 3vw, 0.9rem);
   font-weight: normal;
-	background: #ccc;
+	background: #D4DDE9;
 	padding: 0.1rem 0.8rem;
 	border-radius: 32px;
 	color: black;
@@ -213,7 +213,7 @@ onMounted(async () => {
 .reviewer-avatar {
   width: 32px;
   height: 32px;
-  background: #ccc;
+  background: #D4DDE9;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -223,12 +223,12 @@ onMounted(async () => {
 }
 .reviewer-info .review-date {
   font-size: 0.75rem;
-  color: #777;
+  color: #475569;
 }
 .review-rating {
   margin-left: auto;
-  color: #777;
-  background: #e0e0e0;
+  color: #475569;
+  background: #D4DDE9;
   padding: 0rem 0.7rem;
   border-radius: 999px;
   font-size: 0.85rem;

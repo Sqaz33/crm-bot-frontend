@@ -116,7 +116,7 @@ function navigate(item) {
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background-color: #6267ee;
+  background-color: #666FE8;
   padding: 6px;
   display: block;
 }
@@ -189,5 +189,55 @@ function navigate(item) {
   text-align: center;
   color: #454558;
   white-space: nowrap;
+}
+
+/* Десктоп */
+@media (min-width: 768px) {
+  .main-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+  }
+
+  .salon-info {
+    gap: 22px;
+    padding: 14px 35px;
+  }
+
+  .salon-logo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 0;
+    background-color: transparent;
+    padding: 0;
+  }
+
+  .salon-name {
+    font-size: 30px;
+    line-height: 36px;
+  }
+
+  .salon-desc {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .menu {
+    height: auto;
+    gap: 150px;
+    justify-content: flex-end;
+    padding: 0 100px;
+  }
+
+  .menu-item img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .menu-item span {
+    font-size: 18px;
+    line-height: 24px;
+  }
 }
 </style>

@@ -1,20 +1,20 @@
 <template>
-  <div class="flex items-center justify-between border-b border-[#E8EEF5] bg-[#F8F9FB] px-4 py-3 md:px-6 md:py-4">
+  <div class="flex items-center justify-between border-b border-neutral-200 bg-neutral-100 px-4 py-3 md:px-6 md:py-4">
     <button
       type="button"
-      class="rounded-md px-2 py-1 text-sm font-semibold text-[#5073F0] transition hover:text-[#3D5DD4]"
+      class="rounded-md px-2 py-1 text-sm font-semibold text-brand-500 transition hover:text-[#3D5DD4]"
       @click="$emit('prev')"
     >
       {{ prevMonthName }}
     </button>
 
-    <div class="rounded-xl bg-[#EEF0FF] px-4 py-1.5 text-base font-bold text-[#2B3240] md:bg-transparent md:px-0 md:py-0 md:font-semibold md:text-lg">
+    <div class="rounded-xl bg-brand-100 px-4 py-1.5 text-base font-bold text-neutral-900 md:bg-transparent md:px-0 md:py-0 md:font-semibold md:text-lg">
       {{ monthTitle }}
     </div>
 
     <button
       type="button"
-      class="rounded-md px-2 py-1 text-sm font-semibold text-[#5073F0] transition hover:text-[#3D5DD4]"
+      class="rounded-md px-2 py-1 text-sm font-semibold text-brand-500 transition hover:text-[#3D5DD4]"
       @click="$emit('next')"
     >
       {{ nextMonthName }}

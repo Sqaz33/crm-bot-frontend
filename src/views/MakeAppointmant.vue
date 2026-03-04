@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#F6F7FB] px-4 pt-6">
+  <div class="min-h-screen bg-neutral-100 px-4 pt-6">
     <div class="mx-auto w-full max-w-[420px]">
       <MenuList
         v-model="activeStep"
@@ -100,14 +100,14 @@ const stepItems = computed(() => ([
     label: `Услуги: ${servicesText.value}`,
     icon: servicesIcon,
     disabled: false,
-    class: 'border-b border-[#EEF0F5]'
+    class: 'border-b border-neutral-200'
   },
   {
     key: 'choicestaff',
     label: `Сотрудник: ${summary.value.staffName || '—'}`,
     icon: staffIcon,
     disabled: !hasServices.value,
-    class: 'border-b border-[#EEF0F5]'
+    class: 'border-b border-neutral-200'
   },
   {
     key: 'datetime',
