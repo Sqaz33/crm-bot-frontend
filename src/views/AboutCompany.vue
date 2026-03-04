@@ -9,7 +9,7 @@
 
       <div v-else-if="!company || !company.name" class="flex-1 flex flex-col items-center justify-center">
         <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-brand-500 rounded-full w-[80px] h-[80px] flex justify-center items-center overflow-hidden shadow-sm">
-          <img src="../assets/logo.svg" alt="Логотип" class="w-10 h-10" />
+          <img :src="defaultLogo" alt="Логотип" class="w-10 h-10" />
         </div>
         <p class="text-neutral-500 font-medium text-[15px] mt-2">Информация не заполнена</p>
       </div>
@@ -22,7 +22,7 @@
         <h1 class="text-[18px] font-semibold text-neutral-800 mb-2">{{ company.name }}</h1>
 
         <div v-if="company.rating" class="inline-flex items-center justify-center bg-neutral-100 rounded-full px-3 py-1 mb-6 text-[13px] font-medium text-neutral-700 mx-auto gap-1">
-          <img src="../assets/reviewIcon.svg" alt="Star" class="w-4 h-4" />
+          <img :src="reviewIcon" alt="Star" class="w-4 h-4" />
           <span>{{ company.rating }}</span>
         </div>
 
@@ -42,10 +42,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import api from '../api'
-import { logger } from '../utils/logger'
-import SpinnerLoad from '../components/SpinnerLoad.vue'
-import defaultLogo from '../assets/logo.svg'
+import api from '@/api'
+import { logger } from '@/utils/logger'
+import SpinnerLoad from '@/components/SpinnerLoad.vue'
+import defaultLogo from '@/assets/logo.svg'
+import reviewIcon from '@/assets/reviewIcon.svg'
 
 const company = ref(null)
 const loading = ref(true)
