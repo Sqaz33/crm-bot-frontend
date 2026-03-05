@@ -1,8 +1,8 @@
 <template>
   <header class="main-header">
     <div class="salon-info">
-      <div class="salon-logo">
-        <img src="@/assets/logo.svg" alt="Логотип" />
+      <div class="salon-logo" @click="router.push('/')">
+        <img src="@/assets/logo.svg" alt="На главную" />
       </div>
       <div class="salon-text">
         <div class="salon-name">{{ salon.name }}</div>
@@ -110,6 +110,7 @@ function navigate(item) {
 
 .salon-logo {
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 .salon-logo img {

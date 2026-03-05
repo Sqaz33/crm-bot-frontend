@@ -9,16 +9,27 @@
 
     <!-- Список сотрудников -->
     <div class="flex flex-col gap-2 md:gap-3 mt-4 md:mt-7 w-full">
-      <div v-if="staffList.length === 0" class="text-center text-neutral-500 text-lg py-8">
+      <div v-if="loading" class="flex justify-center py-10">
+        <SpinnerLoad class="text-brand-300" />
+      </div>
+
+      <!-- Пустой список: только когда API вернул 0 сотрудников -->
+      <div
+        v-else-if="staffList.length === 0"
+        class="text-center text-neutral-500 text-lg py-8"
+      >
         Нет сотрудников
       </div>
-      <StaffCard
-        v-for="staff in staffList"
-        :key="staff.id"
-        :staff="staff"
-        @select="onSelect(staff.id)"
-        @avatar-click="goStaff(staff)"
-      />
+
+      <template v-else>
+        <StaffCard
+          v-for="staff in staffList"
+          :key="staff.id"
+          :staff="staff"
+          @select="onSelect(staff.id)"
+          @avatar-click="goStaff(staff)"
+        />
+      </template>
     </div>
   </div>
 </template>
@@ -32,6 +43,7 @@ import { getStaffId } from '../utils/stringUtils'
 import { logger } from '../utils/logger'
 import StaffCard from '../components/staff/StaffCard.vue'
 import StaffFilter from '../components/staff/StaffFilter.vue'
+import SpinnerLoad from '../components/ui/SpinnerLoad.vue'
 
 const router = useRouter()
 const emit = defineEmits(['select'])
@@ -39,6 +51,7 @@ const emit = defineEmits(['select'])
 const tabs = ref([{ label: 'Все', value: 'all' }])
 const activeTab = ref('all')
 const staffList = ref([])
+const loading = ref(true)
 const selectedId = ref(null)
 
 async function loadSpecializations() {
@@ -65,6 +78,7 @@ async function loadSpecializations() {
 }
 
 async function loadStaff(specId) {
+  loading.value = true
   try {
     const visit = readVisit();
     const params = {};
@@ -89,6 +103,8 @@ async function loadStaff(specId) {
     }
   } catch (error) {
     logger.error('ChoiceStaff: ошибка загрузки сотрудников', { error: error?.message || String(error) });
+  } finally {
+    loading.value = false
   }
 }
 
