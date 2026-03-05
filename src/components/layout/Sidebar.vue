@@ -59,7 +59,7 @@ const props = defineProps({
 
 const route = useRoute();
 const router = useRouter();
-const isExpanded = ref(false);
+const isExpanded = ref(window.matchMedia('(min-width: 768px)').matches);
 const expandIcon = expandIconSrc;
 
 function toggle() {

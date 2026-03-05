@@ -2,6 +2,7 @@
   <div class="w-full">
     <!-- Табы специализаций -->
     <StaffFilter
+      v-if="!loading"
       v-model="activeTab"
       :tabs="tabs"
       class="mt-3 md:mt-6"
