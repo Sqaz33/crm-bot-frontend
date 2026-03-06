@@ -18,41 +18,45 @@
           :visit="visit"
         />
 
-        <!-- Плашка: Я точно приду -->
-        <VisitConfirm 
-          :isOld="isOld"
-          :willCome="willCome"
-          :processing="processing"
-          :delete_="delete_"
-          :onWillComeChange="onWillComeChange"
-        />
+        <!-- Показываем элементы только если запись НЕ в статусе 'Оплачено' -->
+        <div v-if="visit.status !== 'success'">
+          <!-- Плашка: Я точно приду -->
+          <VisitConfirm 
+            :isOld="isOld"
+            :willCome="willCome"
+            :processing="processing"
+            :delete_="delete_"
+            :onWillComeChange="onWillComeChange"
+          />
 
-        <!-- Плашка: Оплата -->
-        <Payment 
-          :isOld="isOld"
-          :willCome="willCome"
-          :delete_="delete_"
-        />
-        
-        <!-- Кнопка переноса записи -->
-        <button 
-          v-if="!isOld" 
-          class="tc_button tc_button--ok"
-          @click="goToDatetime"
-          :disabled="willCome || processing || delete_"
-        >
-          Перенести запись
-        </button>
+          <!-- Плашка: Оплата -->
+          <Payment 
+            :isOld="isOld"
+            :willCome="willCome"
+            :delete_="delete_"
+          />
+          
+          <!-- Кнопка переноса записи -->
+          <button 
+            v-if="!isOld"
+            class="tc_button tc_button--ok"
+            @click="goToDatetime"
+            :disabled="willCome || processing || delete_"
+          >
+            Перенести запись
+          </button>
 
-        <!-- Кнопка отмены записи -->
-        <button 
-          v-if="!isOld" 
-          class="tc_button tc_button--cancel"
-          @click="openCancelModal"
-          :disabled="willCome || deleting || processing || delete_"
-        >
-          Отменить запись
-        </button>
+          <!-- Кнопка отмены записи -->
+          <!-- Показываем кнопку только если запись НЕ в статусе 'Оплачено' -->
+          <button 
+            v-if="!isOld" 
+            class="tc_button tc_button--cancel"
+            @click="openCancelModal"
+            :disabled="willCome || deleting || processing || delete_"
+          >
+            Отменить запись
+          </button>
+        </div>
 
         <!-- Кнопки для прошедших записей -->
         <div v-if="isOld" class="action-buttons">
