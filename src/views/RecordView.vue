@@ -5,109 +5,54 @@
 
     <div v-else class="page">
       <div class="record-card">
-        <!-- Шапка карточки -->
-        <div class="header">
-          <div class="who">
-            <div class="avatar">{{ firstLetter }}</div>
-            <div class="info">
-              <div class="name">
-              {{ staff.name }}
-              </div>
-              <div class="spec">{{ staff.specializations?.join(', ') }}</div>
-            </div>
-          </div>
-          <div class="datetime">{{ formatDate(visit.visit_date_time) }}</div>
-        </div>
-
-        <!-- Детали услуги -->
-        <div class="details">
-          <div class="row header-row">
-            <div>Услуга</div>
-            <div>Стоимость</div>
-          </div>
-          <div class="row">
-            <div class="service-name">{{ service.name }}</div>
-            <div class="price">{{ service.price }} ₽</div>
-          </div>
-        </div>
+        <!-- Шапка карточки и детали услуги -->
+        <Header 
+          :firstLetter="firstLetter"
+          :staff="staff"
+          :visit="visit"
+          :service="service"
+        />
 
         <!-- Статус записи -->
-        <div class="card-status">
-          <div class="status-info">
-            <img
-              :src="statusMessage[visit.status]?.icon || clockIcon"
-              :alt="statusMessage[visit.status]?.title || 'Статус'"
-              :class="['status-icon', statusMessage[visit.status]?.bgClass || 'status-icon-waiting']"
-            />
-            <div class="status-badge-reason">
-              <span class="status-badge">
-                {{ statusMessage[visit.status]?.title || 'Ожидание' }}
-              </span>
-              <div class="status-reason">
-                {{ statusMessage[visit.status]?.subtitle || 'Ждем вас в салоне' }}
-              </div>
-            </div>
-          </div>
-        </div>
+        <Status 
+          :visit="visit"
+        />
 
         <!-- Плашка: Я точно приду -->
-        <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome || delete_ }">
-          <div class="section-bar">Я точно приду</div>
-          <div class="toggle-row">
-            <div class="hint">Нажимая, вы подтверждаете свой визит</div>
-            <label class="toggle">
-              <input
-                type="checkbox"
-                :checked="willCome"
-                @change="onWillComeChange"
-                :disabled="willCome || processing || delete_"
-              />
-              <span class="slider"></span>
-            </label>
-          </div>
-        </div>
+        <VisitConfirm 
+          :isOld="isOld"
+          :willCome="willCome"
+          :processing="processing"
+          :delete_="delete_"
+          :onWillComeChange="onWillComeChange"
+        />
 
         <!-- Плашка: Оплата -->
-        <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome || delete_ }">
-          <div class="section-bar">Оплата</div>
-          <div class="list">
-            <div class="list-item disabled" tabindex="-1" aria-disabled="true">
-              <span class="icon-circle lock-icon" aria-hidden="true"><img src="../assets/castle.svg" alt="" class="icon-14" /></span>
-              <span class="text">Оплата недоступна</span>
-              <span class="chevron">›</span>
-            </div>
-          </div>
-        </div>
+        <Payment 
+          :isOld="isOld"
+          :willCome="willCome"
+          :delete_="delete_"
+        />
+        
+        <!-- Кнопка переноса записи -->
+        <button 
+          v-if="!isOld" 
+          class="tc_button tc_button--ok"
+          @click="goToDatetime"
+          :disabled="willCome || processing || delete_"
+        >
+          Перенести запись
+        </button>
 
-        <!-- Плашка: Перенос записи -->
-        <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome || processing || delete_ }">
-          <div class="list">
-            <button
-              class="list-item"
-              @click="goToDatetime"
-              :disabled="willCome || processing || delete_"
-            >
-              <span class="icon-circle neutral-icon">⤴</span>
-              <span class="text">Перенести запись</span>
-              <span class="chevron">›</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Плашка: Отмена записи -->
-        <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome || deleting || processing || delete_ }">
-          <div class="list">
-            <button
-              class="list-item danger"
-              @click="openCancelModal"
-              :disabled="willCome || deleting || processing || delete_"
-            >
-              <span class="icon-circle danger-icon">✖</span>
-              <span class="text">Отменить запись</span>
-              <span class="chevron">›</span>
-            </button>
-          </div>
-        </div>
+        <!-- Кнопка отмены записи -->
+        <button 
+          v-if="!isOld" 
+          class="tc_button tc_button--cancel"
+          @click="openCancelModal"
+          :disabled="willCome || deleting || processing || delete_"
+        >
+          Отменить запись
+        </button>
 
         <!-- Кнопки для прошедших записей -->
         <div v-if="isOld" class="action-buttons">
@@ -118,7 +63,6 @@
         </div>
 
         <div v-if="visitError" class="visit-error">{{ visitError }}</div>
-
       </div>
 
       <!-- Модалки -->
@@ -180,12 +124,12 @@ import { useRoute, useRouter } from 'vue-router'
 import api from '../api'
 import { getStaff, getService } from '../utils/staffServiceCache'
 import { readVisit, writeVisit, clearVisit, waitForVisitTime } from '../utils/visitStorage'
-import { formatDate } from '../utils/dateFormatters'
 import { getErrorMessage } from '../utils/apiError'
 import { logger } from '../utils/logger'
-import crossIcon from '../assets/crossIcon.svg'
-import checkmarkIcon from '../assets/checkmarkIcon.svg'
-import clockIcon from '../assets/clockIcon.svg'
+import Header from '../components/record/Header.vue'
+import Status from '../components/record/Status.vue'
+import VisitConfirm from '../components/record/VisitConfirm.vue'
+import Payment from '../components/record/Payment.vue'
 
 // --- ROUTER --- //
 const route = useRoute()
@@ -214,14 +158,6 @@ let service_id = null
 let staff_id = null
 // AbortController для отмены запросов
 let currentAbortController = null
-
-/* Преобразование статуса в сообщение пользователю */
-const statusMessage = {
-  "waiting": { icon: clockIcon, bgClass: 'status-icon-waiting', title: "Ожидание", subtitle: "Ждем вас в салоне" },
-  "confirmed": { icon: checkmarkIcon, bgClass: 'status-icon-confirmed', title: "Подтверждено", subtitle: "Ждем вас в салон" },
-  "missing": { icon: crossIcon, bgClass: 'status-icon-unpaid', title: "Не оплачено", subtitle: "Визит отменен / клиент не пришел" },
-  "success": { icon: checkmarkIcon, bgClass: 'status-icon-paid', title: "Оплачено", subtitle: "Визит прошел успешно" },
-}
 
 function openCancelModal() {
   cancelAction.value = cancelVisit
@@ -424,114 +360,6 @@ onMounted(() => {
   max-width:100%;
 }
 
-/* 4) Шапка карточки */
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  background:#EEF3FF;
-  border-radius:12px;
-  padding:10px 12px;
-  margin-bottom:12px;
-  max-width:100%;
-}
-.header > *{ min-width:0; }    
-
-.who{display:flex;align-items:center;gap:10px;min-width:0;}
-.avatar{
-  width:24px;height:40px;border-radius:50%;
-  background:var(--green);color:#fff;
-  display:flex;align-items:center;justify-content:center;
-  font-weight:800;font-size:16px;flex:0 0 40px;
-}
-.info{min-width:0;}
-.name{
-  font-weight:800;font-size:14px;color:var(--text);line-height:1.1;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-}
-.spec{
-  font-size:12px;color:var(--muted);margin-top:2px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.datetime{
-  font-size:12px;color:#6f7a87;
-  overflow:hidden;text-overflow:ellipsis;max-width:40%;
-}
-
-/* 5) Детали услуги */
-.details{
-  background:#F3F5F8;border-radius:12px;padding:10px 12px;margin-bottom:12px;
-  overflow:hidden;max-width:100%;
-}
-
-/* 5a) Статус записи */
-.card-status{
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-  background: #fff;
-  border: 1px solid var(--divider);
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 12px;
-  max-width: 100%;
-}
-
-.status-info{
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-.status-icon{
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-}
-
-.status-icon-paid {
-  background-color: #00BB83;
-}
-
-.status-icon-unpaid {
-  background-color: #DE5D93;
-}
-
-.status-icon-confirmed {
-  background-color: #6dadff;
-}
-
-.status-icon-waiting {
-  background-color: #f3a950;
-}
-
-.status-badge-reason{
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.status-badge{
-  font-weight: 700;
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-  color: rgba(69, 69, 88, 1);
-}
-
-.status-reason{
-  font-weight: 400;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  color: rgba(69, 69, 88, 1);
-}
-
 /* Кнопки внизу страницы */
 .action-buttons{
   display: flex;
@@ -571,19 +399,6 @@ onMounted(() => {
 .btn-secondary:hover{
   background: #f0f4ff;
 }
-.row{
-  display:flex;justify-content:space-between;gap:8px;min-width:0;max-width:100%;
-}
-.row > *{ min-width:0; }
-.header-row{
-  font-weight:700;color:#647089;
-  padding-bottom:8px;border-bottom:1px solid #e6e9f0;margin-bottom:8px;
-}
-.service-name{
-  min-width:0;max-width:70%;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.price{font-weight:700;color:var(--text);}
 
 /* 6) Секции */
 .section{margin-bottom:12px;max-width:100%;}
@@ -598,49 +413,10 @@ onMounted(() => {
   letter-spacing:.02em;text-transform:uppercase;
 }
 
-
-
-.toggle-row{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  background:#fff;border:1px solid var(--divider);border-top:none;
-  border-radius:0 0 12px 12px;padding:12px;max-width:100%;
-}
 .hint{
   font-size:13px;color:#6f7a87;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-
-/* 7) iOS-переключатель */
-.toggle{position:relative;display:inline-block;width:46px;height:28px;flex:0 0 auto}
-.toggle input{opacity:0;width:0;height:0}
-.slider{
-  position:absolute;inset:0;background:#D9DDE4;border-radius:999px;transition:.2s;
-  overflow:clip; /* не даём тени кружка выходить */
-}
-.slider:before{
-  content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;background:#fff;border-radius:50%;
-  box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s
-}
-.toggle input:checked + .slider{background:#3ccb78}
-.toggle input:checked + .slider:before{transform:translateX(18px)}
-
-/* 8) Список действий */
-.list{
-  background:#fff;border:1px solid var(--divider);border-top:none;
-  border-radius:0 0 12px 12px;overflow:hidden;max-width:100%;
-}
-.list-item{
-  display:flex;align-items:center;gap:10px;padding:14px 12px;width:100%;
-  border-top:1px solid var(--divider);background:#fff;text-align:left;
-}
-.list-item{border:none}
-.list-item .text{
-  flex:1 1 auto;color:var(--text);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-}
-.list-item .chevron{font-size:18px;opacity:.4}
-.list-item.disabled{opacity:.55;pointer-events:none}
-.list-item.danger .text{color:#d9534f}
 
 /* 9) Круглые иконки */
 .icon-circle {
@@ -662,10 +438,6 @@ onMounted(() => {
   background-color: #0098B3; 
   color: white;
 }
-.lock-icon {
-  background-color: #7F8287; 
-  color: #020202;
-}
 
 /* 10) Модалки */
 .modal-overlay{
@@ -685,13 +457,7 @@ onMounted(() => {
 .loading{font-size:16px;color:#555}
 .error{color:#d9534f}
 .visit-error{color:#d9534f;font-size:13px;margin-top:6px}
-.icon-14 {max-width: 60%;}
 
-@media (max-width: 768px){
-  .header{ padding:10px 12px; }
-  .details{ padding:10px 12px; }
-  .list-item{ padding:12px; }
-}
 @media (max-width: 412px) {
   .record-card{
     border-radius:16px;
@@ -704,5 +470,6 @@ onMounted(() => {
 }
 
 img, svg, video{ max-width:100%; height:auto; }
-.header-row > *{ min-width:0; }
+
+.tc_button--ok{margin-bottom:12px;}
 </style>
