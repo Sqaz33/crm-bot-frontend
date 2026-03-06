@@ -1,35 +1,51 @@
 <template>
-  <div 
-    class="service-card"
-    :class="{ 'selected': isSelected }"
+  <div
+    class="bg-white border border-neutral-200 rounded-2xl p-4 flex flex-col gap-3"
+    :class="isSelected ? 'border-orange-400 shadow-[-3px_0_0_0_#ffa940]' : ''"
   >
-    <!-- Название услуги (сверху слева) -->
-    <div class="svc-name">{{ service.name }}</div>
+ 
+    <div class="font-semibold leading-tight text-neutral-800 line-clamp-2">
+      {{ service.name }}
+    </div>
 
-    <!-- Ниже: кнопка подробнее, цена и крестик -->
-    <div class="svc-bottom">
-      <!-- Кнопка подробнее (слева, с обводкой) -->
-      <button 
-        class="details-btn-outline"
-        @click="$emit('show-details', service)"
-        type="button"
-      >
-        Подробнее
-      </button>
+    <div class="flex items-center justify-between gap-3">
+      
+      <button
+  class="px-4 py-2 text-sm font-medium border rounded-full border-brand-500 text-brand-500
+         hover:bg-violet-50
+         transition-colors duration-200"
+  @click="$emit('show-details', service)"
+  type="button"
+>
+  Подробнее
+</button>
 
-      <!-- Цена и крестик (справа) -->
-      <div class="svc-right">
-        <div class="svc-price">{{ service.price.toLocaleString('ru-RU') }} ₽</div>
-        
+      <div class="flex items-center gap-3 ml-auto">
+         
+        <div class="font-semibold whitespace-nowrap">
+          {{ service.price.toLocaleString('ru-RU') }} ₽
+        </div>
+
         <button
-          class="icon-btn"
-          :class="isSelected ? 'danger' : 'primary'"
+          class="w-9 h-9 rounded-lg border-2 flex items-center justify-center transition-all duration-300"
+          :class="[
+            isSelected
+              ? 'bg-brand-500 text-white border-brand-500'
+              : 'bg-white text-brand-500 border-brand-500 hover:brightness-95'
+          ]"
           @click="$emit('toggle', service)"
-          type="button"
         >
-          <span v-if="isSelected">×</span>
-          <span v-else>＋</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 16"
+            class="w-8 h-8 transition-transform duration-350"
+            :class="isSelected ? 'rotate-45' : 'rotate-0'"
+            fill="currentColor"
+          >
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+          </svg>
         </button>
+
       </div>
     </div>
   </div>
@@ -49,95 +65,3 @@ defineProps({
 
 defineEmits(['toggle', 'show-details'])
 </script>
-
-<style scoped>
-.service-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 1.5rem;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.service-card.selected {
-  border-color: #ffa940;
-  box-shadow: -3px 0 0 0 #ffa940;
-}
-
-.svc-name {
-  font-weight: 600;
-  line-height: 1.25;
-  color: #1f2937;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.svc-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.details-btn-outline {
-  padding: 0.5rem 1rem;
-  border-radius: 1.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #8c93ee;
-  background: transparent;
-  border: 1px solid #8c93ee;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
-}
-
-.details-btn-outline:hover {
-  background: #f5f3ff;
-}
-
-.svc-right {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-left: auto;
-  flex-shrink: 0;
-}
-
-.svc-price {
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.icon-btn {
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 0.625rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  line-height: 1;
-  border: 2px solid var(--brand-500, #5c6cf0);
-  color: var(--brand-500, #5c6cf0);
-  background: white;
-  flex-shrink: 0;
-  cursor: pointer;
-  transition: filter 0.2s;
-}
-
-.icon-btn.primary:hover {
-  filter: brightness(0.95);
-}
-
-.icon-btn.danger {
-  background: var(--brand-500, #5c6cf0);
-  color: white;
-  border-color: var(--brand-500, #5c6cf0);
-}
-</style>
