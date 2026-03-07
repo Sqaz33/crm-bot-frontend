@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="bg-neutral-0 rounded-xl">
     <HeaderTitle 
       :firstLetter="firstLetter"
       :staff="staff"
@@ -37,10 +37,4 @@ const props = defineProps({
 </script>
 
 <style scoped>
-@config "../../tailwind.config.js";
-
-.header {
-  @apply bg-neutral-0;
-  @apply rounded-xl;
-}
 </style>

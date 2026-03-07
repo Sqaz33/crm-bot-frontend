@@ -1,15 +1,21 @@
 <template>
-  <div class="header-title">
-    <div class="who">
-      <div class="avatar">{{ firstLetter }}</div>
-      <div class="info">
-        <div class="name">
+  <div class="flex flex-col justify-between gap-3 p-2.5 px-3 max-w-full">
+    <div class="flex items-center gap-2.5 min-w-0">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#69FFDB] to-[#69FF03] flex items-center justify-center text-white font-extrabold text-lg flex-shrink-0">
+        {{ firstLetter }}
+      </div>
+      <div class="min-w-0">
+        <div class="text-neutral-800 font-semibold text-sm truncate">
         {{ staff.name }}
         </div>
-        <div class="spec">{{ staff.specializations?.join(', ') }}</div>
+        <div class="text-neutral-800 text-xs mt-[2px] truncate">
+          {{ staff.specializations?.join(', ') }}
+        </div>
       </div>
     </div>
-    <div class="datetime">{{ formatDate(visit.visit_date_time) }}</div>
+    <div class="text-neutral-800 text-xs truncate max-w-[40%]">
+      {{ formatDate(visit.visit_date_time) }}
+    </div>
   </div>
 </template>
 
@@ -33,64 +39,4 @@ const props = defineProps({
 </script>
 
 <style scoped>
-@config "../../tailwind.config.js";
-*, *::before, *::after { box-sizing: border-box; }
-
-.header-title {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 12px 5px 12px;
-  max-width: 100%;
-}
-.header-title > *{ min-width: 0; }    
-.who {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-.avatar {
-  width: 24px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(45deg, #69FFDB, #69FF03);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 16px;
-  flex: 0 0 40px;
-}
-.info { min-width: 0; }
-.name {
-  @apply text-neutral-800;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 1.1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.spec {
-  @apply text-neutral-800;
-  font-size: 12px;
-  margin-top: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.datetime {
-  @apply text-neutral-800;
-  font-size: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 40%;
-}
-
-@media (max-width: 768px){
-  .header-title { padding: 1 0px 12px; }
-}
 </style>

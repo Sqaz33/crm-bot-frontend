@@ -1,12 +1,17 @@
 <template>
-  <div class="card-status">
-    <div class="status-info">
-      <img
-        :src="statusMessage[visit.status]?.icon || clockIcon"
-        :alt="statusMessage[visit.status]?.title || 'Статус'"
-        :class="['status-icon', statusMessage[visit.status]?.bgClass || 'status-icon-waiting']"
-      />
-      <div class="status-badge">
+  <div class="bg-neutral-0 rounded-xl flex justify-between items-start gap-4 p-3 mb-3 max-w-full">
+    <div class="flex items-center gap-3 overflow-hidden">
+      <div 
+        class="w-10 h-10 rounded-full flex items-center justify-center p-2 flex-shrink-0"
+        :class="statusMessage[visit.status]?.bg"
+      >
+        <img
+          :src="statusMessage[visit.status]?.icon || clockIcon"
+          :alt="statusMessage[visit.status]?.title || 'Статус'"
+          class="max-w-full h-auto"
+        />
+      </div>
+      <div class="text-neutral-800 font-semibold text-sm">
         {{ statusMessage[visit.status]?.title || 'Ожидание' }}
       </div>
     </div>
@@ -27,62 +32,13 @@ const props = defineProps({
 
 /* Преобразование статуса в сообщение пользователю */
 const statusMessage = {
-  "waiting": { icon: clockIcon, bgClass: 'status-icon-waiting', title: "Ожидание" },
-  "confirmed": { icon: checkmarkIcon, bgClass: 'status-icon-confirmed', title: "Подтверждено"},
-  "canceled": { icon: crossIcon, bgClass: 'status-icon-canceled', title: "Отменено" },
-  "missing": { icon: crossIcon, bgClass: 'status-icon-missed', title: "Пропущена" },
-  "success": { icon: checkmarkIcon, bgClass: 'status-icon-paid', title: "Оплачено" },
+  "waiting": { icon: clockIcon, bg: 'bg-[#f3a950]', title: "Ожидание" },
+  "confirmed": { icon: checkmarkIcon, bg: 'bg-[#6dadff]', title: "Подтверждено"},
+  "canceled": { icon: crossIcon, bg: 'bg-[#DE5D93]', title: "Отменено" },
+  "missing": { icon: crossIcon, bg: 'bg-[#8096b0]', title: "Пропущена" },
+  "success": { icon: checkmarkIcon, bg: 'bg-[#00BB83]', title: "Оплачено" },
 }
 </script>
 
 <style scoped>
-@config "../../tailwind.config.js";
-
-.card-status {
-  @apply bg-neutral-0;
-  @apply rounded-xl;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 12px;
-  margin-bottom: 12px;
-  max-width: 100%;
-}
-.status-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  overflow: hidden;
-}
-.status-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-}
-.status-icon-paid {
-  background-color: #00BB83;
-}
-.status-icon-canceled {
-  background-color: #DE5D93;
-}
-.status-icon-missed {
-  background-color: #8096b0;
-}
-.status-icon-confirmed {
-  background-color: #6dadff;
-}
-.status-icon-waiting {
-  background-color: #f3a950;
-}
-.status-badge {
-  @apply text-neutral-800;
-  font-weight: 600;
-  font-size: 14px;
-}
 </style>

@@ -1,10 +1,10 @@
 <template>
-  <div class="record-view">
-    <SpinnerLoad v-if="loading" class="loading text-brand-500 w-32 h-32" />
-    <div v-else-if="error" class="error">{{ error }}</div>
+  <div class="bg-neutral-100 min-h-screen flex justify-center">
+    <SpinnerLoad v-if="loading" class="text-brand-500 w-32 h-32 mt-12" />
+    <div v-else-if="error" class="text-red-700">{{ error }}</div>
 
-    <div v-else class="page">
-      <div class="record-card">
+    <div v-else class="w-full max-w-lg mx-auto pt-4 pb-6 px-4 sm:px-safe overflow-x-clip">
+      <div class="rounded-2xl px-16 sm:px-16 overflow-hidden max-w-full">
         <!-- Шапка карточки и детали услуги -->
         <Header 
           :firstLetter="firstLetter"
@@ -39,7 +39,7 @@
           <!-- Кнопка переноса записи -->
           <button 
             v-if="!isOld"
-            class="tc_button tc_button--ok"
+            class="tc_button tc_button--ok overflow-hidden mb-3"
             @click="goToDatetime"
             :disabled="willCome || processing || delete_"
           >
@@ -47,10 +47,9 @@
           </button>
 
           <!-- Кнопка отмены записи -->
-          <!-- Показываем кнопку только если запись НЕ в статусе 'Оплачено' -->
           <button 
             v-if="!isOld" 
-            class="tc_button tc_button--cancel"
+            class="tc_button tc_button--cancel overflow-hidden"
             @click="openCancelModal"
             :disabled="willCome || deleting || processing || delete_"
           >
@@ -67,7 +66,7 @@
           Записаться повторно
         </button>
 
-        <div v-if="visitError" class="visit-error">{{ visitError }}</div>
+        <div v-if="visitError" class="text-red-700 text-[13px] mt-1.5">{{ visitError }}</div>
       </div>
 
       <!-- Модалки -->
@@ -341,112 +340,4 @@ onMounted(() => {
 
 
 <style scoped>
-@config "../tailwind.config.js";
-*, *::before, *::after { box-sizing: border-box; }
-
-/* 1) Контейнер страницы + палитра */
-.record-view{
-  @apply bg-neutral-100;
-  --card:#FFFFFF;
-  --text:#1C2534;
-  --muted:#8A95A6;
-  --divider:#ECEFF5;
-  --green:linear-gradient(45deg, #69FFDB, #69FF03);       
-  --shadow:0 8px 20px rgba(23,35,68,.08);
-
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-}
-.page{
-  width:100%;
-  max-width:640px;      
-  margin:0 auto;
-
-  padding-top:16px;
-  padding-bottom:24px;
-  padding-inline:16px;  
-  padding-inline: max(16px, max(env(safe-area-inset-left), env(safe-area-inset-right)));
-  
-  overflow-x:clip;     
-}
-
-/* 2) Центрированный заголовок */
-.page-title{
-  text-align:center;
-  font-weight:700;
-  color:#5C6676;
-  padding:12px 0;
-  margin-bottom:12px;
-  border-radius:12px;
-}
-
-/* 3) Карточка записи */
-.record-card{
-  border-radius:16px;
-  padding-right:64px; padding-left:64px;
-  margin:0;
-  overflow:hidden; 
-  max-width:100%;
-}
-
-/* Кнопки внизу страницы */
-.action-buttons{
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-/* 9) Круглые иконки */
-.icon-circle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  font-size: 14px;
-  line-height: 1;
-  flex-shrink: 0;
-}
-.danger-icon {
-  background-color: #DE5D93; 
-  color: white;
-}
-.neutral-icon {
-  background-color: #0098B3; 
-  color: white;
-}
-
-/* 11) Служебные состояния */
-.loading {
-  margin-top: 48px;
-}
-.error {color: #d9534f}
-.visit-error {
-  color: #d9534f;
-  font-size: 13px;
-  margin-top: 6px
-}
-
-@media (max-width: 412px) {
-  .record-card{
-    border-radius:16px;
-    padding-right:64px; padding-left:64px;
-    width:85%;
-    margin:0;
-    overflow:hidden; 
-    max-width:100%;
-  }
-}
-
-img, svg, video{ max-width:100%; height:auto; }
-
-.tc_button{
-  overflow: hidden;
-}
-.tc_button--ok{
-  margin-bottom: 12px;
-}
 </style>

@@ -1,9 +1,9 @@
 <template>
-  <div class="modal-overlay">
-    <div class="modal">
-      <h3 class="header-text">{{ hText }}</h3>
-      <p class="paragraph-text">{{ pText }}</p>
-      <div class="modal-buttons">
+  <div class="fixed inset-0 bg-black/40 flex justify-center items-center z-[999999]">
+    <div class="bg-neutral-0 rounded-xl p-4 max-w-[90vw] w-auto shadow-lg text-center">
+      <h3 class="text-neutral-800 font-semibold text-sm mb-3">{{ hText }}</h3>
+      <p class="text-neutral-800 text-sm mb-4.5">{{ pText }}</p>
+      <div class="flex justify-center gap-2">
         <button 
           class="s_button s_button--yes"
           @click="yesButtonClick" 
@@ -66,40 +66,4 @@ function yesButtonClick() {
 </script>
 
 <style scoped>
-@config "../../tailwind.config.js";
-
-.modal-overlay{
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999999;
-}
-.modal{
-  @apply bg-neutral-0;
-  @apply rounded-xl;
-  padding: 16px;
-  width: auto;
-  max-width: min(90vw, 360px);
-  box-shadow: 0 10px 30px rgba(0,0,0,.2);
-  text-align: center;
-}
-.modal-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
-.header-text {
-  @apply text-neutral-800;
-  font-weight: 600;
-  font-size: 14px;
-  margin-bottom: 12px;
-}
-.paragraph-text {
-  @apply text-neutral-800;
-  font-size: 14px;
-  margin-bottom: 18px;
-}
 </style>
