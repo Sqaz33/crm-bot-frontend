@@ -21,10 +21,10 @@
 
         <h1 class="text-[18px] font-semibold text-neutral-800 mb-2">{{ company.name }}</h1>
 
-        <div v-if="company.rating" class="inline-flex items-center justify-center bg-neutral-100 rounded-full px-3 py-1 mb-6 text-[13px] font-medium text-neutral-700 mx-auto gap-1">
+        <!-- <div v-if="company.rating" class="inline-flex items-center justify-center bg-neutral-100 rounded-full px-3 py-1 mb-6 text-[13px] font-medium text-neutral-700 mx-auto gap-1">
           <img :src="reviewIcon" alt="Star" class="w-4 h-4" />
           <span>{{ company.rating }}</span>
-        </div>
+        </div> -->
 
         <hr class="border-t border-neutral-200 mb-4" />
 
