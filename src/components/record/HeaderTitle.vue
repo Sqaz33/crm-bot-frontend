@@ -13,7 +13,7 @@
         </div>
       </div>
     </div>
-    <div class="text-neutral-800 text-xs truncate max-w-[40%]">
+    <div class="text-neutral-800 text-xs truncate">
       {{ formatDate(visit.visit_date_time) }}
     </div>
   </div>

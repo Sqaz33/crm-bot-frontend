@@ -11,7 +11,7 @@
         <span class="flex items-center justify-center w-6 h-6 rounded-full bg-gray-500 text-black flex-shrink-0" aria-hidden="true">
           <img src="../../assets/castle.svg" alt="" class="max-w-[60%] h-auto" />
         </span>
-        <span class="text-neutral-600 text-xs flex-1 truncate">
+        <span class="text-neutral-600 text-xs flex-1 break-words">
           Оплата наличными или картой в салоне
         </span>
         <span class="text-lg opacity-40">

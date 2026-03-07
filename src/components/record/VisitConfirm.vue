@@ -9,7 +9,7 @@
         <div class="text-neutral-800 font-semibold text-sm truncate">
           Я точно приду
         </div>
-        <div class="text-neutral-500 text-xs truncate whitespace-nowrap">
+        <div class="text-neutral-500 text-xs break-words">
           Нажимая, вы подтверждаете свой визит
         </div>
       </div>

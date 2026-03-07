@@ -4,7 +4,7 @@
     <div v-else-if="error" class="text-red-700">{{ error }}</div>
 
     <div v-else class="w-full max-w-lg mx-auto pt-4 pb-6 px-4 sm:px-safe overflow-x-clip">
-      <div class="rounded-2xl px-16 sm:px-16 overflow-hidden max-w-full">
+      <div class="sm:px-16 overflow-hidden max-w-full">
         <!-- Шапка карточки и детали услуги -->
         <Header 
           :firstLetter="firstLetter"
@@ -39,7 +39,7 @@
           <!-- Кнопка переноса записи -->
           <button 
             v-if="!isOld"
-            class="tc_button tc_button--ok overflow-hidden mb-3"
+            class="tc_button tc_button--ok mb-3"
             @click="goToDatetime"
             :disabled="willCome || processing || delete_"
           >
@@ -49,7 +49,7 @@
           <!-- Кнопка отмены записи -->
           <button 
             v-if="!isOld" 
-            class="tc_button tc_button--cancel overflow-hidden"
+            class="tc_button tc_button--cancel"
             @click="openCancelModal"
             :disabled="willCome || deleting || processing || delete_"
           >
@@ -58,6 +58,7 @@
         </div>
 
         <!-- Кнопка повторной записи -->
+        <!--
         <button 
           v-if="isOld" 
           class="tc_button tc_button--ok"
@@ -65,6 +66,7 @@
         >
           Записаться повторно
         </button>
+        -->
 
         <div v-if="visitError" class="text-red-700 text-[13px] mt-1.5">{{ visitError }}</div>
       </div>
