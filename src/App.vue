@@ -7,8 +7,8 @@
       :duration="3500"
     />
 
-    <div v-if="loading" class="loading">
-  <SpinnerSvg style="color: var(--brand)" />
+    <div v-if="loading" class="flex items-center justify-center min-h-screen">
+      <SpinnerSvg class="text-brand-300" />
     </div>
 
     <div v-else>
@@ -170,7 +170,6 @@ async function initAuthAndProfile() {
     } else {
       errorText.value = e?.message || 'Ошибка авторизации.'
     }
-    authError.value = true
   } finally {
     loading.value = false
   }

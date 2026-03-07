@@ -4,7 +4,7 @@
       <div
         v-for="day in weekdayNames"
         :key="day"
-        class="py-1 text-xs font-bold uppercase tracking-wide text-[#8D99AD]"
+        class="py-1 text-xs font-bold uppercase tracking-wide text-neutral-500"
       >
         {{ day }}
       </div>
@@ -55,10 +55,10 @@ const dayClasses = day => {
 
   return [
     'mx-auto aspect-square w-full max-w-12 rounded-xl border text-sm font-semibold transition md:max-w-[48px]',
-    selected && 'border-[#5073F0] bg-[#5073F0] text-white',
-    day.isToday && !selected && 'border-2 border-[#5073F0] bg-white text-[#5073F0]',
-    !selected && !day.isToday && day.isCurrentMonth && !isPastCurrentMonth && 'border-[#E6EAF2] bg-white text-[#2B3240] hover:bg-[#E8EEF5]',
-    (!day.isCurrentMonth || isPastCurrentMonth) && 'cursor-not-allowed border-transparent bg-[#EEF2F6] text-[#B7C0CC]'
+    selected && 'border-brand-500 bg-brand-500 text-white',
+    day.isToday && !selected && 'border-2 border-brand-500 bg-white text-brand-500',
+    !selected && !day.isToday && day.isCurrentMonth && !isPastCurrentMonth && 'border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-200',
+    (!day.isCurrentMonth || isPastCurrentMonth) && 'cursor-not-allowed border-transparent bg-neutral-200 text-neutral-300'
   ]
 }
 </script>

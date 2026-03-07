@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @config "./tailwind.config.js";
 
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
 
 /* кнопки */
 

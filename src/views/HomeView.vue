@@ -1,17 +1,14 @@
 <template>
-  <div class="min-h-screen  flex flex-col items-center pt-8 px-3">
-    <button class="b_button mb-6" @click="goTo('appointmant')">
+  <div class="min-h-screen flex flex-col pt-8">
+    <button class="b_button w-full! mb-6" @click="goTo('appointmant')">
       Персональные услуги
     </button>
-    
 
-    <div class="w-[min(90%,1000px)]">
-      <MenuList
-        v-model="active"
-        :items="menuItems"
-        @select="onSelect"
-      />
-    </div>
+    <MenuList
+      v-model="active"
+      :items="menuItems"
+      @select="onSelect"
+    />
   </div>
 </template>
 
@@ -24,6 +21,7 @@ import MenuList from '../components/ui/MenuList.vue'
 
 import walletIcon from '../assets/walletIcon.svg'
 import shopIcon from '../assets/shopIcon.svg'
+import reviewIcon from '../assets/reviewIcon.svg'
 import companyIcon from '../assets/companyIcon.svg'
 
 const router = useRouter()
@@ -39,6 +37,7 @@ watch(
 const menuItems = computed(() => ([
   { key: 'wallet',  label: 'Кошелёк',    icon: walletIcon,  badge: { text: '0', variant: 'orange' } },
   { key: 'shop',    label: 'Магазин',    icon: shopIcon },
+  { key: 'reviews', label: 'Отзывы',     icon: reviewIcon,  badge: { text: '0' } },
   { key: 'company', label: 'О компании', icon: companyIcon }
 ]))
 

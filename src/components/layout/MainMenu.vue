@@ -1,8 +1,8 @@
 <template>
   <header class="main-header">
     <div class="salon-info">
-      <div class="salon-logo">
-        <img src="@/assets/logo.svg" alt="Логотип" />
+      <div class="salon-logo" @click="router.push('/')">
+        <img src="@/assets/logo.svg" alt="На главную" />
       </div>
       <div class="salon-text">
         <div class="salon-name">{{ salon.name }}</div>
@@ -15,10 +15,9 @@
         v-for="item in items"
         :key="item.label"
         class="menu-item"
-        :class="{ active: activeItem === item.path }"
         @click="navigate(item)"
       >
-        <img :src="item.icon" :class="item.iconSize" alt="icon" />
+        <img :src="item.icon" alt="" />
         <span>{{ item.label }}</span>
       </div>
     </nav>
@@ -30,13 +29,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import api from "../../api";
 import { logger } from "../../utils/logger";
 
 import Modal from "../ui/Modal.vue";
-import ShareModal from "../modal/ShareModal.vue";
+import ShareModal from "../Modal/ShareModal.vue"
 
 import AddressIcon from "@/assets/map.svg";
 import RecordsIcon from "@/assets/appointment.svg";
@@ -44,8 +43,6 @@ import ShareIcon from "@/assets/share.svg";
 import ProfileIcon from "@/assets/prof.svg";
 
 const router = useRouter();
-const route = useRoute();
-const activeItem = ref(route.path);
 const showShareModal = ref(false);
 
 const salon = ref({
@@ -71,18 +68,11 @@ onMounted(async () => {
   }
 });
 
-watch(
-  () => route.path,
-  (p) => {
-    activeItem.value = p;
-  }
-);
-
 const items = [
-  { label: "Адрес", path: "/address", icon: AddressIcon, iconSize: "icon1" },
-  { label: "Записи", path: "/records", icon: RecordsIcon, iconSize: "icon1" },
-  { label: "Поделиться", path: "/share", icon: ShareIcon, iconSize: "icon1" },
-  { label: "Профиль", path: "/profile", icon: ProfileIcon, iconSize: "icon1" },
+  { label: "Адрес", path: "/address", icon: AddressIcon },
+  { label: "Записи", path: "/records", icon: RecordsIcon },
+  { label: "Поделиться", path: "/share", icon: ShareIcon },
+  { label: "Профиль", path: "/profile", icon: ProfileIcon },
 ];
 
 function navigate(item) {
@@ -96,7 +86,6 @@ function navigate(item) {
   } else if (item.label === "Поделиться") {
     showShareModal.value = true;
   } else {
-    activeItem.value = item.path;
     router.push(item.path);
   }
 }
@@ -107,30 +96,28 @@ function navigate(item) {
   display: flex;
   flex-direction: column;
   width: 100%;
-  background-color: #ffffff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  padding: 0.8rem 1rem;
-  box-sizing: border-box;
-  gap: 0.8rem;
+  background: #FFFFFF;
+  box-shadow: 3px 0px 9px 0px rgba(0, 0, 0, 0.04);
 }
 
-/* Левая часть — логотип и текст */
+/* Верхняя часть: логотип + название + тип заведения */
 .salon-info {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  flex-shrink: 0;
+  gap: 12px;
+  padding: 12px 16px;
 }
 
 .salon-logo {
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 .salon-logo img {
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background-color: #6267ee;
+  background-color: #666FE8;
   padding: 6px;
   display: block;
 }
@@ -143,29 +130,34 @@ function navigate(item) {
 }
 
 .salon-name {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #222;
+  font-family: 'Geometria', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #454558;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .salon-desc {
-  font-size: 0.8rem;
-  color: #888;
+  font-family: 'Geometria', sans-serif;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 12px;
+  color: #454558;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Меню */
+/* Навигация: 4 иконки */
 .menu {
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  gap: 0.5rem;
-  width: 100%;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0 16px;
 }
 
 .menu-item {
@@ -173,109 +165,80 @@ function navigate(item) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 65px;
+  height: 56px;
+  gap: 4px;
   cursor: pointer;
-  font-size: 0.7rem;
-  color: #666;
-  transition: color 0.2s;
-  padding: 0.25rem;
-  flex: 1;
-  min-width: 0;
+  transition: opacity 0.2s;
 }
 
 .menu-item:hover {
-  color: #6267ee;
-}
-
-.menu-item.active {
-  color: #6267ee;
-  font-weight: 500;
+  opacity: 0.7;
 }
 
 .menu-item img {
-  width: 35px;
-  height: 35px;
-  margin-bottom: 0.3rem;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
-  filter: brightness(0) saturate(100%) invert(37%) sepia(89%) saturate(2098%)
-    hue-rotate(226deg) brightness(98%) contrast(92%);
-}
-
-.menu-item.active img {
-  filter: brightness(0) saturate(100%) invert(37%) sepia(89%) saturate(2098%)
-    hue-rotate(226deg) brightness(98%) contrast(92%);
-}
-
-.menu-item:hover img {
-  filter: brightness(0) saturate(100%) invert(37%) sepia(89%) saturate(2098%)
-    hue-rotate(226deg) brightness(98%) contrast(92%);
 }
 
 .menu-item span {
-  white-space: normal;
-  word-break: break-word;
-  overflow: hidden;
-  max-width: 100%;
+  font-family: 'Geometria', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
   text-align: center;
-  line-height: 1.2;
-  max-height: 2.4em;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  color: #454558;
+  white-space: nowrap;
 }
 
-.icon1 {
-  width: 28px;
-  height: 28px;
-}
-
-/* Адаптация для широких экранов */
+/* Десктоп */
 @media (min-width: 768px) {
   .main-header {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 0.6rem 1.5rem;
+    height: 80px;
   }
 
-  .menu {
-    gap: 2.5rem;
-    width: auto;
-    justify-content: flex-end;
+  .salon-info {
+    gap: 22px;
+    padding: 14px 35px;
   }
 
-  .menu-item {
-    flex: initial;
-    font-size: 0.75rem;
-  }
-
-  .menu-item span {
-    white-space: nowrap;
-    -webkit-line-clamp: 1;
+  .salon-logo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 0;
+    background-color: transparent;
+    padding: 0;
   }
 
   .salon-name {
-    font-size: 0.95rem;
+    font-size: 30px;
+    line-height: 36px;
   }
 
   .salon-desc {
-    font-size: 0.75rem;
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .menu {
+    height: auto;
+    gap: 150px;
+    justify-content: flex-end;
+    padding: 0 100px;
   }
 
   .menu-item img {
-    width: 26px;
-    height: 26px;
-  }
-}
-
-@media (max-width: 360px) {
-  .menu-item {
-    font-size: 0.65rem;
+    width: 40px;
+    height: 40px;
   }
 
-  .menu-item img {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 0.2rem;
+  .menu-item span {
+    font-size: 18px;
+    line-height: 24px;
   }
 }
 </style>

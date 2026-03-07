@@ -53,7 +53,7 @@ defineEmits(['toggle', 'show-details'])
 <style scoped>
 .service-card {
   background: white;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #EBEEF6;
   border-radius: 1.5rem;
   padding: 1rem;
   display: flex;
@@ -62,14 +62,14 @@ defineEmits(['toggle', 'show-details'])
 }
 
 .service-card.selected {
-  border-color: #ffa940;
-  box-shadow: -3px 0 0 0 #ffa940;
+  border-color: #F3A950;
+  box-shadow: -3px 0 0 0 #F3A950;
 }
 
 .svc-name {
   font-weight: 600;
   line-height: 1.25;
-  color: #1f2937;
+  color: #0F172A;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -89,16 +89,16 @@ defineEmits(['toggle', 'show-details'])
   border-radius: 1.5rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #8c93ee;
+  color: #818CF8;
   background: transparent;
-  border: 1px solid #8c93ee;
+  border: 1px solid #818CF8;
   cursor: pointer;
   transition: all 0.2s;
   flex-shrink: 0;
 }
 
 .details-btn-outline:hover {
-  background: #f5f3ff;
+  background: #E0E7FF;
 }
 
 .svc-right {
@@ -123,8 +123,8 @@ defineEmits(['toggle', 'show-details'])
   justify-content: center;
   font-size: 1.25rem;
   line-height: 1;
-  border: 2px solid var(--brand-500, #5c6cf0);
-  color: var(--brand-500, #5c6cf0);
+  border: 2px solid var(--brand-500, #666FE8);
+  color: var(--brand-500, #666FE8);
   background: white;
   flex-shrink: 0;
   cursor: pointer;
@@ -136,8 +136,8 @@ defineEmits(['toggle', 'show-details'])
 }
 
 .icon-btn.danger {
-  background: var(--brand-500, #5c6cf0);
+  background: var(--brand-500, #666FE8);
   color: white;
-  border-color: var(--brand-500, #5c6cf0);
+  border-color: var(--brand-500, #666FE8);
 }
 </style>
