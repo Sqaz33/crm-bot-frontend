@@ -1,12 +1,13 @@
 <template>
   <div class="details">
-    <div class="row header-row">
-      <div>Услуга</div>
-      <div>Стоимость</div>
-    </div>
-    <div class="row">
+    <div class="row services-row">
       <div class="service-name">{{ service.name }}</div>
       <div class="price">{{ service.price }} ₽</div>
+      <div class="duration">{{ service.duration }} мин</div>
+    </div>
+    <div class="row footer-row">
+      <div class="total-price-title">Итого к оплате</div>
+      <div class="total-price">{{ service.price }} ₽</div>
     </div>
   </div>
 </template>
@@ -21,27 +22,72 @@ const props = defineProps({
 </script>
 
 <style scoped>
+@config "../../tailwind.config.js";
 *, *::before, *::after { box-sizing: border-box; }
 
-.details{
-  background:#F3F5F8;border-radius:12px;padding:10px 12px;margin-bottom:12px;
-  overflow:hidden;max-width:100%;
+.details {
+  padding: 5px 12px 10px 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  max-width: 100%;
 }
-.row{
-  display:flex;justify-content:space-between;gap:8px;min-width:0;max-width:100%;
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: 
+    "name name"
+    "duration price";
+  column-gap: 10px;
+  row-gap: 1px;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
 }
-.header-row{
-  font-weight:700;color:#647089;
-  padding-bottom:8px;border-bottom:1px solid #e6e9f0;margin-bottom:8px;
+.row > *{ min-width: 0; }
+.services-row {
+  border-top: 1px solid #EBEEF6;
+  border-bottom: 1px solid #EBEEF6;
+  padding: 10px 0px;
 }
-.row > *{ min-width:0; }
-.header-row > *{ min-width:0; }
-.service-name{
-  min-width:0;max-width:70%;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+.service-name {
+  @apply text-neutral-800;
+  grid-area: name;
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 0;
+  max-width: 70%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.price{font-weight:700;color:var(--text);}
+.price {
+  @apply text-neutral-800;
+  grid-area: price;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.duration {
+  @apply text-neutral-500;
+  grid-area: duration;
+  font-size: 12px;
+}
+.footer-row {
+  margin-top: 12px;
+}
+.total-price-title {
+  @apply text-neutral-800;
+  font-size: 14px;
+  font-weight: 600;
+}
+.total-price {
+  @apply text-neutral-800;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 @media (max-width: 768px){
-  .details{ padding:10px 12px; }
+  .details { padding: 10px 12px; }
 }
 </style>

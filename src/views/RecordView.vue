@@ -1,6 +1,6 @@
 <template>
   <div class="record-view">
-    <div v-if="loading" class="loading">Загрузка...</div>
+    <SpinnerLoad v-if="loading" class="loading text-brand-500 w-32 h-32" />
     <div v-else-if="error" class="error">{{ error }}</div>
 
     <div v-else class="page">
@@ -58,39 +58,44 @@
           </button>
         </div>
 
-        <!-- Кнопки для прошедших записей -->
-        <div v-if="isOld" class="action-buttons">
-          <button class="btn-secondary" @click="goToDatetime">
-            <span class="btn-icon">⤴</span>
-            Записаться повторно
-          </button>
-        </div>
+        <!-- Кнопка повторной записи -->
+        <button 
+          v-if="isOld" 
+          class="tc_button tc_button--ok"
+          @click="goToDatetime"
+        >
+          Записаться повторно
+        </button>
 
         <div v-if="visitError" class="visit-error">{{ visitError }}</div>
       </div>
 
       <!-- Модалки -->
-      <div v-if="showConfirmModal" class="modal-overlay">
-        <div class="modal">
-          <h3>Подтверждение визита</h3>
-          <p>Вы действительно хотите подтвердить, что придёте на приём?</p>
-          <div class="modal-buttons">
-            <button @click="confirmAction(); showConfirmModal = false" :disabled="processing">Да, подтверждаю</button>
-            <button @click="showConfirmModal = false" :disabled="processing">Отмена</button>
-          </div>
-        </div>
-      </div>
+      <!-- Подтверждение визита -->
+      <RecordModal 
+        v-if="showConfirmModal"
+        :hText="'Подтверждение визита'"
+        :pText="'Вы действительно хотите подтвердить, что придёте на приём?'"
+        :yesText="'Да, подтверждаю'"
+        :noText="'Отмена'"
+        :yesAction="executeConfirmAction"
+        :modalVisibilityUpdate="closeConfirmModal"
+        :yesDisabledCondition="processing"
+        :noDisabledCondition="processing"
+      />
 
-      <div v-if="showCancelModal" class="modal-overlay">
-        <div class="modal">
-          <h3>Отмена визита</h3>
-          <p>Вы уверены, что хотите отменить запись на приём?</p>
-          <div class="modal-buttons">
-            <button @click="cancelAction(); showCancelModal = false" :disabled="deleting">Да, отменить</button>
-            <button @click="showCancelModal = false" :disabled="deleting">Отмена</button>
-          </div>
-        </div>
-      </div>
+      <!-- Отмена записи -->
+      <RecordModal 
+        v-if="showCancelModal"
+        :hText="'Отмена визита'"
+        :pText="'Вы уверены, что хотите отменить запись на приём?'"
+        :yesText="'Да, отменить'"
+        :noText="'Отмена'"
+        :yesAction="executeCancelAction"
+        :modalVisibilityUpdate="closeCancelModal"
+        :yesDisabledCondition="deleting"
+        :noDisabledCondition="deleting"
+      />
 
       <!-- Модалка отзыва (временно скрыта) -->
       <!-- <div v-if="showReviewModal" class="modal-overlay">
@@ -134,6 +139,8 @@ import Header from '../components/record/Header.vue'
 import Status from '../components/record/Status.vue'
 import VisitConfirm from '../components/record/VisitConfirm.vue'
 import Payment from '../components/record/Payment.vue'
+import RecordModal from '../components/Modal/RecordModal.vue'
+import SpinnerLoad from '../components/ui/SpinnerLoad.vue'
 
 // --- ROUTER --- //
 const route = useRoute()
@@ -163,9 +170,29 @@ let staff_id = null
 // AbortController для отмены запросов
 let currentAbortController = null
 
+function executeConfirmAction() {
+  if (confirmAction) {
+    confirmAction.value()
+  }
+}
+
+function executeCancelAction() {
+  if (cancelAction) {
+    cancelAction.value()
+  }
+}
+
 function openCancelModal() {
   cancelAction.value = cancelVisit
   showCancelModal.value = true
+}
+
+function closeConfirmModal() {
+  showConfirmModal.value = false
+}
+
+function closeCancelModal() {
+  showCancelModal.value = false
 }
 
 // --- API: Загрузка данных --- //
@@ -314,12 +341,12 @@ onMounted(() => {
 
 
 <style scoped>
-
+@config "../tailwind.config.js";
 *, *::before, *::after { box-sizing: border-box; }
 
 /* 1) Контейнер страницы + палитра */
 .record-view{
-  --bg:#F6F7FB;
+  @apply bg-neutral-100;
   --card:#FFFFFF;
   --text:#1C2534;
   --muted:#8A95A6;
@@ -328,7 +355,6 @@ onMounted(() => {
   --shadow:0 8px 20px rgba(23,35,68,.08);
 
   min-height:100vh;
-  background:var(--bg);
   display:flex;
   justify-content:center;
 }
@@ -372,56 +398,6 @@ onMounted(() => {
   margin-top: 16px;
 }
 
-.btn-primary,
-.btn-secondary{
-  width: 100%;
-  padding: 14px 20px;
-  border: none;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-primary{
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.btn-primary:hover{
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.btn-secondary{
-  background: #fff;
-  color: #5073f0;
-  border: 2px solid #5073f0;
-}
-
-.btn-secondary:hover{
-  background: #f0f4ff;
-}
-
-/* 6) Секции */
-.section{margin-bottom:12px;max-width:100%;}
-.section-disabled{
-  opacity: 0.4;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-.section-bar{
-  background:var(--primary);color:#8097B1;font-weight:400;
-  padding:10px 12px;border-radius:10px 10px 0 0;
-  letter-spacing:.02em;text-transform:uppercase;
-}
-
-.hint{
-  font-size:13px;color:#6f7a87;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-}
-
 /* 9) Круглые иконки */
 .icon-circle {
   display: flex;
@@ -443,24 +419,16 @@ onMounted(() => {
   color: white;
 }
 
-/* 10) Модалки */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.4);
-  display:flex;justify-content:center;align-items:center;z-index: 999999;
-}
-.modal{
-  background:#fff;padding:16px;border-radius:12px;
-  width:auto;max-width:min(90vw, 360px);
-  box-shadow:0 10px 30px rgba(0,0,0,.2);
-}
-.modal-buttons{display:flex;justify-content:flex-end;gap:8px}
-.modal-buttons button{padding:8px 12px;border:none;border-radius:10px;cursor:pointer}
-.modal-buttons button:first-child{background:#666FE8;color:#fff}
-.modal-buttons button:last-child{background:#e7e9ee}
 /* 11) Служебные состояния */
-.loading{font-size:16px;color:#555}
-.error{color:#d9534f}
-.visit-error{color:#d9534f;font-size:13px;margin-top:6px}
+.loading {
+  margin-top: 48px;
+}
+.error {color: #d9534f}
+.visit-error {
+  color: #d9534f;
+  font-size: 13px;
+  margin-top: 6px
+}
 
 @media (max-width: 412px) {
   .record-card{
@@ -475,5 +443,10 @@ onMounted(() => {
 
 img, svg, video{ max-width:100%; height:auto; }
 
-.tc_button--ok{margin-bottom:12px;}
+.tc_button{
+  overflow: hidden;
+}
+.tc_button--ok{
+  margin-bottom: 12px;
+}
 </style>

@@ -1,12 +1,12 @@
 <template>
-  <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome || delete_ }">
-    <div class="section-bar">Оплата</div>
+  <div v-if="!isOld" class="payment" :class="{ 'payment-disabled': willCome || delete_ }">
+    <div class="title">Оплата</div>
     <div class="list">
       <div class="list-item disabled" tabindex="-1" aria-disabled="true">
         <span class="icon-circle lock-icon" aria-hidden="true">
           <img src="../../assets/castle.svg" alt="" class="icon-14" />
         </span>
-        <span class="text">Оплата недоступна</span>
+        <span class="text">Оплата наличными или картой в салоне</span>
         <span class="chevron">›</span>
       </div>
     </div>
@@ -31,33 +31,58 @@ const props = defineProps({
 </script>
 
 <style scoped>
-.section{margin-bottom:12px;max-width:100%;}
-.section-disabled{
+@config "../../tailwind.config.js";
+
+.payment {
+  margin-bottom: 12px;
+  max-width: 100%;
+}
+.payment-disabled {
   opacity: 0.4;
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
-.section-bar{
-  background:var(--primary);color:#8097B1;font-weight:400;
-  padding:10px 12px;border-radius:10px 10px 0 0;
-  letter-spacing:.02em;text-transform:uppercase;
+.title {
+  @apply text-neutral-500;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding-left: 12px;
+  margin-bottom: 12px;
 }
-.list{
-  background:#fff;border:1px solid var(--divider);border-top:none;
-  border-radius:0 0 12px 12px;overflow:hidden;max-width:100%;
+.list {
+  @apply bg-neutral-0;
+  @apply rounded-xl;
+  overflow: hidden;
+  max-width: 100%;
 }
-.list-item{
-  display:flex;align-items:center;gap:10px;padding:14px 12px;width:100%;
-  border-top:1px solid var(--divider);background:#fff;text-align:left;
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 12px;
+  width: 100%;
+  text-align: left;
 }
-.list-item{border:none}
-.list-item .text{
-  flex:1 1 auto;color:var(--text);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+.list-item .text {
+  @apply text-neutral-600;
+  font-size: 12px;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.list-item .chevron{font-size:18px;opacity:.4}
-.list-item.disabled{opacity:.55;pointer-events:none}
-.list-item.danger .text{color:#d9534f}
+.list-item .chevron {
+  font-size: 18px;
+  opacity: .4
+}
+.list-item.disabled {
+  opacity: .55;
+  pointer-events: none
+}
+.list-item.danger .text { 
+  @apply text-red-700;
+}
 .icon-circle {
   display: flex;
   align-items: center;
@@ -73,9 +98,9 @@ const props = defineProps({
   background-color: #7F8287; 
   color: #020202;
 }
-.icon-14 {max-width: 60%;}
+.icon-14 { max-width: 60%; }
 
 @media (max-width: 768px){
-  .list-item{ padding:12px; }
+  .list-item { padding: 12px; }
 }
 </style>

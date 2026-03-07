@@ -1,8 +1,10 @@
 <template>
-  <div v-if="!isOld" class="section" :class="{ 'section-disabled': willCome || delete_ }">
-    <div class="section-bar">Я точно приду</div>
-    <div class="toggle-row">
-      <div class="hint">Нажимая, вы подтверждаете свой визит</div>
+  <div v-if="!isOld" class="visit-confirm" :class="{ 'visit-confirm-disabled': willCome || delete_ }">
+    <div class="row">
+      <div class="info">
+        <div class="title">Я точно приду</div>
+        <div class="hint">Нажимая, вы подтверждаете свой визит</div>
+      </div>
       <label class="toggle">
         <input
           type="checkbox"
@@ -42,32 +44,78 @@ const props = defineProps({
 </script>
 
 <style scoped>
-.section{margin-bottom:12px;max-width:100%;}
-.section-disabled{
+@config "../../tailwind.config.js";
+
+.visit-confirm { 
+  margin-bottom: 12px;
+  max-width: 100%;
+}
+.visit-confirm-disabled {
   opacity: 0.4;
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
-.section-bar{
-  background:var(--primary);color:#8097B1;font-weight:400;
-  padding:10px 12px;border-radius:10px 10px 0 0;
-  letter-spacing:.02em;text-transform:uppercase;
+.row {
+  @apply bg-neutral-0;
+  @apply rounded-xl;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  max-width: 100%;
 }
-.toggle-row{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  background:#fff;border:1px solid var(--divider);border-top:none;
-  border-radius:0 0 12px 12px;padding:12px;max-width:100%;
+.row > .info {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
 }
-.toggle{position:relative;display:inline-block;width:46px;height:28px;flex:0 0 auto}
-.toggle input{opacity:0;width:0;height:0}
-.slider{
-  position:absolute;inset:0;background:#D9DDE4;border-radius:999px;transition:.2s;
-  overflow:clip; /* не даём тени кружка выходить */
+.title {
+  @apply text-neutral-800;
+  font-weight: 600;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.slider:before{
-  content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;background:#fff;border-radius:50%;
-  box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s
+.hint{
+  @apply text-neutral-500;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.toggle input:checked + .slider{background:#3ccb78}
-.toggle input:checked + .slider:before{transform:translateX(18px)}
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 28px;
+  flex: 0 0 auto;
+}
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  inset: 0;
+  background: #D9DDE4;
+  border-radius: 999px;
+  transition: .2s;
+  overflow: clip; /* не даём тени кружка выходить */
+}
+.slider:before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  transition: .2s;
+}
+.toggle input:checked + .slider { background: #3ccb78 }
+.toggle input:checked + .slider:before { transform:translateX(18px) }
 </style>
