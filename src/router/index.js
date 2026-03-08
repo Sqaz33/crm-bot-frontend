@@ -110,7 +110,7 @@ const routes = [
         path: 'record/:id',
         name: 'record',
         component: RecordView,
-        meta: { title: "Просмотр записи" }
+        meta: { title: "Запись" }
       },
       {
         path: 'test',
