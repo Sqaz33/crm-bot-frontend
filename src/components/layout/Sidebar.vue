@@ -143,7 +143,7 @@ const processedItems = computed(() => {
   width: 51px;
   min-height: calc(100dvh - 64px);
   align-self: stretch;
-  background: #FFFFFF;
+  background: white;
   box-shadow: 3px 3px 6px 0px #F6F5F6;
   z-index: 1000;
   display: flex;

@@ -36,7 +36,7 @@
       <button
         type="submit"
         :disabled="!isFormValid || saving"
-        class="w-full h-14 bg-brand-500 text-white rounded-xl text-xl font-medium mt-4 transition-all hover:bg-brand-400 disabled:bg-brand-300 disabled:cursor-not-allowed"
+        class="b_button"
       >
         {{ saving ? 'Сохранение…' : 'Сохранить' }}
       </button>

@@ -10,7 +10,7 @@
     <div class="mr-3 md:mr-4" @click.stop="$emit('avatar-click')">
       <div
         v-if="staff.photo"
-        class="size-10 md:size-16 rounded-full bg-cover bg-center shrink-0 cursor-pointer"
+        class="w-10 h-10 md:w-16 md:h-16 rounded-full bg-cover bg-center shrink-0 cursor-pointer"
         :style="{ backgroundImage: `url(${staff.photo})` }"
         role="button"
         tabindex="0"
@@ -19,8 +19,8 @@
       />
       <div
         v-else
-        class="size-10 md:size-16 rounded-full shrink-0 cursor-pointer
-               bg-gradient-to-br from-[#69ffdb] to-[#69ff03]
+        class="w-10 h-10 md:w-16 md:h-16 rounded-full shrink-0 cursor-pointer
+               bg-gradient-to-br from-green-500 to-green-400
                flex items-center justify-center"
         role="button"
         tabindex="0"

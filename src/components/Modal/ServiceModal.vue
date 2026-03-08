@@ -39,36 +39,36 @@
               <!-- Кнопка закрытия -->
               <button
                 type="button"
-                class="absolute right-3 top-3 h-10 w-10 grid place-items-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition"
+                class="absolute right-3 top-3 h-10 w-10 grid place-items-center rounded-full hover:bg-neutral-100 active:bg-neutral-200 transition"
                 aria-label="Закрыть"
                 @click="$emit('close')"
               >
-                <span class="text-3xl leading-none text-gray-600">&times;</span>
+              <span class="text-3xl leading-none text-neutral-600">&times;</span>
               </button>
 
               <!-- Заголовок "Описание" по центру -->
-              <h2 class="text-center text-sm font-semibold text-gray-900 mb-1">
+              <h2 class="text-center text-sm font-semibold text-neutral-900 mb-1">
                 Описание
               </h2>
 
               <!-- Название услуги по центру -->
-              <h3 class="text-center text-lg font-semibold text-gray-900 truncate px-10">
+              <h3 class="text-center text-lg font-semibold text-neutral-900 truncate px-10">
                 {{ service?.name || 'Услуга' }}
               </h3>
             </div>
 
             <!-- Серая черта -->
-            <div class="border-t border-gray-200"></div>
+            <div class="border-t border-neutral-200"></div>
 
             <!-- body -->
             <div class="flex-1 overflow-y-auto px-6 py-4">
               <!-- Надпись "ОБ УСЛУГЕ" слева серая -->
-              <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+              <h4 class="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-3">
                 Об услуге
               </h4>
 
               <!-- Описание -->
-              <p class="text-base leading-relaxed text-gray-800 break-words whitespace-pre-wrap">
+              <p class="text-base leading-relaxed text-neutral-800 break-words whitespace-pre-wrap">
                 {{ service?.description || 'Описание отсутствует' }}
               </p>
             </div>
