@@ -5,11 +5,7 @@
   >
     <!-- Header with Staff Info -->
     <div class="flex items-start gap-4 mb-4">
-      <img
-        src="../assets/emptyAvatar.svg"
-        alt="Staff avatar"
-        class="w-12 h-12 rounded-full flex-shrink-0 object-cover"
-      />
+      <Avatar :name="visit.staff.name" />
       <div class="flex-1 min-w-0">
         <div class="font-semibold text-neutral-800 text-base mb-1">{{ visit.staff.name }}</div>
         <div class="text-neutral-600 text-sm">
@@ -60,6 +56,7 @@ import { formatDateShort, formatTimeOnly } from '../../utils/dateFormatters'
 import crossIcon from '../../assets/crossIcon.svg'
 import checkmarkIcon from '../../assets/checkmarkIcon.svg'
 import clockIcon from '../../assets/clockIcon.svg'
+import Avatar from './Avatar.vue'
 
 const props = defineProps({
   visit: {
