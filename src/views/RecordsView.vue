@@ -124,9 +124,11 @@ async function fetchVisits(tab) {
       })
     );
 
-    // СОРТИРОВКА: первые записи первыми
+    // СОРТИРОВКА: текущие - по возрастанию (ближайшие первыми), прошедшие - по убыванию (новые первыми)
     const sortedVisits = mapped.sort((a, b) => {
-      return new Date(a.visit_date_time) - new Date(b.visit_date_time);
+      const dateA = new Date(a.visit_date_time);
+      const dateB = new Date(b.visit_date_time);
+      return tab === 'past' ? dateB - dateA : dateA - dateB;
     });
 
     visits.value = sortedVisits;
