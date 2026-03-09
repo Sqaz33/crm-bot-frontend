@@ -12,7 +12,7 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-12">
-        <div class="text-neutral-600 text-base">Загрузка...</div>
+        <SpinnerLoad class="text-neutral-600" />
       </div>
 
       <!-- Content -->
@@ -57,6 +57,7 @@ import { formatDateShort, formatTimeOnly } from '../utils/dateFormatters'
 import { logger } from '../utils/logger'
 import TabsButton from '../components/records/TabsButton.vue'
 import VisitCard from '../components/records/VisitCard.vue'
+import SpinnerLoad from '../components/ui/SpinnerLoad.vue'
 
 const tabsList = [
   { id: 'current', label: 'Текущие' },
