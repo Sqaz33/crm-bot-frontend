@@ -1,8 +1,6 @@
 <template>
   <div class="min-h-screen bg-neutral-100 py-8">
     <div class="container mx-auto px-4">
-      <h1 class="text-3xl font-bold text-neutral-800 mb-8 text-center">Профиль</h1>
-
       <ProfileForm
         v-model="profileData"
         :saving="saving"
