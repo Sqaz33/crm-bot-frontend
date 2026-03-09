@@ -4,7 +4,7 @@
     @click="goToVisit"
   >
     <!-- Header with Staff Info -->
-    <div class="flex justify-between items-start gap-4 mb-4">
+    <div class="flex items-start gap-4 mb-4">
       <img
         src="../assets/emptyAvatar.svg"
         alt="Staff avatar"
@@ -12,45 +12,16 @@
       />
       <div class="flex-1 min-w-0">
         <div class="font-semibold text-neutral-800 text-base mb-1">{{ visit.staff.name }}</div>
-        <div class="text-neutral-600 text-sm line-clamp-2">
+        <div class="text-neutral-600 text-sm">
           {{ visit.staff.specializations.join(", ") }}
         </div>
       </div>
-      <div class="text-right flex-shrink-0">
-        <div class="font-semibold text-neutral-800 text-sm mb-1">
-          {{ formatDateShort(visit.visit_date_time) }}
-        </div>
-        <div class="text-neutral-600 text-sm">
-          {{ formatTimeOnly(visit.visit_date_time) }}
-        </div>
-      </div>
+    </div>
+    <div class="text-neutral-500 text-sm mb-2">
+      {{ formatDateShort(visit.visit_date_time) }}, {{ formatTimeOnly(visit.visit_date_time) }}
     </div>
 
-    <!-- Service Info Grid -->
-    <div class="grid grid-cols-3 gap-3 py-3 border-t border-b border-neutral-200 mb-4">
-      <div>
-        <div class="text-neutral-500 text-xs uppercase font-medium tracking-wide mb-2">
-          Услуга
-        </div>
-        <div class="font-medium text-neutral-800 text-sm">
-          {{ visit.service?.name || "Неизвестная услуга" }}
-        </div>
-      </div>
-      <div class="text-center">
-        <div class="text-neutral-500 text-xs uppercase font-medium tracking-wide mb-2">
-          Количество
-        </div>
-        <div class="text-neutral-800 text-sm">1</div>
-      </div>
-      <div class="text-right">
-        <div class="text-neutral-500 text-xs uppercase font-medium tracking-wide mb-2">
-          Стоимость
-        </div>
-        <div class="font-semibold text-neutral-800 text-sm">
-          {{ visit.service?.price != null ? `${visit.service.price} ₽` : "Неизвестно" }}
-        </div>
-      </div>
-    </div>
+    <div class="border-t border-neutral-200 mb-4"></div>
 
     <!-- Status and Total Price -->
     <div class="flex justify-between items-start gap-4">
