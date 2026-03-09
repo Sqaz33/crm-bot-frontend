@@ -55,8 +55,8 @@ import api from '../api'
 import { getStaff, getService } from '../utils/staffServiceCache'
 import { formatDateShort, formatTimeOnly } from '../utils/dateFormatters'
 import { logger } from '../utils/logger'
-import TabsButton from '../components/ui/TabsButton.vue'
-import VisitCard from '../components/VisitCard.vue'
+import TabsButton from '../components/records/TabsButton.vue'
+import VisitCard from '../components/records/VisitCard.vue'
 
 const tabsList = [
   { id: 'current', label: 'Текущие' },

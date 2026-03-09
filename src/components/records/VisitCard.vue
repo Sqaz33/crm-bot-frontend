@@ -85,7 +85,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { formatDateShort, formatTimeOnly } from '../utils/dateFormatters'
+import { formatDateShort, formatTimeOnly } from '../../utils/dateFormatters'
 import crossIcon from '../assets/crossIcon.svg'
 import checkmarkIcon from '../assets/checkmarkIcon.svg'
 import clockIcon from '../assets/clockIcon.svg'
