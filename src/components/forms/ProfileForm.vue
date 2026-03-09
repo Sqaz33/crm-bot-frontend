@@ -30,7 +30,6 @@
         v-model="modelValue.email"
         label="E-mail"
         type="email"
-        :required="true"
       />
 
       <button
@@ -72,8 +71,8 @@ const emit = defineEmits(['update:modelValue', 'save'])
 const showToast = ref(false)
 
 const isFormValid = computed(() => {
-  const { firstName, lastName, email } = props.modelValue
-  return firstName?.trim().length > 0 && lastName?.trim().length > 0 && email?.trim().length > 0
+  const { firstName, lastName } = props.modelValue
+  return firstName?.trim().length > 0 && lastName?.trim().length > 0
 })
 
 function handleSubmit() {
