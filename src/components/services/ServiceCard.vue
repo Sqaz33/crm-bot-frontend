@@ -24,13 +24,13 @@
         <div class="font-semibold whitespace-nowrap">{{ service.price.toLocaleString('ru-RU') }} ₽</div>
         
         <button
-          class="w-9 h-9 rounded-lg inline-flex items-center justify-center text-lg leading-none border-2 transition-colors flex-shrink-0 cursor-pointer"
+          class="w-9 h-9 rounded-lg inline-flex items-center justify-center text-3xl border-2 transition-colors flex-shrink-0 cursor-pointer"
           :class="isSelected ? 'bg-brand-500 text-white border-brand-500' : 'bg-white text-brand-500 border-brand-500 hover:brightness-95'"
           @click="$emit('toggle', service)"
           type="button"
         >
-          <span v-if="isSelected">×</span>
-          <span v-else>＋</span>
+          <span v-if="isSelected" class="-mt-1">×</span>
+          <span v-else class="-mt-1">＋</span>
         </button>
       </div>
     </div>
