@@ -72,7 +72,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import api from '../api'
+import api from '../../api'
 
 const props = defineProps({
   modelValue: {

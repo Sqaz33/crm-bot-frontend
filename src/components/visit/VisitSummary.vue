@@ -52,8 +52,8 @@
 
 <script setup>
 import { computed } from 'vue'
-import DateTimeCard from './DateTimeCard.vue'
-import { parseDateComponents } from '../utils/dateFormatters'
+import DateTimeCard from '../daytime/DateTimeCard.vue'
+import { parseDateComponents } from '../../utils/dateFormatters'
 
 const props = defineProps({
   summary: {

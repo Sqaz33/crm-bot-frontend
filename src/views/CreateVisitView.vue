@@ -63,10 +63,10 @@ import { humanizeDateTime } from '../utils/dateFormatters'
 import { logger } from '../utils/logger'
 
 // Components
-import VisitSummary from '../components/VisitSummary.vue'
-import VisitForm from '../components/VisitForm.vue'
-import LegalAgreement from '../components/LegalAgreement.vue'
-import SuccessModal from '../components/SuccessModal.vue'
+import VisitSummary from '../components/visit/VisitSummary.vue'
+import VisitForm from '../components/forms/VisitForm.vue'
+import LegalAgreement from '../components/forms/LegalAgreement.vue'
+import SuccessModal from '../components/Modal/SuccessModal.vue'
 
 const router = useRouter()
 
