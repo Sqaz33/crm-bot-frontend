@@ -11,20 +11,8 @@
       <div
         v-if="modelValue"
         class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
-        @click.self="$emit('update:modelValue', false)"
       >
         <div class="relative w-full max-w-[600px] bg-white rounded-3xl overflow-hidden">
-          <!-- Close Button -->
-          <button
-            type="button"
-            class="absolute top-4 right-4 w-5 h-5 bg-transparent border-0 cursor-pointer z-10"
-            @click="$emit('update:modelValue', false)"
-          >
-            <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15.5 5L5.5 15M5.5 5L15.5 15" stroke="#454558" stroke-width="1.5286" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-
           <!-- Content -->
           <div class="flex flex-col py-12 px-8">
             <!-- Salon Card -->
@@ -63,8 +51,14 @@
               </button>
               <button
                 type="button"
-                @click="$emit('ask-admin')"
-                class="h-14 bg-neutral-200 text-neutral-800 border-0 rounded-2.5 font-medium text-lg flex items-center justify-center hover:bg-neutral-300 transition-colors"
+                :disabled="!adminLink"
+                @click="askAdmin"
+                :class="[
+                  'h-14 border-0 rounded-2.5 font-medium text-lg flex items-center justify-center transition-colors',
+                  adminLink 
+                    ? 'bg-neutral-200 text-neutral-800 cursor-pointer hover:bg-neutral-300' 
+                    : 'bg-neutral-100 text-neutral-300 cursor-not-allowed'
+                ]"
               >
                 Задать вопрос администратору
               </button>
@@ -77,7 +71,10 @@
 </template>
 
 <script setup>
-defineProps({
+import { ref, watch } from 'vue'
+import api from '../api'
+
+const props = defineProps({
   modelValue: {
     type: Boolean,
     default: false
@@ -97,5 +94,30 @@ defineProps({
   }
 })
 
-defineEmits(['update:modelValue', 'go-to-records', 'ask-admin'])
+const adminLink = ref(null)
+
+const fetchSalonInfo = async () => {
+  try {
+    const response = await api.get('/salon/info')
+    if (response.data?.admin_link) {
+      adminLink.value = response.data.admin_link
+    }
+  } catch (error) {
+    console.error('Failed to fetch salon info:', error)
+  }
+}
+
+const askAdmin = () => {
+  if (adminLink.value) {
+    window.open(adminLink.value, '_blank')
+  }
+}
+
+watch(() => props.modelValue, (newVal) => {
+  if (newVal) {
+    fetchSalonInfo()
+  }
+})
+
+defineEmits(['update:modelValue', 'go-to-records'])
 </script>
