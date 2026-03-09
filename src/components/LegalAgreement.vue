@@ -5,7 +5,7 @@
       :id="checkboxId"
       :checked="modelValue"
       @change="$emit('update:modelValue', $event.target.checked)"
-      class="w-6 h-6 rounded border-neutral-300 text-brand-500 focus:ring-brand-500"
+      class="w-6 h-6 rounded-lg border-neutral-300 accent-brand-500 focus:ring-brand-500"
     />
     <label :for="checkboxId" class="text-sm text-gray-700">
       <span>Я принимаю </span>
