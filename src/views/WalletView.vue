@@ -1,65 +1,19 @@
 <template>
-  <!-- <div class="base"> -->
-        
-    
-        
-    <main class="form-container">
-      <img src="../assets/SpiderWallet.svg" alt="Пустой кошелёк" class="nothing-icon" />
-      <p1>Увы, в кошельке пусто</p1>
-      <p2>У Вас пока нет ни одной карты лояльности</p2>        
-    </main>
-         
-  <!-- </div> -->
+  <section v-if="!hasCards" class="flex min-h-[70vh] w-full items-center justify-center px-4 py-10 sm:px-6">
+    <div class="flex max-w-[320px] flex-col items-center text-center">
+      <img
+        :src="SpiderWalletIcon"
+        alt="Пустой кошелёк"
+        class="mb-6 h-28 w-28 sm:h-32 sm:w-32"
+      />
+      <p class="text-[18px] font-medium leading-6 text-neutral-800">У Вас пока нет ни одной карты лояльности</p>
+    </div>
+  </section>
 </template>
 
-
-
-
 <script setup>
-  import { ref } from 'vue'
-  const hasCards = ref(false)
+import { ref } from 'vue'
+import SpiderWalletIcon from '../assets/SpiderWallet.svg'
 
-
-
+const hasCards = ref(false)
 </script>
-<style>
-.form-container {
-  flex: 1;
-  display: flex;
-  padding:0;
-	position: absolute;
-  top: 250px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  align-items: center;
-  flex-direction: column;
-  overflow-y: auto;
-  
-  
-}
-
-.form-container p1 {
-  font-size: clamp(0.75rem,4vw,1.2rem);
-}
-
-.form-container p2{
-  font-size: clamp(0.6rem,3vw,1rem);
-}
-
-
-.nothing-icon{
-  width:clamp(6.7rem, 10vw, 8rem);
-  height: clamp(6.7rem, 10vw, 8rem);
-  margin-bottom: 1rem;
-}
-
-@media (max-width: 430px) {
-  .form-container {
-    padding: initial;
-          
-  }
-}
-
-
-</style>

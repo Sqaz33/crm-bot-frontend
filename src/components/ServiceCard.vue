@@ -11,14 +11,14 @@
     <div class="flex items-center justify-between gap-3">
       
       <button
-  class="px-4 py-2 text-sm font-medium border rounded-full border-brand-500 text-brand-500
-         hover:bg-violet-50
-         transition-colors duration-200"
-  @click="$emit('show-details', service)"
-  type="button"
->
-  Подробнее
-</button>
+        class="px-4 py-2 text-sm font-medium border rounded-full border-brand-500 text-brand-500
+              hover:bg-violet-50
+              transition-colors duration-200"
+        @click="$emit('show-details', service)"
+        type="button"
+        >
+          Подробнее
+        </button>
 
       <div class="flex items-center gap-3 ml-auto">
          
@@ -33,6 +33,7 @@
               ? 'bg-brand-500 text-white border-brand-500'
               : 'bg-white text-brand-500 border-brand-500 hover:brightness-95'
           ]"
+
           @click="$emit('toggle', service)"
         >
           <svg
@@ -64,6 +65,4 @@ defineProps({
 })
 
 defineEmits(['toggle', 'show-details'])
-
 </script>
-
