@@ -2,7 +2,16 @@
   <header class="main-header">
     <div class="salon-info">
       <div class="salon-logo" @click="router.push('/')">
-        <img src="@/assets/logo.svg" alt="На главную" />
+        <img 
+          v-if="salon.logo_url"
+          :src="salon.logo_url" 
+          alt="На главную" 
+        />
+        <img 
+          v-else 
+          src="@/assets/logo.svg" 
+          alt="На главную" 
+        />
       </div>
       <div class="salon-text">
         <div class="salon-name">{{ salon.name }}</div>
@@ -49,6 +58,7 @@ const salon = ref({
   name: "",
   description: "",
   address_url: "",
+  logo_url: "",
 });
 
 onMounted(async () => {
@@ -58,12 +68,14 @@ onMounted(async () => {
       name: data.name,
       description: data.description || "",
       address_url: data.address_url || "",
+      logo_url: data.logo_url || "",
     };
   } catch {
     salon.value = {
       name: "Ошибка загрузки",
       description: "",
       address_url: "",
+      logo_url: "",
     };
   }
 });
