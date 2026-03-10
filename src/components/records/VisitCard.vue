@@ -56,7 +56,7 @@ import { formatDateShort, formatTimeOnly } from '../../utils/dateFormatters'
 import crossIcon from '../../assets/crossIcon.svg'
 import checkmarkIcon from '../../assets/checkmarkIcon.svg'
 import clockIcon from '../../assets/clockIcon.svg'
-import Avatar from './Avatar.vue'
+import Avatar from '../staff/Avatar.vue'
 
 const props = defineProps({
   visit: {
