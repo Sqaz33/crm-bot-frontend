@@ -57,7 +57,7 @@ onMounted(async () => {
     const { data: info } = await api.get('/salon/info/')
     company.value = {
       name: info.name,
-      rating: info.rating || '5', 
+      rating: info.rating || '', 
       description: info.description || '',
       about_company: info.about_company || '',
       photo: info.photo || ''
