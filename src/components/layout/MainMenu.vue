@@ -2,7 +2,7 @@
   <header class="main-header">
     <div class="salon-info">
       <div class="salon-logo" @click="router.push('/')">
-        <img src="@/assets/logo.svg" alt="На главную" />
+        <img :src="salon.logo_url || defaultLogo" alt="На главную" />
       </div>
       <div class="salon-text">
         <div class="salon-name">{{ salon.name }}</div>
@@ -35,20 +35,24 @@ import api from "../../api";
 import { logger } from "../../utils/logger";
 
 import Modal from "../ui/Modal.vue";
-import ShareModal from "../Modal/ShareModal.vue"
+import ShareModal from "../Modal/ShareModal.vue";
 
 import AddressIcon from "@/assets/map.svg";
 import RecordsIcon from "@/assets/appointment.svg";
 import ShareIcon from "@/assets/share.svg";
 import ProfileIcon from "@/assets/prof.svg";
+import defaultLogoSrc from "@/assets/logo.svg"; 
 
 const router = useRouter();
 const showShareModal = ref(false);
+const defaultLogo = defaultLogoSrc;
+
 
 const salon = ref({
   name: "",
   description: "",
-  address_url: "",
+  address_url: "",   
+  logo_url: "",      
 });
 
 onMounted(async () => {
@@ -57,13 +61,15 @@ onMounted(async () => {
     salon.value = {
       name: data.name,
       description: data.description || "",
-      address_url: data.address_url || "",
+      address_url: data.address_url || "", 
+      logo_url: data.logo_url || "",       
     };
   } catch {
     salon.value = {
       name: "Ошибка загрузки",
       description: "",
       address_url: "",
+      logo_url: "",
     };
   }
 });
@@ -92,6 +98,7 @@ function navigate(item) {
 </script>
 
 <style scoped>
+
 .main-header {
   display: flex;
   flex-direction: column;
@@ -100,7 +107,6 @@ function navigate(item) {
   box-shadow: 3px 0px 9px 0px rgba(0, 0, 0, 0.04);
 }
 
-/* Верхняя часть: логотип + название + тип заведения */
 .salon-info {
   display: flex;
   align-items: center;
@@ -117,9 +123,10 @@ function navigate(item) {
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background-color: #666FE8;
+  /* background-color: #666FE8; */
   padding: 6px;
   display: block;
+  object-fit: contain;
 }
 
 .salon-text {
@@ -151,7 +158,6 @@ function navigate(item) {
   text-overflow: ellipsis;
 }
 
-/* Навигация: 4 иконки */
 .menu {
   display: flex;
   align-items: center;
@@ -192,7 +198,6 @@ function navigate(item) {
   white-space: nowrap;
 }
 
-/* Десктоп */
 @media (min-width: 768px) {
   .main-header {
     flex-direction: row;
