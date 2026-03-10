@@ -1,7 +1,7 @@
 <template>
-  <main 
+  <div 
     v-if="!hasCards"
-    class="absolute top-[250px] inset-0 flex flex-col items-center p-0 overflow-y-auto"
+    class="flex h-full flex-col items-center justify-center text-center"
   >
     <img 
       src="../assets/SpiderWallet.svg" 
@@ -9,10 +9,10 @@
       class="w-[clamp(6.7rem,10vw,8rem)] h-[clamp(6.7rem,10vw,8rem)] mb-4" 
     />
 
-    <p class="text-[clamp(0.6rem,3vw,1rem)] text-gray-500">
+    <p class="text-[clamp(0.6rem,3vw,1rem)] text-gray-500 font-semibold">
       У Вас пока нет ни одной карты лояльности
     </p>
-  </main>
+  </div>
 </template>
 
 <script setup>
