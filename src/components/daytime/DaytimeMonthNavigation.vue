@@ -2,7 +2,7 @@
   <div class="flex items-center justify-between border-b border-neutral-200 bg-neutral-100 px-4 py-3 md:px-6 md:py-4">
     <button
       type="button"
-      class="rounded-md px-2 py-1 text-sm font-semibold text-brand-500 transition hover:text-[#3D5DD4]"
+      class="rounded-md px-2 py-1 text-sm font-semibold text-brand-500 transition hover:text-brand-400"
       @click="$emit('prev')"
     >
       {{ prevMonthName }}
@@ -14,7 +14,7 @@
 
     <button
       type="button"
-      class="rounded-md px-2 py-1 text-sm font-semibold text-brand-500 transition hover:text-[#3D5DD4]"
+      class="rounded-md px-2 py-1 text-sm font-semibold text-brand-500 transition hover:text-brand-400"
       @click="$emit('next')"
     >
       {{ nextMonthName }}

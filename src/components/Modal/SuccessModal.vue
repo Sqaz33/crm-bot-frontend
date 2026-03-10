@@ -11,25 +11,13 @@
       <div
         v-if="modelValue"
         class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
-        @click.self="$emit('update:modelValue', false)"
       >
         <div class="relative w-full max-w-[600px] bg-white rounded-3xl overflow-hidden">
-          <!-- Close Button -->
-          <button
-            type="button"
-            class="absolute top-4 right-4 w-5 h-5 bg-transparent border-0 cursor-pointer z-10"
-            @click="$emit('update:modelValue', false)"
-          >
-            <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15.5 5L5.5 15M5.5 5L15.5 15" stroke="#454558" stroke-width="1.5286" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-
           <!-- Content -->
           <div class="flex flex-col py-12 px-8">
             <!-- Salon Card -->
             <div class="flex items-center gap-4 py-4 px-2 mb-8">
-              <div class="w-16 h-16 rounded-full bg-[#666FE8] flex items-center justify-center flex-shrink-0">
+            <div class="w-16 h-16 rounded-full bg-brand-500 flex items-center justify-center flex-shrink-0">
                 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="32" cy="32" r="32" fill="#666FE8"/>
                   <path d="M28.858 39.71V36.4899C28.858 35.6709 29.5608 35.0054 30.4316 34.9999H33.6215C34.4965 34.9999 35.2058 35.667 35.2058 36.4899V39.72C35.2056 40.4154 35.7958 40.9837 36.5349 41H38.6615C40.7815 41 42.5 39.3837 42.5 37.3899V28.2297C42.4887 27.4454 42.0971 26.7088 41.4367 26.2297L34.1638 20.7196C32.8897 19.7601 31.0784 19.7601 29.8043 20.7196L22.5633 26.2397C21.9004 26.7169 21.5082 27.4546 21.5 28.2397V37.3899C21.5 39.3837 23.2185 41 25.3385 41H27.4651C28.2226 41 28.8367 40.4224 28.8367 39.71" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
@@ -57,14 +45,20 @@
               <button
                 type="button"
                 @click="$emit('go-to-records')"
-                class="h-14 bg-[#666FE8] text-white border-0 rounded-2.5 font-medium text-lg flex items-center justify-center mb-4 hover:bg-[#5558D6] transition-colors"
+                class="h-14 bg-brand-500 text-white border-0 rounded-2.5 font-medium text-lg flex items-center justify-center mb-4 hover:bg-brand-400 transition-colors"
               >
                 Мои записи
               </button>
               <button
                 type="button"
-                @click="$emit('ask-admin')"
-                class="h-14 bg-[#EBEEF6] text-[#454558] border-0 rounded-2.5 font-medium text-lg flex items-center justify-center hover:bg-[#E0E4EE] transition-colors"
+                :disabled="!adminLink"
+                @click="askAdmin"
+                :class="[
+                  'h-14 border-0 rounded-2.5 font-medium text-lg flex items-center justify-center transition-colors',
+                  adminLink 
+                    ? 'bg-neutral-200 text-neutral-800 cursor-pointer hover:bg-neutral-300' 
+                    : 'bg-neutral-100 text-neutral-300 cursor-not-allowed'
+                ]"
               >
                 Задать вопрос администратору
               </button>
@@ -77,7 +71,10 @@
 </template>
 
 <script setup>
-defineProps({
+import { ref, watch } from 'vue'
+import api from '../../api'
+
+const props = defineProps({
   modelValue: {
     type: Boolean,
     default: false
@@ -97,5 +94,30 @@ defineProps({
   }
 })
 
-defineEmits(['update:modelValue', 'go-to-records', 'ask-admin'])
+const adminLink = ref(null)
+
+const fetchSalonInfo = async () => {
+  try {
+    const response = await api.get('/salon/info')
+    if (response.data?.admin_link) {
+      adminLink.value = response.data.admin_link
+    }
+  } catch (error) {
+    console.error('Failed to fetch salon info:', error)
+  }
+}
+
+const askAdmin = () => {
+  if (adminLink.value) {
+    window.open(adminLink.value, '_blank')
+  }
+}
+
+watch(() => props.modelValue, (newVal) => {
+  if (newVal) {
+    fetchSalonInfo()
+  }
+})
+
+defineEmits(['update:modelValue', 'go-to-records'])
 </script>

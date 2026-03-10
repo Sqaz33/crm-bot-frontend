@@ -6,7 +6,7 @@
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
         placeholder="Ваши пожелания"
-        class="w-full min-h-[96px] rounded-2.5 border border-gray-300 p-3 text-sm resize-y focus:outline-none focus:border-[#666FE8] focus:ring-1 focus:ring-[#666FE8]"
+        class="w-full min-h-[96px] rounded-2.5 border border-neutral-300 p-3 text-sm resize-y focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
       ></textarea>
     </div>
   </div>

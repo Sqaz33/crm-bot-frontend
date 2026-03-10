@@ -57,7 +57,7 @@ const dayClasses = day => {
     'mx-auto aspect-square w-full max-w-12 rounded-xl border text-sm font-semibold transition md:max-w-[48px]',
     selected && 'border-brand-500 bg-brand-500 text-white',
     day.isToday && !selected && 'border-2 border-brand-500 bg-white text-brand-500',
-    !selected && !day.isToday && day.isCurrentMonth && !isPastCurrentMonth && 'border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-200',
+    !selected && !day.isToday && day.isCurrentMonth && !isPastCurrentMonth && 'border-neutral-200 bg-white text-neutral-900 hover:bg-brand-100',
     (!day.isCurrentMonth || isPastCurrentMonth) && 'cursor-not-allowed border-transparent bg-neutral-200 text-neutral-300'
   ]
 }

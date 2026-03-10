@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#F6F9FC] p-3">
+  <div class="min-h-screen bg-neutral-100 p-3">
     <!-- Visit Summary Card -->
     <VisitSummary 
       :summary="summary" 
@@ -7,7 +7,7 @@
     />
 
     <!-- Your Wishes Label -->
-    <div class="text-xs font-bold text-gray-500 mb-2 tracking-wide mt-3">ВАШИ ПОЖЕЛАНИЯ</div>
+    <div class="text-xs font-bold text-neutral-500 mb-2 tracking-wide mt-3">ВАШИ ПОЖЕЛАНИЯ</div>
     
     <!-- Visit Form (comment textarea) -->
     <VisitForm
@@ -33,7 +33,7 @@
     </div>
 
     <!-- Error Message -->
-    <div v-if="errorMsg" class="text-center text-[#C00] mt-2.5 text-sm">
+    <div v-if="errorMsg" class="text-center text-red-700 mt-2.5 text-sm">
       {{ errorMsg }}
     </div>
 
@@ -63,10 +63,10 @@ import { humanizeDateTime } from '../utils/dateFormatters'
 import { logger } from '../utils/logger'
 
 // Components
-import VisitSummary from '../components/VisitSummary.vue'
-import VisitForm from '../components/VisitForm.vue'
-import LegalAgreement from '../components/LegalAgreement.vue'
-import SuccessModal from '../components/SuccessModal.vue'
+import VisitSummary from '../components/visit/VisitSummary.vue'
+import VisitForm from '../components/forms/VisitForm.vue'
+import LegalAgreement from '../components/forms/LegalAgreement.vue'
+import SuccessModal from '../components/Modal/SuccessModal.vue'
 
 const router = useRouter()
 

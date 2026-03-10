@@ -5,17 +5,17 @@
       <!-- Left: Day, Month, Weekday -->
       <div class="flex items-center gap-2">
         <!-- Day in rounded square -->
-        <div class="bg-[#d4dde9] rounded-lg px-3 py-1.5 text-xl font-bold text-gray-900">
+        <div class="bg-neutral-300 rounded-lg px-3 py-1.5 text-xl font-bold text-neutral-900">
           {{ day || '—' }}
         </div>
         <!-- Month and Weekday outside square (same line, comma separated) -->
-        <div class="text-lg font-semibold text-gray-900 leading-tight">
+        <div class="text-lg font-semibold text-neutral-900 leading-tight">
           {{ month }}, {{ weekday }}
         </div>
       </div>
       
       <!-- Right: Time -->
-      <div class="text-lg font-bold text-gray-900">
+      <div class="text-lg font-bold text-neutral-900">
         {{ time || '—' }}
       </div>
     </div>

@@ -30,13 +30,12 @@
         v-model="modelValue.email"
         label="E-mail"
         type="email"
-        :required="true"
       />
 
       <button
         type="submit"
         :disabled="!isFormValid || saving"
-        class="w-full h-14 bg-brand-500 text-white rounded-xl text-xl font-medium mt-4 transition-all hover:bg-brand-400 disabled:bg-brand-300 disabled:cursor-not-allowed"
+        class="b_button"
       >
         {{ saving ? 'Сохранение…' : 'Сохранить' }}
       </button>
@@ -72,8 +71,8 @@ const emit = defineEmits(['update:modelValue', 'save'])
 const showToast = ref(false)
 
 const isFormValid = computed(() => {
-  const { firstName, lastName, email } = props.modelValue
-  return firstName?.trim().length > 0 && lastName?.trim().length > 0 && email?.trim().length > 0
+  const { firstName, lastName } = props.modelValue
+  return firstName?.trim().length > 0 && lastName?.trim().length > 0
 })
 
 function handleSubmit() {
