@@ -1,6 +1,6 @@
 <template>
   <div class="bg-neutral-100 min-h-screen flex justify-center">
-    <SpinnerLoad v-if="loading" class="text-brand-500 w-32 h-32 mt-12" />
+    <SpinnerLoad v-if="loading" class="text-brand-500" />
     <div v-else-if="error" class="text-red-700">{{ error }}</div>
 
     <div v-else class="w-full max-w-lg mx-auto pt-4 pb-6 px-4 sm:px-safe overflow-x-clip">

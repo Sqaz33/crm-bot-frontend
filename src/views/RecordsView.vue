@@ -12,7 +12,7 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-12">
-        <SpinnerLoad class="text-neutral-600" />
+        <SpinnerLoad class="text-brand-500" />
       </div>
 
       <!-- Content -->

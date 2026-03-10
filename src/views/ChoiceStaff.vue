@@ -11,7 +11,7 @@
     <!-- Список сотрудников -->
     <div class="flex flex-col gap-2 md:gap-3 mt-4 md:mt-7 w-full">
       <div v-if="loading" class="flex justify-center py-10">
-        <SpinnerLoad class="text-brand-300" />
+        <SpinnerLoad class="text-brand-500" />
       </div>
 
       <!-- Пустой список: только когда API вернул 0 сотрудников -->
