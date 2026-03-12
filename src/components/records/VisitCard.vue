@@ -76,13 +76,13 @@ const statusClasses = {
     icon: clockIcon,
     bgClass: 'bg-yellow-400',
     title: "Ожидание",
-    subtitle: "Ждем вас в салоне"
+    subtitle: props.isOld ? "Запись просрочена" : "Ждем вас в салоне"
   },
   confirmed: {
     icon: checkmarkIcon,
     bgClass: 'bg-blue-400',
     title: "Подтверждено",
-    subtitle: "Ждем вас в салон"
+    subtitle: props.isOld ? "Запись просрочена" : "Ждем вас в салоне"
   },
   missing: {
     icon: crossIcon,
