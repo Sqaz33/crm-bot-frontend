@@ -7,15 +7,11 @@
            hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]"
     @click="$emit('select')"
   >
-    <div class="mr-3 md:mr-4" @click.stop="$emit('avatar-click')">
-
-      <Avatar
-        :name="staff.name"
-        :photo="staff.photo"
-        class="cursor-pointer"
-      />
-
-    </div>
+    <Avatar
+      :name="staff.name"
+      :photo="staff.photo"
+      class="mr-3 md:mr-4"
+    />
 
     <div class="flex flex-col gap-1 flex-1 min-w-0">
       <div class="font-medium text-neutral-800 truncate text-sm leading-[18px] md:text-xl md:leading-6">
@@ -39,5 +35,5 @@ const props = defineProps({
   },
 })
 
-defineEmits(['select', 'avatar-click'])
+defineEmits(['select'])
 </script>

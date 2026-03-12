@@ -28,7 +28,6 @@
           :key="staff.id"
           :staff="staff"
           @select="onSelect(staff.id)"
-          @avatar-click="goStaff(staff)"
         />
       </template>
     </div>
@@ -107,12 +106,6 @@ async function loadStaff(specId) {
   } finally {
     loading.value = false
   }
-}
-
-function goStaff(idOrStaff) {
-  const id = typeof idOrStaff === "object" ? getStaffId(idOrStaff) : idOrStaff;
-  if (!id) return;
-  router.push({ name: "staff", params: { id } });
 }
 
 function onSelect(idOrStaff) {
