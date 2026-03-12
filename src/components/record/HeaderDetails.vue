@@ -1,5 +1,5 @@
 <template>
-  <div class="p-[5px] px-3 pb-2.5 mb-3 overflow-hidden max-w-full md:p-2.5">
+  <div v-if="service?.id" class="p-[5px] px-3 pb-2.5 mb-3 overflow-hidden max-w-full md:p-2.5">
     <div class="grid grid-cols-[1fr_auto] gap-x-2.5 gap-y-[1px] items-center border-t border-b border-gray-200 py-2.5">
       <div class="text-neutral-800 font-semibold text-sm truncate col-span-2">
         {{ service.name }}

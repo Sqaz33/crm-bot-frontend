@@ -207,9 +207,9 @@ async function loadVisit() {
     const { data } = await api.get(`/visits/${visitId}`)
     visit.value = data
     staff.value = await getStaff(data.staff_id)
-    service.value = await getService(data.service_id)
+    service.value = data.service_id ? await getService(data.service_id) : null
     staff_id = data.staff_id
-    service_id = data.service_id
+    service_id = data.service_id || null
     willCome.value = data.status === 'confirmed'
     delete_.value = data.status === 'missing'
     logger.info('loadVisit: данные загружены', { 

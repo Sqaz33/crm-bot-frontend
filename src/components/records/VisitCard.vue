@@ -44,7 +44,7 @@
         </div>
       </div>
       <div class="font-semibold text-lg text-neutral-800 whitespace-nowrap flex-shrink-0">
-        {{ visit.service?.price != null ? `${visit.service.price} ₽` : "Неизвестно" }}
+        {{ visit.service?.price != null ? `${visit.service.price} ₽` : "-" }}
       </div>
     </div>
   </div>
