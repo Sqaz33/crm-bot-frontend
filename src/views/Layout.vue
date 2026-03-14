@@ -1,14 +1,20 @@
 <template>
   <div class="min-h-dvh bg-neutral-100 text-neutral-800">
-    <Header />
+    <div id="header-wrapper" class="relative z-50">
+      <Header />
+    </div>
     <div class="flex w-full">
       <SidebarMenu
         v-if="showSidebar"
+        v-model:expanded="sidebarExpanded"
         :items="currentMenuItems"
         :show-back-button="showBackButton"
       />
       <!-- Основной контент -->
-      <div class="flex w-full flex-1 overflow-hidden px-4">
+      <div
+        class="flex flex-1 overflow-hidden px-4"
+        :class="showSidebar ? 'ml-[51px]' : ''"
+      >
         <main class="min-w-0 flex-1">
           <router-view />
         </main>
@@ -19,7 +25,7 @@
 
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import SidebarMenu from '../components/layout/Sidebar.vue'
@@ -34,6 +40,13 @@ import calendarIcon from '../assets/calendarIcon.svg'
 import servicesIcon from '../assets/servicesIcon.svg'
 
 const route = useRoute()
+
+const mdQuery = window.matchMedia('(min-width: 768px)')
+const sidebarExpanded = ref(mdQuery.matches)
+const onMediaChange = (e) => { sidebarExpanded.value = e.matches }
+
+onMounted(() => mdQuery.addEventListener('change', onMediaChange))
+onUnmounted(() => mdQuery.removeEventListener('change', onMediaChange))
 
 // Порядок пунктов соответствует макету Figma
 const mainMenuItems = [

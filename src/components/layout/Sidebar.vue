@@ -1,40 +1,88 @@
 <template>
   <aside
-    class="sidebar"
-    :class="{ expanded: isExpanded, empty: items.length === 0 }"
+    class="fixed top-0 left-0 h-dvh bg-white shadow-[3px_3px_6px_0_#F6F5F6] z-40
+           flex flex-col justify-between overflow-hidden transition-[width] duration-[250ms] ease-in-out"
+    :class="[
+      isExpanded ? 'w-[200px]' : 'w-[51px]',
+      items.length === 0 ? 'hidden' : '',
+    ]"
+    :style="{ paddingTop: headerOffset + 'px' }"
   >
     <template v-if="items.length > 0">
       <!-- Пункты навигации -->
-      <div class="sidebar-group">
+      <div class="flex flex-col">
         <RouterLink
           v-for="item in processedItems"
           :key="item.path"
           :to="item.accessible ? item.path : ''"
-          class="sidebar-item"
+          class="relative h-[50px] flex items-center gap-3 px-[15px] no-underline whitespace-nowrap
+                 transition-colors duration-200 cursor-pointer border-none bg-transparent
+                 hover:bg-brand-200"
           :class="{
-            active: route.path === item.path,
-            disabled: !item.accessible,
+            'bg-brand-200 before:content-[\'\'] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[3px] before:bg-brand-500 before:rounded-r-sm': route.path === item.path,
+            'opacity-40 cursor-not-allowed pointer-events-none': !item.accessible,
           }"
           @click="!item.accessible && $event.preventDefault()"
         >
-          <img :src="item.icon" :alt="item.label" class="sidebar-icon" />
-          <span class="sidebar-label">{{ item.label }}</span>
+          <img :src="item.icon" :alt="item.label" class="w-5 h-5 object-contain shrink-0" />
+          <span
+            class="font-[Geometria,sans-serif] text-sm font-normal text-neutral-800
+                   overflow-hidden transition-[opacity,width] duration-200"
+            :class="isExpanded ? 'opacity-100 w-auto' : 'opacity-0 w-0'"
+          >
+            {{ item.label }}
+          </span>
         </RouterLink>
-        <button v-if="showBackButton" class="back-btn" @click="goBack">
-          <span class="back-btn__circle">
+
+        <button
+          v-if="showBackButton"
+          class="group flex items-center border-none bg-transparent cursor-pointer whitespace-nowrap h-[50px]"
+          :class="isExpanded
+            ? 'w-auto px-[15px] justify-start gap-3 hover:bg-brand-200'
+            : 'w-[51px] justify-center gap-0'"
+          @click="goBack"
+        >
+          <span
+            class="rounded-full flex items-center justify-center shrink-0 transition-colors duration-200"
+            :class="isExpanded
+              ? 'w-5 h-5 bg-transparent text-brand-500'
+              : 'w-8 h-8 bg-brand-500 text-white group-hover:opacity-80'"
+          >
             <svg width="10" height="16" viewBox="0 0 10 16" fill="none">
               <path d="M8.5 1L1.5 8L8.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </span>
-          <span class="sidebar-label back-btn__label">Назад</span>
+          <span
+            class="font-[Geometria,sans-serif] text-sm font-normal text-brand-500 font-medium
+                   overflow-hidden transition-[opacity,width] duration-200"
+            :class="isExpanded ? 'opacity-100 w-auto' : 'opacity-0 w-0'"
+          >
+            Назад
+          </span>
         </button>
       </div>
 
       <!-- Кнопка раскрытия/скрытия подписей -->
-      <div class="sidebar-group">
-        <button class="sidebar-item toggle-btn" @click="toggle">
-          <img :src="expandIcon" alt="Раскрыть меню" class="sidebar-icon toggle-icon" />
-          <span class="sidebar-label">Свернуть</span>
+      <div class="flex flex-col">
+        <button
+          class="relative h-[50px] flex items-center gap-3 px-[15px] whitespace-nowrap
+                 transition-colors duration-200 cursor-pointer border-none bg-transparent
+                 hover:bg-brand-200"
+          @click="toggle"
+        >
+          <img
+            :src="expandIcon"
+            alt="Раскрыть меню"
+            class="w-5 h-5 object-contain shrink-0 transition-transform duration-[250ms]"
+            :class="isExpanded ? 'rotate-180' : ''"
+          />
+          <span
+            class="font-[Geometria,sans-serif] text-sm font-normal text-neutral-800
+                   overflow-hidden transition-[opacity,width] duration-200"
+            :class="isExpanded ? 'opacity-100 w-auto' : 'opacity-0 w-0'"
+          >
+            Свернуть
+          </span>
         </button>
       </div>
     </template>
@@ -55,15 +103,35 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  expanded: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+const emit = defineEmits(['update:expanded']);
 
 const route = useRoute();
 const router = useRouter();
-const isExpanded = ref(window.matchMedia('(min-width: 768px)').matches);
 const expandIcon = expandIconSrc;
 
+const isExpanded = computed(() => props.expanded);
+const headerOffset = ref(0);
+let rafId = null;
+
+function updateHeaderOffset() {
+  if (rafId) return;
+  rafId = requestAnimationFrame(() => {
+    const header = document.getElementById('header-wrapper');
+    if (header) {
+      headerOffset.value = Math.max(0, header.getBoundingClientRect().bottom);
+    }
+    rafId = null;
+  });
+}
+
 function toggle() {
-  isExpanded.value = !isExpanded.value;
+  emit('update:expanded', !props.expanded);
 }
 
 function goBack() {
@@ -91,11 +159,17 @@ const handleCustomStorageChange = () => {
 };
 
 onMounted(() => {
+  updateHeaderOffset();
+  window.addEventListener("scroll", updateHeaderOffset, { passive: true });
+  window.addEventListener("resize", updateHeaderOffset, { passive: true });
   window.addEventListener("storage", handleStorageChange);
   window.addEventListener("local-storage-changed", handleCustomStorageChange);
 });
 
 onUnmounted(() => {
+  if (rafId) cancelAnimationFrame(rafId);
+  window.removeEventListener("scroll", updateHeaderOffset);
+  window.removeEventListener("resize", updateHeaderOffset);
   window.removeEventListener("storage", handleStorageChange);
   window.removeEventListener("local-storage-changed", handleCustomStorageChange);
 });
@@ -135,163 +209,4 @@ const processedItems = computed(() => {
 });
 </script>
 
-<style scoped>
-.sidebar {
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 51px;
-  min-height: calc(100dvh - 64px);
-  align-self: stretch;
-  background: white;
-  box-shadow: 3px 3px 6px 0px #F6F5F6;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  flex-shrink: 0;
-  overflow: hidden;
-  transition: width 0.25s ease;
-}
 
-.sidebar.expanded {
-  width: 200px;
-}
-
-.sidebar.empty {
-  display: none;
-}
-
-.sidebar-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar-item {
-  position: relative;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 15px;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: background-color 0.2s ease;
-  cursor: pointer;
-  border: none;
-  background: none;
-}
-
-.sidebar-item:hover {
-  background-color: #CDD3F8;
-}
-
-.sidebar-item.active {
-  background: #CDD3F8;
-}
-
-.sidebar-item.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: #666FE8;
-  border-radius: 0 2px 2px 0;
-}
-
-.sidebar-item.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.sidebar-icon {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-.sidebar-label {
-  font-family: 'Geometria', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  color: #454558;
-  opacity: 0;
-  width: 0;
-  overflow: hidden;
-  transition: opacity 0.2s ease, width 0.25s ease;
-}
-
-.sidebar.expanded .sidebar-label {
-  opacity: 1;
-  width: auto;
-}
-
-/* Поворот иконки при раскрытии */
-.toggle-icon {
-  transition: transform 0.25s ease;
-}
-
-.sidebar.expanded .toggle-icon {
-  transform: rotate(180deg);
-}
-
-/* Кнопка «Назад» */
-.back-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  width: 51px;
-  height: 50px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.back-btn__circle {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #666FE8;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background-color 0.2s ease;
-}
-
-.back-btn:hover .back-btn__circle {
-  background: #4f54d8;
-}
-
-.back-btn__label {
-  color: #666FE8;
-  font-weight: 500;
-}
-
-/* Десктоп (expanded): показываем текст, скрываем круг */
-.sidebar.expanded .back-btn__circle {
-  width: 20px;
-  height: 20px;
-  background: none;
-  color: #666FE8;
-}
-
-.sidebar.expanded .back-btn {
-  width: auto;
-  padding: 0 15px;
-  height: 50px;
-  justify-content: flex-start;
-  gap: 12px;
-}
-
-.sidebar.expanded .back-btn:hover {
-  background-color: #CDD3F8;
-}
-</style>

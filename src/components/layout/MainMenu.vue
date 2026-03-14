@@ -23,8 +23,8 @@
       </div>
     </div>
 
-    <nav class="flex items-center justify-between h-[60px] px-4
-                md:shrink-0 md:h-auto md:gap-6 md:justify-end md:px-4
+    <nav class="flex items-center justify-between py-1 px-4
+                md:shrink-0 md:h-auto md:gap-6 md:justify-end md:px-4 md:py-0
                 lg:gap-[150px] lg:px-[100px]">
       <div
         v-for="item in items"
