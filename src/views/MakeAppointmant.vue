@@ -34,8 +34,7 @@
           <button
             type="button"
             @click="showProfileModal = false"
-            class="w-full mt-3 h-12 rounded-xl bg-gray-100 text-neutral-800 text-base font-medium
-                   transition hover:bg-gray-200 active:scale-[0.99]"
+            class="b_button b_button--cancel mt-3"
           >
             Отмена
           </button>
