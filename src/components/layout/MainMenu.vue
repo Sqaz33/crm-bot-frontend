@@ -122,7 +122,7 @@ function navigate(item) {
 .salon-logo img {
   width: 40px;
   height: 40px;
-  border-radius: 8px;
+  border-radius: 10px;
   /* background-color: #666FE8; */
   padding: 6px;
   display: block;
@@ -214,7 +214,7 @@ function navigate(item) {
   .salon-logo img {
     width: 60px;
     height: 60px;
-    border-radius: 0;
+    border-radius: 10px;
     background-color: transparent;
     padding: 0;
   }
