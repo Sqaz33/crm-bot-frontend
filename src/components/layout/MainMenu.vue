@@ -41,10 +41,11 @@
       </div>
     </nav>
 
-    <Modal :visible="showShareModal" @close="showShareModal = false">
+    <Modal :visible="showShareModal" position="bottom" @close="showShareModal = false">
       <ShareModal
         :bot-link="salon.telegram_link"
         :bot-username="salon.telegram_username"
+        @close="showShareModal = false"
       />
     </Modal>
   </header>
