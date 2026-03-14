@@ -42,7 +42,10 @@
     </nav>
 
     <Modal :visible="showShareModal" @close="showShareModal = false">
-      <ShareModal />
+      <ShareModal
+        :bot-link="salon.telegram_link"
+        :bot-username="salon.telegram_username"
+      />
     </Modal>
   </header>
 </template>
@@ -71,17 +74,23 @@ const salon = ref({
   name: "",
   description: "",
   address_url: "",   
-  logo_url: "",      
+  logo_url: "",
+  telegram_link: "",
+  telegram_username: "",
 });
 
 onMounted(async () => {
   try {
     const { data } = await api.get("/salon/info/");
+    // TODO: убрать временный лог после тестирования
+    console.log('[MainMenu] /salon/info/ response:', JSON.stringify(data, null, 2));
     salon.value = {
       name: data.name,
       description: data.description || "",
       address_url: data.address_url || "", 
-      logo_url: data.logo_url || "",       
+      logo_url: data.logo_url || "",
+      telegram_link: data.telegram_link || "",
+      telegram_username: data.telegram_username || "",
     };
   } catch {
     salon.value = {
@@ -89,6 +98,8 @@ onMounted(async () => {
       description: "",
       address_url: "",
       logo_url: "",
+      telegram_link: "",
+      telegram_username: "",
     };
   }
 });
