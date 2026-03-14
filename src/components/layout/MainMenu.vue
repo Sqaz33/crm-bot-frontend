@@ -207,6 +207,8 @@ function navigate(item) {
   }
 
   .salon-info {
+    flex: 1;
+    min-width: 0;
     gap: 22px;
     padding: 14px 35px;
   }
@@ -220,20 +222,21 @@ function navigate(item) {
   }
 
   .salon-name {
-    font-size: 30px;
+    font-size: clamp(18px, 2.5vw, 30px);
     line-height: 36px;
   }
 
   .salon-desc {
-    font-size: 18px;
+    font-size: clamp(12px, 1.5vw, 18px);
     line-height: 24px;
   }
 
   .menu {
+    flex-shrink: 0;
     height: auto;
-    gap: 150px;
+    gap: clamp(24px, 8vw, 150px);
     justify-content: flex-end;
-    padding: 0 100px;
+    padding: 0 clamp(16px, 5vw, 100px);
   }
 
   .menu-item img {
