@@ -35,9 +35,9 @@
               : 'bg-white text-brand-500 border-brand-500 hover:brightness-95'
           ]"
 ======= -->
-  <div 
+  <div
     class="bg-white border border-neutral-200 rounded-3xl p-4 flex flex-col gap-3 transition-all"
-    :class="{ 'border-orange-500 shadow-[-3px_0_0_0_#F3A950]': isSelected }"
+    :class="{ 'border-orange-500 border-l-4 border-l-orange-500': isSelected }"
   >
     <!-- Название услуги -->
     <div class="font-semibold leading-tight text-neutral-900 overflow-hidden text-ellipsis line-clamp-2">
@@ -75,8 +75,8 @@
             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
           </svg>
 ======= -->
-          <span v-if="isSelected" class="-mt-1">×</span>
-          <span v-else class="-mt-1">＋</span>
+          <span v-if="isSelected" class="-mt-[0.425rem]">×</span>
+          <span v-else class="-mt-1.5">＋</span>
 
         </button>
 
