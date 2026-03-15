@@ -143,13 +143,11 @@ async function loadSalonInfo() {
   try {
     const { data } = await api.get('/salon/info/')
     salonInfo.name = data.name || 'Название салона'
-    salonInfo.description = data.description || 'тип заведения'
   } catch (e) {
     logger.error('CreateVisitView: ошибка загрузки салона', {
       error: e?.message || String(e)
     })
     salonInfo.name = 'Название салона'
-    salonInfo.description = 'тип заведения'
   }
 }
 

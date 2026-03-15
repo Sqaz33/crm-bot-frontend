@@ -6,7 +6,6 @@
       </div>
       <div class="salon-text">
         <div class="salon-name">{{ salon.name }}</div>
-        <div class="salon-desc">{{ salon.description }}</div>
       </div>
     </div>
 
