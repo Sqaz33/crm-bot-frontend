@@ -9,6 +9,9 @@ RUN npm ci
 
 COPY . .
 
+ENV CHOKIDAR_USEPOLLING=true
+ENV CHOKIDAR_INTERVAL=1000
+
 COPY docker/entrypoint.dev.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
