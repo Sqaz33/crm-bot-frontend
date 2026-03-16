@@ -11,10 +11,7 @@
                  md:w-[60px] md:h-[60px] md:rounded-[10px] md:bg-transparent md:p-0"
         />
       </div>
-<<<<<<< HEAD
-      <div class="salon-text">
-        <div class="salon-name">{{ salon.name }}</div>
-=======
+
       <div class="flex flex-col justify-center min-w-0">
         <div class="font-[Geometria,sans-serif] font-normal text-sm leading-5 text-neutral-800 truncate
                     md:text-[30px] md:leading-9">
@@ -24,7 +21,7 @@
                     md:text-lg md:leading-6">
           {{ salon.description }}
         </div>
->>>>>>> origin/koptev/header-and-sidebar
+
       </div>
     </div>
 
