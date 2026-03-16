@@ -67,4 +67,5 @@ deploy-dev:
         --env-file .env \
         -p 127.0.0.1:5174:80 \
         --network crm-bot  \
+        --ulimit nofile=65535:65535 \
         "$IMAGE_NAME:dev"
