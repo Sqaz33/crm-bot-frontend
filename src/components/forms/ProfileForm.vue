@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-[540px] mx-auto">
+  <div class="w-full max-w-[540px] mx-auto" @click="handleOutsideClick">
     <form @submit.prevent="handleSubmit" class="flex flex-col gap-1">
       <Input
         id="firstName"
@@ -78,6 +78,20 @@ const isFormValid = computed(() => {
 function handleSubmit() {
   if (isFormValid.value) {
     emit('save')
+  }
+}
+
+function handleOutsideClick(event) {
+  // Проверяем, что клик был не по кнопке submit и не по полям ввода
+  const target = event.target
+  const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA'
+  const isSubmitButton = target.type === 'submit'
+  const isLabel = target.tagName === 'LABEL'
+  
+  // Если клик был вне полей ввода и кнопки отправки, убираем фокус со всех input
+  if (!isInput && !isSubmitButton && !isLabel) {
+    const inputs = document.querySelectorAll('input')
+    inputs.forEach(input => input.blur())
   }
 }
 
