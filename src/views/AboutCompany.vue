@@ -8,15 +8,15 @@
       </div>
 
       <div v-else-if="!company || !company.name" class="flex-1 flex flex-col items-center justify-center">
-        <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-brand-500 rounded-full w-[80px] h-[80px] flex justify-center items-center overflow-hidden shadow-sm">
-          <img :src="defaultLogo" alt="Логотип" class="w-10 h-10" />
+        <div class="absolute -top-10 left-1/2 -translate-x-1/2 rounded-full w-[80px] h-[80px] overflow-hidden shadow-sm">
+          <img :src="defaultLogo" alt="Логотип" class="w-full h-full object-cover object-center block" />
         </div>
         <p class="text-neutral-500 font-medium text-[15px] mt-2">Информация не заполнена</p>
       </div>
 
       <div v-else class="flex flex-col text-center flex-1">
-        <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-brand-500 rounded-full w-[80px] h-[80px] flex justify-center items-center overflow-hidden shadow-sm">
-           <img :src="company.photo || defaultLogo" alt="Логотип компании" class="w-10 h-10 object-cover" />
+        <div class="absolute -top-10 left-1/2 -translate-x-1/2 rounded-full w-[80px] h-[80px] overflow-hidden shadow-sm">
+          <img :src="company.photo || defaultLogo" alt="Логотип компании" class="w-full h-full object-cover object-center block" />
         </div>
 
         <h1 class="text-[18px] font-semibold text-neutral-800 mb-2">{{ company.name }}</h1>
@@ -28,7 +28,15 @@
 
         <hr class="border-t border-neutral-200 mb-4" />
 
+        
+        
+
         <div class="text-left">
+          <h2 class="text-[#8E96A8] uppercase tracking-wider font-semibold text-[12px] mb-2">Адрес:</h2>
+          <div class="text-[#1C1C1E] text-[15px] leading-relaxed">
+            {{ company.address }}
+          </div>
+          <br>
           <h2 class="text-[#8E96A8] uppercase tracking-wider font-semibold text-[12px] mb-2">О компании</h2>
           <p class="text-[#1C1C1E] text-[15px] leading-relaxed">
             {{ company.about_company }}
@@ -60,7 +68,8 @@ onMounted(async () => {
       rating: info.rating || '', 
       description: info.description || '',
       about_company: info.about_company || '',
-      photo: info.photo || ''
+      address: info.address || '',
+      photo: info.logo_url || ''
     }
   } catch (e) {
     logger.error('AboutCompany: ошибка загрузки данных', { error: e?.message || String(e) });

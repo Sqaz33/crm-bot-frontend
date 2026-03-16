@@ -8,6 +8,7 @@
     />
 
     <HeaderDetails 
+      v-if="service?.id"
       :service="service"
     />
   </div>
@@ -34,7 +35,7 @@ const props = defineProps({
   },
   service: {
     type: Object,
-    required: true
+    default: null
   }
 })
 

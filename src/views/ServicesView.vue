@@ -61,13 +61,14 @@
         </section>
       </div>
 
-      <div class="flex justify-center">
+      <div class="flex justify-center mt-6">
         <button
-          class="b_button mt-2"
+          class="flex items-center justify-between w-[90%] max-w-[400px] px-6 py-3 rounded-[0.625rem] text-base font-semibold text-white bg-brand-500 hover:bg-[#4f54d8] disabled:bg-brand-300 disabled:cursor-not-allowed transition-colors duration-200"
           :disabled="!selectedServiceIds.length"
           @click="confirm"
         >
-          Продолжить запись<span v-if="selectedServiceIds.length"> — {{ totalPrice.toLocaleString('ru-RU') }} ₽</span>
+          <span>Продолжить запись</span>
+          <span class="ml-auto bg-white bg-opacity-30 px-3 py-1 rounded-xl text-neutral-800 text-sm">{{ totalPrice.toLocaleString('ru-RU') }} ₽</span>
         </button>
       </div>
     </div>

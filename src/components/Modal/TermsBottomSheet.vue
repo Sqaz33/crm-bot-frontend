@@ -13,11 +13,11 @@
         Политика конфиденциальности:
         <a
           class="underline break-all"
-          href="https://zabot.org/politics"
+          href="https://zabot.org/policy"
           target="_blank"
           rel="noopener noreferrer"
         >
-          https://zabot.org/politics
+          https://zabot.org/policy
         </a>
       </li>
 
@@ -25,11 +25,11 @@
         Пользовательское соглашение:
         <a
           class="underline break-all"
-          href="https://zabot.org/oferta"
+          href="https://zabot.org/offer"
           target="_blank"
           rel="noopener noreferrer"
         >
-          https://zabot.org/oferta
+          https://zabot.org/offer
         </a>
       </li>
     </ul>

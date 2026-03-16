@@ -1,54 +1,65 @@
 <template>
   <div class="min-h-screen bg-neutral-100 p-3">
-    <!-- Visit Summary Card -->
-    <VisitSummary 
-      :summary="summary" 
-      :client-name="clientNameFromAPI" 
-    />
 
-    <!-- Your Wishes Label -->
-    <div class="text-xs font-bold text-neutral-500 mb-2 tracking-wide mt-3">ВАШИ ПОЖЕЛАНИЯ</div>
-    
-    <!-- Visit Form (comment textarea) -->
-    <VisitForm
-      v-model="comment"
-    />
-
-    <!-- Legal Agreement -->
-    <LegalAgreement
-      v-model="accepted"
-      @show-terms="showTerms = true"
-    />
-
-    <!-- Submit Button -->
-    <div class="flex justify-center mt-4">
-      <button
-        type="button"
-        class="r_button"
-        :disabled="submitting || !accepted"
-        @click="submitVisit"
-      >
-        {{ submitting ? 'Запись...' : 'Записаться' }}
-      </button>
+    <!-- SPINNER -->
+    <div v-if="loading" class="flex justify-center items-center  text-brand-500">
+      <Spinner />
     </div>
 
-    <!-- Error Message -->
-    <div v-if="errorMsg" class="text-center text-red-700 mt-2.5 text-sm">
-      {{ errorMsg }}
-    </div>
+    <!-- PAGE CONTENT -->
+    <template v-else>
 
-    <!-- License Agreement Modal -->
-    <LicenseAgreementSheet v-model="showTerms" />
+      <!-- Visit Summary Card -->
+      <VisitSummary 
+        :summary="summary" 
+        :client-name="clientNameFromAPI" 
+      />
 
-    <!-- Success Modal -->
-    <SuccessModal
-      v-model="showSuccessModal"
-      :client-name="clientNameFromAPI"
-      :summary="summary"
-      :salon-info="salonInfo"
-      @go-to-records="goToRecords"
-      @ask-admin="askAdmin"
-    />
+      <!-- Your Wishes Label -->
+      <div class="text-xs font-bold text-neutral-500 mb-2 tracking-wide mt-3">
+        ВАШИ ПОЖЕЛАНИЯ
+      </div>
+      
+      <!-- Visit Form -->
+      <VisitForm v-model="comment" />
+
+      <!-- Legal Agreement -->
+      <LegalAgreement
+        v-model="accepted"
+        @show-terms="showTerms = true"
+      />
+
+      <!-- Submit Button -->
+      <div class="flex justify-center mt-4">
+        <button
+          type="button"
+          class="r_button"
+          :disabled="submitting || !accepted"
+          @click="submitVisit"
+        >
+          {{ submitting ? 'Запись...' : 'Записаться' }}
+        </button>
+      </div>
+
+      <!-- Error -->
+      <div v-if="errorMsg" class="text-center text-red-700 mt-2.5 text-sm">
+        {{ errorMsg }}
+      </div>
+
+      <!-- Terms -->
+      <LicenseAgreementSheet v-model="showTerms" />
+
+      <!-- Success -->
+      <SuccessModal
+        v-model="showSuccessModal"
+        :client-name="clientNameFromAPI"
+        :summary="summary"
+        :salon-info="salonInfo"
+        @go-to-records="goToRecords"
+        @ask-admin="askAdmin"
+      />
+
+    </template>
   </div>
 </template>
 
@@ -62,15 +73,18 @@ import { getRawVisit, readVisit, clearVisit } from '../utils/visitStorage'
 import { humanizeDateTime } from '../utils/dateFormatters'
 import { logger } from '../utils/logger'
 
-// Components
 import VisitSummary from '../components/visit/VisitSummary.vue'
 import VisitForm from '../components/forms/VisitForm.vue'
 import LegalAgreement from '../components/forms/LegalAgreement.vue'
 import SuccessModal from '../components/Modal/SuccessModal.vue'
+import Spinner from '../components/ui/SpinnerLoad.vue'
 
 const router = useRouter()
 
-// Reactive state
+// loading state
+const loading = ref(true)
+
+// data
 const summary = reactive({ 
   rawDate: '',
   date: '', 
@@ -78,28 +92,32 @@ const summary = reactive({
   staff: null, 
   service: null 
 })
+
 const salonInfo = reactive({ 
   name: 'Загрузка...', 
   description: '' 
 })
+
 const adminContactUrl = getEnv('ADMIN_CONTACT_URL', '#')
 const clientData = ref(null)
+
 const comment = ref('')
 const submitting = ref(false)
 const errorMsg = ref('')
 const showSuccessModal = ref(false)
 const accepted = ref(false)
 const showTerms = ref(false)
+
 const staffId = ref(null)
 const serviceId = ref(null)
 const visitDate = ref(null)
 
-// Computed
+// computed
 const clientNameFromAPI = computed(() => {
   return clientData.value?.name || '—'
 })
 
-// Load client data
+// load client
 async function loadClientData() {
   try {
     const { data } = await api.get('/auth/me/', {
@@ -108,43 +126,47 @@ async function loadClientData() {
     })
     clientData.value = data
   } catch (error) {
-    logger.error('CreateVisitView: ошибка загрузки данных клиента', { error: error?.message || String(error) })
+    logger.error('CreateVisitView: ошибка загрузки клиента', {
+      error: error?.message || String(error)
+    })
     clientData.value = null
   }
 }
 
-// Clear visit data
+// clear visit
 function clearVisitData() {
   clearVisit()
 }
 
-// Load salon info
+// salon info
 async function loadSalonInfo() {
   try {
     const { data } = await api.get('/salon/info/')
     salonInfo.name = data.name || 'Название салона'
-    salonInfo.description = data.description || 'тип заведения'
   } catch (e) {
-    logger.error('CreateVisitView: ошибка загрузки информации о салоне', { error: e?.message || String(e) })
+    logger.error('CreateVisitView: ошибка загрузки салона', {
+      error: e?.message || String(e)
+    })
     salonInfo.name = 'Название салона'
-    salonInfo.description = 'тип заведения'
   }
 }
 
-// Initialize on mount
+// init
 onMounted(async () => {
-  // Load client data
-  await loadClientData()
-  
-  // Load salon info
-  await loadSalonInfo()
-  
+
   try {
+
+    await loadClientData()
+    await loadSalonInfo()
+
     const raw = getRawVisit()
+
     if (!raw) {
       errorMsg.value = 'Не выбраны данные для записи.'
+      loading.value = false
       return
     }
+
     const v = readVisit()
 
     comment.value = v.comment || ''
@@ -152,45 +174,60 @@ onMounted(async () => {
     serviceId.value = v.services_id ?? null
     visitDate.value = v.visit_time?.start_time ?? null
 
+    // staff
     if (staffId.value) {
-      try { 
+      try {
         const { data: staff } = await api.get(`/staff/${staffId.value}`)
+
         summary.staff = {
           id: staff.id,
           name: staff.name,
           photo: staff.photo,
           specialization: staff.specializations?.[0] || 'мастер'
         }
-      } catch { 
-        summary.staff = null 
+      } catch {
+        summary.staff = null
       }
     }
-    
+
+    // service
     if (serviceId.value) {
-      try { 
-        const { data: list } = await api.get('/services/', { params: { service_id: serviceId.value } })
-        summary.service = list?.[0] ?? null 
-      } catch { 
-        summary.service = null 
+      try {
+        const { data: list } = await api.get('/services/', {
+          params: { service_id: serviceId.value }
+        })
+
+        summary.service = list?.[0] ?? null
+      } catch {
+        summary.service = null
       }
     }
 
     const h = humanizeDateTime(visitDate.value)
+
     summary.rawDate = visitDate.value
     summary.date = h.d
     summary.time = h.t
+
   } catch (e) {
-    logger.error('CreateVisitView: ошибка инициализации формы', { error: e?.message || String(e) })
+    logger.error('CreateVisitView: ошибка инициализации', {
+      error: e?.message || String(e)
+    })
+
     errorMsg.value = 'Ошибка инициализации формы.'
   }
+
+  loading.value = false
 })
 
-// Submit visit
+// submit
 async function submitVisit() {
+
   if (!staffId.value || !serviceId.value || !visitDate.value) {
     errorMsg.value = 'Заполните сотрудника, услугу и дату.'
     return
   }
+
   if (!accepted.value) {
     errorMsg.value = 'Необходимо принять условия использования.'
     return
@@ -200,6 +237,7 @@ async function submitVisit() {
   errorMsg.value = ''
 
   try {
+
     const payload = {
       staff_id: staffId.value,
       service_id: serviceId.value,
@@ -208,31 +246,40 @@ async function submitVisit() {
     }
 
     logger.info('CreateVisitView: создание записи', { payload })
+
     const res = await api.post('/visits/', payload)
-    logger.info('CreateVisitView: запись успешно создана', { status: res.status, data: res.data })
+
+    logger.info('CreateVisitView: запись создана', {
+      status: res.status,
+      data: res.data
+    })
 
     showSuccessModal.value = true
     clearVisitData()
+
   } catch (e) {
-    logger.error('CreateVisitView: ошибка создания записи', { error: e?.message || String(e) })
+
+    logger.error('CreateVisitView: ошибка создания записи', {
+      error: e?.message || String(e)
+    })
+
     const s = e?.response?.status
     const detail = e?.response?.data?.detail
+
     errorMsg.value =
       s === 401 ? 'Сессия истекла. Перезайдите.' :
       s === 403 ? 'Недостаточно прав.' :
-      s === 422 ? (Array.isArray(detail) ? JSON.stringify(detail) : (detail || 'Некорректные данные (422).')) :
-      'Не удалось создать запись. Попробуйте ещё раз.'
+      s === 422 ? (Array.isArray(detail)
+        ? JSON.stringify(detail)
+        : (detail || 'Некорректные данные (422).')) :
+      'Не удалось создать запись.'
+
   } finally {
     submitting.value = false
   }
 }
 
-// Navigation
-function closeSuccessModal() {
-  showSuccessModal.value = false
-  router.push({ name: 'home' })
-}
-
+// navigation
 function goToRecords() {
   showSuccessModal.value = false
   router.push('/records')
