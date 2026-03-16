@@ -150,11 +150,20 @@ export default {
       })
     }
   },
-  mounted() {
-    this.selectedDate = null
-    this.selectedTime = null
+  async mounted() {
+    // Восстанавливаем данные визита из localStorage
+    const savedVisit = readVisit()
+    
+    if (savedVisit.visit_time?.start_time) {
+      // Восстанавливаем выбранное время, если есть
+      this.selectedTime = savedVisit.visit_time.start_time
+      // Извлекаем дату из времени
+      this.selectedDate = savedVisit.visit_time.start_time.split('T')[0]
+      // Загружаем слоты для восстановленной даты
+      await this.loadFreeSlots()
+    }
+    
     this.loadingDay = false
-    this.freeSlots = []
   },
   methods: {
     cap,

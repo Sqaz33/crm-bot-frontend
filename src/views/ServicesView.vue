@@ -92,7 +92,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
 import { readVisit, writeVisit } from '../utils/visitStorage'
@@ -118,6 +118,13 @@ const visit = ref({
 })
 
 onMounted(async () => {
+  // Восстанавливаем выбранные услуги из localStorage
+  const savedVisit = readVisit()
+  if (Array.isArray(savedVisit.services_id) && savedVisit.services_id.length > 0) {
+    selectedServiceIds.value = [...savedVisit.services_id]
+    visit.value.services_id = [...savedVisit.services_id]
+  }
+
   try {
     const { data: types } = await api.get('/services/types/')
     serviceTypes.value = types || []
@@ -127,15 +134,25 @@ onMounted(async () => {
 
     const { data: all } = await api.get('/services/', { params })
     services.value = all || []
-
-    if (Array.isArray(visit.value.services_id)) {
-      selectedServiceIds.value = [...visit.value.services_id]
-    }
   } catch (error) {
     logger.error('ServicesView: error loading services', { error: error?.message || String(error) })
   } finally {
     loading.value = false
   }
+})
+
+// Слушаем изменения localStorage для синхронизации между вкладками
+window.addEventListener('local-storage-changed', handleStorageChange)
+
+function handleStorageChange() {
+  const savedVisit = readVisit()
+  if (Array.isArray(savedVisit.services_id)) {
+    selectedServiceIds.value = [...savedVisit.services_id]
+  }
+}
+
+onUnmounted(() => {
+  window.removeEventListener('local-storage-changed', handleStorageChange)
 })
 
 const servicesByType = computed(() => {

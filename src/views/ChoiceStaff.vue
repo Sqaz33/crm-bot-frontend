@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
 import { readVisit, writeVisit } from '../utils/visitStorage'
@@ -53,6 +53,21 @@ const activeTab = ref('all')
 const staffList = ref([])
 const loading = ref(true)
 const selectedId = ref(null)
+
+// Обработчик изменения localStorage (например, при возврате со страницы DateTime)
+function handleStorageChange() {
+  const savedVisit = readVisit()
+  if (savedVisit?.staff_id) {
+    selectedId.value = savedVisit.staff_id
+  }
+}
+
+// Слушаем изменения localStorage для синхронизации состояния
+window.addEventListener('local-storage-changed', handleStorageChange)
+
+onUnmounted(() => {
+  window.removeEventListener('local-storage-changed', handleStorageChange)
+})
 
 async function loadSpecializations() {
   try {
