@@ -77,7 +77,7 @@ const salon = ref({
   name: "",
   description: "",
   address_url: "",   
-  logo_url: "",
+  map_url: "",
   telegram_link: "",
   telegram_username: "",
 });
@@ -90,7 +90,7 @@ onMounted(async () => {
     salon.value = {
       name: data.name,
       description: data.description || "",
-      address_url: data.address_url || "", 
+      map_url: data.map_url || "",       
       logo_url: data.logo_url || "",
       telegram_link: data.telegram_link || "",
       telegram_username: data.telegram_username || "",
@@ -116,11 +116,11 @@ const items = [
 
 function navigate(item) {
   if (item.label === "Адрес") {
-    if (salon.value.address_url) {
-      const win = window.open(salon.value.address_url, "_blank");
+    if (salon.value.map_url) {              
+      const win = window.open(salon.value.map_url, "_blank");
       if (win) win.opener = null;
     } else {
-      logger.warn('MainMenu: ссылка на адрес недоступна');
+      logger.warn('MainMenu: ссылка на карту недоступна');
     }
   } else if (item.label === "Поделиться") {
     showShareModal.value = true;
