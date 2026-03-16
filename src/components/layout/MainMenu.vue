@@ -1,28 +1,57 @@
 <template>
-  <header class="main-header">
-    <div class="salon-info">
-      <div class="salon-logo" @click="router.push('/')">
-        <img :src="salon.logo_url || defaultLogo" alt="На главную" />
+  <header class="flex flex-col w-full bg-white shadow-[3px_0_9px_0_rgba(0,0,0,0.04)]
+                  md:flex-row md:items-center md:justify-between md:h-20">
+    <div class="flex items-center gap-3 px-4 py-3
+                md:flex-1 md:min-w-0 md:gap-[22px] md:px-[35px] md:py-3.5">
+      <div class="shrink-0 cursor-pointer" @click="router.push('/')">
+        <img
+          :src="salon.logo_url || defaultLogo"
+          alt="На главную"
+          class="w-10 h-10 rounded-[10px] p-1.5 block object-contain
+                 md:w-[60px] md:h-[60px] md:rounded-[10px] md:bg-transparent md:p-0"
+        />
       </div>
+<<<<<<< HEAD
       <div class="salon-text">
         <div class="salon-name">{{ salon.name }}</div>
+=======
+      <div class="flex flex-col justify-center min-w-0">
+        <div class="font-[Geometria,sans-serif] font-normal text-sm leading-5 text-neutral-800 truncate
+                    md:text-[30px] md:leading-9">
+          {{ salon.name }}
+        </div>
+        <div class="font-[Geometria,sans-serif] font-normal text-[10px] leading-3 text-neutral-800 truncate
+                    md:text-lg md:leading-6">
+          {{ salon.description }}
+        </div>
+>>>>>>> origin/koptev/header-and-sidebar
       </div>
     </div>
 
-    <nav class="menu">
+    <nav class="flex items-center justify-between py-1 px-4
+                md:shrink-0 md:h-auto md:gap-6 md:justify-end md:px-4 md:py-0
+                lg:gap-[150px] lg:px-[100px]">
       <div
         v-for="item in items"
         :key="item.label"
-        class="menu-item"
+        class="flex flex-col items-center justify-center w-[65px] h-14 gap-1
+               cursor-pointer transition-opacity hover:opacity-70"
         @click="navigate(item)"
       >
-        <img :src="item.icon" alt="" />
-        <span>{{ item.label }}</span>
+        <img :src="item.icon" alt="" class="w-8 h-8 shrink-0 md:w-10 md:h-10" />
+        <span class="font-[Geometria,sans-serif] font-normal text-sm leading-5 text-center text-neutral-800 whitespace-nowrap
+                     md:text-lg md:leading-6">
+          {{ item.label }}
+        </span>
       </div>
     </nav>
 
-    <Modal :visible="showShareModal" @close="showShareModal = false">
-      <ShareModal />
+    <Modal :visible="showShareModal" position="bottom" @close="showShareModal = false">
+      <ShareModal
+        :bot-link="salon.telegram_link"
+        :bot-username="salon.telegram_username"
+        @close="showShareModal = false"
+      />
     </Modal>
   </header>
 </template>
@@ -51,17 +80,23 @@ const salon = ref({
   name: "",
   description: "",
   address_url: "",   
-  logo_url: "",      
+  logo_url: "",
+  telegram_link: "",
+  telegram_username: "",
 });
 
 onMounted(async () => {
   try {
     const { data } = await api.get("/salon/info/");
+    // TODO: убрать временный лог после тестирования
+    console.log('[MainMenu] /salon/info/ response:', JSON.stringify(data, null, 2));
     salon.value = {
       name: data.name,
       description: data.description || "",
       address_url: data.address_url || "", 
-      logo_url: data.logo_url || "",       
+      logo_url: data.logo_url || "",
+      telegram_link: data.telegram_link || "",
+      telegram_username: data.telegram_username || "",
     };
   } catch {
     salon.value = {
@@ -69,6 +104,8 @@ onMounted(async () => {
       description: "",
       address_url: "",
       logo_url: "",
+      telegram_link: "",
+      telegram_username: "",
     };
   }
 });
@@ -96,153 +133,3 @@ function navigate(item) {
 }
 </script>
 
-<style scoped>
-
-.main-header {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  background: #FFFFFF;
-  box-shadow: 3px 0px 9px 0px rgba(0, 0, 0, 0.04);
-}
-
-.salon-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-}
-
-.salon-logo {
-  flex-shrink: 0;
-  cursor: pointer;
-}
-
-.salon-logo img {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  /* background-color: #666FE8; */
-  padding: 6px;
-  display: block;
-  object-fit: contain;
-}
-
-.salon-text {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0;
-}
-
-.salon-name {
-  font-family: 'Geometria', sans-serif;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  color: #454558;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.salon-desc {
-  font-family: 'Geometria', sans-serif;
-  font-weight: 400;
-  font-size: 10px;
-  line-height: 12px;
-  color: #454558;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.menu {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-  padding: 0 16px;
-}
-
-.menu-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 65px;
-  height: 56px;
-  gap: 4px;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.menu-item:hover {
-  opacity: 0.7;
-}
-
-.menu-item img {
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
-}
-
-.menu-item span {
-  font-family: 'Geometria', sans-serif;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  text-align: center;
-  color: #454558;
-  white-space: nowrap;
-}
-
-@media (min-width: 768px) {
-  .main-header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    height: 80px;
-  }
-
-  .salon-info {
-    gap: 22px;
-    padding: 14px 35px;
-  }
-
-  .salon-logo img {
-    width: 60px;
-    height: 60px;
-    border-radius: 0;
-    background-color: transparent;
-    padding: 0;
-  }
-
-  .salon-name {
-    font-size: 30px;
-    line-height: 36px;
-  }
-
-  .salon-desc {
-    font-size: 18px;
-    line-height: 24px;
-  }
-
-  .menu {
-    height: auto;
-    gap: 150px;
-    justify-content: flex-end;
-    padding: 0 100px;
-  }
-
-  .menu-item img {
-    width: 40px;
-    height: 40px;
-  }
-
-  .menu-item span {
-    font-size: 18px;
-    line-height: 24px;
-  }
-}
-</style>
