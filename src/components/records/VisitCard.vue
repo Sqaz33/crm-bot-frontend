@@ -1,22 +1,17 @@
 <template>
   <div
-    :class="[
-      'bg-white rounded-xl shadow-card transition-all duration-200',
-      hasPrice
-        ? 'p-3 md:p-4 cursor-pointer hover:shadow-md hover:-translate-y-0.5'
-        : 'p-3 md:p-4 cursor-default'
-    ]"
+    class="bg-white rounded-xl shadow-card p-3 md:p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
     @click="goToVisit"
   >
     <div class="flex items-start gap-3 mb-2.5 md:mb-3">
-      <Avatar :name="visit.staff.name" size="sm" class="md:size-normal" />
+      <Avatar :name="safeStaffName" size="sm" class="md:size-normal" />
 
       <div class="flex-1 min-w-0">
         <div class="font-semibold text-neutral-800 text-sm md:text-base leading-tight mb-0.5">
-          {{ visit.staff.name }}
+          {{ safeStaffName }}
         </div>
         <div class="text-neutral-600 text-xs md:text-sm leading-tight">
-          {{ visit.staff.specializations.join(", ") }}
+          {{ safeSpecializations }}
         </div>
       </div>
     </div>
@@ -52,9 +47,8 @@
         </div>
       </div>
 
-      <!-- Цена -->
       <div class="font-medium text-neutral-800 text-sm md:text-base whitespace-nowrap flex-shrink-0 leading-tight">
-        {{ hasPrice ? `${visit.service.price} ₽` : "-" }}
+        {{ safePrice }}
       </div>
     </div>
   </div>
@@ -82,8 +76,18 @@ const props = defineProps({
 
 const router = useRouter()
 
-const hasPrice = computed(() => {
-  return props.visit?.service?.price !== null && props.visit?.service?.price !== undefined
+const safeStaffName = computed(() => {
+  return props.visit?.staff?.name ?? '-'
+})
+
+const safeSpecializations = computed(() => {
+  const specs = props.visit?.staff?.specializations
+  return Array.isArray(specs) && specs.length ? specs.join(', ') : '-'
+})
+
+const safePrice = computed(() => {
+  const price = props.visit?.service?.price
+  return price != null ? `${price} ₽` : '-'
 })
 
 const statusMap = computed(() => ({
@@ -115,7 +119,7 @@ const statusMap = computed(() => ({
 
 const statusInfo = computed(() => {
   return (
-    statusMap.value[props.visit.status] || {
+    statusMap.value[props.visit?.status] || {
       icon: clockIcon,
       bgClass: 'bg-neutral-300',
       title: 'Статус неизвестен',
@@ -125,8 +129,6 @@ const statusInfo = computed(() => {
 })
 
 function goToVisit() {
-  if (!hasPrice.value) return
-
   router.push({
     name: 'record',
     params: { id: props.visit.id },
