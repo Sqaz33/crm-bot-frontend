@@ -44,7 +44,7 @@
         </div>
       </div>
       <div class="font-semibold text-lg text-neutral-800 whitespace-nowrap flex-shrink-0">
-        {{ visit.service?.price != null ? `${visit.service.price} ₽` : "Неизвестно" }}
+        {{ visit.service?.price != null ? `${visit.service.price} ₽` : "-" }}
       </div>
     </div>
   </div>
@@ -76,13 +76,13 @@ const statusClasses = {
     icon: clockIcon,
     bgClass: 'bg-yellow-400',
     title: "Ожидание",
-    subtitle: "Ждем вас в салоне"
+    subtitle: props.isOld ? "Запись просрочена" : "Ждем вас в салоне"
   },
   confirmed: {
     icon: checkmarkIcon,
     bgClass: 'bg-blue-400',
     title: "Подтверждено",
-    subtitle: "Ждем вас в салон"
+    subtitle: props.isOld ? "Запись просрочена" : "Ждем вас в салоне"
   },
   missing: {
     icon: crossIcon,
