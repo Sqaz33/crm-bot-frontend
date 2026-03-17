@@ -10,10 +10,11 @@
     <div class="header-content">
       <div class="logo-area">
         <img
-          :src="logo"
+          :src="salon.logoUrl || defaultLogo"
           alt="На главную"
           class="logo-btn"
           @click="$router.push('/')"
+          @error="(e) => e.target.src = defaultLogo"
         />
       </div>
 
@@ -25,12 +26,18 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import HomeMenu from './MainMenu.vue'
-import logo from '../../assets/logo.svg'
+import defaultLogo from '../../assets/logo.svg'
+import { useSalonStore } from '../../stores/salon'
 
 const route = useRoute()
+const salon = useSalonStore()
+
+onMounted(() => {
+  salon.fetch()
+})
 
 const isHome = computed(() => route.name === 'home')
 const title = computed(() => route.meta.title || route.name || 'Страница')
