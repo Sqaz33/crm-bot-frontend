@@ -67,6 +67,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import api from '../api'
 import { useRouter } from 'vue-router'
+import { useSalonStore } from '../stores/salon'
 import LicenseAgreementSheet from '../components/Modal/TermsBottomSheet.vue'
 import { getEnv } from '../config'
 import { getRawVisit, readVisit, clearVisit } from '../utils/visitStorage'
@@ -80,6 +81,7 @@ import SuccessModal from '../components/Modal/SuccessModal.vue'
 import Spinner from '../components/ui/SpinnerLoad.vue'
 
 const router = useRouter()
+const salonStore = useSalonStore()
 
 // loading state
 const loading = ref(true)
@@ -140,17 +142,9 @@ function clearVisitData() {
 
 // salon info
 async function loadSalonInfo() {
-  try {
-    const { data } = await api.get('/salon/info/')
-    salonInfo.name = data.name || 'Название салона'
-    salonInfo.description = data.description || 'тип заведения'
-  } catch (e) {
-    logger.error('CreateVisitView: ошибка загрузки салона', {
-      error: e?.message || String(e)
-    })
-    salonInfo.name = 'Название салона'
-    salonInfo.description = 'тип заведения'
-  }
+  await salonStore.fetch()
+  salonInfo.name = salonStore.name || 'Название салона'
+  salonInfo.description = salonStore.description || 'тип заведения'
 }
 
 // init

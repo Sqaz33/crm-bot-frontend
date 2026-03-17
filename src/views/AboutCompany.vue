@@ -50,29 +50,32 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import api from '@/api'
+import { useSalonStore } from '@/stores/salon'
 import { logger } from '@/utils/logger'
 // Исправленный путь: добавили папку ui
 import SpinnerLoad from '@/components/ui/SpinnerLoad.vue' 
 import defaultLogo from '@/assets/logo.svg'
 import reviewIcon from '@/assets/reviewIcon.svg'
 
+const salon = useSalonStore()
 const company = ref(null)
 const loading = ref(true)
 
 onMounted(async () => {
   try {
-    const { data: info } = await api.get('/salon/info/')
-    company.value = {
-      name: info.name,
-      rating: info.rating || '', 
-      description: info.description || '',
-      about_company: info.about_company || '',
-      address: info.address || '',
-      photo: info.logo_url || ''
+    await salon.fetch()
+    if (salon.loaded && !salon.error) {
+      company.value = {
+        name: salon.name,
+        rating: salon.rating,
+        description: salon.description,
+        about_company: salon.aboutCompany,
+        address: salon.address,
+        photo: salon.logoUrl
+      }
     }
   } catch (e) {
-    logger.error('AboutCompany: ошибка загрузки данных', { error: e?.message || String(e) });
+    logger.error('AboutCompany: ошибка загрузки данных', { error: e?.message || String(e) })
   } finally {
     loading.value = false
   }
