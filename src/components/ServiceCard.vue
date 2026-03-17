@@ -27,31 +27,37 @@
         </div>
 
         <button
-          class="w-9 h-9 rounded-lg border-2 flex items-center justify-center transition-colors duration-300 leading-none ease-[cubic-bezier(0.4,0,0.2,1)]"
+          class="w-9 h-9 rounded-lg border-2 flex items-center justify-center
+                transition-colors duration-300 leading-none
+                ease-[cubic-bezier(0.4,0,0.2,1)]"
           :class="[
             isSelected
               ? 'bg-brand-500 text-white border-brand-500'
               : 'bg-white text-brand-500 border-brand-500'
           ]"
-
-          @click="$emit('toggle', service)"
+        @click="$emit('toggle', service)"
         >
 
-          <div
-            class="w-6 h-6 relative transform-gpu
-                   transition-transform duration-400 ease-[cubic-bezier(.4,0,.2,1)]"
-            :class="isSelected ? 'rotate-45' : 'rotate-0'"
-            style="will-change: transform;"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 16 16"
-              class="w-6 h-6 block"
-              fill="currentColor"
+          <transition name="icon" mode="out-in">
+    
+            <span
+              v-if="!isSelected"
+              key="plus"
+              class="text-xl font-semibold"
             >
-              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-            </svg>
-          </div>
+              +
+            </span>
+
+            <span
+              v-else
+              key="cross"
+              class="text-xl font-semibold"
+            >
+              ×
+            </span>
+
+          </transition>
+
         </button>
 
       </div>
