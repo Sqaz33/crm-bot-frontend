@@ -106,8 +106,8 @@ const statusMap = computed(() => ({
   missing: {
     icon: crossIcon,
     bgClass: 'bg-pink-400',
-    title: 'Не оплачено',
-    subtitle: 'Визит отменен / клиент не пришел'
+    title: 'Пропущено',
+    subtitle: 'Визит пропущен'
   },
   success: {
     icon: checkmarkIcon,
