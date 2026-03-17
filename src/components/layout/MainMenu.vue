@@ -5,10 +5,11 @@
                 md:flex-1 md:min-w-0 md:gap-[22px] md:px-[35px] md:py-3.5">
       <div class="shrink-0 cursor-pointer" @click="router.push('/')">
         <img
-          :src="salon.logo_url || defaultLogo"
+          :src="salon.logoUrl || defaultLogo"
           alt="На главную"
           class="w-10 h-10 rounded-[10px] p-1.5 block object-contain
                  md:w-[60px] md:h-[60px] md:rounded-[10px] md:bg-transparent md:p-0"
+          @error="(e) => e.target.src = defaultLogo"
         />
       </div>
 
@@ -45,8 +46,8 @@
 
     <Modal :visible="showShareModal" position="bottom" @close="showShareModal = false">
       <ShareModal
-        :bot-link="salon.telegram_link"
-        :bot-username="salon.telegram_username"
+        :bot-link="salon.telegramLink"
+        :bot-username="salon.telegramUsername"
         @close="showShareModal = false"
       />
     </Modal>
@@ -56,8 +57,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import api from "../../api";
 import { logger } from "../../utils/logger";
+import { useSalonStore } from "../../stores/salon";
 
 import Modal from "../ui/Modal.vue";
 import ShareModal from "../Modal/ShareModal.vue";
@@ -66,45 +67,14 @@ import AddressIcon from "@/assets/map.svg";
 import RecordsIcon from "@/assets/appointment.svg";
 import ShareIcon from "@/assets/share.svg";
 import ProfileIcon from "@/assets/prof.svg";
-import defaultLogoSrc from "@/assets/logo.svg"; 
+import defaultLogo from "@/assets/logo.svg";
 
 const router = useRouter();
 const showShareModal = ref(false);
-const defaultLogo = defaultLogoSrc;
+const salon = useSalonStore();
 
-
-const salon = ref({
-  name: "",
-  description: "",
-  address_url: "",   
-  map_url: "",
-  telegram_link: "",
-  telegram_username: "",
-});
-
-onMounted(async () => {
-  try {
-    const { data } = await api.get("/salon/info/");
-    // TODO: убрать временный лог после тестирования
-    console.log('[MainMenu] /salon/info/ response:', JSON.stringify(data, null, 2));
-    salon.value = {
-      name: data.name,
-      description: data.description || "",
-      map_url: data.map_url || "",       
-      logo_url: data.logo_url || "",
-      telegram_link: data.telegram_link || "",
-      telegram_username: data.telegram_username || "",
-    };
-  } catch {
-    salon.value = {
-      name: "Ошибка загрузки",
-      description: "",
-      address_url: "",
-      logo_url: "",
-      telegram_link: "",
-      telegram_username: "",
-    };
-  }
+onMounted(() => {
+  salon.fetch();
 });
 
 const items = [
@@ -116,8 +86,8 @@ const items = [
 
 function navigate(item) {
   if (item.label === "Адрес") {
-    if (salon.value.map_url) {              
-      const win = window.open(salon.value.map_url, "_blank");
+    if (salon.addressUrl) {
+      const win = window.open(salon.addressUrl, "_blank");
       if (win) win.opener = null;
     } else {
       logger.warn('MainMenu: ссылка на карту недоступна');
