@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white border border-neutral-200 rounded-2xl p-4 flex flex-col gap-3"
+    class="bg-white border border-neutral-200 rounded-2xl p-4 flex flex-col gap-3 duration-200"
     :class="isSelected ? 'border-orange-400 shadow-[-3px_0_0_0_#ffa940]' : ''"
   >
  
@@ -27,24 +27,31 @@
         </div>
 
         <button
-          class="w-9 h-9 rounded-lg border-2 flex items-center justify-center transition-all duration-300"
+          class="w-9 h-9 rounded-lg border-2 flex items-center justify-center transition-colors duration-300 leading-none ease-[cubic-bezier(0.4,0,0.2,1)]"
           :class="[
             isSelected
               ? 'bg-brand-500 text-white border-brand-500'
-              : 'bg-white text-brand-500 border-brand-500 hover:brightness-95'
+              : 'bg-white text-brand-500 border-brand-500'
           ]"
 
           @click="$emit('toggle', service)"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 16"
-            class="w-8 h-8 transition-transform duration-350"
+
+          <div
+            class="w-6 h-6 relative transform-gpu
+                   transition-transform duration-400 ease-[cubic-bezier(.4,0,.2,1)]"
             :class="isSelected ? 'rotate-45' : 'rotate-0'"
-            fill="currentColor"
+            style="will-change: transform;"
           >
-            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-          </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              class="w-6 h-6 block"
+              fill="currentColor"
+            >
+              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+            </svg>
+          </div>
         </button>
 
       </div>
