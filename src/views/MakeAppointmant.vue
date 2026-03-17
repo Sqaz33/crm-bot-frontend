@@ -58,6 +58,7 @@ import ProfileForm from '../components/forms/ProfileForm.vue'
 import servicesIcon from '../assets/servicesIcon.svg'
 import staffIcon from '../assets/staffIcon.svg'
 import calendarIcon from '../assets/calendarIcon.svg'
+import { getService, getStaff } from '../utils/staffServiceCache'
 
 const router = useRouter()
 const route = useRoute()
@@ -193,7 +194,8 @@ async function loadSummary() {
   let staffName = null
   if (staff_id) {
     try {
-      const { data: staff } = await api.get(`/staff/${staff_id}`)
+      // const { data: staff } = await api.get(`/staff/${staff_id}`)
+      const staff = await getStaff(staff_id)
       staffName = staff.name
     } catch {
       staffName = '—'
@@ -205,8 +207,10 @@ async function loadSummary() {
     try {
       const prices = await Promise.all(
         services_id.map(async (id) => {
-          const { data } = await api.get('/services/', { params: { service_id: id } })
-          return data[0]?.price || 0
+          // const { data } = await api.get('/services/', { params: { service_id: id } })
+          // return data[0]?.price || 0
+          const data = await getService(id)
+          return data?.price || 0
         })
       )
       totalPrice = prices.reduce((sum, p) => sum + p, 0)
