@@ -72,6 +72,7 @@ import { getEnv } from '../config'
 import { getRawVisit, readVisit, clearVisit } from '../utils/visitStorage'
 import { humanizeDateTime } from '../utils/dateFormatters'
 import { logger } from '../utils/logger'
+import { getService, getStaff } from '../utils/staffServiceCache'
 
 import VisitSummary from '../components/visit/VisitSummary.vue'
 import VisitForm from '../components/forms/VisitForm.vue'
@@ -177,7 +178,7 @@ onMounted(async () => {
     // staff
     if (staffId.value) {
       try {
-        const { data: staff } = await api.get(`/staff/${staffId.value}`)
+        const { data: staff } = await getStaff(staffId.value)
 
         summary.staff = {
           id: staff.id,
@@ -193,13 +194,15 @@ onMounted(async () => {
     // service
     if (serviceId.value) {
       try {
-        const { data: list } = await api.get('/services/', {
-          params: { service_id: serviceId.value }
-        })
+        // const { data: list } = await api.get('/services/', {
+        //   params: { service_id: serviceId.value }
+        // })
 
-        summary.service = list?.[0] ?? null
+        // summary.service = list?.[0] ?? null
+
+        summary.service = await getService(serviceId.value) 
       } catch {
-        summary.service = null
+        summary.service = "-"
       }
     }
 
