@@ -71,8 +71,6 @@ const title = computed(() => route.meta.title || route.name || 'Страница
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background-color: #666FE8;
-  padding: 6px;
   cursor: pointer;
   display: block;
   transition: opacity 0.2s;
