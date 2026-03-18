@@ -30,6 +30,7 @@
         v-model="modelValue.email"
         label="E-mail"
         type="email"
+        :required="true"
       />
 
       <button

@@ -68,9 +68,9 @@ const title = computed(() => route.meta.title || route.name || 'Страница
 
 /* Убран фиолетовый фон, оставлены закруглённые углы */
 .logo-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
   cursor: pointer;
   display: block;
   transition: opacity 0.2s;
