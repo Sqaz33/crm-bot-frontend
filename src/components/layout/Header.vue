@@ -9,13 +9,7 @@
   <header v-if="!isHome" class="sticky top-0 z-10 bg-white shadow-[3px_0px_9px_0px_rgba(0,0,0,0.04)] md:hidden">
     <div class="flex items-center py-3">
       <div class="w-[51px] flex items-center justify-center shrink-0">
-        <img
-          :src="salon.logoUrl || defaultLogo"
-          alt="На главную"
-          class="w-10 h-10 rounded-lg cursor-pointer block transition-opacity hover:opacity-80"
-          @click="$router.push('/')"
-          @error="(e) => e.target.src = defaultLogo"
-        />
+        <Logo />
       </div>
 
       <h1 class="font-[Geometria,sans-serif] font-medium text-2xl leading-[30px] text-center text-[#454558] m-0 flex-1 min-w-0 truncate">{{ title }}</h1>
@@ -29,7 +23,7 @@
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import HomeMenu from './MainMenu.vue'
-import defaultLogo from '../../assets/logo.svg'
+import Logo from '../ui/Logo.vue'
 import { useSalonStore } from '../../stores/salon'
 
 const route = useRoute()

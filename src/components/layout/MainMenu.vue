@@ -3,15 +3,7 @@
                   md:flex-row md:items-center md:justify-between md:h-20">
     <div class="flex items-center gap-3 px-4 py-3
                 md:flex-1 md:min-w-0 md:gap-[22px] md:px-[35px] md:py-3.5">
-      <div class="shrink-0 cursor-pointer" @click="router.push('/')">
-        <img
-          :src="salon.logoUrl || defaultLogo"
-          alt="На главную"
-          class="w-10 h-10 rounded-[10px] p-1.5 block object-contain
-                 md:w-[60px] md:h-[60px] md:rounded-[10px] md:bg-transparent md:p-0"
-          @error="(e) => e.target.src = defaultLogo"
-        />
-      </div>
+      <Logo class="shrink-0" />
 
       <div class="flex flex-col justify-center min-w-0">
         <div class="font-[Geometria,sans-serif] font-normal text-sm leading-5 text-neutral-800 truncate
@@ -62,12 +54,12 @@ import { useSalonStore } from "../../stores/salon";
 
 import Modal from "../ui/Modal.vue";
 import ShareModal from "../Modal/ShareModal.vue";
+import Logo from "../ui/Logo.vue";
 
 import AddressIcon from "@/assets/map.svg";
 import RecordsIcon from "@/assets/appointment.svg";
 import ShareIcon from "@/assets/share.svg";
 import ProfileIcon from "@/assets/prof.svg";
-import defaultLogo from "@/assets/logo.svg";
 
 const router = useRouter();
 const showShareModal = ref(false);
