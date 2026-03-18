@@ -16,11 +16,17 @@
         Оформить запись
       </button>
 
+      <!-- Модальное окно -->
       <div
         v-if="showProfileModal"
         class="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000] px-4"
+        @click.self="showProfileModal = false"
       >
-        <div class="bg-white p-6 rounded-2xl w-full max-w-[500px] shadow-[0_10px_40px_rgba(0,0,0,0.18)]">
+        <!-- Белый блок с прокруткой -->
+        <div
+          class="bg-white p-6 rounded-2xl w-full max-w-[500px] shadow-[0_10px_40px_rgba(0,0,0,0.18)] max-h-[90vh] overflow-y-auto"
+          @click.stop
+        >
           <h3 class="text-neutral-800 text-2xl font-medium text-center mb-4">
             Проверьте данные
           </h3>
@@ -53,7 +59,6 @@ import { logger } from '../utils/logger'
 
 import MenuList from '../components/ui/MenuList.vue' 
 import ProfileForm from '../components/forms/ProfileForm.vue'
-
 
 import servicesIcon from '../assets/servicesIcon.svg'
 import staffIcon from '../assets/staffIcon.svg'
@@ -132,6 +137,27 @@ const form = reactive({
 })
 
 const showProfileModal = ref(false)
+const scrollPosition = ref(0) // для сохранения скролла
+
+// Блокировка скролла body при открытой модалке (надёжный способ)
+watch(showProfileModal, (val) => {
+  if (val) {
+    // Запоминаем текущую позицию скролла
+    scrollPosition.value = window.scrollY
+    // Блокируем скролл, фиксируем body и компенсируем top
+    document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollPosition.value}px`
+    document.body.style.width = '100%'
+  } else {
+    // Возвращаем скролл
+    document.body.style.overflow = ''
+    document.body.style.position = ''
+    document.body.style.top = ''
+    document.body.style.width = ''
+    window.scrollTo(0, scrollPosition.value)
+  }
+})
 
 async function readProfile() {
   try {
@@ -194,7 +220,6 @@ async function loadSummary() {
   let staffName = null
   if (staff_id) {
     try {
-      // const { data: staff } = await api.get(`/staff/${staff_id}`)
       const staff = await getStaff(staff_id)
       staffName = staff.name
     } catch {
@@ -207,8 +232,6 @@ async function loadSummary() {
     try {
       const prices = await Promise.all(
         services_id.map(async (id) => {
-          // const { data } = await api.get('/services/', { params: { service_id: id } })
-          // return data[0]?.price || 0
           const data = await getService(id)
           return data?.price || 0
         })
