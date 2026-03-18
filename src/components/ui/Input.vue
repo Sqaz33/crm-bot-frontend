@@ -17,7 +17,7 @@
         class="w-full h-12 px-4 rounded-lg border border-neutral-200 text-neutral-800 text-base outline-none transition-colors duration-200"
         :class="[
           readonly ? 'bg-neutral-50' : 'bg-white',
-          readonly ? '' : 'focus:border-blue-500'
+          readonly ? '' : 'focus:border-brand-500 caret-brand-500'
         ]"
       />
       <img 

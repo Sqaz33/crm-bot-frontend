@@ -76,7 +76,7 @@ const currentMenuItems = computed(() => {
 // Кнопка «Назад» — только на страницах оформления записи и детали записи
 const showBackButton = computed(() => {
   const path = route.path
-  return path === '/createvisit'
+  return path === '/createvisit' || path.startsWith('/record/')
 })
 
 // Показывать ли сайдбар

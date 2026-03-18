@@ -35,7 +35,7 @@ const statusMessage = {
   "waiting": { icon: clockIcon, bg: 'bg-[#f3a950]', title: "Ожидание" },
   "confirmed": { icon: checkmarkIcon, bg: 'bg-[#6dadff]', title: "Подтверждено"},
   "canceled": { icon: crossIcon, bg: 'bg-[#DE5D93]', title: "Отменено" },
-  "missing": { icon: crossIcon, bg: 'bg-[#8096b0]', title: "Пропущена" },
+  "missing": { icon: crossIcon, bg: 'bg-[#8096b0]', title: "Пропущено" },
   "success": { icon: checkmarkIcon, bg: 'bg-[#00BB83]', title: "Оплачено" },
 }
 </script>

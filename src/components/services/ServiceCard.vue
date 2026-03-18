@@ -8,7 +8,7 @@
       {{ service.name }}
     </div>
 
-    <!-- Кнопка подробнее, цена и крестик -->
+    <!-- Нижняя строка: кнопка подробнее, цена и кнопка выбора -->
     <div class="flex items-center justify-between gap-3">
       <!-- Кнопка подробнее -->
       <button
@@ -19,7 +19,7 @@
         Подробнее
       </button>
 
-      <!-- Цена и крестик -->
+      <!-- Цена и кнопка выбора -->
       <div class="inline-flex items-center gap-3 ml-auto flex-shrink-0">
         <div class="font-semibold whitespace-nowrap">{{ service.price.toLocaleString('ru-RU') }} ₽</div>
 
@@ -27,6 +27,7 @@
           class="w-9 h-9 rounded-lg inline-flex items-center justify-center border-2 transition-colors flex-shrink-0 cursor-pointer"
           :class="isSelected ? 'bg-brand-500 text-white border-brand-500' : 'bg-white text-brand-500 border-brand-500 hover:brightness-95'"
           @click="$emit('toggle', service)"
+          type="button"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
