@@ -12,14 +12,13 @@
         <img
           :src="salon.logoUrl || defaultLogo"
           alt="На главную"
-          class="logo-btn"
+          class="logo-btn rounded-lg cursor-pointer focus:outline-none"
           @click="$router.push('/')"
           @error="(e) => e.target.src = defaultLogo"
         />
       </div>
 
       <h1 class="page-title">{{ title }}</h1>
-
       <div class="spacer" />
     </div>
   </header>
@@ -67,12 +66,11 @@ const title = computed(() => route.meta.title || route.name || 'Страница
   flex-shrink: 0;
 }
 
+/* Убран фиолетовый фон, оставлены закруглённые углы */
 .logo-btn {
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background-color: #666FE8;
-  padding: 6px;
   cursor: pointer;
   display: block;
   transition: opacity 0.2s;
