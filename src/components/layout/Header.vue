@@ -6,21 +6,21 @@
   <HomeMenu v-if="isHome" />
 
   <!-- Простой header: на внутренних страницах, только mobile -->
-  <header v-if="!isHome" class="header md:hidden">
-    <div class="header-content">
-      <div class="logo-area">
+  <header v-if="!isHome" class="sticky top-0 z-10 bg-white shadow-[3px_0px_9px_0px_rgba(0,0,0,0.04)] md:hidden">
+    <div class="flex items-center py-3">
+      <div class="w-[51px] flex items-center justify-center shrink-0">
         <img
           :src="salon.logoUrl || defaultLogo"
           alt="На главную"
-          class="logo-btn"
+          class="w-10 h-10 rounded-lg cursor-pointer block transition-opacity hover:opacity-80"
           @click="$router.push('/')"
           @error="(e) => e.target.src = defaultLogo"
         />
       </div>
 
-      <h1 class="page-title">{{ title }}</h1>
+      <h1 class="font-[Geometria,sans-serif] font-medium text-2xl leading-[30px] text-center text-[#454558] m-0 flex-1 min-w-0 truncate">{{ title }}</h1>
 
-      <div class="spacer" />
+      <div class="w-[51px] shrink-0" />
     </div>
   </header>
 </template>
@@ -42,61 +42,3 @@ onMounted(() => {
 const isHome = computed(() => route.name === 'home')
 const title = computed(() => route.meta.title || route.name || 'Страница')
 </script>
-
-<style scoped>
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: #FFFFFF;
-  box-shadow: 3px 0px 9px 0px rgba(0, 0, 0, 0.04);
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  padding: 12px 0;
-}
-
-/* Зона лого шириной 51px, чтобы центр совпадал с иконками сайдбара */
-.logo-area {
-  width: 51px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.logo-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: block;
-  transition: opacity 0.2s;
-}
-
-.logo-btn:hover {
-  opacity: 0.8;
-}
-
-.page-title {
-  font-family: 'Geometria', sans-serif;
-  font-weight: 500;
-  font-size: 24px;
-  line-height: 30px;
-  text-align: center;
-  color: #454558;
-  margin: 0;
-  flex: 1;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.spacer {
-  width: 51px;
-  flex-shrink: 0;
-}
-</style>
