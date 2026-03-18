@@ -4,7 +4,7 @@
       :firstLetter="firstLetter"
       :staff="staff"
       :visit="visit"
-      :logo-url="logoUrl"
+     
     />
 
     <HeaderDetails 
