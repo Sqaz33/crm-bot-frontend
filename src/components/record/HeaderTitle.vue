@@ -1,14 +1,7 @@
 <template>
   <div class="flex flex-col justify-between gap-3 p-2.5 px-3 max-w-full">
     <div class="flex items-center gap-2.5 min-w-0">
-      <img 
-        v-if="logoUrl"
-        :src="logoUrl" 
-        alt="Логотип" 
-        class="w-10 h-10 rounded-full object-cover flex-shrink-0"
-      />
-      <div 
-        v-else 
+      <div
         class="w-10 h-10 rounded-full bg-gradient-to-br from-[#69FFDB] to-[#69FF03] flex items-center justify-center text-white font-extrabold text-lg flex-shrink-0"
       >
         {{ firstLetter }}
@@ -36,17 +29,13 @@ const props = defineProps({
     type: String,
     required: true
   },
-  staff: { 
-    type: Object, 
-    required: true 
+  staff: {
+    type: Object,
+    required: true
   },
   visit: {
     type: Object,
     required: true
-  },
-  logoUrl: {
-    type: String,
-    default: ''
   }
 })
 </script>
