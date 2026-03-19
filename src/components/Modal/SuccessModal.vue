@@ -27,7 +27,7 @@
               </div>
               <div class="flex flex-col">
                 <div class="text-xl font-medium">{{ salonInfo.name }}</div>
-                <div class="text-base font-normal">{{ salonInfo.description }}</div>
+                <!-- <div class="text-base font-normal">{{ salonInfo.description }}</div> -->
               </div>
             </div>
 
