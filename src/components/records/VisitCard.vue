@@ -23,29 +23,7 @@
     <div class="border-t border-neutral-200 mb-2.5 md:mb-3"></div>
 
     <div class="flex justify-between items-start gap-3">
-      <div class="flex gap-2 items-start min-w-0">
-        <div
-          :class="[
-            'w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center shrink-0 p-1.5',
-            statusInfo.bgClass
-          ]"
-        >
-          <img
-            :src="statusInfo.icon"
-            :alt="statusInfo.title"
-            class="w-3.5 h-3.5 md:w-4 md:h-4"
-          />
-        </div>
-
-        <div class="flex flex-col min-w-0 leading-tight">
-          <span class="font-semibold text-neutral-800 text-sm md:text-[15px]">
-            {{ statusInfo.title }}
-          </span>
-          <div class="text-neutral-500 text-[11px] md:text-xs">
-            {{ statusInfo.subtitle }}
-          </div>
-        </div>
-      </div>
+      <VisitStatus :status="visit.status" compact size="sm" />
 
       <div class="font-medium text-neutral-800 text-sm md:text-base whitespace-nowrap flex-shrink-0 leading-tight">
         {{ safePrice }}
@@ -58,10 +36,8 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { formatDateShort, formatTimeOnly } from '../../utils/dateFormatters'
-import crossIcon from '../../assets/crossIcon.svg'
-import checkmarkIcon from '../../assets/checkmarkIcon.svg'
-import clockIcon from '../../assets/clockIcon.svg'
 import Avatar from '../staff/Avatar.vue'
+import VisitStatus from '../record/VisitStatus.vue'
 
 const props = defineProps({
   visit: {
@@ -88,44 +64,6 @@ const safeSpecializations = computed(() => {
 const safePrice = computed(() => {
   const price = props.visit?.service?.price
   return price != null ? `${price} ₽` : '-'
-})
-
-const statusMap = computed(() => ({
-  waiting: {
-    icon: clockIcon,
-    bgClass: 'bg-yellow-400',
-    title: 'Ожидание',
-    subtitle: props.isOld ? 'Запись просрочена' : 'Ждем вас в салоне'
-  },
-  confirmed: {
-    icon: checkmarkIcon,
-    bgClass: 'bg-blue-400',
-    title: 'Подтверждено',
-    subtitle: props.isOld ? 'Запись просрочена' : 'Ждем вас в салоне'
-  },
-  missing: {
-    icon: crossIcon,
-    bgClass: 'bg-pink-400',
-    title: 'Пропущено',
-    subtitle: 'Визит пропущен'
-  },
-  success: {
-    icon: checkmarkIcon,
-    bgClass: 'bg-green-400',
-    title: 'Оплачено',
-    subtitle: 'Визит прошел успешно'
-  }
-}))
-
-const statusInfo = computed(() => {
-  return (
-    statusMap.value[props.visit?.status] || {
-      icon: clockIcon,
-      bgClass: 'bg-neutral-300',
-      title: 'Статус неизвестен',
-      subtitle: ''
-    }
-  )
 })
 
 function goToVisit() {
