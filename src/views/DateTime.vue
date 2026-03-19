@@ -14,6 +14,7 @@
         :calendar-days="calendarDays"
         :selected-date="selectedDate"
         :loading-day="loadingDay"
+        :unavailable-dates="unavailableDates"
         @select-day="selectDate"
       />
 
@@ -56,7 +57,8 @@ export default {
       selectedTime: null,
       loadingDay: false,
       weekdayNames: ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'],
-      freeSlots: []
+      freeSlots: [],
+      unavailableDates: new Set()
     }
   },
   computed: {
@@ -107,12 +109,14 @@ export default {
       for (let i = 1; i <= thisCount; i++) {
         const dt = new Date(year, month, i)
         dt.setHours(0, 0, 0, 0)
+        const formattedDate = this.formatDate(dt)
         days.push({
           dayNumber: i,
-          date: this.formatDate(dt),
+          date: formattedDate,
           isCurrentMonth: true,
           isToday: dt.toDateString() === today.toDateString(),
-          isPast: dt < today
+          isPast: dt < today,
+          isUnavailable: this.unavailableDates.has(formattedDate)
         })
       }
 
@@ -150,7 +154,7 @@ export default {
       })
     }
   },
-  async mounted() {
+    async mounted() {
     // Восстанавливаем данные визита из localStorage
     const savedVisit = readVisit()
     
@@ -164,24 +168,29 @@ export default {
     }
     
     this.loadingDay = false
+    
+    // Загружаем расписание сотрудника для блокировки недоступных дат
+    await this.loadUnavailableDates()
   },
   methods: {
     cap,
     formatDate: formatDateForCalendar,
     formatTime,
-    prevMonth() {
+    async prevMonth() {
       this.currentDate = new Date(
         this.currentDate.getFullYear(),
         this.currentDate.getMonth() - 1,
         1
       )
+      await this.loadUnavailableDates()
     },
-    nextMonth() {
+    async nextMonth() {
       this.currentDate = new Date(
         this.currentDate.getFullYear(),
         this.currentDate.getMonth() + 1,
         1
       )
+      await this.loadUnavailableDates()
     },
     async selectDate(day) {
       this.selectedDate = day.date
@@ -283,6 +292,75 @@ export default {
         this.$router.push({ path, query })
       } else {
         this.$router.push({ path: '/appointmant' })
+      }
+    },
+    async loadUnavailableDates() {
+      const parsed = getRawVisit()
+      let staff_id = null
+      
+      if (parsed) {
+        if (parsed.staff_id && parsed.staff_id !== '') {
+          staff_id = parsed.staff_id
+        }
+      }
+
+      if (!staff_id) {
+        // Если сотрудник не выбран, не блокируем даты
+        this.unavailableDates = new Set()
+        return
+      }
+
+      const year = this.currentDate.getFullYear()
+      const month = this.currentDate.getMonth()
+      
+      // Первый и последний день месяца для запроса
+      const firstDay = new Date(year, month, 1)
+      const lastDay = new Date(year, month + 1, 0)
+      
+      const dateFrom = this.formatDate(firstDay)
+      const dateTo = this.formatDate(lastDay)
+
+      try {
+        const response = await api.get(`/staff/${staff_id}/schedule/`, {
+          params: { date_from: dateFrom, date_to: dateTo }
+        })
+
+        if (response.status !== 200) {
+          logger.error('DateTime: неожиданный статус ответа расписания', {
+            staff_id,
+            status: response.status
+          })
+          this.unavailableDates = new Set()
+          return
+        }
+
+        const responseData = response.data
+        const unavailable = new Set()
+
+        // Проверяем success и получаем данные
+        if (!responseData.success || !Array.isArray(responseData.data)) {
+          this.unavailableDates = new Set()
+          return
+        }
+
+        // Обрабатываем данные расписания
+        // Формат: { success: true, data: [{ date: "string", working_hours: [...], booked_slots: [...] }] }
+        for (const item of responseData.data) {
+          // Если working_hours пустой или отсутствует - сотрудник недоступен в этот день
+          if (!item.working_hours || item.working_hours.length === 0) {
+            if (item.date) {
+              unavailable.add(item.date)
+            }
+          }
+        }
+
+        this.unavailableDates = unavailable
+      } catch (err) {
+        logger.error('DateTime: ошибка загрузки расписания', {
+          staff_id,
+          error: err?.message || String(err)
+        })
+        this.unavailableDates = new Set()
       }
     }
   }
