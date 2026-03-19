@@ -9,7 +9,11 @@
         @next="nextMonth"
       />
 
+      <div v-if="loadingSchedule" class="flex items-center justify-center py-12">
+        <SpinnerLoad class="text-brand-500" />
+      </div>
       <DaytimeCalendar
+        v-else
         :weekday-names="weekdayNames"
         :calendar-days="calendarDays"
         :selected-date="selectedDate"
@@ -39,6 +43,7 @@ import api from '../api'
 import DaytimeCalendar from '../components/daytime/DaytimeCalendar.vue'
 import DaytimeMonthNavigation from '../components/daytime/DaytimeMonthNavigation.vue'
 import DaytimeTimeSlots from '../components/daytime/DaytimeTimeSlots.vue'
+import SpinnerLoad from '../components/ui/SpinnerLoad.vue'
 import { getRawVisit, readVisit, writeVisit } from '../utils/visitStorage'
 import { formatDateForCalendar, formatTime } from '../utils/dateFormatters'
 import { cap } from '../utils/stringUtils'
@@ -48,7 +53,8 @@ export default {
   components: {
     DaytimeMonthNavigation,
     DaytimeCalendar,
-    DaytimeTimeSlots
+    DaytimeTimeSlots,
+    SpinnerLoad
   },
   data() {
     return {
@@ -58,7 +64,8 @@ export default {
       loadingDay: false,
       weekdayNames: ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'],
       freeSlots: [],
-      unavailableDates: new Set()
+      unavailableDates: new Set(),
+      loadingSchedule: true
     }
   },
   computed: {
@@ -171,26 +178,31 @@ export default {
     
     // Загружаем расписание сотрудника для блокировки недоступных дат
     await this.loadUnavailableDates()
+    this.loadingSchedule = false
   },
   methods: {
     cap,
     formatDate: formatDateForCalendar,
     formatTime,
     async prevMonth() {
+      this.loadingSchedule = true
       this.currentDate = new Date(
         this.currentDate.getFullYear(),
         this.currentDate.getMonth() - 1,
         1
       )
       await this.loadUnavailableDates()
+      this.loadingSchedule = false
     },
     async nextMonth() {
+      this.loadingSchedule = true
       this.currentDate = new Date(
         this.currentDate.getFullYear(),
         this.currentDate.getMonth() + 1,
         1
       )
       await this.loadUnavailableDates()
+      this.loadingSchedule = false
     },
     async selectDate(day) {
       this.selectedDate = day.date
