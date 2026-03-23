@@ -84,6 +84,8 @@ import Spinner from '../components/ui/SpinnerLoad.vue'
 const router = useRouter()
 const salonStore = useSalonStore()
 
+const tabKey = 'ACTIVE_TAB'
+
 // loading state
 const loading = ref(true)
 
@@ -281,7 +283,8 @@ async function submitVisit() {
 // navigation
 function goToRecords() {
   showSuccessModal.value = false
-  router.push('/records/current')
+  localStorage.setItem(tabKey, 'current');
+  router.push('/records')
 }
 
 function askAdmin() {
