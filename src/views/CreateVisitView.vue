@@ -281,7 +281,7 @@ async function submitVisit() {
 // navigation
 function goToRecords() {
   showSuccessModal.value = false
-  router.push('/records')
+  router.push('/records/current')
 }
 
 function askAdmin() {
