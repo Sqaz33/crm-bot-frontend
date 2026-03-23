@@ -189,7 +189,8 @@ function openProfileModal() {
 }
 
 function saveProfile() {
-  const n = `${form.lastName} ${form.firstName} ${form.middleName}`.trim()
+  const nameParts = [form.firstName, form.lastName, form.middleName].filter(Boolean)
+  const n = nameParts.join(' ').trim()
   const payload = { name: n, email: form.email }
   writeProfile(payload)
 }

@@ -11,7 +11,6 @@
         id="lastName"
         v-model="modelValue.lastName"
         label="Фамилия"
-        :required="true"
       />
       <Input
         id="middleName"
@@ -73,7 +72,7 @@ const showToast = ref(false)
 
 const isFormValid = computed(() => {
   const { firstName, lastName } = props.modelValue
-  return firstName?.trim().length > 0 && lastName?.trim().length > 0
+  return firstName?.trim().length > 0
 })
 
 function handleSubmit() {
