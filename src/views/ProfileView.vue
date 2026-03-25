@@ -21,24 +21,12 @@ const saving = ref(false)
 const profileFormRef = ref(null)
 
 const profileData = ref({
-  firstName: "",
-  lastName: "",
-  middleName: "",
+  name: "",
+  last_name: "",
+  middle_name: "",
   phone: "",
   email: "",
 })
-
-function splitFullName(full) {
-  const parts = String(full || "").trim().split(/\s+/).filter(Boolean)
-  if (parts.length === 0) return { firstName: "", lastName: "", middleName: "" }
-  if (parts.length === 1) return { firstName: parts[0], lastName: "", middleName: "" }
-  if (parts.length === 2) return { firstName: parts[0], lastName: parts[1], middleName: "" }
-  return { firstName: parts[0], lastName: parts[1], middleName: parts.slice(2).join(" ") }
-}
-
-function joinFullName({ firstName, lastName, middleName }) {
-  return [firstName, lastName, middleName].filter(Boolean).join(" ").replace(/\s+/g, " ").trim()
-}
 
 async function loadMe() {
   try {
@@ -46,9 +34,10 @@ async function loadMe() {
       headers: { Accept: "application/json" },
       withCredentials: true,
     })
-    const fio = splitFullName(data?.name)
     profileData.value = {
-      ...fio,
+      name: data?.name ?? "",
+      last_name: data?.last_name ?? "",
+      middle_name: data?.middle_name ?? "",
       phone: data?.phone ?? "",
       email: data?.email ?? "",
     }
@@ -79,7 +68,9 @@ async function handleSave() {
   saving.value = true
   try {
     const payload = { 
-      name: joinFullName(profileData.value),
+      name: profileData.value.name,
+      last_name: profileData.value.last_name,
+      middle_name: profileData.value.middle_name,
       email: profileData.value.email
     }
     logger.debug('ProfileView: [SAVE /auth/me] payload', { payload })

@@ -2,19 +2,19 @@
   <div class="w-full max-w-[540px] mx-auto" @click="handleOutsideClick">
     <form @submit.prevent="handleSubmit" class="flex flex-col gap-1">
       <Input
-        id="firstName"
-        v-model="modelValue.firstName"
+        id="name"
+        v-model="modelValue.name"
         label="Имя"
         :required="true"
       />
       <Input
-        id="lastName"
-        v-model="modelValue.lastName"
+        id="last_name"
+        v-model="modelValue.last_name"
         label="Фамилия"
       />
       <Input
-        id="middleName"
-        v-model="modelValue.middleName"
+        id="middle_name"
+        v-model="modelValue.middle_name"
         label="Отчество"
       />
       <Input
@@ -71,8 +71,8 @@ const emit = defineEmits(['update:modelValue', 'save'])
 const showToast = ref(false)
 
 const isFormValid = computed(() => {
-  const { firstName, lastName } = props.modelValue
-  return firstName?.trim().length > 0
+  const { name } = props.modelValue
+  return name?.trim().length > 0
 })
 
 function handleSubmit() {
