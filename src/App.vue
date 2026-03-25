@@ -25,7 +25,7 @@ import { ensureSession } from "./auth/ensureSession"
 import { getClientByTelegramId } from "./api/clients"
 import { useAuthStore } from "./stores/auth"
 import { writeVisit, DEFAULT_VISIT } from "./utils/visitStorage"
-import { splitFullNameIfNeeded, getInitDataInfo, isUserAuthorized } from './utils/telegram'
+import { getInitDataInfo, isUserAuthorized } from './utils/telegram'
 import { logger } from './utils/logger'
 import SpinnerSvg from './components/ui/SpinnerLoad.vue'
 
@@ -42,9 +42,9 @@ const store = useAuthStore()
 let mountedOnce = false
 
 const form = reactive({
-  firstName: "",
-  lastName: "",
-  middleName: "",
+  name: "",
+  last_name: "",
+  middle_name: "",
   phone: "",
   email: "",
 })
@@ -63,9 +63,9 @@ function mergeSaveProfile(partial = {}, silent = false) {
   const val = (v) => (typeof v === "string" ? v.trim() : v)
   const next = {
     tg_id: partial.tg_id ?? saved.tg_id ?? null,
-    firstName: val(partial.firstName) ?? saved.firstName ?? form.firstName ?? "",
-    lastName: val(partial.lastName) ?? saved.lastName ?? form.lastName ?? "",
-    middleName: val(partial.middleName) ?? saved.middleName ?? form.middleName ?? "",
+    name: val(partial.name) ?? saved.name ?? form.name ?? "",
+    last_name: val(partial.last_name) ?? saved.last_name ?? form.last_name ?? "",
+    middle_name: val(partial.middle_name) ?? saved.middle_name ?? form.middle_name ?? "",
     phone: val(partial.phone) ?? saved.phone ?? form.phone ?? "",
     email: val(partial.email) ?? saved.email ?? form.email ?? "",
   }
@@ -73,9 +73,9 @@ function mergeSaveProfile(partial = {}, silent = false) {
   localStorage.setItem(PROFILE_KEY, JSON.stringify(next))
   if (!silent) logger.debug('Profile merged & saved', next)
 
-  form.firstName = next.firstName
-  form.lastName = next.lastName
-  form.middleName = next.middleName
+  form.name = next.name
+  form.last_name = next.last_name
+  form.middle_name = next.middle_name
   form.phone = next.phone
   form.email = next.email
 
@@ -90,13 +90,15 @@ async function fetchAndApplyClientByTelegramId(tg_id) {
   if (tg_id === undefined || tg_id === null) return
   try {
     const { data } = await getClientByTelegramId(tg_id)
-    const { name, telephone } = data || {}
-    const namePatch = splitFullNameIfNeeded(name, {
-      firstName: form.firstName,
-      lastName: form.lastName,
-    })
-    mergeSaveProfile({ ...namePatch, phone: telephone || form.phone, tg_id }, true)
-    logger.info('CRM client applied', { name, telephone, tg_id })
+    const { name, last_name, middle_name, telephone } = data || {}
+    mergeSaveProfile({ 
+      name: name || form.name, 
+      last_name: last_name || form.last_name, 
+      middle_name: middle_name || form.middle_name,
+      phone: telephone || form.phone, 
+      tg_id 
+    }, true)
+    logger.info('CRM client applied', { name, last_name, middle_name, telephone, tg_id })
   } catch (e) {
     const s = e?.response?.status
     if (s !== 404) logger.warn('getClientByTelegramId failed', { status: s })
