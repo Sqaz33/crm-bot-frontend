@@ -129,9 +129,9 @@ function onSelectStep(item) {
 
 /* ===== Профиль ===== */
 const form = reactive({
-  firstName: '',
-  lastName: '',
-  middleName: '',
+  name: '',
+  last_name: '',
+  middle_name: '',
   phone: '',
   email: ''
 })
@@ -164,14 +164,14 @@ async function readProfile() {
     const response = await api.get('/auth/me/')
     const profile = response.data
     return {
-      firstName: profile.name?.split(' ')[0] || '',
-      lastName: profile.name?.split(' ')[1] || '',
-      middleName: profile.name?.split(' ')[2] || '',
+      name: profile.name || '',
+      last_name: profile.last_name || '',
+      middle_name: profile.middle_name || '',
       phone: profile.phone || '',
       email: profile.email || ''
     }
   } catch {
-    return { firstName: '', lastName: '', middleName: '', phone: '', email: '' }
+    return { name: '', last_name: '', middle_name: '', phone: '', email: '' }
   }
 }
 
@@ -189,8 +189,12 @@ function openProfileModal() {
 }
 
 function saveProfile() {
-  const n = `${form.lastName} ${form.firstName} ${form.middleName}`.trim()
-  const payload = { name: n, email: form.email }
+  const payload = {
+    name: form.name,
+    last_name: form.last_name,
+    middle_name: form.middle_name,
+    email: form.email
+  }
   writeProfile(payload)
 }
 
@@ -258,9 +262,9 @@ onMounted(async () => {
   await loadSummary()
 
   const saved = await readProfile()
-  form.firstName = saved.firstName ?? ''
-  form.lastName = saved.lastName ?? ''
-  form.middleName = saved.middleName ?? ''
+  form.name = saved.name ?? ''
+  form.last_name = saved.last_name ?? ''
+  form.middle_name = saved.middle_name ?? ''
   form.phone = saved.phone ?? ''
   form.email = saved.email ?? ''
 })
