@@ -16,6 +16,7 @@ export const useSalonStore = defineStore('salon', {
     rating: '',
     telegramLink: '',
     telegramUsername: '',
+    timezone: 'UTC',
     loaded: false,
     error: false,
   }),
@@ -44,6 +45,7 @@ export const useSalonStore = defineStore('salon', {
           this.rating = d.rating || ''
           this.telegramLink = d.telegram_link || ''
           this.telegramUsername = d.telegram_username || ''
+          this.timezone = d.timezone || 'UTC'
           this.loaded = true
           this.error = false
         } else {

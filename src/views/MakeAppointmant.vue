@@ -64,6 +64,7 @@ import servicesIcon from '../assets/servicesIcon.svg'
 import staffIcon from '../assets/staffIcon.svg'
 import calendarIcon from '../assets/calendarIcon.svg'
 import { getService, getStaff } from '../utils/staffServiceCache'
+import { formatSlotDateTime } from '../utils/dateFormatters'
 
 const router = useRouter()
 const route = useRoute()
@@ -212,13 +213,7 @@ async function loadSummary() {
   const { staff_id, services_id = [], visit_time = {} } = data
 
   const visitTime = visit_time.start_time
-    ? new Date(visit_time.start_time).toLocaleString('ru-RU', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
+    ? formatSlotDateTime(visit_time.start_time)
     : null
 
   let staffName = null

@@ -53,7 +53,7 @@
 import { ref, onMounted } from 'vue'
 import api from '../api'
 import { getStaff, getService } from '../utils/staffServiceCache'
-import { formatDateShort, formatTimeOnly } from '../utils/dateFormatters'
+import { parseDateForComparison } from '../utils/dateFormatters'
 import { logger } from '../utils/logger'
 import TabsButton from '../components/records/TabsButton.vue'
 import VisitCard from '../components/records/VisitCard.vue'
@@ -125,10 +125,12 @@ async function fetchVisits(tab) {
     );
 
     // СОРТИРОВКА: текущие - по возрастанию (ближайшие первыми), прошедшие - по убыванию (новые первыми)
+    // Используем parseDateForComparison для корректной работы с timezone салона
     const sortedVisits = mapped.sort((a, b) => {
-      const dateA = new Date(a.visit_date_time);
-      const dateB = new Date(b.visit_date_time);
-      return tab === 'past' ? dateB - dateA : dateA - dateB;
+      const dateA = parseDateForComparison(a.visit_date_time);
+      const dateB = parseDateForComparison(b.visit_date_time);
+      if (!dateA || !dateB) return 0;
+      return tab === 'past' ? dateB.time - dateA.time : dateA.time - dateB.time;
     });
 
     visits.value = sortedVisits;
