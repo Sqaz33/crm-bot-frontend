@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import api from '../api'
 import { logger } from '../utils/logger'
+import { stripHtml } from '../utils/stripHtml'
 
 let _pending = null
 
@@ -34,9 +35,9 @@ export const useSalonStore = defineStore('salon', {
         const response = await api.get('/salon/info/')
         if (response.status === 200) {
           const d = response.data
-          this.name = d.name || ''
-          this.description = d.description || ''
-          this.aboutCompany = d.about_company || ''
+          this.name = stripHtml(d.name || '')
+          this.description = stripHtml(d.description || '')
+          this.aboutCompany = stripHtml(d.about_company || '')
           this.address = d.address || ''
           this.addressUrl = d.address_url || ''
           this.logoUrl = d.logo_url || ''
