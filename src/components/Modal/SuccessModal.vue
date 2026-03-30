@@ -51,11 +51,10 @@
               </button>
               <button
                 type="button"
-                :disabled="!adminLink"
-                @click="askAdmin"
+                :disabled="!adminContactUrl || adminContactUrl === '#'"
                 :class="[
                   'h-14 border-0 rounded-2.5 font-medium text-lg flex items-center justify-center transition-colors',
-                  adminLink 
+                  adminContactUrl && adminContactUrl !== '#'
                     ? 'bg-neutral-200 text-neutral-800 cursor-pointer hover:bg-neutral-300' 
                     : 'bg-neutral-100 text-neutral-300 cursor-not-allowed'
                 ]"
@@ -71,9 +70,6 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-import api from '../../api'
-
 const props = defineProps({
   modelValue: {
     type: Boolean,
@@ -91,33 +87,18 @@ const props = defineProps({
   salonInfo: {
     type: Object,
     default: () => ({ name: 'Загрузка...', description: '' })
+  },
+  adminContactUrl: {
+    type: String,
+    default: '#'
   }
 })
-
-const adminLink = ref(null)
-
-const fetchSalonInfo = async () => {
-  try {
-    const response = await api.get('/salon/info')
-    if (response.data?.admin_link) {
-      adminLink.value = response.data.admin_link
-    }
-  } catch (error) {
-    console.error('Failed to fetch salon info:', error)
-  }
-}
 
 const askAdmin = () => {
-  if (adminLink.value) {
-    window.open(adminLink.value, '_blank')
+  if (props.adminContactUrl && props.adminContactUrl !== '#') {
+    window.open(props.adminContactUrl, '_blank')
   }
 }
-
-watch(() => props.modelValue, (newVal) => {
-  if (newVal) {
-    fetchSalonInfo()
-  }
-})
 
 defineEmits(['update:modelValue', 'go-to-records'])
 </script>

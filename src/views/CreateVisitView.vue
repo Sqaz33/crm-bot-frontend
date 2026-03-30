@@ -55,8 +55,8 @@
         :client-name="clientNameFromAPI"
         :summary="summary"
         :salon-info="salonInfo"
+        :admin-contact-url="adminContactUrl"
         @go-to-records="goToRecords"
-        @ask-admin="askAdmin"
       />
 
     </template>
@@ -285,13 +285,5 @@ function goToRecords() {
   showSuccessModal.value = false
   localStorage.setItem(tabKey, 'current');
   router.push('/records')
-}
-
-function askAdmin() {
-  if (adminContactUrl && adminContactUrl !== '#') {
-    window.open(adminContactUrl, '_blank')
-  } else {
-    alert('Ссылка для связи с администратором не настроена.')
-  }
 }
 </script>
