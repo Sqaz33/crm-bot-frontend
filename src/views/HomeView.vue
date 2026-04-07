@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col pt-8">
     <button class="b_button w-full! mb-6" @click="goTo('appointmant')">
-      Персональные услуги
+      Записаться
     </button>
 
     <MenuList
