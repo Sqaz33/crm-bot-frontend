@@ -36,11 +36,16 @@ export const useSalonStore = defineStore('salon', {
         const response = await api.get('/salon/info/')
         if (response.status === 200) {
           const d = response.data
+          logger.info('Salon store: данные с сервера', { 
+            address_url: d.address_url,
+            map_url: d.map_url,
+            rawData: d 
+          })
           this.name = stripHtml(d.name || '')
           this.description = stripHtml(d.description || '')
           this.aboutCompany = stripHtml(d.about_company || '')
           this.address = d.address || ''
-          this.addressUrl = d.address_url || ''
+          this.addressUrl = d.address_url || d.map_url || ''
           this.logoUrl = d.logo_url || ''
           this.rating = d.rating || ''
           this.telegramLink = d.telegram_link || ''

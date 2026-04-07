@@ -76,13 +76,20 @@ const items = [
   { label: "Профиль", path: "/profile", icon: ProfileIcon },
 ];
 
-function navigate(item) {
+async function navigate(item) {
   if (item.label === "Адрес") {
+    if (!salon.loaded) {
+      await salon.fetch();
+    }
     if (salon.addressUrl) {
       const win = window.open(salon.addressUrl, "_blank");
       if (win) win.opener = null;
     } else {
-      logger.warn('MainMenu: ссылка на карту недоступна');
+      logger.warn('MainMenu: ссылка на карту недоступна', { 
+        addressUrl: salon.addressUrl,
+        loaded: salon.loaded,
+        address: salon.address 
+      });
     }
   } else if (item.label === "Поделиться") {
     showShareModal.value = true;
