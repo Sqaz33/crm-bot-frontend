@@ -63,12 +63,12 @@
 
       <div class="flex justify-center mt-6">
         <button
-          class="flex items-center justify-between w-[90%] max-w-[400px] px-2 py-3 rounded-[0.625rem] text-base font-semibold text-white bg-brand-500 hover:bg-[#4f54d8] disabled:bg-brand-300 disabled:cursor-not-allowed transition-colors duration-200"
+          class="flex items-center justify-between w-[90%] max-w-[400px] px-4 py-3 rounded-[0.625rem] whitespace-nowrap text-base font-semibold text-white bg-brand-500 hover:bg-[#4f54d8] disabled:bg-brand-300 disabled:cursor-not-allowed transition-colors duration-200"
           :disabled="!selectedServiceIds.length"
           @click="confirm"
         >
-          <span class="sm:ml-8 ml-2 mr-7">Продолжить запись</span>
-          <span class="sm:mr-8 mr-2 bg-white bg-opacity-30 px-3 py-1 rounded-xl text-neutral-800 text-sm">{{ totalPrice.toLocaleString('ru-RU') }} ₽</span>
+          <span class="truncate">Продолжить запись</span>
+          <span class="shrink-0 ml-2 bg-white bg-opacity-30 px-3 py-1 rounded-xl text-neutral-800 text-sm">{{ totalPrice.toLocaleString('ru-RU') }} ₽</span>
         </button>
       </div>
     </div>
