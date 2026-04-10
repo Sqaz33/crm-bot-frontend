@@ -1,49 +1,61 @@
 <template>
-  <div class="p-4 bg-neutral-100 min-h-screen pt-16">
-    
-    <div class="bg-white rounded-[24px] px-6 pb-6 pt-12 text-center relative flex flex-col min-h-[400px]">
-
-      <div v-if="loading" class="flex-1 flex justify-center items-center">
+  <div
+    class="min-h-screen bg-neutral-100 px-4 pt-16 pb-10 flex flex-col items-center justify-center"
+  >
+    <div
+      class="w-full max-w-[420px] bg-white rounded-[24px] px-6 pb-8 pt-12 text-center relative flex flex-col min-h-[min(400px,70vh)] shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-neutral-200/60"
+    >
+      <div v-if="loading" class="flex-1 flex justify-center items-center min-h-[280px]">
         <SpinnerLoad class="text-brand-500 w-8 h-8" />
       </div>
 
-      <div v-else-if="!company || !company.name" class="flex-1 flex flex-col items-center justify-center">
-        <div class="absolute -top-10 left-1/2 -translate-x-1/2 rounded-full w-[80px] h-[80px] overflow-hidden shadow-sm">
+      <div
+        v-else-if="!company || !company.name"
+        class="flex-1 flex flex-col items-center justify-center min-h-[280px]"
+      >
+        <div
+          class="absolute -top-10 left-1/2 -translate-x-1/2 rounded-full w-[80px] h-[80px] overflow-hidden shadow-md ring-4 ring-white"
+        >
           <img :src="defaultLogo" alt="Логотип" class="w-full h-full object-cover object-center block" />
         </div>
         <p class="text-neutral-500 font-medium text-[15px] mt-2">Информация не заполнена</p>
       </div>
 
-      <div v-else class="flex flex-col text-center flex-1">
-        <div class="absolute -top-10 left-1/2 -translate-x-1/2 rounded-full w-[80px] h-[80px] overflow-hidden shadow-sm">
-          <img :src="company.photo || defaultLogo" alt="Логотип компании" class="w-full h-full object-cover object-center block" />
+      <div v-else class="flex flex-col flex-1 w-full">
+        <div
+          class="absolute -top-10 left-1/2 -translate-x-1/2 rounded-full w-[80px] h-[80px] overflow-hidden shadow-md ring-4 ring-white"
+        >
+          <img
+            :src="company.photo || defaultLogo"
+            alt="Логотип компании"
+            class="w-full h-full object-cover object-center block"
+          />
         </div>
 
-        <h1 class="text-[18px] font-semibold text-neutral-800 mb-2">{{ company.name }}</h1>
+        <h1 class="text-[18px] font-semibold text-neutral-800 mb-1 px-1">{{ company.name }}</h1>
 
-        <!-- <div v-if="company.rating" class="inline-flex items-center justify-center bg-neutral-100 rounded-full px-3 py-1 mb-6 text-[13px] font-medium text-neutral-700 mx-auto gap-1">
-          <img :src="reviewIcon" alt="Star" class="w-4 h-4" />
-          <span>{{ company.rating }}</span>
-        </div> -->
+        <hr class="border-t border-neutral-200 my-5 w-full" />
 
-        <hr class="border-t border-neutral-200 mb-4" />
+        <div class="flex flex-col gap-6 w-full text-center">
+          <section class="w-full">
+            <h2 class="text-[#8E96A8] uppercase tracking-[0.08em] font-semibold text-[12px] mb-2">
+              Адрес
+            </h2>
+            <p class="text-[#1C1C1E] text-[15px] leading-[1.5] whitespace-pre-line">
+              {{ company.address }}
+            </p>
+          </section>
 
-        
-        
-
-        <div class="text-left">
-          <h2 class="text-[#8E96A8] uppercase tracking-wider font-semibold text-[12px] mb-2">Адрес:</h2>
-          <div class="text-[#1C1C1E] text-[15px] leading-relaxed">
-            {{ company.address }}
-          </div>
-          <br>
-          <h2 class="text-[#8E96A8] uppercase tracking-wider font-semibold text-[12px] mb-2">О компании</h2>
-          <p class="text-[#1C1C1E] text-[15px] leading-relaxed">
-            {{ company.about_company }}
-          </p>
+          <section class="w-full">
+            <h2 class="text-[#8E96A8] uppercase tracking-[0.08em] font-semibold text-[12px] mb-2">
+              О компании
+            </h2>
+            <p class="text-[#1C1C1E] text-[15px] leading-[1.5] whitespace-pre-line">
+              {{ company.about_company }}
+            </p>
+          </section>
         </div>
       </div>
-
     </div>
   </div>
 </template>
