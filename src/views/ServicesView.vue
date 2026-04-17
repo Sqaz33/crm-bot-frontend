@@ -9,7 +9,7 @@
 
       <div class="flex flex-col gap-3">
         <section
-          v-for="type in serviceTypes"
+          v-for="type in filteredServiceTypes"
           :key="type.id"
           class="rounded-[14px] overflow-hidden"
           :class="[openType === type.id ? 'bg-neutral-100' : '']"
@@ -21,10 +21,12 @@
           >
             <span class="truncate overflow-hidden text-ellipsis">{{ type.name }}</span>
             <div class="inline-flex items-center gap-2.5">
-              <span class="min-w-[34px] h-[34px] px-2.5 bg-white border border-neutral-200 rounded-full inline-flex items-center justify-center font-bold text-sm">
+              <span
+                class="min-w-[34px] h-[34px] px-2.5 bg-white border border-neutral-200 rounded-full inline-flex items-center justify-center font-bold text-sm"
+              >
                 {{ (servicesByType[type.id] || []).length }}
               </span>
-              <span 
+              <span
                 class="text-xl transition-transform duration-150"
                 :class="{ 'rotate-180': openType === type.id }"
               >
@@ -45,10 +47,7 @@
               v-show="openType === type.id"
               class="flex flex-col gap-2.5 mt-2.5 pb-0.5 list-none"
             >
-              <li
-                v-for="svc in servicesByType[type.id]"
-                :key="svc.id"
-              >
+              <li v-for="svc in servicesByType[type.id]" :key="svc.id">
                 <ServiceCard
                   :service="svc"
                   :is-selected="isSelected(svc.id)"
@@ -68,7 +67,11 @@
           @click="confirm"
         >
           <span class="truncate">Продолжить запись</span>
-          <span class="shrink-0 ml-2 bg-white bg-opacity-30 px-3 py-1 rounded-xl text-neutral-800 text-sm">{{ totalPrice.toLocaleString('ru-RU') }} ₽</span>
+          <span
+            class="shrink-0 ml-2 bg-white bg-opacity-30 px-3 py-1 rounded-xl text-neutral-800 text-sm"
+          >
+            {{ totalPrice.toLocaleString('ru-RU') }} ₽
+          </span>
         </button>
       </div>
     </div>
@@ -80,10 +83,7 @@
       @close="closeServiceModal"
     >
       <template #footer>
-        <button
-          class="b_button w-full"
-          @click="selectAndClose"
-        >
+        <button class="b_button w-full" @click="selectAndClose">
           Выбрать услугу
         </button>
       </template>
@@ -157,13 +157,23 @@ onUnmounted(() => {
 
 const servicesByType = computed(() => {
   const map = {}
-  serviceTypes.value.forEach(t => { map[t.id] = [] })
+  serviceTypes.value.forEach(t => {
+    map[t.id] = []
+  })
   services.value.forEach(s => {
     if (s.service_type_id && map[s.service_type_id]) {
       map[s.service_type_id].push(s)
     }
   })
   return map
+})
+
+// ✅ Новое вычисляемое свойство: только категории, в которых есть хотя бы одна услуга
+const filteredServiceTypes = computed(() => {
+  return serviceTypes.value.filter(type => {
+    const svcs = servicesByType.value[type.id] || []
+    return svcs.length > 0
+  })
 })
 
 const selectedServices = computed(() =>
