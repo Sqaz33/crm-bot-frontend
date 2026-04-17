@@ -118,7 +118,6 @@ const visit = ref({
 })
 
 onMounted(async () => {
-  // Восстанавливаем выбранные услуги из localStorage
   const savedVisit = readVisit()
   if (Array.isArray(savedVisit.services_id) && savedVisit.services_id.length > 0) {
     selectedServiceIds.value = [...savedVisit.services_id]
@@ -141,7 +140,6 @@ onMounted(async () => {
   }
 })
 
-// Слушаем изменения localStorage для синхронизации между вкладками
 window.addEventListener('local-storage-changed', handleStorageChange)
 
 function handleStorageChange() {
@@ -168,7 +166,6 @@ const servicesByType = computed(() => {
   return map
 })
 
-// ✅ Новое вычисляемое свойство: только категории, в которых есть хотя бы одна услуга
 const filteredServiceTypes = computed(() => {
   return serviceTypes.value.filter(type => {
     const svcs = servicesByType.value[type.id] || []
