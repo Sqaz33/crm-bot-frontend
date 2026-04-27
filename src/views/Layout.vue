@@ -50,9 +50,9 @@ onUnmounted(() => mdQuery.removeEventListener('change', onMediaChange))
 
 // Порядок пунктов соответствует макету Figma
 const mainMenuItems = [
-  { label: 'Мои записи', path: '/records', icon: recordsIcon },
-  { label: 'Магазин', path: '/shop', icon: shopIcon },
-  { label: 'Кошелёк', path: '/wallet', icon: walletIcon },
+  // { label: 'Мои записи', path: '/records', icon: recordsIcon },
+  // { label: 'Магазин', path: '/shop', icon: shopIcon },
+  // { label: 'Кошелёк', path: '/wallet', icon: walletIcon },
   { label: 'О компании', path: '/company', icon: companyIcon },
   { label: 'Профиль', path: '/profile', icon: profileIcon },
 ]

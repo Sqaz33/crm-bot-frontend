@@ -35,9 +35,9 @@ watch(
 )
 
 const menuItems = computed(() => ([
-  { key: 'wallet',  label: 'Кошелёк',    icon: walletIcon,  badge: { text: '0', variant: 'orange' } },
-  { key: 'shop',    label: 'Магазин',    icon: shopIcon },
-  { key: 'reviews', label: 'Отзывы',     icon: reviewIcon,  badge: { text: '0' } },
+  // { key: 'wallet',  label: 'Кошелёк',    icon: walletIcon,  badge: { text: '0', variant: 'orange' } },
+  // { key: 'shop',    label: 'Магазин',    icon: shopIcon },
+  // { key: 'reviews', label: 'Отзывы',     icon: reviewIcon,  badge: { text: '0' } },
   { key: 'company', label: 'О компании', icon: companyIcon }
 ]))
 
