@@ -1,10 +1,11 @@
 // src/utils/telegram.js
 
 import { logger } from '../utils/logger'
+import { storeInitData, getStoredInitData } from '../auth/initDataVault'
 
 /**
  * Получаем init_data из Telegram WebApp (или из hash/query при локальном запуске).
- * Логируем источник, длину строки и сохраняем копию в localStorage.DEBUG_INIT_DATA.
+ * Использует initDataVault для безопасного хранения в sessionStorage (localStorage опционально).
  */
 export function getInitData() {
   let raw = null;
@@ -62,12 +63,10 @@ export function getInitData() {
     logger.debug('getInitData: user data present');
   }
 
-  try {
-    localStorage.setItem('DEBUG_INIT_DATA', raw);
-    logger.debug('getInitData: saved to localStorage.DEBUG_INIT_DATA');
-  } catch (e) {
-    logger.warn('getInitData: failed to save to localStorage', { error: e?.message });
-  }
+  // Используем initDataVault для безопасного сохранения
+  // По умолчанию сохраняет в sessionStorage, в localStorage только при VITE_SAVE_INIT_DATA_TO_STORAGE=true
+  storeInitData(raw);
+  logger.debug('getInitData: saved via initDataVault');
 
   return raw;
 }
@@ -249,12 +248,12 @@ export function splitFullNameIfNeeded(fullName, fallback = {}) {
 
 /**
  * Вспомогательная функция для отладки:
- * Печатает сохранённый init_data из localStorage.DEBUG_INIT_DATA
+ * Использует initDataVault для получения сохранённых данных
  */
 export function debugInitData() {
-  const val = localStorage.getItem('DEBUG_INIT_DATA');
+  const val = getStoredInitData();
   if (!val) {
-    logger.warn('DEBUG_INIT_DATA not found');
+    logger.warn('debugInitData: no stored init data found');
     return;
   }
   

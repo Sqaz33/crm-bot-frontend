@@ -56,7 +56,7 @@
           :disabled="!selectedTime"
           @click="$emit('book')"
         >
-          Занять
+          Записаться
         </button>
       </div>
     </template>
