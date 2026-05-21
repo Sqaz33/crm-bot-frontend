@@ -53,11 +53,9 @@ const form = reactive({
 
 
 function checkMAX() {
-  const isMAX = window?.location?.hash.includes("tgWebAppData") === true;
+  const isMAX = !window?.location?.hash?.includes("tgWebAppData");
   sessionStorage.setItem(MAX_FRONTEND_KEY, isMAX) 
   logger.info('App checkMAX: значение isMAX', isMAX)
-
-
 }
 
 function saveVisit(silent = false) {
