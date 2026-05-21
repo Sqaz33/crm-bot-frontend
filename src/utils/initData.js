@@ -1,12 +1,16 @@
 // src/utils/telegram.js
 
-import { logger } from '../utils/logger'
+import { logger } from './logger'
 import { storeInitData, getStoredInitData } from '../auth/initDataVault'
 
 /**
  * Получаем init_data из Telegram WebApp (или из hash/query при локальном запуске).
  * Использует initDataVault для безопасного хранения в sessionStorage (localStorage опционально).
  */
+
+
+// получить дату из max
+// декодировать
 export function getInitData() {
   let raw = null;
 
@@ -142,48 +146,48 @@ export function extractUserFromInitData(id) {
 /**
  * Форматирует initData для отладки (console.table для разработчиков)
  */
-export function debugInitDataPretty(initData) {
-  if (!initData) {
-    logger.warn('debugInitDataPretty: initData is null');
-    return;
-  }
+// export function debugInitDataPretty(initData) {
+//   if (!initData) {
+//     logger.warn('debugInitDataPretty: initData is null');
+//     return;
+//   }
   
-  const usp = new URLSearchParams(initData);
+//   const usp = new URLSearchParams(initData);
   
-  // Выводим все параметры в читаемом виде
-  const params = Array.from(usp.entries()).map(([k, v]) => ({
-    key: k,
-    value: v.length > 120 ? v.slice(0, 120) + '...' : v,
-    length: v.length
-  }));
+//   // Выводим все параметры в читаемом виде
+//   const params = Array.from(usp.entries()).map(([k, v]) => ({
+//     key: k,
+//     value: v.length > 120 ? v.slice(0, 120) + '...' : v,
+//     length: v.length
+//   }));
   
-  logger.debug('debugInitDataPretty: params', { params });
+//   logger.debug('debugInitDataPretty: params', { params });
 
-  // Выводим user отдельно, если есть
-  const u = usp.get('user');
-  if (u) {
-    try {
-      let decoded = u;
-      try { decoded = decodeURIComponent(u); } catch {}
+//   // Выводим user отдельно, если есть
+//   const u = usp.get('user');
+//   if (u) {
+//     try {
+//       let decoded = u;
+//       try { decoded = decodeURIComponent(u); } catch {}
       
-      try {
-        const userObj = JSON.parse(decoded);
-        logger.debug('debugInitDataPretty: user', { user: userObj });
-      } catch {
-        logger.debug('debugInitDataPretty: failed to parse user', { decoded });
-      }
-    } catch (e) {
-      logger.error('debugInitDataPretty: error parsing user', { error: e?.message });
-    }
-  }
+//       try {
+//         const userObj = JSON.parse(decoded);
+//         logger.debug('debugInitDataPretty: user', { user: userObj });
+//       } catch {
+//         logger.debug('debugInitDataPretty: failed to parse user', { decoded });
+//       }
+//     } catch (e) {
+//       logger.error('debugInitDataPretty: error parsing user', { error: e?.message });
+//     }
+//   }
 
-  // Выводим auth_date в читаемом формате
-  const authDate = usp.get('auth_date');
-  if (authDate) {
-    const date = new Date(parseInt(authDate) * 1000);
-    logger.debug('debugInitDataPretty: auth_date', { authDateISO: date.toISOString(), authDate });
-  }
-}
+//   // Выводим auth_date в читаемом формате
+//   const authDate = usp.get('auth_date');
+//   if (authDate) {
+//     const date = new Date(parseInt(authDate) * 1000);
+//     logger.debug('debugInitDataPretty: auth_date', { authDateISO: date.toISOString(), authDate });
+//   }
+// }
 
 /**
  * Получаем полную информацию об initData
@@ -293,33 +297,33 @@ export function debugInitData() {
   }
 }
 
-/**
- * Инициализация WebApp
- */
-export function initTelegramWebApp() {
-  if (window.Telegram?.WebApp) {
-    logger.info('initTelegramWebApp: initializing');
+// /**
+//  * Инициализация WebApp
+//  */
+// export function initTelegramWebApp() {
+//   if (window.Telegram?.WebApp) {
+//     logger.info('initTelegramWebApp: initializing');
     
-    // Развертываем приложение на весь экран
-    window.Telegram.WebApp.expand();
+//     // Развертываем приложение на весь экран
+//     window.Telegram.WebApp.expand();
     
-    // Включаем кнопку "Назад"
-    window.Telegram.WebApp.BackButton.show();
+//     // Включаем кнопку "Назад"
+//     window.Telegram.WebApp.BackButton.show();
     
-    // Обработка кнопки "Назад"
-    window.Telegram.WebApp.BackButton.onClick(() => {
-      window.history.back();
-    });
+//     // Обработка кнопки "Назад"
+//     window.Telegram.WebApp.BackButton.onClick(() => {
+//       window.history.back();
+//     });
     
-    logger.debug('initTelegramWebApp: initialized', {
-      platform: window.Telegram.WebApp.platform,
-      version: window.Telegram.WebApp.version,
-      initDataUnsafe: window.Telegram.WebApp.initDataUnsafe
-    });
+//     logger.debug('initTelegramWebApp: initialized', {
+//       platform: window.Telegram.WebApp.platform,
+//       version: window.Telegram.WebApp.version,
+//       initDataUnsafe: window.Telegram.WebApp.initDataUnsafe
+//     });
     
-    return window.Telegram.WebApp;
-  }
+//     return window.Telegram.WebApp;
+//   }
   
-  logger.warn('initTelegramWebApp: Telegram WebApp not available');
-  return null;
-}
+//   logger.warn('initTelegramWebApp: Telegram WebApp not available');
+//   return null;
+// }

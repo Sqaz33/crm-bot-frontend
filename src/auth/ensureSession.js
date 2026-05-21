@@ -1,6 +1,6 @@
 import { getMe, loginViaTelegram } from '../api/auth'
 import { useAuthStore } from '../stores/auth'
-import { getInitData, extractUserFromInitData } from '../utils/telegram'
+import { getInitData, extractUserFromInitData } from '../utils/initData'
 import { logger } from '../utils/logger'
 
 export async function ensureSession() {

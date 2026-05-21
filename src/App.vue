@@ -25,7 +25,7 @@ import { ensureSession } from "./auth/ensureSession"
 import { getClientByTelegramId } from "./api/clients"
 import { useAuthStore } from "./stores/auth"
 import { writeVisit, DEFAULT_VISIT } from "./utils/visitStorage"
-import { getInitDataInfo, isUserAuthorized } from './utils/telegram'
+import { getInitDataInfo, isUserAuthorized } from './utils/initData'
 import { logger } from './utils/logger'
 import SpinnerSvg from './components/ui/SpinnerLoad.vue'
 
@@ -39,6 +39,8 @@ const errorText = ref("")
 
 const store = useAuthStore()
 
+const MAX_FRONTEND_KEY = "max_frontend"
+
 let mountedOnce = false
 
 const form = reactive({
@@ -48,6 +50,15 @@ const form = reactive({
   phone: "",
   email: "",
 })
+
+
+function checkMAX() {
+  const isMAX = window?.location?.hash.includes("tgWebAppData") === true;
+  sessionStorage.setItem(MAX_FRONTEND_KEY, isMAX) 
+  logger.info('App checkMAX: значение isMAX', isMAX)
+
+
+}
 
 function saveVisit(silent = false) {
   writeVisit(DEFAULT_VISIT)
@@ -180,6 +191,8 @@ async function initAuthAndProfile() {
 onMounted(() => {
   logger.info('App mounted')
   
+  checkMAX()
+
   attachDebugInitSender()
   initAuthAndProfile()
 })
