@@ -138,20 +138,20 @@ async function initAuthAndProfile() {
     const isMAX = sessionStorage.getItem("max_frontend") === 'true';
 
     saveVisit(true)
-    if (!isMAX) { // TODO:
-      const initDataInfo = getInitDataInfo()
-      logger.info('App init: initData', {
-        hasRaw: !!initDataInfo.raw,
-        isAuthorized: initDataInfo.isAuthorized,
-        hasUser: !!initDataInfo.user,
-      })
-    }
+
+    const initDataInfo = getInitDataInfo()
+    logger.info('App init: initData', {
+      hasRaw: !!initDataInfo.raw,
+      isAuthorized: initDataInfo.isAuthorized,
+      hasUser: !!initDataInfo.user,
+    })
 
     if (!initDataInfo.raw) {
       showNoInitDataToast()
       console.error("[App] NO_INIT_DATA: приложение открыто не из WebApp")
       return
     }
+    
     // salon id 
     try {
       const usp = new URLSearchParams(initDataInfo.raw)
