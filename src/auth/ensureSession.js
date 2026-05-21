@@ -1,27 +1,31 @@
-import { getMe, loginViaTelegram } from '../api/auth'
+import { getMe, loginViaTelegram, loginViaMAX, loginViaMAXResolveSalonID } from '../api/auth'
 import { useAuthStore } from '../stores/auth'
 import { getInitData, extractUserFromInitData } from '../utils/initData'
 import { logger } from '../utils/logger'
 
 export async function ensureSession() {
   const store = useAuthStore()
+  const id = sessionStorage.getItem('SALON_ID');
+  const isMAX = sessionStorage.getItem(MAX_FRONTEND_KEY) === 'true';
 
-  try {
-    logger.debug('ensureSession: пробуем /auth/me')
-    const response = await getMe()
-    const status = response?.status || response?.data?.status || (response?.data ? 200 : 0)
+  if (id) {
+    try {
+      logger.debug('ensureSession: пробуем /auth/me')
+      const response = await getMe()
+      const status = response?.status || response?.data?.status || (response?.data ? 200 : 0)
+      
+      if (status === 200) {
+        logger.debug('ensureSession: /auth/me OK', { data: response.data })
+        store.setMe?.(response.data)
+        return response.data
+      }
     
-    if (status === 200) {
-      logger.debug('ensureSession: /auth/me OK', { data: response.data })
-      store.setMe?.(response.data)
-      return response.data
+      logger.warn('ensureSession: /auth/me returned 401, need re-auth')
+    } catch (e) {
+      const status = e?.response?.status
+      logger.warn('ensureSession: /auth/me failed', { status })
+      throw e
     }
-  
-    logger.warn('ensureSession: /auth/me returned 401, need re-auth')
-  } catch (e) {
-    const status = e?.response?.status
-    logger.warn('ensureSession: /auth/me failed', { status })
-    throw e
   }
 
   const initData = getInitData()
@@ -30,16 +34,25 @@ export async function ensureSession() {
     err.code = 'NO_INIT_DATA'
     throw err
   }
-
-  logger.debug('ensureSession: логинимся через /auth/telegram/login', { initDataLen: initData.length })
-  await loginViaTelegram(initData)
-  logger.debug('ensureSession: логин завершён')
-
-  const u = extractUserFromInitData(initData)
-  if (u) logger.debug('ensureSession: распарсен user', { userId: u.id })
+  
+  if (isMAX) {
+    if (id) {
+      await loginViaMAX(initData)
+    } else {
+      const response = await loginViaMAXResolveSalonID()
+      const data = response?.data;
+      const salonId = data?.salon_id;
+      if (salonId != null) {
+        sessionStorage.setItem('SALON_ID', salonId);
+      }
+    }
+  } else {
+    logger.debug('ensureSession: логинимся через /auth/telegram/login', { initDataLen: initData.length })
+    await loginViaTelegram(initData)
+    logger.debug('ensureSession: логин завершён')
+  }
 
   logger.debug('ensureSession: повторный запрос /auth/me')
- 
   const response = await getMe()
   const status = response?.status || response?.data?.status || (response?.data ? 200 : 0)
   if (status === 200) {

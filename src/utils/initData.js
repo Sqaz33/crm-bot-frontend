@@ -8,32 +8,29 @@ import { storeInitData, getStoredInitData } from '../auth/initDataVault'
  * Использует initDataVault для безопасного хранения в sessionStorage (localStorage опционально).
  */
 
-
-// получить дату из max
-// декодировать
-export function getInitData() {
+function getInitDataFromTG() {
   let raw = null;
 
   if (window.Telegram?.WebApp?.initData) {
     raw = window.Telegram.WebApp.initData;
-    logger.debug('getInitData: source=window.Telegram.WebApp.initData', { length: raw?.length });
+    logger.debug('getInitDataFromTG: source=window.Telegram.WebApp.initData', { length: raw?.length });
   }
 
   if (!raw && window.location.hash?.startsWith('#tgWebAppData=')) {
     raw = decodeURIComponent(window.location.hash.replace('#tgWebAppData=', ''));
-    logger.debug('getInitData: source=location.hash', { length: raw?.length });
+    logger.debug('getInitDataFromTG: source=location.hash', { length: raw?.length });
   }
 
   if (!raw) {
     const params = new URLSearchParams(window.location.search);
     if (params.has('init_data')) {
       raw = decodeURIComponent(params.get('init_data'));
-      logger.debug('getInitData: source=query.init_data', { length: raw?.length });
+      logger.debug('getInitDataFromTG: source=query.init_data', { length: raw?.length });
     }
   }
 
   if (!raw) {
-    logger.warn('getInitData: init_data not found');
+    logger.warn('getInitDataFromTG: init_data not found');
     return null;
   }
 
@@ -43,7 +40,7 @@ export function getInitData() {
 
   const usp = new URLSearchParams(raw);
   const keys = Array.from(usp.keys());
-  logger.debug('getInitData: keys found', { keys, length: raw.length });
+  logger.debug('getInitDataFromTG: keys found', { keys, length: raw.length });
 
   // Проверяем, что есть либо user, либо данные авторизации
   const hasUser = usp.has('user');
@@ -51,21 +48,50 @@ export function getInitData() {
   const hasHash = usp.has('hash');
   
   if (!hasHash) {
-    logger.warn('getInitData: hash is missing - initData may be invalid');
+    logger.warn('getInitDataFromTG: hash is missing - initData may be invalid');
   }
   
   if (!hasAuthDate) {
-    logger.warn('getInitData: auth_date is missing');
+    logger.warn('getInitDataFromTG: auth_date is missing');
   }
 
   if (!hasUser) {
-    logger.warn('getInitData: user is missing - this may be initial auth state');
-    logger.debug('getInitData: available params', { 
+    logger.warn('getInitDataFromTG: user is missing - this may be initial auth state');
+    logger.debug('getInitDataFromTG: available params', { 
       params: keys.map(k => `${k}: ${usp.get(k).slice(0, 50)}...`) 
     });
   } else {
-    logger.debug('getInitData: user data present');
+    logger.debug('getInitDataFromTG: user data present');
   }
+
+  return raw;
+}
+
+function getInitDataFromMAX() {
+  // TODO: debug init data
+  let raw = null
+
+  if (!raw && window.location.hash?.startsWith('#WebAppData=')) {
+    raw = decodeURIComponent(window.location.hash.replace('#WebAppData=', ''));
+    logger.debug('getInitDataFromMAX: source=location.hash', { length: raw?.length });
+
+    const idx = raw.indexOf('&WebAppPlatform=');
+    if (idx > -1) raw = raw.substring(0, idx);
+  }
+
+  if (!raw) {
+    logger.warn('getInitDataFromMAX: init_data not found');
+    return null;
+  }
+
+  return raw;
+}
+
+export function getInitData() {
+  const isMAX = sessionStorage.getItem(MAX_FRONTEND_KEY) === 'true';
+
+  if (isMAX) return getInitDataFromMAX()
+  else return getInitDataFromTG()
 
   // Используем initDataVault для безопасного сохранения
   // По умолчанию сохраняет в sessionStorage, в localStorage только при VITE_SAVE_INIT_DATA_TO_STORAGE=true

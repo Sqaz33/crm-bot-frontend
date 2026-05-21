@@ -13,8 +13,11 @@ import { logger } from '../utils/logger'
  *   2) вызывает ensureSession()
  *   3) возвращает { ok: true, me } или { ok: false, error }
  */
+// TODO
 export function attachDebugInitSender() {
   if (typeof window === 'undefined') return
+  const isMAX = sessionStorage.getItem(MAX_FRONTEND_KEY) === 'true';
+  if (isMAX) return
 
   window.__debugInitData = async function (rawInitData) {
     logger.debug('debug:init: устанавливаем Telegram.WebApp.initData', { rawInitDataLen: rawInitData?.length })

@@ -25,7 +25,7 @@ import { ensureSession } from "./auth/ensureSession"
 import { getClientByTelegramId } from "./api/clients"
 import { useAuthStore } from "./stores/auth"
 import { writeVisit, DEFAULT_VISIT } from "./utils/visitStorage"
-import { getInitDataInfo, isUserAuthorized } from './utils/initData'
+import { getInitData, getInitDataInfo, isUserAuthorized } from './utils/initData'
 import { logger } from './utils/logger'
 import SpinnerSvg from './components/ui/SpinnerLoad.vue'
 
@@ -114,8 +114,21 @@ async function fetchAndApplyClientByTelegramId(tg_id) {
   }
 }
 
+async function fetchAndApplyClientByMAX() {
+  const init_data = getInitData()
+  const u = extractUserFromInitData(initData)
+  const { name, last_name, middle_name, telephone } = u || {}
+  mergeSaveProfile({ 
+    name: name || form.name, 
+    last_name: last_name || form.last_name, 
+    middle_name: middle_name || form.middle_name,
+    phone: telephone || form.phone, 
+    tg_id 
+  }, true)
+}
+
 function showNoInitDataToast() {
-  errorText.value = "Перезайдите через telegram!"
+  errorText.value = "Перезайдите через мини-приложение!"
   showToast.value = true
 }
 
@@ -124,40 +137,49 @@ async function initAuthAndProfile() {
   mountedOnce = true
 
   try {
+    const isMAX = sessionStorage.getItem(MAX_FRONTEND_KEY) === 'true';
+
     saveVisit(true)
-
-    const initDataInfo = getInitDataInfo()
-    logger.info('App init: initData', {
-      hasRaw: !!initDataInfo.raw,
-      isAuthorized: initDataInfo.isAuthorized,
-      hasUser: !!initDataInfo.user,
-    })
-
-  
-    try {
-      const usp = new URLSearchParams(initDataInfo.raw)
-      const params = Object.fromEntries(usp.entries())
-      const id = params?.start_param  
-      if (!id) {  
-        throw new Error('нет start_param в telegram init_data')
-      }
-      sessionStorage.setItem('SALON_ID', id) 
-      logger.info('App init: salon_id сохранён', { salonId: id })
-    } catch (e) {
-      logger.warn('App init: не удалось сохранить salon_id', { error: e.message })
+    if (!isMAX) { // TODO:
+      const initDataInfo = getInitDataInfo()
+      logger.info('App init: initData', {
+        hasRaw: !!initDataInfo.raw,
+        isAuthorized: initDataInfo.isAuthorized,
+        hasUser: !!initDataInfo.user,
+      })
     }
 
     if (!initDataInfo.raw) {
       showNoInitDataToast()
-      console.error("[App] NO_INIT_DATA: приложение открыто не из Telegram WebApp")
+      console.error("[App] NO_INIT_DATA: приложение открыто не из WebApp")
       return
     }
-
+    // salon id 
+    try {
+      const usp = new URLSearchParams(initDataInfo.raw)
+      const params = Object.fromEntries(usp.entries())
+      const id = params?.start_param  
+      if (!id && !isMAX) {  
+        throw new Error('нет start_param в telegram init_data')
+      } else if (id) {
+        sessionStorage.setItem('SALON_ID', id) 
+        logger.info('App init: salon_id сохранён', { salonId: id })
+      } else {
+        logger.info('App init: MAX приложение открыто не через inline-кнопку')
+      }
+    } catch (e) {
+      logger.warn('App init: не удалось сохранить salon_id', { error: e.message })
+      return
+    }
+    // login
     const me = await ensureSession()
     mergeSaveProfile({ tg_id: me.telegram_id, phone: me.telephone }, true)
     logger.info('App init: авторизация успешна', { userId: me.id })
 
-    await fetchAndApplyClientByTelegramId(me.telegram_id)
+    if (isMAX) 
+      await fetchAndApplyClientByMAX()
+    else 
+      await fetchAndApplyClientByTelegramId(me.telegram_id)
   } catch (e) {
     logger.error('App init: ошибка авторизации', { 
       error: e.message, 
