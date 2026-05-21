@@ -16,7 +16,7 @@ import { logger } from '../utils/logger'
 // TODO
 export function attachDebugInitSender() {
   if (typeof window === 'undefined') return
-  const isMAX = sessionStorage.getItem(MAX_FRONTEND_KEY) === 'true';
+  const isMAX = sessionStorage.getItem("max_frontend") === 'true';
   if (isMAX) return
 
   window.__debugInitData = async function (rawInitData) {

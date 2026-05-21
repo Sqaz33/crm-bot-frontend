@@ -88,7 +88,7 @@ function getInitDataFromMAX() {
 }
 
 export function getInitData() {
-  const isMAX = sessionStorage.getItem(MAX_FRONTEND_KEY) === 'true';
+  const isMAX = sessionStorage.getItem("max_frontend") === 'true';
 
   if (isMAX) return getInitDataFromMAX()
   else return getInitDataFromTG()

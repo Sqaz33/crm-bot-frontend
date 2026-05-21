@@ -6,7 +6,7 @@ import { logger } from '../utils/logger'
 export async function ensureSession() {
   const store = useAuthStore()
   const id = sessionStorage.getItem('SALON_ID');
-  const isMAX = sessionStorage.getItem(MAX_FRONTEND_KEY) === 'true';
+  const isMAX = sessionStorage.getItem("max_frontend") === 'true';
 
   if (id) {
     try {
@@ -34,7 +34,7 @@ export async function ensureSession() {
     err.code = 'NO_INIT_DATA'
     throw err
   }
-  
+
   if (isMAX) {
     if (id) {
       await loginViaMAX(initData)

@@ -39,8 +39,6 @@ const errorText = ref("")
 
 const store = useAuthStore()
 
-const MAX_FRONTEND_KEY = "max_frontend"
-
 let mountedOnce = false
 
 const form = reactive({
@@ -54,7 +52,7 @@ const form = reactive({
 
 function checkMAX() {
   const isMAX = !window?.location?.hash?.includes("tgWebAppData");
-  sessionStorage.setItem(MAX_FRONTEND_KEY, isMAX) 
+  sessionStorage.setItem("max_frontend", isMAX) 
   logger.info('App checkMAX: значение isMAX', isMAX)
 }
 
@@ -137,7 +135,7 @@ async function initAuthAndProfile() {
   mountedOnce = true
 
   try {
-    const isMAX = sessionStorage.getItem(MAX_FRONTEND_KEY) === 'true';
+    const isMAX = sessionStorage.getItem("max_frontend") === 'true';
 
     saveVisit(true)
     if (!isMAX) { // TODO:
