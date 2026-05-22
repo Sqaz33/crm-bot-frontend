@@ -41,13 +41,13 @@ const store = useAuthStore()
 
 let mountedOnce = false
 
-const form = reactive({
-  name: "",
-  last_name: "",
-  middle_name: "",
-  phone: "",
-  email: "",
-})
+// const form = reactive({
+//   name: "",
+//   last_name: "",
+//   middle_name: "",
+//   phone: "",
+//   email: "",
+// })
 
 
 function checkMAX() {
@@ -61,68 +61,68 @@ function saveVisit(silent = false) {
   if (!silent) logger.debug('Visit draft saved', DEFAULT_VISIT)
 }
 
-function mergeSaveProfile(partial = {}, silent = false) {
-  let saved = {}
-  try {
-    saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}")
-  } catch {}
+// function mergeSaveProfile(partial = {}, silent = false) {
+//   let saved = {}
+//   try {
+//     saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}")
+//   } catch {}
 
-  const val = (v) => (typeof v === "string" ? v.trim() : v)
-  const next = {
-    tg_id: partial.tg_id ?? saved.tg_id ?? null,
-    name: val(partial.name) ?? saved.name ?? form.name ?? "",
-    last_name: val(partial.last_name) ?? saved.last_name ?? form.last_name ?? "",
-    middle_name: val(partial.middle_name) ?? saved.middle_name ?? form.middle_name ?? "",
-    phone: val(partial.phone) ?? saved.phone ?? form.phone ?? "",
-    email: val(partial.email) ?? saved.email ?? form.email ?? "",
-  }
+//   const val = (v) => (typeof v === "string" ? v.trim() : v)
+//   const next = {
+//     tg_id: partial.tg_id ?? saved.tg_id ?? null,
+//     name: val(partial.name) ?? saved.name ?? form.name ?? "",
+//     last_name: val(partial.last_name) ?? saved.last_name ?? form.last_name ?? "",
+//     middle_name: val(partial.middle_name) ?? saved.middle_name ?? form.middle_name ?? "",
+//     phone: val(partial.phone) ?? saved.phone ?? form.phone ?? "",
+//     email: val(partial.email) ?? saved.email ?? form.email ?? "",
+//   }
 
-  localStorage.setItem(PROFILE_KEY, JSON.stringify(next))
-  if (!silent) logger.debug('Profile merged & saved', next)
+//   localStorage.setItem(PROFILE_KEY, JSON.stringify(next))
+//   if (!silent) logger.debug('Profile merged & saved', next)
 
-  form.name = next.name
-  form.last_name = next.last_name
-  form.middle_name = next.middle_name
-  form.phone = next.phone
-  form.email = next.email
+//   form.name = next.name
+//   form.last_name = next.last_name
+//   form.middle_name = next.middle_name
+//   form.phone = next.phone
+//   form.email = next.email
 
-  if (next.tg_id && store.setTelegramId) {
-    try {
-      store.setTelegramId(next.tg_id)
-    } catch {}
-  }
-}
+//   if (next.tg_id && store.setTelegramId) {
+//     try {
+//       store.setTelegramId(next.tg_id)
+//     } catch {}
+//   }
+// }
 
-async function fetchAndApplyClientByTelegramId(tg_id) {
-  if (tg_id === undefined || tg_id === null) return
-  try {
-    const { data } = await getClientByTelegramId(tg_id)
-    const { name, last_name, middle_name, telephone } = data || {}
-    mergeSaveProfile({ 
-      name: name || form.name, 
-      last_name: last_name || form.last_name, 
-      middle_name: middle_name || form.middle_name,
-      phone: telephone || form.phone, 
-      tg_id 
-    }, true)
-    logger.info('CRM client applied', { name, last_name, middle_name, telephone, tg_id })
-  } catch (e) {
-    const s = e?.response?.status
-    if (s !== 404) logger.warn('getClientByTelegramId failed', { status: s })
-  }
-}
+// async function fetchAndApplyClientByTelegramId(tg_id) {
+//   if (tg_id === undefined || tg_id === null) return
+//   try {
+//     const { data } = await getClientByTelegramId(tg_id)
+//     const { name, last_name, middle_name, telephone } = data || {}
+//     mergeSaveProfile({ 
+//       name: name || form.name, 
+//       last_name: last_name || form.last_name, 
+//       middle_name: middle_name || form.middle_name,
+//       phone: telephone || form.phone, 
+//       tg_id 
+//     }, true)
+//     logger.info('CRM client applied', { name, last_name, middle_name, telephone, tg_id })
+//   } catch (e) {
+//     const s = e?.response?.status
+//     if (s !== 404) logger.warn('getClientByTelegramId failed', { status: s })
+//   }
+// }
 
-async function fetchAndApplyClientByMAX() {
-  const initData = getInitData()
-  const u = extractUserFromInitData(initData)
-  const { name, last_name, middle_name, telephone } = u || {}
-  mergeSaveProfile({ 
-    name: name || form.name, 
-    last_name: last_name || form.last_name, 
-    middle_name: middle_name || form.middle_name,
-    phone: telephone || form.phone
-  }, true)
-}
+// async function fetchAndApplyClientByMAX() {
+//   const initData = getInitData()
+//   const u = extractUserFromInitData(initData)
+//   const { name, last_name, middle_name, telephone } = u || {}
+//   mergeSaveProfile({ 
+//     name: name || form.name, 
+//     last_name: last_name || form.last_name, 
+//     middle_name: middle_name || form.middle_name,
+//     phone: telephone || form.phone
+//   }, true)
+// }
 
 function showNoInitDataToast() {
   errorText.value = "Перезайдите через мини-приложение!"
@@ -170,13 +170,13 @@ async function initAuthAndProfile() {
     }
     // login
     const me = await ensureSession()
-    mergeSaveProfile({ tg_id: me.telegram_id, phone: me.telephone }, true)
+    // mergeSaveProfile({ tg_id: me.telegram_id, phone: me.telephone }, true)
     logger.info('App init: авторизация успешна', { userId: me.id })
 
-    if (isMAX) 
-      await fetchAndApplyClientByMAX()
-    else 
-      await fetchAndApplyClientByTelegramId(me.telegram_id)
+    // if (isMAX) 
+    //   await fetchAndApplyClientByMAX()
+    // else 
+    //   await fetchAndApplyClientByTelegramId(me.telegram_id)
   } catch (e) {
     logger.error('App init: ошибка авторизации', { 
       error: e.message, 
