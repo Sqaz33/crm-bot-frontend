@@ -241,7 +241,7 @@ export function getInitDataInfo() {
     auth_date: authDate,
     auth_date_formatted: authDateFormatted,
     hash: params.hash,
-    isAuthorized: !!user
+    // isAuthorized: !!user
   };
 }
 

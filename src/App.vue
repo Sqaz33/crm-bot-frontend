@@ -141,8 +141,8 @@ async function initAuthAndProfile() {
     const initDataInfo = getInitDataInfo()
     logger.info('App init: initData', {
       hasRaw: !!initDataInfo.raw,
-      isAuthorized: initDataInfo.isAuthorized,
-      hasUser: !!initDataInfo.user,
+      // isAuthorized: initDataInfo.isAuthorized,
+      // hasUser: !!initDataInfo.user,
     })
 
     if (!initDataInfo.raw) {
