@@ -120,8 +120,7 @@ async function fetchAndApplyClientByMAX() {
     name: name || form.name, 
     last_name: last_name || form.last_name, 
     middle_name: middle_name || form.middle_name,
-    phone: telephone || form.phone, 
-    tg_id 
+    phone: telephone || form.phone
   }, true)
 }
 
