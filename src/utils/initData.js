@@ -228,7 +228,7 @@ export function getInitDataInfo() {
 
   const usp = new URLSearchParams(initData);
   const params = Object.fromEntries(usp.entries());
-  const user = extractUserFromInitData(initData);
+  // const user = extractUserFromInitData(initData);
 
   // Также получаем auth_date
   const authDate = params.auth_date ? parseInt(params.auth_date) * 1000 : null;
@@ -236,7 +236,7 @@ export function getInitDataInfo() {
 
   return {
     raw: initData,
-    user,
+    // user,
     params,
     auth_date: authDate,
     auth_date_formatted: authDateFormatted,
