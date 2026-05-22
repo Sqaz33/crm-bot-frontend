@@ -25,7 +25,7 @@ import { ensureSession } from "./auth/ensureSession"
 import { getClientByTelegramId } from "./api/clients"
 import { useAuthStore } from "./stores/auth"
 import { writeVisit, DEFAULT_VISIT } from "./utils/visitStorage"
-import { getInitData, getInitDataInfo, isUserAuthorized, extractUserFromInitData } from './utils/initData'
+import { getInitData, getInitDataInfo, isUserAuthorized } from './utils/initData'
 import { logger } from './utils/logger'
 import SpinnerSvg from './components/ui/SpinnerLoad.vue'
 

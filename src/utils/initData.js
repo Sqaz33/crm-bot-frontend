@@ -90,8 +90,10 @@ function getInitDataFromMAX() {
 export function getInitData() {
   const isMAX = sessionStorage.getItem("max_frontend") === 'true';
 
-  if (isMAX) return getInitDataFromMAX()
-  else return getInitDataFromTG()
+  let raw
+
+  if (isMAX) raw = getInitDataFromMAX()
+  else raw = getInitDataFromTG()
 
   // Используем initDataVault для безопасного сохранения
   // По умолчанию сохраняет в sessionStorage, в localStorage только при VITE_SAVE_INIT_DATA_TO_STORAGE=true
@@ -105,69 +107,69 @@ export function getInitData() {
  * Извлекаем user из init_data (user=… в строке запроса)
  * Возвращает null если пользователь еще не авторизовался
  */
-export function extractUserFromInitData(id) {
-  if (!id) return null;
+// export function extractUserFromInitData(id) {
+//   if (!id) return null;
   
-  try {
-    const usp = new URLSearchParams(id);
-    const rawUser = usp.get('user');
+//   try {
+//     const usp = new URLSearchParams(id);
+//     const rawUser = usp.get('user');
     
-    // Если пользователь не авторизован, возвращаем null
-    if (!rawUser) {
-      logger.debug('extractUserFromInitData: no user data - not authorized yet');
-      return null;
-    }
+//     // Если пользователь не авторизован, возвращаем null
+//     if (!rawUser) {
+//       logger.debug('extractUserFromInitData: no user data - not authorized yet');
+//       return null;
+//     }
 
-    // Декодируем строку user
-    let decoded = rawUser;
-    try {
-      decoded = decodeURIComponent(rawUser);
-    } catch (e) {
-      logger.warn('extractUserFromInitData: failed to decodeURIComponent user', { error: e?.message });
-    }
+//     // Декодируем строку user
+//     let decoded = rawUser;
+//     try {
+//       decoded = decodeURIComponent(rawUser);
+//     } catch (e) {
+//       logger.warn('extractUserFromInitData: failed to decodeURIComponent user', { error: e?.message });
+//     }
 
-    // Пытаемся распарсить JSON
-    let userObj = null;
-    try {
-      userObj = JSON.parse(decoded);
-    } catch (e) {
-      logger.warn('extractUserFromInitData: failed to parse user JSON', { error: e?.message });
-      // Иногда может быть двойное кодирование
-      try {
-        const doubleDecoded = decodeURIComponent(decoded);
-        userObj = JSON.parse(doubleDecoded);
-      } catch (e2) {
-        logger.error('extractUserFromInitData: failed to double decode user', { error: e2?.message });
-        return null;
-      }
-    }
+//     // Пытаемся распарсить JSON
+//     let userObj = null;
+//     try {
+//       userObj = JSON.parse(decoded);
+//     } catch (e) {
+//       logger.warn('extractUserFromInitData: failed to parse user JSON', { error: e?.message });
+//       // Иногда может быть двойное кодирование
+//       try {
+//         const doubleDecoded = decodeURIComponent(decoded);
+//         userObj = JSON.parse(doubleDecoded);
+//       } catch (e2) {
+//         logger.error('extractUserFromInitData: failed to double decode user', { error: e2?.message });
+//         return null;
+//       }
+//     }
 
-    if (!userObj || !userObj.id) {
-      logger.warn('extractUserFromInitData: invalid user object or missing id', { userObj });
-      return null;
-    }
+//     if (!userObj || !userObj.id) {
+//       logger.warn('extractUserFromInitData: invalid user object or missing id', { userObj });
+//       return null;
+//     }
 
-    logger.debug('extractUserFromInitData: successfully extracted user', {
-      id: userObj.id,
-      firstName: userObj.first_name,
-      username: userObj.username
-    });
+//     logger.debug('extractUserFromInitData: successfully extracted user', {
+//       id: userObj.id,
+//       firstName: userObj.first_name,
+//       username: userObj.username
+//     });
 
-    return {
-      firstName: userObj.first_name || '',
-      lastName: userObj.last_name || '',
-      tg_id: userObj.id,
-      username: userObj.username || '',
-      language_code: userObj.language_code || '',
-      is_premium: userObj.is_premium || false,
-      allows_write_to_pm: userObj.allows_write_to_pm || false,
-      photo_url: userObj.photo_url || ''
-    };
-  } catch (error) {
-    logger.error('[extractUserFromInitData] Error', { error: error?.message || String(error) });
-    return null;
-  }
-}
+//     return {
+//       firstName: userObj.first_name || '',
+//       lastName: userObj.last_name || '',
+//       tg_id: userObj.id,
+//       username: userObj.username || '',
+//       language_code: userObj.language_code || '',
+//       is_premium: userObj.is_premium || false,
+//       allows_write_to_pm: userObj.allows_write_to_pm || false,
+//       photo_url: userObj.photo_url || ''
+//     };
+//   } catch (error) {
+//     logger.error('[extractUserFromInitData] Error', { error: error?.message || String(error) });
+//     return null;
+//   }
+// }
 
 /**
  * Форматирует initData для отладки (console.table для разработчиков)
