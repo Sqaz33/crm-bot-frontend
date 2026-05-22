@@ -171,7 +171,9 @@ async function initAuthAndProfile() {
     // login
     const me = await ensureSession()
     // mergeSaveProfile({ tg_id: me.telegram_id, phone: me.telephone }, true)
-    logger.info('App init: авторизация успешна', { userId: me.id })
+        
+    if (!me) throw new Error('сервер не вернул профиль')
+    logger.info('App init: авторизация успешна', { userId: me?.id })
 
     // if (isMAX) 
     //   await fetchAndApplyClientByMAX()
