@@ -13,7 +13,7 @@
 import { logger } from '../utils/logger'
 
 // Ключ хранилища обфусцирован для затруднения поиска
-const STORAGE_KEY_BASE = 'tg_webapp_'
+const STORAGE_KEY_BASE = 'webapp_'
 const STORAGE_KEY_HASH = 'init_vault_hash_8723'
 const getKey = () => `${STORAGE_KEY_BASE}${STORAGE_KEY_HASH}`
 
