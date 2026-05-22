@@ -39,7 +39,7 @@ export async function ensureSession() {
     if (id) {
       await loginViaMAX(initData)
     } else {
-      const response = await loginViaMAXResolveSalonID()
+      const response = await loginViaMAXResolveSalonID(initData)
       const data = response?.data;
       const salonId = data?.salon_id;
       if (salonId != null) {

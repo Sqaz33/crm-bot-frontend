@@ -68,8 +68,12 @@ function getInitDataFromTG() {
 }
 
 function getInitDataFromMAX() {
-  // TODO: debug init data
   let raw = null
+
+  if (!raw && window?.WebApp?.initData) {
+    raw = window.WebApp.initData;
+    logger.debug('getInitDataFromMAX: source=window.WebApp.initData', { length: raw?.length });
+  }
 
   if (!raw && window.location.hash?.startsWith('#WebAppData=')) {
     raw = decodeURIComponent(window.location.hash.replace('#WebAppData=', ''));

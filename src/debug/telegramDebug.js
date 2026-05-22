@@ -13,19 +13,24 @@ import { logger } from '../utils/logger'
  *   2) вызывает ensureSession()
  *   3) возвращает { ok: true, me } или { ok: false, error }
  */
-// TODO
 export function attachDebugInitSender() {
   if (typeof window === 'undefined') return
-  const isMAX = sessionStorage.getItem("max_frontend") === 'true';
-  if (isMAX) return
 
-  window.__debugInitData = async function (rawInitData) {
-    logger.debug('debug:init: устанавливаем Telegram.WebApp.initData', { rawInitDataLen: rawInitData?.length })
+  window.__debugInitData = async function (rawInitData, isMAX = false) {
+    sessionStorage.setItem('max_frontend', isMAX);
 
-    const w = window
-    w.Telegram = w.Telegram || {}
-    w.Telegram.WebApp = w.Telegram.WebApp || {}
-    w.Telegram.WebApp.initData = rawInitData
+    if (!isMAX) {
+      logger.debug('debug:init: устанавливаем Telegram.WebApp.initData', { rawInitDataLen: rawInitData?.length })
+      const w = window
+      w.Telegram = w.Telegram || {}
+      w.Telegram.WebApp = w.Telegram.WebApp || {}
+      w.Telegram.WebApp.initData = rawInitData
+    } else {
+      logger.debug('debug:init: устанавливаем WebApp.initData', { rawInitDataLen: rawInitData?.length })
+      const w = window
+      w.WebApp = w.WebApp || {}
+      w.WebApp.initData = rawInitData
+    }
 
     try {
       const me = await ensureSession()

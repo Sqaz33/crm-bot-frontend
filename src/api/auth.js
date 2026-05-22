@@ -17,5 +17,5 @@ export function loginViaMAX(initDataStr) {
 }
 
 export function loginViaMAXResolveSalonID(initDataStr) {
-  return api.post('/auth/max/login/resolve', { init_data: initDataStr })
+  return api.post('/auth/max/login/resolve/', { init_data: initDataStr })
 }
