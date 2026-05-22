@@ -1,6 +1,6 @@
 import { getMe, loginViaTelegram } from '../api/auth'
 import { useAuthStore } from '../stores/auth'
-import { getInitData, extractUserFromInitData } from '../utils/initData'
+import { getInitData } from '../utils/initData'
 import { logger } from '../utils/logger'
 
 /**
@@ -42,11 +42,11 @@ export async function ensureSession() {
   await loginViaTelegram(initData)
 
   // сохраним базовый профиль из init_data (для UX)
-  const u = extractUserFromInitData(initData)
-  if (u) {
-    store.setTelegramId(u.tg_id)
-    logger.info('ensureSession: Telegram user получен', { tgId: u.tg_id })
-  }
+  // const u = extractUserFromInitData(initData)
+  // if (u) {
+  //   store.setTelegramId(u.tg_id)
+  //   logger.info('ensureSession: Telegram user получен', { tgId: u.tg_id })
+  // }
 
   // 3) снова /auth/me
   const { data } = await getMe()
