@@ -113,7 +113,7 @@ async function fetchAndApplyClientByTelegramId(tg_id) {
 }
 
 async function fetchAndApplyClientByMAX() {
-  const init_data = getInitData()
+  const initData = getInitData()
   const u = extractUserFromInitData(initData)
   const { name, last_name, middle_name, telephone } = u || {}
   mergeSaveProfile({ 
