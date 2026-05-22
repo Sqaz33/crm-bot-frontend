@@ -1,6 +1,6 @@
 import { getMe, loginViaTelegram, loginViaMAX, loginViaMAXResolveSalonID } from '../api/auth'
 import { useAuthStore } from '../stores/auth'
-import { getInitData, extractUserFromInitData } from '../utils/initData'
+import { getInitData } from '../utils/initData'
 import { logger } from '../utils/logger'
 
 export async function ensureSession() {
