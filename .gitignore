@@ -26,3 +26,4 @@ dist-ssr
 
 .env
 docs/
+*/__pycache__/
