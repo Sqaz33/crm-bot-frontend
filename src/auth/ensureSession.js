@@ -45,6 +45,7 @@ export async function ensureSession() {
       if (salonId != null) {
         sessionStorage.setItem('SALON_ID', salonId);
       }
+      logger.error('ensureSession: salon id не был получен/логин не произошел')
     }
   } else {
     logger.debug('ensureSession: логинимся через /auth/telegram/login', { initDataLen: initData.length })
