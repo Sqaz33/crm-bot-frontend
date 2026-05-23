@@ -7,6 +7,7 @@ import re
 
 app = FastAPI()
 
+# python.exe -m uvicorn main:app
 
 # ── CORS (нужен withCredentials=true): echo-back origin ──────────────────────
 class CORSMiddleware(BaseHTTPMiddleware):

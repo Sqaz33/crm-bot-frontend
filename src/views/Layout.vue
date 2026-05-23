@@ -42,7 +42,7 @@ import servicesIcon from '../assets/servicesIcon.svg'
 const route = useRoute()
 
 const mdQuery = window.matchMedia('(min-width: 768px)')
-const sidebarExpanded = ref(mdQuery.matches)
+const sidebarExpanded = ref(false)
 const onMediaChange = (e) => { sidebarExpanded.value = e.matches }
 
 onMounted(() => mdQuery.addEventListener('change', onMediaChange))
