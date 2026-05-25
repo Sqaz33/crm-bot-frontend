@@ -176,7 +176,7 @@ onMounted(async () => {
     // staff
     if (staffId.value) {
       try {
-        const { data: staff } = await getStaff(staffId.value)
+        const staff = await getStaff(staffId.value)
 
         summary.staff = {
           id: staff.id,
