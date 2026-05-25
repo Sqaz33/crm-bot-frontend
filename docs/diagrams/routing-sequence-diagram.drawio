@@ -1,0 +1,187 @@
+<mxfile host="app.diagrams.net" modified="2026-05-25T00:00:00.000Z" agent="Mozilla/5.0" etag="routing-sequence" version="24.0.0" type="device">
+  <diagram id="routing-sequence" name="Routing Sequence">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Заголовок диаграммы -->
+        <mxCell id="title1" value="Диаграмма последовательности: Маршрутизация (Vue Router)" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="600" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Lifelines (линии жизни) -->
+        <!-- User -->
+        <mxCell id="user-lf" value="User" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="100" height="700" as="geometry" />
+        </mxCell>
+        
+        <!-- Browser -->
+        <mxCell id="browser-lf" value="Browser" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="260" y="80" width="100" height="700" as="geometry" />
+        </mxCell>
+        
+        <!-- Vue Router -->
+        <mxCell id="router-lf" value="Vue&#xa;Router" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="440" y="80" width="100" height="700" as="geometry" />
+        </mxCell>
+        
+        <!-- Router View -->
+        <mxCell id="view-lf" value="RouterView&#xa;(Component)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="620" y="80" width="120" height="700" as="geometry" />
+        </mxCell>
+        
+        <!-- Component -->
+        <mxCell id="comp-lf" value="View&#xa;(Component)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="820" y="80" width="120" height="700" as="geometry" />
+        </mxCell>
+        
+        <!-- Store -->
+        <mxCell id="store-lf" value="Pinia Store" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="80" width="120" height="700" as="geometry" />
+        </mxCell>
+        
+        <!-- API -->
+        <mxCell id="api-lf" value="API" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="80" width="100" height="700" as="geometry" />
+        </mxCell>
+        
+        <!-- Сообщения и стрелки -->
+        
+        <!-- 1. Изменение URL -->
+        <mxCell id="msg1" value="1: Изменение URL&#xa;/records" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="100" y="120" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.1;exitDx=0;exitDy=0;entryX=0;entryY=0.1;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="user-lf" target="browser-lf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- 2. push() или навигация -->
+        <mxCell id="msg2" value="2: router.push(&#39;/records&#39;)" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="100" y="160" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.15;exitDx=0;exitDy=0;entryX=0;entryY=0.15;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="user-lf" target="router-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 3. Разбор маршрута -->
+        <mxCell id="msg3" value="3: match(&#39;/records&#39;)" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="480" y="200" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 4. Проверка guardов -->
+        <mxCell id="msg4" value="4: beforeEach guards" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="480" y="240" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 5. Проверка meta.requiresAuth -->
+        <mxCell id="msg5" value="5: Проверка meta" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="1080" y="270" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.28;exitDx=0;exitDy=0;entryX=0;entryY=0.28;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="router-lf" target="store-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1100" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 6. Ответ о авторизации -->
+        <mxCell id="msg6" value="6: { isAuth }" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxCell id="arrow6-aux" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.32;exitDx=0;exitDy=0;entryX=1;entryY=0.32;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="store-lf" target="router-lf">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </mxCell>
+        
+        <!-- 7. Разрешение навигации -->
+        <mxCell id="msg7" value="7: next()" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="480" y="320" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 8. Создание компонента -->
+        <mxCell id="msg8" value="8: createRouteContext()" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="480" y="360" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 9. mounted хук -->
+        <mxCell id="msg9" value="9: onMounted()" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="660" y="400" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 10. fetch данных -->
+        <mxCell id="msg10" value="10: fetch() / API call" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="1260" y="440" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.48;exitDx=0;exitDy=0;entryX=0;entryY=0.48;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="comp-lf" target="api-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1280" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 11. Ответ API -->
+        <mxCell id="msg11" value="11: { data }" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="1240" y="490" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.53;exitDx=0;exitDy=0;entryX=1;entryY=0.53;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="api-lf" target="comp-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1260" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 12. Обновление состояния -->
+        <mxCell id="msg12" value="12: reactive state update" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="840" y="540" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 13. Рендеринг -->
+        <mxCell id="msg13" value="13: render()" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="660" y="590" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 14. Отображение DOM -->
+        <mxCell id="msg14" value="14: DOM update" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="280" y="640" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.7;exitDx=0;exitDy=0;entryX=1;entryY=0.7;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="view-lf" target="browser-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="300" y="660" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 15. Навигация завершена -->
+        <mxCell id="msg15" value="15: afterEach hook" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="480" y="700" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Фрагмент alt для проверки авторизации -->
+        <mxCell id="alt1" value="alt" style="shape=umlAltFragment;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;pointerEvents=0;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="250" width="200" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="alt-label1" value="[Авторизован]" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="alt1">
+          <mxGeometry x="10" y="10" width="100" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="alt-label2" value="[Не авторизован]" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="alt1">
+          <mxGeometry x="10" y="45" width="100" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Комментарий -->
+        <mxCell id="comment1" value="Маршруты:&#xa;/, /records, /profile,&#xa;/appointmant, /createvisit" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=0;darkOpacity=0.05;" vertex="1" parent="1">
+          <mxGeometry x="520" y="100" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="comment2" value="meta: { title, showMenu,&#xa;requiresAuth }" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=0;darkOpacity=0.05;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="100" width="140" height="50" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

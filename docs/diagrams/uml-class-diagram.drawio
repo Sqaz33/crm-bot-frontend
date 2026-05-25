@@ -1,0 +1,226 @@
+<mxfile host="Electron" agent="Mozilla/5.0">
+  <diagram id="crm-class-diagram" name="CRM Class Diagram">
+    <mxGraphModel dx="1214" dy="1193" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="client" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;" value="Client" vertex="1">
+          <mxGeometry height="280" width="200" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="client-attr1" parent="client" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ id: Integer" vertex="1">
+          <mxGeometry height="24" width="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="client-attr2" parent="client" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ telegram_id: Integer" vertex="1">
+          <mxGeometry height="24" width="200" y="64" as="geometry" />
+        </mxCell>
+        <mxCell id="client-attr3" parent="client" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ name: String" vertex="1">
+          <mxGeometry height="24" width="200" y="88" as="geometry" />
+        </mxCell>
+        <mxCell id="client-attr4" parent="client" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ last_name: String" vertex="1">
+          <mxGeometry height="24" width="200" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="client-attr5" parent="client" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ middle_name: String" vertex="1">
+          <mxGeometry height="24" width="200" y="136" as="geometry" />
+        </mxCell>
+        <mxCell id="client-attr6" parent="client" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ phone: String" vertex="1">
+          <mxGeometry height="24" width="200" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="client-attr7" parent="client" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ email: String" vertex="1">
+          <mxGeometry height="24" width="200" y="184" as="geometry" />
+        </mxCell>
+        <mxCell id="client-method2" parent="client" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getMe(): Client" vertex="1">
+          <mxGeometry height="24" width="200" y="232" as="geometry" />
+        </mxCell>
+        <mxCell id="client-method3" parent="client" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ updateMe(data): Client" vertex="1">
+          <mxGeometry height="24" width="200" y="256" as="geometry" />
+        </mxCell>
+        <mxCell id="salon" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;" value="Salon" vertex="1">
+          <mxGeometry height="220" width="200" x="280" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="salon-attr1" parent="salon" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ id: Integer" vertex="1">
+          <mxGeometry height="24" width="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="salon-attr2" parent="salon" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ name: String" vertex="1">
+          <mxGeometry height="24" width="200" y="64" as="geometry" />
+        </mxCell>
+        <mxCell id="salon-attr3" parent="salon" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ description: String" vertex="1">
+          <mxGeometry height="24" width="200" y="88" as="geometry" />
+        </mxCell>
+        <mxCell id="salon-attr4" parent="salon" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ address: String" vertex="1">
+          <mxGeometry height="24" width="200" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="salon-attr5" parent="salon" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ rating: String" vertex="1">
+          <mxGeometry height="24" width="200" y="136" as="geometry" />
+        </mxCell>
+        <mxCell id="salon-attr6" parent="salon" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ timezone: String" vertex="1">
+          <mxGeometry height="24" width="200" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="salon-method1" parent="salon" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getInfo(): Salon" vertex="1">
+          <mxGeometry height="24" width="200" y="184" as="geometry" />
+        </mxCell>
+        <mxCell id="serviceType" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;" value="ServiceType" vertex="1">
+          <mxGeometry height="140" width="200" x="520" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="serviceType-attr1" parent="serviceType" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ id: Integer" vertex="1">
+          <mxGeometry height="24" width="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="serviceType-attr2" parent="serviceType" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ name: String" vertex="1">
+          <mxGeometry height="24" width="200" y="64" as="geometry" />
+        </mxCell>
+        <mxCell id="serviceType-method1" parent="serviceType" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getAll(): ServiceType[]" vertex="1">
+          <mxGeometry height="24" width="200" y="88" as="geometry" />
+        </mxCell>
+        <mxCell id="serviceType-method2" parent="serviceType" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getById(id): ServiceType" vertex="1">
+          <mxGeometry height="24" width="200" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="service" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;" value="Service" vertex="1">
+          <mxGeometry height="160" width="200" x="520" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="service-attr1" parent="service" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ id: Integer" vertex="1">
+          <mxGeometry height="24" width="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="service-attr2" parent="service" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ name: String" vertex="1">
+          <mxGeometry height="24" width="200" y="64" as="geometry" />
+        </mxCell>
+        <mxCell id="service-attr3" parent="service" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ price: Decimal" vertex="1">
+          <mxGeometry height="24" width="200" y="88" as="geometry" />
+        </mxCell>
+        <mxCell id="service-method1" parent="service" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getAll(): Service[]" vertex="1">
+          <mxGeometry height="24" width="200" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="service-method2" parent="service" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getById(id): Service" vertex="1">
+          <mxGeometry height="24" width="200" y="136" as="geometry" />
+        </mxCell>
+        <mxCell id="staff" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;" value="Staff" vertex="1">
+          <mxGeometry height="240" width="200" x="530" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="staff-attr1" parent="staff" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ id: Integer" vertex="1">
+          <mxGeometry height="24" width="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="staff-attr2" parent="staff" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ name: String" vertex="1">
+          <mxGeometry height="24" width="200" y="64" as="geometry" />
+        </mxCell>
+        <mxCell id="staff-attr3" parent="staff" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ photo: String" vertex="1">
+          <mxGeometry height="24" width="200" y="88" as="geometry" />
+        </mxCell>
+        <mxCell id="staff-attr4" parent="staff" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ specializations: String[]" vertex="1">
+          <mxGeometry height="24" width="200" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="staff-method1" parent="staff" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getAll(): Staff[]" vertex="1">
+          <mxGeometry height="24" width="200" y="136" as="geometry" />
+        </mxCell>
+        <mxCell id="staff-method2" parent="staff" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getById(id): Staff" vertex="1">
+          <mxGeometry height="24" width="200" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="staff-method3" parent="staff" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getSpecializations(): String[]" vertex="1">
+          <mxGeometry height="24" width="200" y="184" as="geometry" />
+        </mxCell>
+        <mxCell id="staff-method4" parent="staff" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getFreeTime(date, serviceId): TimeSlot[]" vertex="1">
+          <mxGeometry height="24" width="200" y="208" as="geometry" />
+        </mxCell>
+        <mxCell id="visit" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;" value="Visit" vertex="1">
+          <mxGeometry height="280" width="200" x="45" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="visit-attr1" parent="visit" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ id: Integer" vertex="1">
+          <mxGeometry height="24" width="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="visit-attr2" parent="visit" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ visit_date_time: DateTime" vertex="1">
+          <mxGeometry height="24" width="200" y="64" as="geometry" />
+        </mxCell>
+        <mxCell id="visit-attr3" parent="visit" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ comment: String" vertex="1">
+          <mxGeometry height="24" width="200" y="88" as="geometry" />
+        </mxCell>
+        <mxCell id="visit-attr4" parent="visit" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ status: String" vertex="1">
+          <mxGeometry height="24" width="200" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="visit-attr5" parent="visit" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ will_come: Boolean" vertex="1">
+          <mxGeometry height="24" width="200" y="136" as="geometry" />
+        </mxCell>
+        <mxCell id="visit-method1" parent="visit" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ create(data): Visit" vertex="1">
+          <mxGeometry height="24" width="200" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="visit-method2" parent="visit" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getCurrent(): Visit[]" vertex="1">
+          <mxGeometry height="24" width="200" y="184" as="geometry" />
+        </mxCell>
+        <mxCell id="visit-method3" parent="visit" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getOld(): Visit[]" vertex="1">
+          <mxGeometry height="24" width="200" y="208" as="geometry" />
+        </mxCell>
+        <mxCell id="visit-method4" parent="visit" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getById(id): Visit" vertex="1">
+          <mxGeometry height="24" width="200" y="232" as="geometry" />
+        </mxCell>
+        <mxCell id="visit-method5" parent="visit" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ confirm(id): Visit" vertex="1">
+          <mxGeometry height="24" width="200" y="256" as="geometry" />
+        </mxCell>
+        <mxCell id="timeSlot" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;" value="TimeSlot" vertex="1">
+          <mxGeometry height="120" width="200" x="520" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="timeSlot-attr1" parent="timeSlot" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;" value="+ start_time: DateTime" vertex="1">
+          <mxGeometry height="24" width="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="timeSlot-method1" parent="timeSlot" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getAvailable(staffId, date): TimeSlot[]" vertex="1">
+          <mxGeometry height="24" width="200" y="64" as="geometry" />
+        </mxCell>
+        <mxCell id="timeSlot-method2" parent="timeSlot" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingTop=4;whiteSpace=wrap;overflow=hidden;fontStyle=italic;" value="+ getSchedule(staffId, from, to): TimeSlot[]" vertex="1">
+          <mxGeometry height="24" width="200" y="88" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-salon-staff" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=diamond;endFill=1;strokeColor=#000000;strokeWidth=1;" value="1" vertex="1">
+          <mxGeometry y="20" as="geometry">
+            <mxPoint x="490" y="150" as="sourcePoint" />
+            <mxPoint x="640" y="830" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-salon-staff-count" connectable="0" parent="rel-salon-staff" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="1..*" vertex="1">
+          <mxGeometry relative="1" x="-0.1" y="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-servicetype-service" edge="1" parent="1" source="serviceType" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=diamond;endFill=0;strokeColor=#000000;strokeWidth=1;" target="service" value="1" vertex="1">
+          <mxGeometry y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-servicetype-service-count" connectable="0" parent="rel-servicetype-service" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="1..*" vertex="1">
+          <mxGeometry relative="1" x="-0.1" y="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-staff-timeslot" edge="1" parent="1" source="staff" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=diamond;endFill=0;strokeColor=#000000;strokeWidth=1;" target="timeSlot" value="1" vertex="1">
+          <mxGeometry y="20" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="685" />
+              <mxPoint x="740" y="685" />
+              <mxPoint x="740" y="400" />
+              <mxPoint x="620" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-staff-timeslot-count" connectable="0" parent="rel-staff-timeslot" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="1..*" vertex="1">
+          <mxGeometry relative="1" x="-0.1" y="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-client-visit" edge="1" parent="1" source="client" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=diamond;endFill=0;strokeColor=#000000;strokeWidth=1;" target="visit" value="1" vertex="1">
+          <mxGeometry y="20" as="geometry">
+            <mxPoint x="140" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-client-visit-count" connectable="0" parent="rel-client-visit" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="1..*" vertex="1">
+          <mxGeometry relative="1" x="-0.1" y="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-visit-staff" edge="1" parent="1" source="visit" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=open;strokeColor=#000000;strokeWidth=1;" target="staff" value="1" vertex="1">
+          <mxGeometry y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-visit-staff-count" connectable="0" parent="rel-visit-staff" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.8" y="-1" as="geometry">
+            <mxPoint x="5" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-visit-service" edge="1" parent="1" source="visit" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=open;strokeColor=#000000;strokeWidth=1;" target="service" value="1" vertex="1">
+          <mxGeometry y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-staff-service" edge="1" parent="1" source="staff" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=open;strokeColor=#000000;strokeWidth=1;" target="service" value="" vertex="1">
+          <mxGeometry y="20" as="geometry">
+            <Array as="points">
+              <mxPoint x="670" y="605" />
+              <mxPoint x="740" y="605" />
+              <mxPoint x="740" y="200" />
+              <mxPoint x="620" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

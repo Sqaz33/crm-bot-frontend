@@ -1,0 +1,236 @@
+<mxfile host="app.diagrams.net" modified="2026-05-25T00:00:00.000Z" agent="Mozilla/5.0" etag="create-visit-sequence" version="24.0.0" type="device">
+  <diagram id="create-visit-sequence" name="Create Visit Sequence">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Заголовок диаграммы -->
+        <mxCell id="title1" value="Диаграмма последовательности: Создание записи на услугу" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="600" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Lifelines (линии жизни) -->
+        <!-- User -->
+        <mxCell id="user-lf" value="User" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80" width="100" height="800" as="geometry" />
+        </mxCell>
+        
+        <!-- CreateVisitView -->
+        <mxCell id="view-lf" value="CreateVisitView&#xa;(Frontend)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="280" y="80" width="140" height="800" as="geometry" />
+        </mxCell>
+        
+        <!-- VisitStorage -->
+        <mxCell id="storage-lf" value="VisitStorage&#xa;(localStorage)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="500" y="80" width="140" height="800" as="geometry" />
+        </mxCell>
+        
+        <!-- SalonStore -->
+        <mxCell id="store-lf" value="SalonStore&#xa;(Pinia)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="720" y="80" width="120" height="800" as="geometry" />
+        </mxCell>
+        
+        <!-- API Client -->
+        <mxCell id="api-lf" value="API Client&#xa;(Axios)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="920" y="80" width="120" height="800" as="geometry" />
+        </mxCell>
+        
+        <!-- Backend -->
+        <mxCell id="backend-lf" value="Backend&#xa;(Django)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="80" width="120" height="800" as="geometry" />
+        </mxCell>
+        
+        <!-- Сообщения и стрелки -->
+        
+        <!-- 1. Переход на страницу создания записи -->
+        <mxCell id="msg1" value="1: navigate to&#xa;/createvisit" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="120" y="130" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.1;exitDx=0;exitDy=0;entryX=0;entryY=0.1;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="user-lf" target="view-lf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- 2. onMounted hook -->
+        <mxCell id="msg2" value="2: onMounted()" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="320" y="180" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 3. loadClientData() -->
+        <mxCell id="msg3" value="3: loadClientData()" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="320" y="220" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 4. GET /auth/me/ -->
+        <mxCell id="msg4" value="4: GET /auth/me/" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="960" y="250" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="view-lf" target="backend-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="980" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 5. Ответ с данными клиента -->
+        <mxCell id="msg5" value="5: 200 OK&#xa;{client data}" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="1060" y="290" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.3;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="backend-lf" target="view-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1080" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 6. loadSalonInfo() -->
+        <mxCell id="msg6" value="6: loadSalonInfo()" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="320" y="340" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 7. fetch() из SalonStore -->
+        <mxCell id="msg7" value="7: fetch()" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="760" y="370" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.4;exitDx=0;exitDy=0;entryX=0;entryY=0.4;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="view-lf" target="backend-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="780" y="390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 8. Данные салона -->
+        <mxCell id="msg8" value="8: {salon data}" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="1060" y="410" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.45;exitDx=0;exitDy=0;entryX=1;entryY=0.45;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="backend-lf" target="view-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1080" y="430" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 9. getRawVisit() -->
+        <mxCell id="msg9" value="9: getRawVisit()" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="320" y="460" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="view-lf" target="storage-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 10. Возврат данных черновика -->
+        <mxCell id="msg10" value="10: raw visit data" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="560" y="500" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.55;exitDx=0;exitDy=0;entryX=1;entryY=0.55;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="storage-lf" target="view-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="580" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 11. Отображение формы с данными -->
+        <mxCell id="msg11" value="11: Отображение&#xa;VisitSummary, VisitForm" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="300" y="550" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 12. Нажатие кнопки "Записаться" -->
+        <mxCell id="msg12" value="12: submitVisit()" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="120" y="600" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.7;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="user-lf" target="view-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="620" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 13. Валидация формы -->
+        <mxCell id="msg13" value="13: Валидация: staff_id,&#xa;service_id, visit_time, accepted" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="320" y="640" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 14. Формирование payload -->
+        <mxCell id="msg14" value="14: POST /visits/&#xa;{payload}" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="960" y="680" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="view-lf" target="backend-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="980" y="700" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 15. Создание записи в БД -->
+        <mxCell id="msg15" value="15: Сохранение&#xa;в базу данных" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="1140" y="720" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 16. Ответ об успешном создании -->
+        <mxCell id="msg16" value="16: 201 Created&#xa;{visit data}" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="1060" y="760" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.85;exitDx=0;exitDy=0;entryX=1;entryY=0.85;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="backend-lf" target="view-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1080" y="780" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 17. clearVisit() -->
+        <mxCell id="msg17" value="17: clearVisit()" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="320" y="800" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.9;exitDx=0;exitDy=0;entryX=0;entryY=0.9;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#000000;endArrow=block;endFill=1;" edge="1" parent="1" source="view-lf" target="storage-lf">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="820" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 18. Показать SuccessModal -->
+        <mxCell id="msg18" value="18: SuccessModal" style="shape=message;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="300" y="850" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Фрагмент loop для повторяющихся действий -->
+        <mxCell id="loop1" value="loop" style="shape=umlLoopFragment;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;pointerEvents=0;" vertex="1" parent="1">
+          <mxGeometry x="280" y="160" width="400" height="150" as="geometry" />
+        </mxCell>
+        
+        <!-- Метка loop -->
+        <mxCell id="loop-label" value="[Загрузка данных]" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="loop1">
+          <mxGeometry x="10" y="10" width="100" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Фрагмент alt для валидации -->
+        <mxCell id="alt1" value="alt" style="shape=umlAltFragment;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;pointerEvents=0;" vertex="1" parent="1">
+          <mxGeometry x="280" y="620" width="200" height="100" as="geometry" />
+        </mxCell>
+        
+        <!-- Метки alt -->
+        <mxCell id="alt-label1" value="[Валидно]" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="alt1">
+          <mxGeometry x="10" y="10" width="80" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="alt-label2" value="[Не валидно]" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="alt1">
+          <mxGeometry x="10" y="55" width="80" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Комментарий -->
+        <mxCell id="comment1" value="Черновик записи: staff_id,&#xa;service_id, visit_time, comment" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=0;darkOpacity=0.05;" vertex="1" parent="1">
+          <mxGeometry x="660" y="450" width="160" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="comment2" value="Payload:&#xa;staff_id, service_id,&#xa;visit_date_time, comment" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=0;darkOpacity=0.05;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="660" width="130" height="60" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
