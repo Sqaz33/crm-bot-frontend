@@ -1,0 +1,117 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.8 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.8">
+  <diagram id="auth-sequence-diagram-fixed" name="Auth Sequence">
+    <mxGraphModel dx="1969" dy="993" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Диаграмма последовательности: Авторизация через Telegram WebApp" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=14;fontStyle=1;align=center;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="290" y="20" width="820" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="user-lf" value="User" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="80" width="100" height="860" as="geometry" />
+        </mxCell>
+        <mxCell id="webapp-lf" value="WebApp&lt;br&gt;(Frontend)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="230" y="80" width="120" height="860" as="geometry" />
+        </mxCell>
+        <mxCell id="browser-lf" value="Browser" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="445" y="80" width="110" height="860" as="geometry" />
+        </mxCell>
+        <mxCell id="apiclient-lf" value="API Client&lt;br&gt;(Axios)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="640" y="80" width="130" height="860" as="geometry" />
+        </mxCell>
+        <mxCell id="backend-lf" value="Backend&lt;br&gt;(Django)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="865" y="80" width="130" height="860" as="geometry" />
+        </mxCell>
+        <mxCell id="telegram-lf" value="Telegram" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1085" y="80" width="110" height="860" as="geometry" />
+        </mxCell>
+        <mxCell id="alt-fragment" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontColor=#000000;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="30" y="350" width="1200" height="580" as="geometry" />
+        </mxCell>
+        <mxCell id="alt-tab" value="alt" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="30" y="350" width="45" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="guard-valid" value="[Сессия валидна]" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#000000;fontSize=12;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=fill;" parent="1" vertex="1">
+          <mxGeometry x="85" y="356" width="180" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="guard-invalid" value="[Сессия невалидна]" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#000000;fontSize=12;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=fill;" parent="1" vertex="1">
+          <mxGeometry x="85" y="560" width="200" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="alt-divider" value="" style="endArrow=none;html=1;strokeColor=#000000;rounded=0;dashed=0;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="30" y="550" as="sourcePoint" />
+            <mxPoint x="1230" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="comment1" value="Проверка cookie-сессии" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;align=center;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="1130" y="230" width="160" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="comment2" value="Верификация через&lt;br&gt;HMAC-SHA256" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;align=center;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="1150" y="690" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow1" value="1: Открывает WebApp" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.0523;entryX=0.5;entryY=0.0523;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="90" y="139.99799999999996" as="sourcePoint" />
+            <mxPoint x="290" y="139.99799999999996" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow2" value="2: getInitData()" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.1047;entryX=0.5;entryY=0.1047;" parent="1" source="webapp-lf" target="telegram-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow3" value="3: init_data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=open;endFill=0;dashed=1;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.157;entryX=0.5;entryY=0.157;" parent="1" source="telegram-lf" target="webapp-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow4" value="4: ensureSession()" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.2035;entryX=0.5;entryY=0.2477;" parent="1" source="webapp-lf" target="webapp-lf" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="255" />
+              <mxPoint x="360" y="293" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow5" value="5: GET /auth/me/" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.2733;entryX=0.5;entryY=0.2733;" parent="1" source="webapp-lf" target="backend-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow6" value="6: Проверка Cookie&lt;br&gt;сессии" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.3198;entryX=0.5;entryY=0.364;" parent="1" source="backend-lf" target="backend-lf" edge="1">
+          <mxGeometry x="0.1788" y="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1000" y="355" />
+              <mxPoint x="1000" y="393" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow7a" value="7a: 200 OK&lt;br&gt;{user data}" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=open;endFill=0;dashed=1;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.3895;entryX=0.5;entryY=0.3895;" parent="1" source="backend-lf" target="webapp-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow8a" value="8a: Успешная авторизация" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=open;endFill=0;dashed=1;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.4535;entryX=0.5;entryY=0.4535;" parent="1" source="webapp-lf" target="user-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow7b" value="7b: 401 Unauthorized" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=open;endFill=0;dashed=1;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.5988;entryX=0.5;entryY=0.5988;" parent="1" source="backend-lf" target="webapp-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow8b" value="8b: POST /auth/telegram/login/" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.657;entryX=0.5;entryY=0.657;" parent="1" source="webapp-lf" target="backend-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow9" value="9: Валидация подписи&lt;br&gt;init_data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.7151;entryX=0.5;entryY=0.7151;" parent="1" source="backend-lf" target="telegram-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow10" value="10: Подпись валидна" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=open;endFill=0;dashed=1;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.7733;entryX=0.5;entryY=0.7733;" parent="1" source="telegram-lf" target="backend-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow11" value="11: Set-Cookie: session_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=open;endFill=0;dashed=1;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.8256;entryX=0.5;entryY=0.8256;" parent="1" source="backend-lf" target="browser-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow12" value="12: GET /auth/me/" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.8721;entryX=0.5;entryY=0.8721;" parent="1" source="webapp-lf" target="backend-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow13" value="13: 200 OK&lt;br&gt;{user data}" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=open;endFill=0;dashed=1;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.9186;entryX=0.5;entryY=0.9186;" parent="1" source="backend-lf" target="webapp-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow14" value="14: Сессия активна" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=open;endFill=0;dashed=1;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.9651;entryX=0.5;entryY=0.9651;" parent="1" source="webapp-lf" target="user-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

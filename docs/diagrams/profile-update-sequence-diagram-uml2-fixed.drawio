@@ -1,0 +1,112 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.8 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.8">
+  <diagram id="profile-update-sequence-fixed" name="Profile Update Sequence">
+    <mxGraphModel dx="1674" dy="844" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Диаграмма последовательности: Обновление профиля (Profile Update)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=14;fontStyle=1;align=center;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="300" y="20" width="900" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="user-lf" value="User" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="80" width="110" height="940" as="geometry" />
+        </mxCell>
+        <mxCell id="form-lf" value="ProfileForm&lt;br&gt;(Component)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="220" y="80" width="150" height="940" as="geometry" />
+        </mxCell>
+        <mxCell id="view-lf" value="ProfileView" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="430" y="80" width="130" height="940" as="geometry" />
+        </mxCell>
+        <mxCell id="api-lf" value="API" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="640" y="80" width="100" height="940" as="geometry" />
+        </mxCell>
+        <mxCell id="backend-lf" value="Backend&lt;br&gt;(Django)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="820" y="80" width="140" height="940" as="geometry" />
+        </mxCell>
+        <mxCell id="toast-lf" value="Toast" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1040" y="80" width="110" height="940" as="geometry" />
+        </mxCell>
+        <mxCell id="loop-fragment" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontColor=#000000;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="405" y="410" width="575" height="235" as="geometry" />
+        </mxCell>
+        <mxCell id="loop-tab" value="loop" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="405" y="410" width="55" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="loop-guard" value="[status in 404, 405, 400]" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#000000;fontSize=12;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=fill;" parent="1" vertex="1">
+          <mxGeometry x="470" y="416" width="210" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="note-payload" value="payload:&lt;br&gt;{name, last_name,&lt;br&gt;middle_name, email}" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;align=center;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="1065" y="200" width="180" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="note-fallback" value="Fallback логика:&lt;br&gt;PATCH → PUT → POST" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=12;align=center;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="1065" y="385" width="180" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow1" value="1: Заполнение полей&#xa;формы" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.0691;entryX=0.5;entryY=0.0691;" parent="1" source="user-lf" target="form-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow2" value="2: @save click" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.133;entryX=0.5;entryY=0.133;" parent="1" source="user-lf" target="form-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow3" value="3: handleSave()" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.1809;entryX=0.5;entryY=0.2191;" parent="1" source="form-lf" target="form-lf" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="385" y="250" />
+              <mxPoint x="385" y="286" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow4" value="4: setSaving(true)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.2394;entryX=0.5;entryY=0.2777;" parent="1" source="form-lf" target="form-lf" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="385" y="305" />
+              <mxPoint x="385" y="341" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow5" value="5: updateMeName(payload)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.2979;entryX=0.5;entryY=0.2979;" parent="1" source="view-lf" target="api-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow6" value="6: PATCH&#xa;/auth/me/" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.3564;entryX=0.5;entryY=0.3564;" parent="1" source="api-lf" target="backend-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow7" value="7: 200 OK&#xa;/ 4xx Error" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=open;endFill=0;dashed=1;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.4149;entryX=0.5;entryY=0.4149;" parent="1" source="backend-lf" target="api-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow8" value="8: PUT&#xa;/auth/me/" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.4734;entryX=0.5;entryY=0.4734;" parent="1" source="api-lf" target="backend-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow9" value="9: 200 OK&#xa;/ 4xx Error" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=open;endFill=0;dashed=1;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.5319;entryX=0.5;entryY=0.5319;" parent="1" source="backend-lf" target="api-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow10" value="10: POST&#xa;/auth/me/" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.5904;entryX=0.5;entryY=0.5904;" parent="1" source="api-lf" target="backend-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow11" value="11: 200 OK" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=open;endFill=0;dashed=1;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.6489;entryX=0.5;entryY=0.6489;" parent="1" source="backend-lf" target="api-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow12" value="12: loadMe()" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.7234;entryX=0.5;entryY=0.7234;" parent="1" source="view-lf" target="api-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow13" value="13: GET&#xa;/auth/me/" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.7819;entryX=0.5;entryY=0.7819;" parent="1" source="api-lf" target="backend-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow14" value="14: {me data}" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=open;endFill=0;dashed=1;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.8404;entryX=0.5;entryY=0.8404;" parent="1" source="backend-lf" target="api-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow15" value="15: profileData&#xa;update" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=open;endFill=0;dashed=1;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.8989;entryX=0.5;entryY=0.8989;" parent="1" source="api-lf" target="view-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow16" value="16: saving = false" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.9468;entryX=0.5;entryY=0.9851;" parent="1" source="form-lf" target="form-lf" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="385" y="970" />
+              <mxPoint x="385" y="1006" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow17" value="17: triggerToast()" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;fontColor=#000000;endArrow=block;endFill=1;dashed=0;fontSize=12;labelBackgroundColor=#ffffff;align=center;verticalAlign=bottom;exitX=0.5;exitY=0.9894;entryX=0.5;entryY=0.9894;" parent="1" source="view-lf" target="toast-lf" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
